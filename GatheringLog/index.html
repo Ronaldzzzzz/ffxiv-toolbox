@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FFXIV Gathering Log</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .checked-item { opacity: 0.5; filter: grayscale(100%); transition: all 0.3s; }
+        .checked-item .item-name { text-decoration: line-through; opacity: 0.7; }
+        html { scroll-behavior: smooth; }
+        
+        .custom-checkbox {
+            appearance: none;
+            background-color: transparent;
+            border: 2px solid currentColor;
+            border-radius: 4px;
+            display: grid;
+            place-content: center;
+        }
+        .custom-checkbox::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em #3b82f6;
+            transform-origin: center;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+        .custom-checkbox:checked::before { transform: scale(1); }
+        .custom-checkbox:checked { border-color: #3b82f6; }
+
+        /* --- 關鍵修復：CSS 變數設定 --- */
+        :root {
+            --header-offset: 0px; /* 計算：主導航 + 等級導覽的高度 */
+        }
+
+        /* 讓每個列表的標題黏在「主導航 + 等級導覽」的下方 */
+        .section-header-sticky {
+            position: sticky;
+            top: var(--header-offset); 
+            z-index: 20; /* 層級：比內容高，但比上方導航低 */
+        }
+        
+        body { transition: background-color 0.3s, color 0.3s; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 min-h-screen font-sans pb-20">
+
+    <nav id="main-nav" class="sticky top-0 z-50 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md shadow-md border-b border-slate-200 dark:border-slate-700 transition-all">
+        <div class="max-w-[1600px] mx-auto px-4 py-3">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 id="ui-title" class="text-xl font-bold text-slate-800 dark:text-yellow-500 flex items-center gap-2">FFXIV Gathering Guide</h1>
+                    <div class="flex items-center gap-2 mt-1">
+                        <div class="flex space-x-1 bg-slate-100 dark:bg-slate-900 p-0.5 rounded border border-slate-300 dark:border-slate-700">
+                            <button onclick="changeLang('zh-TW')" id="lang-tw" class="px-2 py-0.5 text-xs rounded opacity-50">繁</button>
+                            <button onclick="changeLang('zh-CN')" id="lang-cn" class="px-2 py-0.5 text-xs rounded opacity-50">简</button>
+                            <button onclick="changeLang('en')" id="lang-en" class="px-2 py-0.5 text-xs rounded opacity-50">EN</button>
+                            <button onclick="changeLang('ja')" id="lang-ja" class="px-2 py-0.5 text-xs rounded opacity-50">日</button>
+                        </div>
+                        <span class="text-slate-400 dark:text-slate-600">|</span>
+                        <div class="text-xs font-mono text-blue-600 dark:text-blue-300">
+                            <span id="ui-progress">Progress</span>: <span id="progress-text">0/0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 w-full md:w-auto items-center">
+                    <button onclick="setJob('miner')" id="btn-miner" class="flex-1 md:flex-none px-6 py-2 rounded-lg font-bold transition-colors border border-transparent">
+                        Miner
+                    </button>
+                    <button onclick="setJob('botanist')" id="btn-botanist" class="flex-1 md:flex-none px-6 py-2 rounded-lg font-bold transition-colors border border-transparent">
+                        Botanist
+                    </button>
+                    <button id="theme-toggle" onclick="toggleTheme()" class="ml-2 border border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                        🌙
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-[1600px] mx-auto p-4 flex flex-col md:flex-row gap-6 items-start">
+        
+        <aside class="w-full md:w-56 shrink-0 bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 sticky top-24 max-h-[85vh] overflow-y-auto no-scrollbar shadow-lg z-40 transition-colors">
+            <h3 id="ui-region-title" class="text-slate-800 dark:text-yellow-500 font-bold mb-3 uppercase text-xs tracking-wider border-b border-slate-200 dark:border-slate-700 pb-2">Regions</h3>
+            <div id="region-list" class="space-y-1"></div>
+        </aside>
+
+        <main class="flex-grow w-full min-w-0 relative">
+            
+            <div id="level-nav-container" class="sticky z-30 mb-4 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-md p-3 rounded-b-lg border-x border-b border-slate-200 dark:border-slate-700 shadow-md transition-all" style="top: var(--nav-height, 0px);">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 id="ui-jump-to" class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Jump To Level</h3>
+                </div>
+                <div id="level-grid" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <div id="list-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                <div id="ui-loading" class="col-span-full text-center mt-10 text-slate-500">Loading data...</div>
+            </div>
+
+        </main>
+    </div>
+
+    <button onclick="window.scrollTo(0,0)" class="fixed bottom-6 right-6 bg-blue-600 text-white p-3 rounded-full shadow-lg opacity-80 hover:opacity-100 transition-opacity z-50">
+        ⬆
+    </button>
+
+    <footer class="mt-12 mb-6 px-4 text-center text-slate-400 dark:text-slate-500 text-[10px] md:text-xs leading-relaxed">
+        <p>FINAL FANTASY XIV © 2010 - 2026 SQUARE ENIX CO., LTD. 版權所有。</p>
+    </footer>
+
+    <script>
+        // --- Theme Logic ---
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('ffxiv-tools-theme', 'light');
+                document.getElementById('theme-toggle').innerText = '🌙';
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('ffxiv-tools-theme', 'dark');
+                document.getElementById('theme-toggle').innerText = '☀️';
+            }
+        }
+
+        (function() {
+            const savedTheme = localStorage.getItem('ffxiv-tools-theme');
+            if (savedTheme === 'dark' || !savedTheme) { // Default dark
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-toggle').innerText = '☀️';
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('theme-toggle').innerText = '🌙';
+            }
+        })();
+
+        // --- 全域變數 ---
+        let allItems = []; 
+        let locales = {};  
+        let currentJob = 'miner';
+        let currentRegion = 'all'; 
+        let currentLang = localStorage.getItem('ff14_lang_pref') || 'zh-TW'; 
+
+        const STORAGE_KEY = 'ff14_gathering_progress_v2';
+        let completedItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+
+        // --- 初始化 ---
+        async function init() {
+            try {
+                const [itemsRes, localesRes] = await Promise.all([
+                    fetch('items.json'),
+                    fetch('locales.json')
+                ]);
+                if (!itemsRes.ok) throw new Error("JSON Fetch Failed");
+                allItems = await itemsRes.json();
+                locales = await localesRes.json();
+                
+                updateLangButtons();
+                render(); 
+                
+                setTimeout(updateStickyOffsets, 100);
+                window.addEventListener('resize', updateStickyOffsets);
+                window.addEventListener('scroll', updateStickyOffsets);
+
+            } catch (err) {
+                document.getElementById('list-container').innerHTML = `
+                    <div class="col-span-full text-red-400 text-center p-4 border border-red-800 rounded bg-red-900/20">
+                        Error: ${err.message}<br>
+                        <small>Need Web Server context.</small>
+                    </div>`;
+            }
+        }
+
+        function updateStickyOffsets() {
+            const mainNav = document.getElementById('main-nav');
+            const levelNav = document.getElementById('level-nav-container');
+            
+            if (mainNav && levelNav) {
+                const navH = mainNav.offsetHeight;
+                const lvlH = levelNav.offsetHeight;
+                const totalOffset = navH + lvlH;
+                levelNav.style.top = `${navH}px`;
+                document.documentElement.style.setProperty('--header-offset', `${totalOffset - 1}px`);
+            }
+        }
+
+        function changeLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('ff14_lang_pref', lang); 
+            updateLangButtons();
+            render(); 
+            setTimeout(updateStickyOffsets, 50);
+        }
+
+        function updateLangButtons() {
+            ['zh-TW', 'zh-CN', 'en', 'ja'].forEach(lang => {
+                let btnId = '';
+                if (lang === 'zh-TW') btnId = 'lang-tw';
+                else if (lang === 'zh-CN') btnId = 'lang-cn';
+                else btnId = `lang-${lang}`;
+
+                const btn = document.getElementById(btnId);
+                if (lang === currentLang) {
+                    btn.className = "px-2 py-0.5 text-xs rounded bg-blue-600 text-white font-bold shadow";
+                } else {
+                    btn.className = "px-2 py-0.5 text-xs rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors";
+                }
+            });
+            
+            let regionTitle = 'Regions';
+            if (currentLang === 'zh-TW') regionTitle = '地區篩選';
+            else if (currentLang === 'zh-CN') regionTitle = '地区筛选';
+            else if (currentLang === 'ja') regionTitle = '地域';
+            
+            document.getElementById('ui-region-title').innerText = regionTitle;
+        }
+
+        function t(key, type = 'ui') {
+            if (!locales[currentLang]) return key;
+            return locales[currentLang][type][key] || key;
+        }
+
+        function render() {
+            document.getElementById('ui-title').innerText = t('title');
+            document.getElementById('ui-progress').innerText = t('progress');
+            document.getElementById('ui-jump-to').innerText = t('jump_to');
+            document.getElementById('btn-miner').innerText = t('miner');
+            document.getElementById('btn-botanist').innerText = t('botanist');
+            updateJobButtons();
+
+            const jobItems = allItems.filter(item => item.job === currentJob);
+            renderRegionSidebar(jobItems);
+
+            let displayItems = jobItems;
+            if (currentRegion !== 'all') {
+                displayItems = jobItems.filter(item => item.region_key === currentRegion);
+            }
+
+            const grouped = {};
+            let levels = new Set();
+            displayItems.forEach(item => {
+                if (!grouped[item.level]) {
+                    grouped[item.level] = [];
+                    levels.add(item.level);
+                }
+                grouped[item.level].push(item);
+            });
+
+            const sortedLevels = Array.from(levels).sort((a, b) => {
+                const numA = parseInt(a.split('-')[0]);
+                const numB = parseInt(b.split('-')[0]);
+                return numA - numB;
+            });
+
+            const listContainer = document.getElementById('list-container');
+            const navGrid = document.getElementById('level-grid');
+            listContainer.innerHTML = '';
+            navGrid.innerHTML = '';
+
+            if (sortedLevels.length === 0) {
+                listContainer.innerHTML = `<div class="col-span-full text-center text-slate-500 py-10">No items found in this region.</div>`;
+                updateStickyOffsets(); 
+                return;
+            }
+
+            sortedLevels.forEach(levelRange => {
+                const itemsInLevel = grouped[levelRange];
+                const sectionId = `section-${levelRange}`;
+                
+                const completedCount = itemsInLevel.filter(i => completedItems.has(i.id)).length;
+                const totalCount = itemsInLevel.length;
+                const isAllDone = completedCount === totalCount && totalCount > 0;
+                
+                // Nav Button Style logic needs update for light mode
+                const navBtn = document.createElement('button');
+                
+                let btnClass = "bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600";
+                let progressColor = "text-slate-400";
+
+                if (isAllDone) {
+                    btnClass = "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 border-green-300 dark:border-green-700/50 hover:bg-green-200 dark:hover:bg-green-900/60";
+                    progressColor = "text-green-600 dark:text-green-300";
+                } else if (completedCount > 0) {
+                    btnClass = "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700/50 hover:bg-blue-200 dark:hover:bg-blue-900/60";
+                    progressColor = "text-blue-600 dark:text-blue-200";
+                }
+
+                navBtn.className = `px-3 py-1.5 rounded-md border text-xs font-bold transition-all flex items-center gap-2 shadow-sm ${btnClass}`;
+                navBtn.innerHTML = `
+                    <span>Lv. ${levelRange}</span>
+                    <span class="${progressColor} font-mono opacity-80 text-[10px] border-l border-slate-300 dark:border-white/10 pl-2">
+                        ${Math.round((completedCount/totalCount)*100)}%
+                    </span>
+                `;
+                navBtn.onclick = () => scrollToSection(sectionId);
+                navGrid.appendChild(navBtn);
+
+                const section = document.createElement('section');
+                section.id = sectionId;
+                section.className = "relative bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm h-fit pb-1 transition-colors"; 
+                
+                section.innerHTML = `
+                    <div class="section-header-sticky rounded-t-lg bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-3 py-2 flex justify-between items-center shadow-md transition-colors">
+                        <h2 class="font-bold text-slate-800 dark:text-slate-200">Lv. ${levelRange}</h2>
+                        <span class="text-xs font-mono ${isAllDone ? 'text-green-600 dark:text-green-400' : 'text-slate-500'}">
+                            ${isAllDone ? t('done') : `${completedCount}/${totalCount}`}
+                        </span>
+                    </div>
+                `;
+
+                const itemsList = document.createElement('div');
+                itemsList.className = "divide-y divide-slate-200 dark:divide-slate-700/50"; 
+
+                itemsInLevel.forEach(item => {
+                    const isChecked = completedItems.has(item.id);
+                    const itemName = t(item.id, 'item');
+                    const areaName = t(item.area_key, 'area') || item.area_key;
+                    const locName = t(item.location_key, 'location') || item.location_key;
+                    
+                    let locationStr = `${areaName} > ${locName}`;
+                    if (item.locations && item.locations.length > 0) {
+                        const uniqueLocs = [...new Set(item.locations)].filter(l => l);
+                        if (uniqueLocs.length > 0) locationStr = uniqueLocs.join('<br>');
+                    } else if (item.location) {
+                        locationStr = item.location;
+                    }
+
+                    const itemRow = document.createElement('div');
+                    itemRow.className = `group flex items-start p-3 hover:bg-slate-100 dark:hover:bg-slate-750 transition-all ${isChecked ? 'checked-item bg-slate-50 dark:bg-slate-800/50' : ''}`;
+                    
+                    let iconHtml = '';
+                    if (item.icon) {
+                        iconHtml = `<img src="${item.icon}" class="w-8 h-8 rounded mr-3 border border-slate-300 dark:border-slate-600 shadow-sm shrink-0" alt="" loading="lazy">`;
+                    } else {
+                        iconHtml = `<div class="w-8 h-8 rounded mr-3 bg-slate-200 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 flex items-center justify-center text-xs text-slate-500 opacity-50 shrink-0">?</div>`;
+                    }
+
+                    let locHtml = '';
+                    if (item.locations && item.locations.length > 0) {
+                        const uniqueLocs = [...new Set(item.locations)].filter(l => l);
+                        if (uniqueLocs.length > 0) {
+                            locHtml = uniqueLocs.map(l => {
+                                const parts = l.split('\t');
+                                if (parts.length === 2) {
+                                    return `<div class="truncate"><span class="text-slate-500 mr-1">${parts[0]}</span><span class="text-slate-700 dark:text-slate-300 font-medium">${parts[1]}</span></div>`;
+                                } else {
+                                    return `<div class="truncate">${l}</div>`;
+                                }
+                            }).join('');
+                        }
+                    } else if (item.location) {
+                        locHtml = `<div class="truncate">${item.location}</div>`;
+                    } else {
+                        locHtml = `<div class="truncate">${locationStr}</div>`;
+                    }
+
+                    itemRow.innerHTML = `
+                        <div class="mr-3 mt-1 shrink-0 flex items-center">
+                            <input type="checkbox" 
+                                class="custom-checkbox w-5 h-5 cursor-pointer text-slate-800 dark:text-slate-200"
+                                ${isChecked ? 'checked' : ''} 
+                                onchange="toggleItem('${item.id}')">
+                        </div>
+                        
+                        <div class="flex-grow min-w-0 cursor-pointer flex items-start gap-3" onclick="toggleItem('${item.id}', true)">
+                            ${iconHtml}
+                            <div class="flex-grow min-w-0 flex flex-col justify-center">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold text-slate-800 dark:text-slate-100 item-name text-sm leading-tight">${itemName}</span>
+                                    ${item.time ? `
+                                        <span class="shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-600 text-white">
+                                            ${item.time}
+                                        </span>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            <div class="shrink-0 text-right text-xs text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-300 transition-colors max-w-[50%] flex flex-col items-end gap-0.5 mt-0.5">
+                                ${locHtml}
+                            </div>
+                        </div>
+                    `;
+                    itemsList.appendChild(itemRow);
+                });
+
+                section.appendChild(itemsList);
+                listContainer.appendChild(section);
+            });
+
+            updateProgress(jobItems);
+            setTimeout(updateStickyOffsets, 50);
+        }
+
+        function renderRegionSidebar(items) {
+            const container = document.getElementById('region-list');
+            container.innerHTML = '';
+            const regions = new Set(items.map(i => i.region_key).filter(r => r));
+            const sortedRegions = Array.from(regions).sort();
+
+            const allBtn = document.createElement('button');
+            const isAll = currentRegion === 'all';
+            allBtn.className = `w-full text-left px-3 py-2 rounded text-sm mb-1 transition-colors ${isAll ? 'bg-blue-600 text-white font-bold' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'}`;
+            
+            let allText = 'All Regions';
+            if (currentLang === 'zh-TW') allText = '全部地區';
+            else if (currentLang === 'zh-CN') allText = '全部地区';
+            else if (currentLang === 'ja') allText = '全地域';
+            
+            allBtn.innerText = allText;
+            allBtn.onclick = () => setRegion('all');
+            container.appendChild(allBtn);
+
+            sortedRegions.forEach(rKey => {
+                const isActive = currentRegion === rKey;
+                const rName = t(rKey, 'region') || rKey;
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left px-3 py-2 rounded text-sm mb-1 transition-colors ${isActive ? 'bg-blue-600 text-white font-bold' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'}`;
+                btn.innerText = rName;
+                btn.onclick = () => setRegion(rKey);
+                container.appendChild(btn);
+            });
+        }
+
+        function setRegion(regionKey) {
+            currentRegion = regionKey;
+            render();
+            const list = document.getElementById('list-container');
+            const offset = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-offset')) || 150;
+            const bodyRect = document.body.getBoundingClientRect().top;
+            const elementRect = list.getBoundingClientRect().top;
+            const elementPosition = elementRect - bodyRect;
+            const offsetPosition = elementPosition - offset - 20;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: "smooth"
+            });
+        }
+
+        function setJob(job) {
+            currentJob = job;
+            currentRegion = 'all';
+            render();
+        }
+
+        function updateJobButtons() {
+            const btnMiner = document.getElementById('btn-miner');
+            const btnBotanist = document.getElementById('btn-botanist');
+            const activeClass = "bg-blue-600 text-white ring-2 ring-blue-400 border-blue-500 shadow-lg shadow-blue-900/50";
+            const inactiveClass = "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-200";
+            
+            btnMiner.className = `flex-1 md:flex-none px-6 py-2 rounded-lg font-bold transition-all border ${currentJob === 'miner' ? activeClass : inactiveClass}`;
+            btnBotanist.className = `flex-1 md:flex-none px-6 py-2 rounded-lg font-bold transition-all border ${currentJob === 'botanist' ? activeClass : inactiveClass}`;
+        }
+
+        function toggleItem(id) {
+            if (completedItems.has(id)) completedItems.delete(id);
+            else completedItems.add(id);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify([...completedItems]));
+            render();
+        }
+
+        function updateProgress(items) {
+            const total = items.length;
+            const completed = items.filter(i => completedItems.has(i.id)).length;
+            const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+            document.getElementById('progress-text').innerText = `${completed}/${total} (${percent}%)`;
+        }
+
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                const offset = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-offset')) || 150;
+                const bodyRect = document.body.getBoundingClientRect().top;
+                const elementRect = element.getBoundingClientRect().top;
+                const elementPosition = elementRect - bodyRect;
+                const offsetPosition = elementPosition - offset - 10; 
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth"
+                });
+
+                element.classList.add('ring-2', 'ring-yellow-500');
+                setTimeout(() => element.classList.remove('ring-2', 'ring-yellow-500'), 1000);
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
