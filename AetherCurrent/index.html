@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最短路徑影像辨識系統 V2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <script async src="https://docs.opencv.org/4.5.0/opencv.js" onload="onOpenCvReady();"
+        type="text/javascript"></script>
+    <style>
+        /* 自定義滑桿樣式 */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #cbd5e1;
+            /* slate-300 light */
+            border-radius: 2px;
+        }
+
+        .dark input[type=range]::-webkit-slider-runnable-track {
+            background: #475569;
+            /* slate-600 dark */
+        }
+
+        input[type=range]:focus::-webkit-slider-thumb {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+        }
+
+        /* 隱藏貼上區域的溢出 */
+        .paste-area-container {
+            background-image: repeating-linear-gradient(45deg, #e2e8f0 25%, transparent 25%, transparent 75%, #e2e8f0 75%, #e2e8f0), repeating-linear-gradient(45deg, #e2e8f0 25%, #f1f5f9 25%, #f1f5f9 75%, #e2e8f0 75%, #e2e8f0);
+            background-position: 0 0, 10px 10px;
+            background-size: 20px 20px;
+        }
+
+        .dark .paste-area-container {
+            background-image: repeating-linear-gradient(45deg, #1e293b 25%, transparent 25%, transparent 75%, #1e293b 75%, #1e293b), repeating-linear-gradient(45deg, #1e293b 25%, #0f172a 25%, #0f172a 75%, #1e293b 75%, #1e293b);
+        }
+
+        body {
+            transition: background-color 0.3s, color 0.3s;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 min-h-screen font-sans selection:bg-blue-500 selection:text-white flex flex-col">
+
+    <!-- 導航列 -->
+    <nav class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-md transition-colors">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-slate-800 dark:text-yellow-500 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                </svg>
+                最短路徑影像辨識系統 <span
+                    class="text-xs px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 ml-2 border border-blue-200 dark:border-blue-700">V2</span>
+            </h1>
+            <div class="flex items-center gap-4">
+                <a href="../index.html"
+                    class="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    回首頁
+                </a>
+                <button id="theme-toggle" onclick="toggleTheme()"
+                    class="border border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                    🌙
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto p-6 w-full flex-grow">
+
+        <!-- 說明區塊 -->
+        <div
+            class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-500/20 p-5 rounded-xl mb-8 text-sm text-blue-800 dark:text-blue-100/90 shadow-sm transition-colors">
+            <strong class="text-blue-600 dark:text-blue-300 block mb-2 text-base">📝 使用說明：</strong>
+            <ul class="list-disc list-inside space-y-1 ml-1 text-slate-700 dark:text-slate-300">
+                <li><strong class="text-slate-900 dark:text-white">主地圖</strong>：直接在網頁上按 <code
+                        class="bg-white dark:bg-slate-800 px-1 py-0.5 rounded border border-slate-300 dark:border-slate-600 font-mono text-yellow-600 dark:text-yellow-500">Ctrl+V</code>
+                    貼上截圖，或使用右側按鈕上傳。</li>
+                <li><strong class="text-slate-900 dark:text-white">起點 (A)</strong>：預設讀取 <code
+                        class="text-xs bg-white dark:bg-slate-800 px-1 rounded">A.png</code> (乙太水晶)。</li>
+                <li><strong class="text-slate-900 dark:text-white">目標 (B)</strong>：預設讀取 <code
+                        class="text-xs bg-white dark:bg-slate-800 px-1 rounded">B.png</code> (風脈泉)。請直接從灰機wiki截圖後貼上。</li>
+                <li>設定完成後，點擊下方 <span class="text-blue-600 dark:text-blue-400 font-bold">開始計算與繪製</span> 按鈕。</li>
+            </ul>
+        </div>
+
+        <div
+            class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-500/20 p-5 rounded-xl mb-8 text-sm text-blue-800 dark:text-blue-100/90 shadow-sm transition-colors">
+            <strong class="text-blue-600 dark:text-blue-300 block mb-2 text-base">備註：</strong>
+            <ul class="list-disc list-inside space-y-1 ml-1 text-slate-700 dark:text-slate-300">
+                <li>2.0至6.0版本的風脈泉已經過優化，每個地圖皆只需要4個風脈泉即可。且每個風脈泉皆放置於重要地點附近，請隨手按下風脈儀確認位置。</li>
+                <li>言下之意:這工具基本沒用了</li>
+                <li>7.0請參照下方參考路線。請注意，路線僅供參考，此工具並未將如地圖出入口、地形等加入運算。</li>
+                <li>若有其他遊戲或個人的路徑需求，還是可以使用此工具來協助你。只是預設為協助FF14的風脈泉路線，自行上傳圖片即可。</li>
+                <li><s>原先預計刪除此工具，但...Token都用了，就先留著吧。</s></li>
+            </ul>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+
+            <!-- 左側：主地圖區域 -->
+            <div class="lg:col-span-2 flex flex-col gap-4">
+                <div
+                    class="bg-white dark:bg-slate-800 p-1 rounded-t-lg border-b border-slate-200 dark:border-slate-700 flex justify-between items-center px-4 py-2 transition-colors shadow-sm">
+                    <label class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                        <span class="w-2 h-6 bg-blue-500 rounded-full"></span>
+                        1. 主要地圖區域
+                    </label>
+                    <span class="text-xs text-slate-500">支援貼上或拖曳</span>
+                </div>
+
+                <div
+                    class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 min-h-[400px] flex flex-col transition-colors">
+                    <div class="paste-area-container flex-grow border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg flex justify-center items-center relative overflow-hidden group hover:border-blue-500 transition-colors cursor-default"
+                        id="pasteArea">
+                        <div
+                            class="text-center pointer-events-none z-10 p-6 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xl">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="h-12 w-12 text-slate-400 dark:text-slate-500 mx-auto mb-3 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <p class="text-lg font-medium text-slate-700 dark:text-slate-300 mb-1">Ctrl + V 貼上 或 拖曳圖片至此
+                            </p>
+                            <p class="text-xs text-slate-500">或從右側選單上傳</p>
+                        </div>
+                        <img id="pastePreviewImg"
+                            class="absolute inset-0 w-full h-full object-contain bg-slate-50 dark:bg-slate-900 hidden opacity-60"
+                            alt="Paste Preview">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右側：控制面板 -->
+            <div class="flex flex-col gap-6">
+
+                <!-- 上傳主圖 (備用) -->
+                <div
+                    class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 transition-colors">
+                    <label for="fileMain"
+                        class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">備用：上傳主圖檔案</label>
+                    <input type="file" id="fileMain" accept="image/*"
+                        class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-slate-100 dark:file:bg-slate-700 file:text-blue-600 dark:file:text-blue-400 hover:file:bg-slate-200 dark:hover:file:bg-slate-600 transition-all cursor-pointer">
+                </div>
+
+                <!-- Pattern A 設定 -->
+                <div
+                    class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 relative overflow-hidden transition-colors">
+                    <div class="absolute top-0 right-0 p-2 opacity-10">
+                        <span class="text-6xl font-bold text-slate-300 dark:text-slate-500">A</span>
+                    </div>
+                    <label class="font-bold text-slate-800 dark:text-slate-200 mb-4 block flex items-center gap-2">
+                        <span class="w-2 h-2 bg-blue-500 rounded-full"></span> 2. 起點圖案 (A)
+                    </label>
+
+                    <div class="flex items-center gap-4 mb-4">
+                        <div
+                            class="w-12 h-12 bg-slate-100 dark:bg-slate-900 rounded border border-slate-300 dark:border-slate-600 flex items-center justify-center shrink-0 overflow-hidden">
+                            <img id="previewA" src="A.png" class="max-w-full max-h-full" alt="A">
+                            <span class="text-xs text-slate-500 dark:text-slate-600 hidden" id="placeholderA">預設</span>
+                        </div>
+                        <input type="file" id="fileA" accept="image/*"
+                            class="block w-full text-xs text-slate-500 dark:text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:font-semibold file:bg-slate-100 dark:file:bg-slate-700 file:text-slate-700 dark:file:text-slate-300 hover:file:bg-slate-200 dark:hover:file:bg-slate-600 cursor-pointer">
+                    </div>
+
+                    <div class="mb-1">
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-500 dark:text-slate-400">辨識容許度</span>
+                            <span id="valA" class="text-blue-600 dark:text-blue-400 font-mono font-bold">0.6</span>
+                        </div>
+                        <input type="range" id="thresholdA" min="0.1" max="1.0" step="0.05" value="0.6"
+                            class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                    </div>
+                    <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-2 text-right">將強制縮放為 32x32</p>
+                </div>
+
+                <!-- Pattern B 設定 -->
+                <div
+                    class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 relative overflow-hidden transition-colors">
+                    <div class="absolute top-0 right-0 p-2 opacity-10">
+                        <span class="text-6xl font-bold text-slate-300 dark:text-slate-500">B</span>
+                    </div>
+                    <label class="font-bold text-slate-800 dark:text-slate-200 mb-4 block flex items-center gap-2">
+                        <span class="w-2 h-2 bg-green-500 rounded-full"></span> 3. 目標圖案 (B)
+                    </label>
+
+                    <div class="flex items-center gap-4 mb-4">
+                        <div
+                            class="w-12 h-12 bg-slate-100 dark:bg-slate-900 rounded border border-slate-300 dark:border-slate-600 flex items-center justify-center shrink-0 overflow-hidden">
+                            <img id="previewB" src="B.png" class="max-w-full max-h-full" alt="B">
+                            <span class="text-xs text-slate-500 dark:text-slate-600 hidden" id="placeholderB">預設</span>
+                        </div>
+                        <input type="file" id="fileB" accept="image/*"
+                            class="block w-full text-xs text-slate-500 dark:text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:font-semibold file:bg-slate-100 dark:file:bg-slate-700 file:text-slate-700 dark:file:text-slate-300 hover:file:bg-slate-200 dark:hover:file:bg-slate-600 cursor-pointer">
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-500 dark:text-slate-400">辨識容許度</span>
+                            <span id="valB" class="text-blue-600 dark:text-blue-400 font-mono font-bold">0.7</span>
+                        </div>
+                        <input type="range" id="thresholdB" min="0.1" max="1.0" step="0.05" value="0.7"
+                            class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                    </div>
+
+                    <div class="flex flex-wrap gap-3">
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <div class="relative">
+                                <input type="checkbox" id="useOriginalB" class="peer sr-only">
+                                <div
+                                    class="w-9 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer-checked:bg-blue-600 transition-all">
+                                </div>
+                                <div
+                                    class="absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-all peer-checked:translate-x-4 shadow-sm">
+                                </div>
+                            </div>
+                            <span
+                                class="text-xs text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">原始大小</span>
+                        </label>
+
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <div class="relative">
+                                <input type="checkbox" id="multiScaleB" class="peer sr-only">
+                                <div
+                                    class="w-9 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer-checked:bg-blue-600 transition-all">
+                                </div>
+                                <div
+                                    class="absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-all peer-checked:translate-x-4 shadow-sm">
+                                </div>
+                            </div>
+                            <span
+                                class="text-xs text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">多尺度搜尋</span>
+                        </label>
+                    </div>
+                    <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-3 text-right">預設縮放為 40x40</p>
+                </div>
+
+                <!-- Action Button -->
+                <button id="runBtn" onclick="processImages()" disabled
+                    class="w-full py-4 bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-400 font-bold rounded-xl shadow-lg transition-all transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white hover:shadow-blue-500/30 flex justify-center items-center gap-2">
+                    <svg class="animate-spin h-5 w-5 hidden" id="btnSpinner" xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    <span>OpenCV 載入中...</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 狀態顯示 -->
+        <div id="status"
+            class="hidden mt-8 p-4 rounded-lg text-center font-bold text-sm border shadow-sm transition-all duration-300">
+        </div>
+
+        <!-- 畫布區域 -->
+        <div
+            class="mt-8 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-x-auto flex justify-center min-h-[200px] relative transition-colors">
+            <span
+                class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-600 text-sm pointer-events-none"
+                id="canvasPlaceholder">結果將顯示於此</span>
+            <canvas id="outputCanvas" class="max-w-full h-auto rounded shadow-sm relative z-10"></canvas>
+        </div>
+
+        <!-- 參考圖區域 (7-1 ~ 7-6) -->
+        <div class="mt-12">
+            <h3 class="text-xl font-bold text-slate-800 dark:text-slate-200 mb-6 flex items-center gap-2">
+                <span class="w-2 h-6 bg-green-500 rounded-full"></span>
+                7.0 地圖路徑參考
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div
+                    class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md border border-slate-200 dark:border-slate-700 transition-colors flex flex-col gap-3 group">
+                    <h4 class="text-center text-lg font-bold text-slate-700 dark:text-slate-300">奧闊帕恰山</h4>
+                    <div class="relative overflow-hidden rounded-lg cursor-zoom-in"
+                        onclick="openModal('final/7-1.png')">
+                        <img src="final/7-1.png"
+                            class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+                            alt="Reference 7-1" loading="lazy">
+                        <div
+                            class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors pointer-events-none">
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md border border-slate-200 dark:border-slate-700 transition-colors flex flex-col gap-3 group">
+                    <h4 class="text-center text-lg font-bold text-slate-700 dark:text-slate-300">克扎瑪烏卡濕地</h4>
+                    <div class="relative overflow-hidden rounded-lg cursor-zoom-in"
+                        onclick="openModal('final/7-2.png')">
+                        <img src="final/7-2.png"
+                            class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+                            alt="Reference 7-2" loading="lazy">
+                        <div
+                            class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors pointer-events-none">
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md border border-slate-200 dark:border-slate-700 transition-colors flex flex-col gap-3 group">
+                    <h4 class="text-center text-lg font-bold text-slate-700 dark:text-slate-300">亞克特爾樹海</h4>
+                    <div class="relative overflow-hidden rounded-lg cursor-zoom-in"
+                        onclick="openModal('final/7-3.png')">
+                        <img src="final/7-3.png"
+                            class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+                            alt="Reference 7-3" loading="lazy">
+                        <div
+                            class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors pointer-events-none">
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md border border-slate-200 dark:border-slate-700 transition-colors flex flex-col gap-3 group">
+                    <h4 class="text-center text-lg font-bold text-slate-700 dark:text-slate-300">夏勞尼荒野</h4>
+                    <div class="relative overflow-hidden rounded-lg cursor-zoom-in"
+                        onclick="openModal('final/7-4.png')">
+                        <img src="final/7-4.png"
+                            class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+                            alt="Reference 7-4" loading="lazy">
+                        <div
+                            class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors pointer-events-none">
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md border border-slate-200 dark:border-slate-700 transition-colors flex flex-col gap-3 group">
+                    <h4 class="text-center text-lg font-bold text-slate-700 dark:text-slate-300">遺產之地</h4>
+                    <div class="relative overflow-hidden rounded-lg cursor-zoom-in"
+                        onclick="openModal('final/7-5.png')">
+                        <img src="final/7-5.png"
+                            class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+                            alt="Reference 7-5" loading="lazy">
+                        <div
+                            class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors pointer-events-none">
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md border border-slate-200 dark:border-slate-700 transition-colors flex flex-col gap-3 group">
+                    <h4 class="text-center text-lg font-bold text-slate-700 dark:text-slate-300">活著的記憶</h4>
+                    <div class="relative overflow-hidden rounded-lg cursor-zoom-in"
+                        onclick="openModal('final/7-6.png')">
+                        <img src="final/7-6.png"
+                            class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+                            alt="Reference 7-6" loading="lazy">
+                        <div
+                            class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors pointer-events-none">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer
+        class="mt-12 py-6 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 text-center text-slate-500 dark:text-slate-600 text-[10px] md:text-xs leading-relaxed transition-colors">
+        <p>FINAL FANTASY XIV © 2010 - 2026 SQUARE ENIX CO., LTD. 版權所有。</p>
+        <p>FINAL FANTASY is a registered trademark of Square Enix Holdings Co., Ltd.</p>
+        <p>FINAL FANTASY 是 Square Enix Holdings Co., Ltd. 的註冊商標。</p>
+    </footer>
+
+    <script>
+        // --- Theme Logic ---
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('ffxiv-tools-theme', 'light');
+                document.getElementById('theme-toggle').innerText = '🌙';
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('ffxiv-tools-theme', 'dark');
+                document.getElementById('theme-toggle').innerText = '☀️';
+            }
+        }
+
+        (function () {
+            const savedTheme = localStorage.getItem('ffxiv-tools-theme');
+            if (savedTheme === 'dark' || !savedTheme) { // Default dark
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-toggle').innerText = '☀️';
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('theme-toggle').innerText = '🌙';
+            }
+        })();
+
+        let openCvReady = false;
+        let pastedMainImage = null;
+
+        function onOpenCvReady() {
+            openCvReady = true;
+            const btn = document.getElementById('runBtn');
+            btn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                </svg>
+                <span>開始計算與繪製</span>
+            `;
+            btn.disabled = false;
+            btn.classList.remove('bg-slate-200', 'dark:bg-slate-700', 'text-slate-400', 'dark:text-slate-400');
+            btn.classList.add('bg-blue-600', 'text-white');
+            console.log("OpenCV.js is ready.");
+            setStatus("系統準備就緒，請貼上主圖。", "success");
+        }
+
+        function setStatus(msg, type) {
+            const el = document.getElementById('status');
+            el.style.display = 'block';
+            el.className = 'mt-8 p-4 rounded-lg text-center font-bold text-sm border shadow-sm transition-all duration-300';
+
+            if (type === 'loading') {
+                el.classList.add('bg-blue-100', 'dark:bg-blue-900/30', 'text-blue-700', 'dark:text-blue-300', 'border-blue-300', 'dark:border-blue-500/30', 'animate-pulse');
+            } else if (type === 'success') {
+                el.classList.add('bg-green-100', 'dark:bg-green-900/30', 'text-green-700', 'dark:text-green-300', 'border-green-300', 'dark:border-green-500/30');
+            } else if (type === 'error') {
+                el.classList.add('bg-red-100', 'dark:bg-red-900/30', 'text-red-700', 'dark:text-red-300', 'border-red-300', 'dark:border-red-500/30');
+            }
+            el.innerText = msg;
+        }
+
+        document.addEventListener('paste', async (event) => {
+            const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+            for (const item of items) {
+                if (item.type.indexOf('image') === 0) {
+                    const blob = item.getAsFile();
+                    setStatus("正在讀取剪貼簿影像...", "loading");
+                    try {
+                        pastedMainImage = await loadImageSource(blob);
+                        updatePasteArea(pastedMainImage.src, "已貼上影像。<br>點擊「開始計算」。");
+                        document.getElementById('fileMain').value = '';
+                        setStatus("已成功貼上主圖。", "success");
+                    } catch (e) {
+                        setStatus("貼上失敗，請重試。", "error");
+                        console.error(e);
+                    }
+                    return;
+                }
+            }
+        });
+
+        document.getElementById('fileMain').addEventListener('change', async () => {
+            const fileInput = document.getElementById('fileMain');
+            if (fileInput.files.length > 0) {
+                pastedMainImage = null;
+                try {
+                    const img = await loadImageSource(fileInput.files[0]);
+                    updatePasteArea(img.src, "已選擇檔案。<br>點擊「開始計算」。");
+                    setStatus("已載入主圖檔案。", "success");
+                } catch (e) {
+                    console.error(e);
+                    setStatus("無法讀取檔案。", "error");
+                }
+            }
+        });
+
+        function updatePasteArea(src, textHtml) {
+            const pasteArea = document.getElementById('pasteArea');
+            const previewImg = document.getElementById('pastePreviewImg');
+            const textDiv = pasteArea.querySelector('div'); // The text container
+
+            pasteArea.classList.add('border-blue-500', 'border-solid');
+            pasteArea.classList.remove('border-dashed', 'border-slate-300', 'dark:border-slate-600');
+
+            previewImg.src = src;
+            previewImg.classList.remove('hidden');
+
+            // 更新文字並確保可見性適當
+            textDiv.innerHTML = `<p class="text-white font-bold text-lg drop-shadow-md">${textHtml}</p>`;
+            textDiv.className = "absolute z-20 text-center bg-black/50 p-4 rounded-xl backdrop-blur-sm pointer-events-none";
+        }
+
+        // --- Drag & Drop Logic ---
+        const pasteArea = document.getElementById('pasteArea');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            pasteArea.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            pasteArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            pasteArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            pasteArea.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+            pasteArea.classList.remove('border-slate-300', 'dark:border-slate-600');
+        }
+
+        function unhighlight(e) {
+            pasteArea.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+            pasteArea.classList.add('border-slate-300', 'dark:border-slate-600');
+        }
+
+        pasteArea.addEventListener('drop', handleDrop, false);
+
+        async function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            if (files.length > 0 && files[0].type.startsWith('image/')) {
+                setStatus("正在讀取拖曳影像...", "loading");
+                try {
+                    pastedMainImage = await loadImageSource(files[0]);
+                    updatePasteArea(pastedMainImage.src, "已載入拖曳影像。<br>點擊「開始計算」。");
+                    document.getElementById('fileMain').value = '';
+                    setStatus("已成功載入主圖。", "success");
+                } catch (e) {
+                    setStatus("讀取失敗，請重試。", "error");
+                    console.error(e);
+                }
+            }
+        }
+
+        // 預覽圖片輔助函數
+        function handlePreview(fileInputId, imgId, placeholderId, defaultSrc) {
+            document.getElementById(fileInputId).addEventListener('change', async () => {
+                const input = document.getElementById(fileInputId);
+                const img = document.getElementById(imgId);
+                const ph = document.getElementById(placeholderId);
+
+                if (input.files.length > 0) {
+                    try {
+                        const loadedImg = await loadImageSource(input.files[0]);
+                        img.src = loadedImg.src;
+                        img.classList.remove('hidden');
+                        if (ph) ph.classList.add('hidden');
+                    } catch (e) { console.error(e); }
+                } else {
+                    // Revert to default
+                    img.src = defaultSrc;
+                    img.classList.remove('hidden');
+                    if (ph) ph.classList.add('hidden');
+                }
+            });
+        }
+
+        handlePreview('fileA', 'previewA', 'placeholderA', 'A.png');
+        handlePreview('fileB', 'previewB', 'placeholderB', 'B.png');
+
+        document.getElementById('thresholdA').addEventListener('input', (e) => document.getElementById('valA').innerText = e.target.value);
+        document.getElementById('thresholdB').addEventListener('input', (e) => document.getElementById('valB').innerText = e.target.value);
+
+        function loadImageSource(source) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'Anonymous';
+                img.onload = () => resolve(img);
+                img.onerror = (e) => reject(new Error(`無法載入圖片: ${source instanceof File ? source.name : source}`));
+                if (source instanceof File) img.src = URL.createObjectURL(source);
+                else img.src = source;
+            });
+        }
+
+        function dist(p1, p2) {
+            return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+        }
+
+        function solveTSP(startPoint, points) {
+            let minDistance = Infinity;
+            let bestPath = [];
+            function permute(arr, m = []) {
+                if (arr.length === 0) {
+                    let currentDist = dist(startPoint, m[0]);
+                    for (let i = 0; i < m.length - 1; i++) currentDist += dist(m[i], m[i + 1]);
+                    if (currentDist < minDistance) { minDistance = currentDist; bestPath = m; }
+                } else {
+                    for (let i = 0; i < arr.length; i++) {
+                        let curr = arr.slice(); let next = curr.splice(i, 1);
+                        permute(curr.slice(), m.concat(next));
+                    }
+                }
+            }
+            if (points.length === 0) return [];
+            permute(points);
+            return bestPath;
+        }
+
+        function findMatches(srcMat, templMat, threshold, maskMat) {
+            let dst = new cv.Mat();
+            try {
+                if (maskMat) cv.matchTemplate(srcMat, templMat, dst, cv.TM_CCOEFF_NORMED, maskMat);
+                else cv.matchTemplate(srcMat, templMat, dst, cv.TM_CCOEFF_NORMED);
+            } catch (e) {
+                console.error("Match Template Error:", e);
+                cv.matchTemplate(srcMat, templMat, dst, cv.TM_CCOEFF_NORMED);
+            }
+
+            let matches = [];
+            while (true) {
+                let result = cv.minMaxLoc(dst);
+                if (result.maxVal < threshold) break;
+                let maxLoc = result.maxLoc;
+                matches.push({ x: maxLoc.x + templMat.cols / 2, y: maxLoc.y + templMat.rows / 2 });
+                cv.rectangle(dst,
+                    new cv.Point(Math.max(0, maxLoc.x - templMat.cols / 2), Math.max(0, maxLoc.y - templMat.rows / 2)),
+                    new cv.Point(Math.min(dst.cols, maxLoc.x + templMat.cols / 2), Math.min(dst.rows, maxLoc.y + templMat.rows / 2)),
+                    [0, 0, 0, 0], -1);
+            }
+            dst.delete();
+            return matches;
+        }
+
+        function resizeMat(srcMat, targetWidth, targetHeight) {
+            let dstMat = new cv.Mat();
+            let dsize = new cv.Size(targetWidth, targetHeight);
+            cv.resize(srcMat, dstMat, dsize, 0, 0, cv.INTER_AREA);
+            return dstMat;
+        }
+
+        function extractColorAndMask(rgbaMat) {
+            let rgb = new cv.Mat();
+            let mask = new cv.Mat();
+            let channels = new cv.MatVector();
+            cv.split(rgbaMat, channels);
+            let rgbChannels = new cv.MatVector();
+            rgbChannels.push_back(channels.get(0));
+            rgbChannels.push_back(channels.get(1));
+            rgbChannels.push_back(channels.get(2));
+            cv.merge(rgbChannels, rgb);
+            mask = channels.get(3).clone();
+            channels.delete(); rgbChannels.delete();
+            return { rgb, mask };
+        }
+
+        function nonMaxSuppression(matches, radius) {
+            if (matches.length === 0) return [];
+            let result = [];
+            for (let i = 0; i < matches.length; i++) {
+                let keep = true;
+                for (let j = 0; j < result.length; j++) {
+                    if (dist(matches[i], result[j]) < radius) {
+                        keep = false;
+                        break;
+                    }
+                }
+                if (keep) result.push(matches[i]);
+            }
+            return result;
+        }
+
+        function findMatchesMultiScale(srcRGB, templRGBA, threshold, autoDelete) {
+            let matches = [];
+            const scales = [0.8, 0.9, 1.0, 1.1, 1.2];
+            for (let scale of scales) {
+                let w = Math.round(templRGBA.cols * scale);
+                let h = Math.round(templRGBA.rows * scale);
+                if (w < 10 || h < 10) continue;
+                let resizedTempl = autoDelete(resizeMat(templRGBA, w, h));
+                let { rgb, mask } = extractColorAndMask(resizedTempl);
+                autoDelete(rgb); autoDelete(mask);
+                let currentMatches = findMatches(srcRGB, rgb, threshold, mask);
+                matches = matches.concat(currentMatches);
+            }
+            return nonMaxSuppression(matches, templRGBA.cols * 0.5);
+        }
+
+        async function processImages() {
+            setStatus("正在處理影像...", "loading");
+            document.getElementById('canvasPlaceholder').classList.add('hidden');
+            const canvas = document.getElementById('outputCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const fileMainInput = document.getElementById('fileMain');
+            let mainImageSource = pastedMainImage;
+            if (!mainImageSource && fileMainInput.files.length > 0) mainImageSource = fileMainInput.files[0];
+            if (!mainImageSource) {
+                setStatus("錯誤：請先貼上主圖 (Ctrl+V) 或上傳檔案。", "error");
+                return;
+            }
+
+            const sourceA = document.getElementById('fileA').files[0] || 'A.png';
+            const sourceB = document.getElementById('fileB').files[0] || 'B.png';
+            let matList = [];
+            const autoDelete = (mat) => { if (mat) matList.push(mat); return mat; };
+
+            try {
+                const imgMain = (mainImageSource instanceof Image) ? mainImageSource : await loadImageSource(mainImageSource);
+                const imgA = await loadImageSource(sourceA);
+                const imgB = await loadImageSource(sourceB);
+
+                let srcRGBA = autoDelete(cv.imread(imgMain));
+                let templARaw = autoDelete(cv.imread(imgA));
+                let templBRaw = autoDelete(cv.imread(imgB));
+                let srcRGB = autoDelete(new cv.Mat());
+                cv.cvtColor(srcRGBA, srcRGB, cv.COLOR_RGBA2RGB);
+
+                let templA_Resized = autoDelete(resizeMat(templARaw, 32, 32));
+                let { rgb: templA_RGB, mask: templA_Mask } = extractColorAndMask(templA_Resized);
+                autoDelete(templA_RGB); autoDelete(templA_Mask);
+
+                const threshA = parseFloat(document.getElementById('thresholdA').value);
+                let matchesA = findMatches(srcRGB, templA_RGB, threshA, templA_Mask);
+
+                if (matchesA.length === 0) throw new Error(`找不到起點圖案 A (容許度 ${threshA})。請確認 A.png 存在或嘗試調低容許度。`);
+                let startPoint = matchesA[0];
+
+                let templB_Final = null;
+                const useOriginalB = document.getElementById('useOriginalB').checked;
+                const enableMultiScaleB = document.getElementById('multiScaleB').checked;
+
+                if (useOriginalB) templB_Final = templBRaw;
+                else templB_Final = autoDelete(resizeMat(templBRaw, 40, 40));
+
+                const threshB = parseFloat(document.getElementById('thresholdB').value);
+                let matchesB = [];
+
+                if (enableMultiScaleB) {
+                    setStatus("正在進行多尺度搜尋 B...", "loading");
+                    matchesB = findMatchesMultiScale(srcRGB, templB_Final, threshB, autoDelete);
+                } else {
+                    let { rgb: templB_RGB, mask: templB_Mask } = extractColorAndMask(templB_Final);
+                    autoDelete(templB_RGB); autoDelete(templB_Mask);
+                    matchesB = findMatches(srcRGB, templB_RGB, threshB, templB_Mask);
+                }
+
+                if (matchesB.length === 0) throw new Error(`找不到任何目標圖案 B (容許度 ${threshB})。請確認 B.png 存在或嘗試調低容許度。`);
+                if (matchesB.length > 10) {
+                    setStatus("警告：目標 B 超過 10 個，僅計算前 10 個。", "loading");
+                    matchesB = matchesB.slice(0, 10);
+                }
+
+                console.log(`Found Start A: 1, Found Targets B: ${matchesB.length}`);
+                let sortedPath = solveTSP(startPoint, matchesB);
+
+                cv.line(srcRGBA, new cv.Point(startPoint.x, startPoint.y), new cv.Point(sortedPath[0].x, sortedPath[0].y), [255, 0, 0, 255], 3);
+                for (let i = 0; i < sortedPath.length - 1; i++) {
+                    cv.line(srcRGBA, new cv.Point(sortedPath[i].x, sortedPath[i].y), new cv.Point(sortedPath[i + 1].x, sortedPath[i + 1].y), [0, 255, 0, 255], 2);
+                }
+
+                cv.circle(srcRGBA, new cv.Point(startPoint.x, startPoint.y), 10, [255, 0, 0, 255], -1);
+                cv.putText(srcRGBA, "Start(A)", new cv.Point(startPoint.x + 15, startPoint.y), cv.FONT_HERSHEY_SIMPLEX, 0.7, [255, 0, 0, 255], 2);
+
+                for (let i = 0; i < sortedPath.length; i++) {
+                    let p = sortedPath[i];
+                    cv.circle(srcRGBA, new cv.Point(p.x, p.y), 8, [0, 255, 0, 255], -1);
+                    cv.putText(srcRGBA, "B" + (i + 1), new cv.Point(p.x - 10, p.y - 15), cv.FONT_HERSHEY_SIMPLEX, 0.6, [0, 0, 255, 255], 2);
+                }
+
+                cv.imshow('outputCanvas', srcRGBA);
+                setStatus(`計算完成！路徑：A -> B共 ${matchesB.length} 個點。`, "success");
+
+            } catch (err) {
+                console.error(err);
+                setStatus("發生錯誤：" + err.message, "error");
+            } finally {
+                matList.forEach(mat => { try { mat.delete(); } catch (e) { } });
+            }
+        }
+        // --- Image Modal Logic ---
+        function openModal(src) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImg');
+            modalImg.src = src;
+            modal.classList.remove('hidden');
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.add('hidden');
+            // Restore body scroll
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+
+    <!-- Image Modal -->
+    <div id="imageModal"
+        class="fixed inset-0 z-[100] hidden bg-black/90 backdrop-blur-sm flex justify-center items-center p-4 cursor-zoom-out transition-opacity duration-300"
+        onclick="closeModal()">
+        <div class="relative max-w-7xl max-h-screen flex justify-center items-center">
+            <img id="modalImg"
+                class="max-w-full max-h-[90vh] rounded-lg shadow-2xl object-contain transition-transform transform scale-100"
+                src="" alt="Enlarged Image">
+            <button onclick="closeModal()"
+                class="absolute -top-12 right-0 md:top-[-20px] md:right-[-50px] text-white hover:text-gray-300 focus:outline-none bg-black/50 hover:bg-black/70 rounded-full p-2 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+</body>
+
+</html>
