@@ -1,4 +1,4 @@
-# FFXIV Web Tools
+# FFXIV Toolbox
 
 這是我為 Final Fantasy XIV (FF14) 玩家製作的 Web 輔助工具集。
 
