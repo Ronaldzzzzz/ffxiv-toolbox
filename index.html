@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FFXIV Web Tools Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <style>
+        body {
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .tool-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center p-6 bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-50 min-h-screen">
+
+    <button id="theme-toggle" onclick="toggleTheme()" class="absolute top-6 right-6 border-2 border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 px-4 py-1.5 rounded-full font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+        🌙 Dark Mode
+    </button>
+
+    <header class="text-center mb-12 mt-12 md:mt-0">
+        <h1 class="text-4xl font-bold text-slate-800 dark:text-yellow-500 mb-2 tracking-tight transition-colors">FFXIV Web Tools</h1>
+        <p class="text-slate-500 dark:text-slate-400">Warriors of Light Auxiliary Kit</p>
+    </header>
+
+    <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl w-full">
+        <!-- Aether Current Card -->
+        <a href="./AetherCurrent/index.html" class="tool-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-8 rounded-2xl flex flex-col items-center text-center shadow-lg dark:shadow-none">
+            <div class="w-16 h-16 bg-blue-100 dark:bg-blue-500/20 rounded-full flex items-center justify-center mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+            </div>
+            <h2 class="text-2xl font-bold mb-3 text-slate-800 dark:text-white">最短路徑影像辨識</h2>
+            <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-4">
+                Aether Current Path Finder<br>
+                自動偵測地圖截圖並規劃最優風脈採集路線。
+            </p>
+            <span class="text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1 mt-auto">
+                開啟工具 
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </span>
+        </a>
+
+        <!-- Gathering Log Card (Maintenance Mode) -->
+        <div class="tool-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-8 rounded-2xl flex flex-col items-center text-center shadow-lg dark:shadow-none opacity-60 relative overflow-hidden cursor-not-allowed">
+            <div class="absolute top-4 right-[-35px] bg-yellow-500 text-slate-900 text-[10px] font-bold py-1 px-10 rotate-45 shadow-md">施工中</div>
+            <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700/50 rounded-full flex items-center justify-center mb-6 grayscale">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+            </div>
+            <h2 class="text-2xl font-bold mb-3 text-slate-400 dark:text-slate-500">採集手冊檢核表</h2>
+            <p class="text-slate-400 dark:text-slate-500 text-sm leading-relaxed mb-4">
+                Gathering Log Checklist<br>
+                工具系統升級與維護中，暫不開放使用。
+            </p>
+            <span class="text-slate-400 dark:text-slate-500 font-semibold flex items-center gap-1 mt-auto">
+                施工中
+            </span>
+        </div>
+
+        <!-- Gathering Log Card (Active Mode - Commented out for easy switching)
+        <a href="./GatheringLog/index.html" class="tool-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-8 rounded-2xl flex flex-col items-center text-center shadow-lg dark:shadow-none">
+            <div class="w-16 h-16 bg-green-100 dark:bg-green-500/20 rounded-full flex items-center justify-center mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+            </div>
+            <h2 class="text-2xl font-bold mb-3 text-slate-800 dark:text-white">採集手冊檢核表</h2>
+            <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-4">
+                Gathering Log Checklist<br>
+                Miner 與 Botanist 的採集圖鑑追蹤工具，支援多語言。
+            </p>
+            <span class="text-green-600 dark:text-green-400 font-semibold flex items-center gap-1 mt-auto">
+                開啟工具 
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </span>
+        </a>
+        -->
+
+        <!-- Squadron Card -->
+        <a href="./Squadron/index.html" class="tool-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-8 rounded-2xl flex flex-col items-center text-center shadow-lg dark:shadow-none">
+            <div class="w-16 h-16 bg-orange-100 dark:bg-orange-500/20 rounded-full flex items-center justify-center mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-orange-600 dark:text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+            </div>
+            <h2 class="text-2xl font-bold mb-3 text-slate-800 dark:text-white">冒險者分隊計算器</h2>
+            <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-4">
+                Squadron Mission Calculator<br>
+                最佳化隊員編組與訓練，計算 100% 成功率配置。
+            </p>
+            <span class="text-orange-600 dark:text-orange-400 font-semibold flex items-center gap-1 mt-auto">
+                開啟工具 
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </span>
+        </a>
+    </main>
+
+    <footer class="mt-20 text-center text-slate-400 dark:text-slate-600 text-[10px] md:text-xs leading-relaxed">
+        <p>FINAL FANTASY XIV © 2010 - 2026 SQUARE ENIX CO., LTD. 版權所有。</p>
+        <p>FINAL FANTASY is a registered trademark of Square Enix Holdings Co., Ltd.</p>
+        <p>FINAL FANTASY 是 Square Enix Holdings Co., Ltd. 的註冊商標。</p>
+    </footer>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('ffxiv-tools-theme', 'light');
+                document.getElementById('theme-toggle').innerText = '🌙 Dark Mode';
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('ffxiv-tools-theme', 'dark');
+                document.getElementById('theme-toggle').innerText = '☀️ Light Mode';
+            }
+        }
+
+        // Init Theme
+        (function() {
+            const savedTheme = localStorage.getItem('ffxiv-tools-theme');
+            // Default to dark if no setting (matching original feel)
+            if (savedTheme === 'dark' || !savedTheme) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-toggle').innerText = '☀️ Light Mode';
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('theme-toggle').innerText = '🌙 Dark Mode';
+            }
+        })();
+    </script>
+
+</body>
+</html>
