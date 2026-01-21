@@ -1,0 +1,90 @@
+/* Custom styles for Squadron Tool */
+
+input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    background: transparent;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #3b82f6;
+    cursor: pointer;
+    margin-top: -6px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    background: #cbd5e1;
+    border-radius: 2px;
+}
+
+.dark input[type=range]::-webkit-slider-runnable-track {
+    background: #475569;
+}
+
+.stat-phy {
+    color: #ef4444;
+}
+
+.stat-men {
+    color: #3b82f6;
+}
+
+.stat-tac {
+    color: #eab308;
+}
+
+.dark .stat-phy {
+    color: #f87171;
+}
+
+.dark .stat-men {
+    color: #60a5fa;
+}
+
+.dark .stat-tac {
+    color: #facc15;
+}
+
+
+.member-card.disabled {
+    opacity: 0.5;
+    filter: grayscale(100%);
+    pointer-events: none;
+    background-color: #f3f4f6;
+    /* Tailwind gray-100 */
+}
+
+.active-checkbox {
+    pointer-events: auto;
+}
+
+.member-card.disabled .member-header {
+    pointer-events: auto;
+}
+
+.member-header * {
+    pointer-events: none;
+}
+
+.dark .member-card.disabled {
+    background-color: #1f2937;
+    /* Tailwind gray-800 */
+}
+
+body {
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.transition-colors {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+}
