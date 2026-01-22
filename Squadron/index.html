@@ -14,6 +14,7 @@
     </script>
     <link rel="stylesheet" href="style.css">
     <script src="squadron_data.js"></script>
+    <script src="squadron_calc.js"></script>
 </head>
 
 <body
@@ -23,7 +24,7 @@
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <h1 class="text-xl font-bold text-slate-800 dark:text-yellow-500 flex items-center gap-2">
                 <span data-i18n="title">FF14 冒險者分隊計算器</span> <span
-                    class="text-xs px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 ml-2 border border-blue-200 dark:border-blue-700">V2.11</span>
+                    class="text-xs px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 ml-2 border border-blue-200 dark:border-blue-700">V2.2</span>
             </h1>
             <div class="flex items-center gap-4">
                 <a href="../index.html"
@@ -174,7 +175,30 @@
 
     <footer
         class="mt-8 py-6 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 text-center text-slate-500 dark:text-slate-600 text-[10px] md:text-xs leading-relaxed transition-colors">
-        <p data-i18n="footer_copy">FINAL FANTASY XIV © 2010 - 2026 SQUARE ENIX CO., LTD. 版權所有。</p>
+        <p>FINAL FANTASY XIV © 2010 - 2026 SQUARE ENIX CO., LTD. 版權所有。</p>
+        <p>FINAL FANTASY is a registered trademark of Square Enix Holdings Co., Ltd.</p>
+        <p class="mt-2 text-[10px]">
+            <span>參考資料來源:</span>
+            <a href="https://ffxiv.consolegameswiki.com/wiki/Adventurer_Squadrons" target="_blank"
+                rel="noopener noreferrer" class="text-blue-500 dark:text-blue-400 hover:underline">FF14 Console Games
+                Wiki</a>
+            |
+            <a href="https://ffxivsquadron.com/" target="_blank" rel="noopener noreferrer"
+                class="text-blue-500 dark:text-blue-400 hover:underline">
+                FF14 Squadron</a>
+            |
+            <a href="https://ff14.huijiwiki.com/wiki/%E5%86%92%E9%99%A9%E8%80%85%E5%88%86%E9%98%9F" target="_blank"
+                rel="noopener noreferrer" class="text-blue-500 dark:text-blue-400 hover:underline">
+                Huiji Wiki</a>
+            |
+            <a href="https://cafemaker.wakingsands.com/" target="_blank" rel="noopener noreferrer"
+                class="text-blue-500 dark:text-blue-400 hover:underline">
+                Cafemaker</a>
+            |
+            <a href="https://xivapi.com/" target="_blank" rel="noopener noreferrer"
+                class="text-blue-500 dark:text-blue-400 hover:underline">
+                XIVAPI</a>
+        </p>
     </footer>
 
     <!-- Recruit Selection Modal -->
@@ -475,6 +499,7 @@
                 const data = JSON.parse(jsonStr);
 
                 loadSquadronData(false, data);
+                saveSquadronData(); // 匯入後自動儲存至本機
                 closeDataModal();
             } catch (e) {
                 showToast("Invalid JSON format!", "error");
@@ -853,263 +878,7 @@
         }
 
         // --- Calculation Logic ---
-
-        function getCombinations(arr, k) {
-            let i, subI, ret = [], sub, next;
-            for (i = 0; i < arr.length; i++) {
-                if (k === 1) {
-                    ret.push([arr[i]]);
-                } else {
-                    sub = getCombinations(arr.slice(i + 1), k - 1);
-                    for (subI = 0; subI < sub.length; subI++) {
-                        next = sub[subI];
-                        next.unshift(arr[i]);
-                        ret.push(next);
-                    }
-                }
-            }
-            return ret;
-        }
-
-        function solveTraining(baseP, baseM, baseT, currTrain, reqP, reqM, reqT) {
-            // 取得目前 Rank 的素質上限
-            const rank = parseInt(document.getElementById('rank-selector').value);
-            const cap = RANK_CAPS[rank];
-
-            // Initial State
-            const startState = {
-                p: currTrain[0],
-                m: currTrain[1],
-                t: currTrain[2],
-                path: []
-            };
-
-            // Check if initial state works
-            if ((baseP + startState.p >= reqP) &&
-                (baseM + startState.m >= reqM) &&
-                (baseT + startState.t >= reqT)) {
-                return { success: true, path: [], finalStats: startState };
-            }
-
-            const queue = [startState];
-            const visited = new Set();
-            visited.add(`${startState.p},${startState.m},${startState.t}`);
-
-            let maxDepth = 9; // Max trainings
-
-            while (queue.length > 0) {
-                const current = queue.shift();
-                if (current.path.length >= maxDepth) continue;
-
-                const currentSum = current.p + current.m + current.t;
-
-                // Try all 6 training ops
-                for (let op of TRAINING_OPS) {
-                    let nextP, nextM, nextT;
-
-                    // 遊戲機制：素質未滿時只加不減，已滿時完整套用訓練效果
-                    if (currentSum < cap) {
-                        // 未滿：只加正數部分
-                        nextP = current.p + Math.max(0, op.cost[0]);
-                        nextM = current.m + Math.max(0, op.cost[1]);
-                        nextT = current.t + Math.max(0, op.cost[2]);
-                    } else {
-                        // 已滿：完整套用訓練效果
-                        nextP = current.p + op.cost[0];
-                        nextM = current.m + op.cost[1];
-                        nextT = current.t + op.cost[2];
-
-                        // 已滿時，若任一屬性會變成負數，該訓練不可執行
-                        // （因為無法減到負數會導致總和超過上限）
-                        if (nextP < 0 || nextM < 0 || nextT < 0) continue;
-                    }
-
-                    // 素質不可超過上限，總和也不可超過上限
-                    if (nextP > cap || nextM > cap || nextT > cap) continue;
-                    const nextSum = nextP + nextM + nextT;
-                    if (nextSum > cap) continue;
-
-                    const stateKey = `${nextP},${nextM},${nextT}`;
-                    if (visited.has(stateKey)) continue;
-
-                    const nextState = {
-                        p: nextP, m: nextM, t: nextT,
-                        path: [...current.path, op.id]
-                    };
-
-                    if ((baseP + nextP >= reqP) &&
-                        (baseM + nextM >= reqM) &&
-                        (baseT + nextT >= reqT)) {
-                        return { success: true, path: nextState.path, finalStats: nextState };
-                    }
-
-                    visited.add(stateKey);
-                    queue.push(nextState);
-                }
-            }
-            return { success: false };
-        }
-
-        //window.calculate = function () {
-        // old definition
-        function calculate() {
-            const t = TRANSLATIONS[currentLang] || TRANSLATIONS['zh-TW'];
-            const resultSection = document.getElementById('result-section');
-            const resultContent = document.getElementById('result-content');
-            resultSection.style.display = 'block';
-            resultContent.innerHTML = t.msg_calculating;
-
-            // Check if sum matches rank
-            if (!validateSum()) {
-                resultContent.innerHTML = `<h3 class="text-red-700 dark:text-red-400 font-bold mb-2">${t.msg_error_sum}</h3><p>${t.msg_error_sum_desc}</p>`;
-                return;
-            }
-
-            const reqP = parseInt(document.getElementById('req-p').value);
-            const reqM = parseInt(document.getElementById('req-m').value);
-            const reqT = parseInt(document.getElementById('req-t').value);
-
-            const currTrain = [
-                parseInt(document.getElementById('curr-p').value),
-                parseInt(document.getElementById('curr-m').value),
-                parseInt(document.getElementById('curr-t').value)
-            ];
-
-            // Gather Members (Only Active Ones)
-            const members = [];
-            for (let i = 0; i < 8; i++) {
-                const isActive = document.getElementById(`active-${i}`).checked;
-                if (!isActive) continue;
-
-                const nameInput = document.getElementById(`name-${i}`);
-                const name = nameInput.dataset.recruitId || nameInput.value; // Prefer data-recruit-id
-                const cls = document.getElementById(`class-${i}`).value;
-                const lvl = parseInt(document.getElementById(`lvl-${i}`).value);
-                const rData = RECRUIT_DATA.find(r => r.name === name);
-                members.push({
-                    id: i, name, cls, lvl, stats: getStats(cls, lvl),
-                    img: rData ? rData.img : null
-                });
-            }
-
-            if (members.length < 4) {
-                resultContent.innerHTML = `<h3 class="text-red-700 dark:text-red-400 font-bold mb-2">${t.msg_error_min_members}</h3><p>${t.msg_error_min_members_desc}</p>`;
-                return;
-            }
-
-            const squads = getCombinations(members, 4);
-            let solutions = [];
-
-            squads.forEach(squad => {
-                let bp = 0, bm = 0, bt = 0;
-                squad.forEach(m => { bp += m.stats[0]; bm += m.stats[1]; bt += m.stats[2]; });
-
-                const solution = solveTraining(bp, bm, bt, currTrain, reqP, reqM, reqT);
-
-                if (solution.success) {
-                    solutions.push({
-                        squad: squad,
-                        steps: solution.path.length,
-                        path: solution.path,
-                        finalStats: solution.finalStats
-                    });
-                }
-            });
-
-            if (solutions.length === 0) {
-                resultContent.innerHTML = `<h3 class="text-red-700 dark:text-red-400 font-bold mb-2">${t.msg_impossible}</h3><p>${t.msg_impossible_desc}</p>`;
-                return;
-            }
-
-            // Sort by steps (asc)
-            solutions.sort((a, b) => a.steps - b.steps);
-
-            // Take top 8
-            const bestSolutions = solutions.slice(0, 8);
-            const rank = parseInt(document.getElementById('rank-selector').value);
-
-            // Render Result
-            let html = `<div class="mb-4 text-center font-bold text-green-700 dark:text-green-400 text-lg">Found ${bestSolutions.length} options:</div>`;
-
-            bestSolutions.forEach((sol, idx) => {
-                html += `
-            <div class="bg-white dark:bg-slate-800 p-4 rounded-lg border border-green-200 dark:border-green-700 mb-6 shadow-sm">
-                <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300 mb-2 border-b border-slate-100 dark:border-slate-700 pb-2 flex justify-between items-center">
-                    <span>#${idx + 1} - ${t.msg_success_found.replace('{steps}', sol.steps)}</span>
-                    <span class="text-xs font-normal text-slate-500">${t.msg_req.replace('{reqP}', reqP).replace('{reqM}', reqM).replace('{reqT}', reqT)}</span>
-                </h3>
-                
-                <div class="flex justify-center gap-2 mb-4 flex-wrap">
-                    ${sol.squad.map(m => `
-                        <div class="text-center p-2 bg-slate-50 dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 flex flex-col items-center w-24">
-                            <div class="w-20 h-28 bg-slate-200 dark:bg-slate-600 rounded-md mb-1 overflow-hidden flex justify-center items-center shadow-sm border border-slate-300 dark:border-slate-500 relative">
-                                ${m.img ? `<img src="${m.img}" class="w-full h-full object-cover">` : `<span class="font-bold text-slate-500">${m.name.substring(0, 2)}</span>`}
-                                <img src="${CLASS_ICONS[m.cls]}" class="absolute bottom-1 right-1 w-6 h-6 drop-shadow-md z-10" title="${(t.class_names && t.class_names[m.cls]) || m.cls}">
-                            </div>
-                            <div class="font-bold text-xs text-slate-800 dark:text-slate-200 truncate w-full">${(t.recruit_names && t.recruit_names[m.name]) || m.name}</div>
-                            <div class="text-[10px] text-slate-500 dark:text-slate-400 truncate w-full">${(t.class_names && t.class_names[m.cls]) || m.cls} Lv${m.lvl}</div>
-                        </div>
-                    `).join('')}
-                </div>
-
-                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg mb-4 text-sm border-l-4 border-slate-300 dark:border-slate-600">
-                    <h4 class="font-bold mb-2 text-slate-700 dark:text-slate-300 text-xs uppercase tracking-wider">${t.msg_analysis.replace('{rank}', rank)}</h4>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-                        <div>
-                            <div class="text-slate-500 dark:text-slate-400 mb-1">${t.msg_base}</div>
-                            <div class="font-mono font-bold text-slate-700 dark:text-slate-300">
-                                <span class="stat-phy">P:${sol.squad.reduce((a, b) => a + b.stats[0], 0)}</span>
-                                <span class="stat-men">M:${sol.squad.reduce((a, b) => a + b.stats[1], 0)}</span>
-                                <span class="stat-tac">T:${sol.squad.reduce((a, b) => a + b.stats[2], 0)}</span>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="text-slate-500 dark:text-slate-400 mb-1">${t.msg_target_train}</div>
-                            <div class="font-mono font-bold text-blue-600 dark:text-blue-400">
-                                <span class="stat-phy">P:${sol.finalStats.p}</span>
-                                <span class="stat-men">M:${sol.finalStats.m}</span>
-                                <span class="stat-tac">T:${sol.finalStats.t}</span>
-                            </div>
-                        </div>
-                        <div class="col-span-2 md:col-span-2">
-                             <div class="text-slate-500 dark:text-slate-400 mb-1">${t.msg_final_total}</div>
-                             <div class="font-mono text-lg font-bold text-green-600 dark:text-green-400">
-                                  <span class="stat-phy mr-2">P:${sol.finalStats.p + sol.squad.reduce((a, b) => a + b.stats[0], 0)}</span>
-                                  <span class="stat-men mr-2">M:${sol.finalStats.m + sol.squad.reduce((a, b) => a + b.stats[1], 0)}</span>
-                                  <span class="stat-tac">T:${sol.finalStats.t + sol.squad.reduce((a, b) => a + b.stats[2], 0)}</span>
-                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-blue-50 dark:bg-blue-900/20 border-2 border-dashed border-blue-300 dark:border-blue-700 rounded-xl p-4 shadow-sm">
-                    <h4 class="font-bold mb-3 text-blue-800 dark:text-blue-100 text-lg flex items-center gap-2">
-                        <span class="text-xl">📋</span> ${t.msg_suggested_order}
-                    </h4>
-                    <div class="flex flex-col sm:flex-row flex-wrap gap-3">
-                        ${sol.path.length > 0 ?
-                        sol.path.map((opId, idx) => {
-                            return `
-                            <div class="bg-white dark:bg-slate-800 px-4 py-3 rounded-lg shadow-sm border border-blue-100 dark:border-blue-800 flex items-center gap-3">
-                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 font-bold text-sm shrink-0">${idx + 1}</span>
-                                <div class="flex items-center gap-3">
-                                    ${(t.training_ops && t.training_ops[opId]) ?
-                                    ((TRAINING_OPS.find(o => o.id === opId)?.img) ? `<img src="${TRAINING_OPS.find(o => o.id === opId).img}" class="w-8 h-8 object-contain">` : '') +
-                                    `<span class="font-bold text-slate-800 dark:text-slate-100 text-base">${t.training_ops[opId]}</span>`
-                                    : `<span class="font-bold text-slate-800 dark:text-slate-100 text-base">${opId}</span>`}
-                                </div>
-                            </div>`;
-                        }).join('') :
-                        `<div class="text-green-600 dark:text-green-400 font-bold text-lg flex items-center gap-2">✅ ${t.msg_no_training_needed}</div>`
-                    }
-                    </div>
-                </div>
-            </div>
-            `;
-            });
-            resultContent.innerHTML = html;
-            saveSquadronData();
-        }
+        // 移至 squadron_calc.js
 
         initRoster();
 
