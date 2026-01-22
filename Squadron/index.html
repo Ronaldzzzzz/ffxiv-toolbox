@@ -23,7 +23,7 @@
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <h1 class="text-xl font-bold text-slate-800 dark:text-yellow-500 flex items-center gap-2">
                 <span data-i18n="title">FF14 冒險者分隊計算器</span> <span
-                    class="text-xs px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 ml-2 border border-blue-200 dark:border-blue-700">V2.1</span>
+                    class="text-xs px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 ml-2 border border-blue-200 dark:border-blue-700">V2.11</span>
             </h1>
             <div class="flex items-center gap-4">
                 <a href="../index.html"
@@ -90,16 +90,19 @@
                         <div class="flex flex-col items-center">
                             <label class="font-bold text-sm stat-phy mb-1" data-i18n="stat_p">P</label>
                             <input type="number" id="curr-p" value="140" oninput="validateSum()"
+                                onchange="saveSquadronData()"
                                 class="w-20 p-2 text-center border rounded bg-white dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white">
                         </div>
                         <div class="flex flex-col items-center">
                             <label class="font-bold text-sm stat-men mb-1" data-i18n="stat_m">M</label>
                             <input type="number" id="curr-m" value="140" oninput="validateSum()"
+                                onchange="saveSquadronData()"
                                 class="w-20 p-2 text-center border rounded bg-white dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white">
                         </div>
                         <div class="flex flex-col items-center">
                             <label class="font-bold text-sm stat-tac mb-1" data-i18n="stat_t">T</label>
                             <input type="number" id="curr-t" value="120" oninput="validateSum()"
+                                onchange="saveSquadronData()"
                                 class="w-20 p-2 text-center border rounded bg-white dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white">
                         </div>
                     </div>
@@ -355,17 +358,7 @@
             const warning = document.getElementById('sum-warning');
             if (sum !== cap) {
                 warning.style.display = 'block';
-                warning.innerHTML = (t.msg_error_sum_desc || "總和不符").replace('Total', sum).replace('Cap', cap); // Simple fallback, realistically needs dynamic replacement
-                // Better approach with replace:
-                // We'll trust the user to provide a formatted string or we handle it simply. 
-                // Since the original message was: "⚠️ 總和 (${sum}) 與 Rank ${rank} 上限 (${cap}) 不符"
-                // We should probably just use innerText assignment with template literal if we want to keep it simple, 
-                // OR use a localized formatted string.
-                // Let's use the t key but we need to inject variables.
-                warning.innerText = `⚠️ ${sum} / ${cap}`; // Simplified for multi-lang compatibility or use a formatted string function.
-                // Let's stick to the key 'sum_warning' for the label, and maybe a custom message here.
-                // Actually the warning text in HTML is "⚠️ 總和不符，請修正", let's use that for general warning
-                // and maybe detailed text if needed.
+                // 使用翻譯文字 + 數值顯示，確保多語言相容
                 warning.innerText = t.sum_warning + ` (${sum}/${cap})`;
                 return false;
             } else {
@@ -374,7 +367,6 @@
             }
         }
 
-        // --- Roster Initialization ---
         // --- Roster Initialization ---
         const rosterContainer = document.getElementById('roster-container');
         const defaultRecruits = [];
@@ -387,8 +379,10 @@
         };
         const CLASS_MAP_IMPORT = Object.fromEntries(Object.entries(CLASS_MAP_EXPORT).map(([k, v]) => [v, k]));
 
-        const RANK_CAP_MAP_EXPORT = { 1: 200, 2: 280, 3: 400 };
-        const RANK_CAP_MAP_IMPORT = { 200: 1, 280: 2, 400: 3 };
+        // 從 Cap 反查 Rank（供匯入時使用）
+        function getRankByCap(cap) {
+            return Object.entries(RANK_CAPS).find(([_, v]) => v === cap)?.[0];
+        }
 
         function getSquadronDataObj() {
             const recruits = {};
@@ -417,7 +411,7 @@
             ];
 
             const rankVal = parseInt(document.getElementById('rank-selector').value);
-            const rankCap = RANK_CAP_MAP_EXPORT[rankVal] || 400;
+            const rankCap = RANK_CAPS[rankVal] || 400;
 
             return {
                 "recruits": recruits,
@@ -511,8 +505,9 @@
                 console.log("Loading data:", data);
 
                 // Load Rank
-                if (data.rank && RANK_CAP_MAP_IMPORT[data.rank]) {
-                    document.getElementById('rank-selector').value = RANK_CAP_MAP_IMPORT[data.rank];
+                const importedRank = getRankByCap(data.rank);
+                if (data.rank && importedRank) {
+                    document.getElementById('rank-selector').value = importedRank;
                     updateRankCap();
                 }
 
@@ -877,6 +872,10 @@
         }
 
         function solveTraining(baseP, baseM, baseT, currTrain, reqP, reqM, reqT) {
+            // 取得目前 Rank 的素質上限
+            const rank = parseInt(document.getElementById('rank-selector').value);
+            const cap = RANK_CAPS[rank];
+
             // Initial State
             const startState = {
                 p: currTrain[0],
@@ -902,14 +901,33 @@
                 const current = queue.shift();
                 if (current.path.length >= maxDepth) continue;
 
+                const currentSum = current.p + current.m + current.t;
+
                 // Try all 6 training ops
                 for (let op of TRAINING_OPS) {
-                    const nextP = current.p + op.cost[0];
-                    const nextM = current.m + op.cost[1];
-                    const nextT = current.t + op.cost[2];
+                    let nextP, nextM, nextT;
 
-                    // IMPORTANT: In FFXIV, stats in pool cannot go below 0.
-                    if (nextP < 0 || nextM < 0 || nextT < 0) continue;
+                    // 遊戲機制：素質未滿時只加不減，已滿時完整套用訓練效果
+                    if (currentSum < cap) {
+                        // 未滿：只加正數部分
+                        nextP = current.p + Math.max(0, op.cost[0]);
+                        nextM = current.m + Math.max(0, op.cost[1]);
+                        nextT = current.t + Math.max(0, op.cost[2]);
+                    } else {
+                        // 已滿：完整套用訓練效果
+                        nextP = current.p + op.cost[0];
+                        nextM = current.m + op.cost[1];
+                        nextT = current.t + op.cost[2];
+
+                        // 已滿時，若任一屬性會變成負數，該訓練不可執行
+                        // （因為無法減到負數會導致總和超過上限）
+                        if (nextP < 0 || nextM < 0 || nextT < 0) continue;
+                    }
+
+                    // 素質不可超過上限，總和也不可超過上限
+                    if (nextP > cap || nextM > cap || nextT > cap) continue;
+                    const nextSum = nextP + nextM + nextT;
+                    if (nextSum > cap) continue;
 
                     const stateKey = `${nextP},${nextM},${nextT}`;
                     if (visited.has(stateKey)) continue;
@@ -932,8 +950,9 @@
             return { success: false };
         }
 
-
-        window.calculate = function () {
+        //window.calculate = function () {
+        // old definition
+        function calculate() {
             const t = TRANSLATIONS[currentLang] || TRANSLATIONS['zh-TW'];
             const resultSection = document.getElementById('result-section');
             const resultContent = document.getElementById('result-content');
@@ -1089,6 +1108,7 @@
             `;
             });
             resultContent.innerHTML = html;
+            saveSquadronData();
         }
 
         initRoster();
