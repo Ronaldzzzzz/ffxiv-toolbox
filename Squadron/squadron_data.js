@@ -432,7 +432,7 @@ const TRANSLATIONS = {
         "msg_partial_found": "⚠️ 完全達成不可、{count} 件の 2/3 達成策が見つかりました:",
         "msg_partial_badge": "⚠️ 2/3 達成",
         "msg_missing": "不足:",
-        "msg_level_hint": "💡 隕員のレベルを上げると基本能力が増加し、任務条件を満たす可能性があります。",
+        "msg_level_hint": "💡 小隊員のレベルを上げると基本能力が増加し、任務条件を満たす可能性があります。",
         "btn_simulate_level": "🔍 レベルアップ後の可能性をシミュレート",
         "msg_simulating": "レベルアップをシミュレート中...",
         "msg_level_suggestions": "💡 {count} 件のレベルアップ提案が見つかりました",
@@ -678,12 +678,12 @@ const RECRUIT_DATA = [
 
 // Training Ops keys mapped to translation keys
 const TRAINING_OPS = [
-    { id: 'phy_40', cost: [40, -20, -20], img: 'img/0.png' },
-    { id: 'men_40', cost: [-20, 40, -20], img: 'img/1.png' },
-    { id: 'tac_40', cost: [-20, -20, 40], img: 'img/2.png' },
-    { id: 'phy_men_20', cost: [20, 20, -40], img: 'img/3.png' },
-    { id: 'phy_tac_20', cost: [20, -40, 20], img: 'img/4.png' },
-    { id: 'men_tac_20', cost: [-40, 20, 20], img: 'img/5.png' }
+    { id: 'phy_40', cost: [40, -20, -20], img: 'img/P.png' },
+    { id: 'men_40', cost: [-20, 40, -20], img: 'img/M.png' },
+    { id: 'tac_40', cost: [-20, -20, 40], img: 'img/T.png' },
+    { id: 'phy_men_20', cost: [20, 20, -40], img: 'img/PM.png' },
+    { id: 'phy_tac_20', cost: [20, -40, 20], img: 'img/PT.png' },
+    { id: 'men_tac_20', cost: [-40, 20, 20], img: 'img/MT.png' }
 ];
 
 const RANK_CAPS = {
