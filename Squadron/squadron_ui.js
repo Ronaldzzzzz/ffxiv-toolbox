@@ -499,14 +499,11 @@ function openRecruitModal(index) {
 
         // Badge Colors
         const badgeColors = {
-            "guildhests": "bg-indigo-500 text-white",
-            "leves": "bg-green-500 text-white",
-            "gc": "bg-red-700 text-white",
+            "quest": "bg-indigo-500 text-white", // Quest (Guildhests/Leves/GC)
             "gs": "bg-yellow-400 text-yellow-900",
             "fates": "bg-blue-600 text-white",
             "dungeons": "bg-purple-600 text-white",
-            "dol": "bg-emerald-600 text-white",
-            "map": "bg-amber-600 text-white",
+            "gathering": "bg-emerald-600 text-white", // Gathering (DoL/Map)
             "doh": "bg-slate-600 text-white",
             "pvp": "bg-rose-600 text-white"
         };
@@ -573,6 +570,7 @@ function openRecruitModal(index) {
             // Sticky Header for Legend
             html += `<div class="sticky top-0 bg-slate-100 dark:bg-slate-800 p-4 border-b border-slate-300 dark:border-slate-600 z-10 shadow-sm">
                         <h4 class="font-bold text-lg text-slate-800 dark:text-slate-200">${t.legend_title || 'Legend'}</h4>
+                        <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">${t.legend_subtitle || 'Complete the following Challenge Log entries'}</div>
                      </div>`;
             html += `<div class="space-y-1 p-2">`;
 
@@ -589,9 +587,11 @@ function openRecruitModal(index) {
 
                     html += `
                         <div class="filter-reason-sidebar cursor-pointer rounded-lg p-2 transition-all flex items-start gap-2 border-b border-slate-100 dark:border-slate-700/50 last:border-0 ${activeClass}" data-value="${key}">
-                            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold leading-tight shadow-sm border border-white/20 flex-shrink-0 mt-0.5 ${color} min-w-[36px] text-center select-none">
-                                ${short}
-                            </span>
+                            <div class="w-[60px] flex justify-center shrink-0">
+                                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold leading-tight shadow-sm border border-white/20 flex-shrink-0 mt-0.5 ${color} min-w-[36px] text-center select-none">
+                                    ${short}
+                                </span>
+                            </div>
                             <div class="flex flex-col">
                                 <span class="text-sm font-bold text-slate-700 dark:text-slate-300 leading-tight select-none">${full}</span>
                                 ${desc ? `<span class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-tight select-none">${desc}</span>` : ''}
