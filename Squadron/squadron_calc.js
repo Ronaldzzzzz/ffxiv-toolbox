@@ -225,13 +225,43 @@ function solveTraining(baseP, baseM, baseT, currTrain, reqP, reqM, reqT) {
                 nextM = current.m + Math.max(0, op.cost[1]);
                 nextT = current.t + Math.max(0, op.cost[2]);
             } else {
-                // 已滿：完整套用訓練效果
-                nextP = current.p + op.cost[0];
-                nextM = current.m + op.cost[1];
-                nextT = current.t + op.cost[2];
+                // 已滿：維持總和 (Spillover Logic)
+                // 當某屬性扣減至 0 以下時，將多餘的扣減量 (Debt) 轉移給其他屬性
+                let temp = [
+                    current.p + op.cost[0],
+                    current.m + op.cost[1],
+                    current.t + op.cost[2]
+                ];
+                let debt = 0;
 
-                // 已滿時，若任一屬性會變成負數，該訓練不可執行
-                if (nextP < 0 || nextM < 0 || nextT < 0) continue;
+                // 1. 修正負值並累計 Debt
+                for (let i = 0; i < 3; i++) {
+                    if (temp[i] < 0) {
+                        debt += -temp[i];
+                        temp[i] = 0;
+                    }
+                }
+
+                // 2. 分配 Debt
+                if (debt > 0) {
+                    // 優先從其他「原本就要減少」的屬性 (Reducers) 扣除
+                    for (let i = 0; i < 3; i++) {
+                        if (debt <= 0) break;
+                        if (op.cost[i] < 0 && temp[i] > 0) {
+                            const deduct = Math.min(temp[i], debt);
+                            temp[i] -= deduct;
+                            debt -= deduct;
+                        }
+                    }
+
+                    // 依據遊戲機制：若無法從其他減少屬性分擔扣減量，則此訓練無效 (不可從增加屬性扣除)
+                    // "加法的優先度大於減法"
+                    if (debt > 0) continue;
+                }
+
+                nextP = temp[0];
+                nextM = temp[1];
+                nextT = temp[2];
             }
 
             // 素質不可超過上限，總和也不可超過上限
