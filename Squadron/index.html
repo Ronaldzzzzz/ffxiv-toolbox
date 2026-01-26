@@ -23,8 +23,10 @@
     <nav class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-md transition-colors">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <h1 class="text-xl font-bold text-slate-800 dark:text-yellow-500 flex items-center gap-2">
-                <span data-i18n="title">FF14 冒險者分隊計算器</span> <span
-                    class="text-xs px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 ml-2 border border-blue-200 dark:border-blue-700">V2.3.1</span>
+                <span data-i18n="title">FF14 冒險者分隊計算器</span>
+                <span
+                    class="text-xs px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 ml-2 border border-blue-200 dark:border-blue-700">
+                    V2.4</span>
             </h1>
             <div class="flex items-center gap-4">
                 <a href="../index.html"
@@ -59,74 +61,198 @@
             class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 mb-8 transition-colors">
             <h2 class="text-lg font-bold mb-4 text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700 pb-2"
                 data-i18n="section_1_title">
-                1. 任務需求 & 分隊狀態</h2>
+                1. 分隊狀態 & 任務需求</h2>
 
+            <!-- Row 1: Rank & Training Stats (Unified) -->
             <div
-                class="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg mb-6 border border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 items-end justify-center">
-                <div class="flex flex-col items-center">
-                    <label for="rank-selector" class="mb-1 font-bold text-sm" data-i18n="rank_label">分隊等級 (Rank)</label>
-                    <select id="rank-selector" onchange="updateRankCap()"
-                        class="p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 w-[200px]">
-                        <option value="1">Rank 1 (Max 200)</option>
-                        <option value="2">Rank 2 (Max 280)</option>
-                        <option value="3" selected>Rank 3 (Max 400)</option>
-                    </select>
-                </div>
-                <div
-                    class="text-xs text-slate-500 dark:text-slate-400 pl-4 border-l border-slate-300 dark:border-slate-700">
-                    <div class="mb-1"><span data-i18n="pool_cap_label">訓練屬性池上限:</span> <span id="pool-cap-display"
-                            class="font-bold text-blue-600 dark:text-yellow-500 text-lg">400</span></div>
-                    <div><span data-i18n="current_sum_label">目前輸入總和:</span> <span id="current-sum-display"
-                            class="font-mono">400</span></div>
-                    <div id="sum-warning" class="text-red-500 font-bold mt-1 hidden" data-i18n="sum_warning">⚠️ 總和不符，請修正
+                class="bg-slate-50 dark:bg-slate-900 p-6 rounded-lg mb-6 border border-slate-200 dark:border-slate-700">
+                <div class="flex flex-col lg:flex-row gap-8 items-center justify-center">
+
+                    <!-- Left: Rank & Pool Cap -->
+                    <div
+                        class="w-auto flex flex-col items-center justify-center lg:border-r border-slate-200 dark:border-slate-700 lg:pr-8">
+                        <div class="flex flex-col items-center mb-4">
+                            <label for="rank-selector" class="mb-1 font-bold text-sm" data-i18n="rank_label">分隊等級
+                                (Rank)</label>
+                            <select id="rank-selector" onchange="updateRankCap()"
+                                class="p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 w-[200px]">
+                                <option value="1">Rank 1 (Max 200)</option>
+                                <option value="2">Rank 2 (Max 280)</option>
+                                <option value="3" selected>Rank 3 (Max 400)</option>
+                            </select>
+                        </div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400 flex flex-col items-center gap-1">
+                            <div><span data-i18n="pool_cap_label">訓練屬性池上限:</span> <span id="pool-cap-display"
+                                    class="font-bold text-blue-600 dark:text-yellow-500 text-lg">400</span></div>
+                            <div><span data-i18n="current_sum_label">目前輸入總和:</span> <span id="current-sum-display"
+                                    class="font-mono">400</span></div>
+                            <div id="sum-warning" class="text-red-500 font-bold hidden" data-i18n="sum_warning">⚠️
+                                總和不符，請修正</div>
+                        </div>
                     </div>
+
+                    <!-- Right: Training Stats -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-auto">
+
+                        <!-- 1. Current Stats Inputs -->
+                        <div
+                            class="flex flex-col items-center bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700 h-full justify-center">
+                            <p class="text-center mb-4 font-bold text-slate-600 dark:text-slate-400"
+                                data-i18n="current_stats_title">目前訓練數值 (Training Stats)</p>
+                            <div class="flex justify-center gap-6">
+                                <div class="flex flex-col items-center">
+                                    <label class="font-bold text-sm stat-phy mb-1" data-i18n="stat_p">P</label>
+                                    <input type="number" id="curr-p" step="20" value="140" max="400" min="0"
+                                        oninput="validateSum(); saveSquadronDataDebounced()"
+                                        class="w-24 p-3 text-lg text-center border rounded-lg bg-gray-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                                    <div id="delta-p"
+                                        class="text-xs font-bold h-4 text-center mt-1 transition-all opacity-0"></div>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <label class="font-bold text-sm stat-men mb-1" data-i18n="stat_m">M</label>
+                                    <input type="number" id="curr-m" step="20" value="140" max="400" min="0"
+                                        oninput="validateSum(); saveSquadronDataDebounced()"
+                                        class="w-24 p-3 text-lg text-center border rounded-lg bg-gray-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                                    <div id="delta-m"
+                                        class="text-xs font-bold h-4 text-center mt-1 transition-all opacity-0"></div>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <label class="font-bold text-sm stat-tac mb-1" data-i18n="stat_t">T</label>
+                                    <input type="number" id="curr-t" step="20" value="120" max="400" min="0"
+                                        oninput="validateSum(); saveSquadronDataDebounced()"
+                                        class="w-24 p-3 text-lg text-center border rounded-lg bg-gray-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                                    <div id="delta-t"
+                                        class="text-xs font-bold h-4 text-center mt-1 transition-all opacity-0"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Training Buttons -->
+                        <div
+                            class="flex flex-col items-center bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700 h-full">
+                            <p class="text-center mb-4 font-bold text-slate-600 dark:text-slate-400">執行訓練 (Execute
+                                Training)</p>
+                            <div class="grid grid-cols-3 gap-4">
+                                <!-- Physical -->
+                                <div class="flex flex-col items-center gap-1 group">
+                                    <button onclick="confirmTraining('phy_40')" onmouseenter="previewTraining('phy_40')"
+                                        onmouseleave="clearPreview()"
+                                        class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-xl p-2 border-2 border-slate-200 dark:border-slate-600 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-slate-600 shadow-sm transition-all flex items-center justify-center">
+                                        <img src="img/training/P.png" class="w-full h-full object-contain">
+                                    </button>
+                                    <span
+                                        class="text-xs font-medium text-slate-600 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">Physical</span>
+                                </div>
+
+                                <!-- Mental -->
+                                <div class="flex flex-col items-center gap-1 group">
+                                    <button onclick="confirmTraining('men_40')" onmouseenter="previewTraining('men_40')"
+                                        onmouseleave="clearPreview()"
+                                        class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-xl p-2 border-2 border-slate-200 dark:border-slate-600 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-slate-600 shadow-sm transition-all flex items-center justify-center">
+                                        <img src="img/training/M.png" class="w-full h-full object-contain">
+                                    </button>
+                                    <span
+                                        class="text-xs font-medium text-slate-600 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">Mental</span>
+                                </div>
+
+                                <!-- Tactical -->
+                                <div class="flex flex-col items-center gap-1 group">
+                                    <button onclick="confirmTraining('tac_40')" onmouseenter="previewTraining('tac_40')"
+                                        onmouseleave="clearPreview()"
+                                        class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-xl p-2 border-2 border-slate-200 dark:border-slate-600 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-slate-600 shadow-sm transition-all flex items-center justify-center">
+                                        <img src="img/training/T.png" class="w-full h-full object-contain">
+                                    </button>
+                                    <span
+                                        class="text-xs font-medium text-slate-600 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">Tactical</span>
+                                </div>
+
+                                <!-- Phy/Men -->
+                                <div class="flex flex-col items-center gap-1 group">
+                                    <button onclick="confirmTraining('phy_men_20')"
+                                        onmouseenter="previewTraining('phy_men_20')" onmouseleave="clearPreview()"
+                                        class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-xl p-2 border-2 border-slate-200 dark:border-slate-600 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-slate-600 shadow-sm transition-all flex items-center justify-center">
+                                        <img src="img/training/PM.png" class="w-full h-full object-contain">
+                                    </button>
+                                    <span
+                                        class="text-xs font-medium text-slate-600 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">Phy/Men</span>
+                                </div>
+
+                                <!-- Phy/Tac -->
+                                <div class="flex flex-col items-center gap-1 group">
+                                    <button onclick="confirmTraining('phy_tac_20')"
+                                        onmouseenter="previewTraining('phy_tac_20')" onmouseleave="clearPreview()"
+                                        class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-xl p-2 border-2 border-slate-200 dark:border-slate-600 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-slate-600 shadow-sm transition-all flex items-center justify-center">
+                                        <img src="img/training/PT.png" class="w-full h-full object-contain">
+                                    </button>
+                                    <span
+                                        class="text-xs font-medium text-slate-600 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">Phy/Tac</span>
+                                </div>
+
+                                <!-- Men/Tac -->
+                                <div class="flex flex-col items-center gap-1 group">
+                                    <button onclick="confirmTraining('men_tac_20')"
+                                        onmouseenter="previewTraining('men_tac_20')" onmouseleave="clearPreview()"
+                                        class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-xl p-2 border-2 border-slate-200 dark:border-slate-600 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-slate-600 shadow-sm transition-all flex items-center justify-center">
+                                        <img src="img/training/MT.png" class="w-full h-full object-contain">
+                                    </button>
+                                    <span
+                                        class="text-xs font-medium text-slate-600 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">Men/Tac</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                    <p class="text-center mb-2 font-bold text-slate-600 dark:text-slate-400"
-                        data-i18n="current_stats_title">目前訓練數值 (Training Stats)</p>
-                    <div class="flex justify-center gap-4">
+            <!-- Row 2: Mission Requirements -->
+            <div
+                class="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg mb-6 border border-slate-200 dark:border-slate-700 flex flex-col lg:flex-row items-stretch justify-center gap-4">
+
+                <!-- Left: Mission Selectors -->
+                <div class="flex flex-col items-center justify-start flex-1 w-full">
+                    <p class="text-center mb-4 font-bold text-slate-600 dark:text-slate-400"
+                        data-i18n="mission_list_title">
+                        任務一覽 (Mission List)
+                    </p>
+                    <div class="flex flex-row gap-4 items-center justify-center">
                         <div class="flex flex-col items-center">
-                            <label class="font-bold text-sm stat-phy mb-1" data-i18n="stat_p">P</label>
-                            <input type="number" id="curr-p" value="140" oninput="validateSum()"
-                                onchange="saveSquadronData()"
-                                class="w-20 p-2 text-center border rounded bg-white dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white">
+                            <label class="font-bold text-sm mb-1" data-i18n="mission_label">Mission</label>
+                            <select id="mission-selector" onchange="updateMissionReqs()"
+                                class="p-2 rounded border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none w-80">
+                                <option value="">Select Mission...</option>
+                            </select>
                         </div>
                         <div class="flex flex-col items-center">
-                            <label class="font-bold text-sm stat-men mb-1" data-i18n="stat_m">M</label>
-                            <input type="number" id="curr-m" value="140" oninput="validateSum()"
-                                onchange="saveSquadronData()"
-                                class="w-20 p-2 text-center border rounded bg-white dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white">
-                        </div>
-                        <div class="flex flex-col items-center">
-                            <label class="font-bold text-sm stat-tac mb-1" data-i18n="stat_t">T</label>
-                            <input type="number" id="curr-t" value="120" oninput="validateSum()"
-                                onchange="saveSquadronData()"
-                                class="w-20 p-2 text-center border rounded bg-white dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white">
+                            <label class="font-bold text-sm mb-1" data-i18n="pattern_label">Pattern</label>
+                            <select id="mission-pattern" onchange="updateMissionReqs()"
+                                class="p-2 rounded border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none w-40">
+                            </select>
                         </div>
                     </div>
                 </div>
 
-                <div>
-                    <p class="text-center mb-2 font-bold text-slate-600 dark:text-slate-400"
-                        data-i18n="mission_req_title">任務需求 (Mission Requirements)
+                <!-- Right: Title & Inputs -->
+                <div class="flex flex-col items-center justify-start flex-1 w-full">
+                    <p class="text-center mb-4 font-bold text-slate-600 dark:text-slate-400"
+                        data-i18n="mission_req_title">
+                        任務需求 (Mission Requirements)
                     </p>
                     <div class="flex justify-center gap-4">
                         <div class="flex flex-col items-center">
                             <label class="font-bold text-sm stat-phy mb-1" data-i18n="stat_p">P</label>
-                            <input type="number" id="req-p" value="315"
+                            <input type="number" id="req-p" step="5" min="0" value="315"
                                 class="w-20 p-2 text-center border rounded bg-white dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white">
                         </div>
                         <div class="flex flex-col items-center">
                             <label class="font-bold text-sm stat-men mb-1" data-i18n="stat_m">M</label>
-                            <input type="number" id="req-m" value="325"
+                            <input type="number" id="req-m" step="5" min="0" value="325"
                                 class="w-20 p-2 text-center border rounded bg-white dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white">
                         </div>
                         <div class="flex flex-col items-center">
                             <label class="font-bold text-sm stat-tac mb-1" data-i18n="stat_t">T</label>
-                            <input type="number" id="req-t" value="340"
+                            <input type="number" id="req-t" step="5" min="0" value="340"
                                 class="w-20 p-2 text-center border rounded bg-white dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white">
                         </div>
                     </div>
@@ -268,6 +394,32 @@
     <script src="squadron_ui.js"></script>
 
 
+    <!-- Training Confirmation Modal -->
+    <div id="training-confirm-modal"
+        class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div
+            class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-sm flex flex-col border border-slate-200 dark:border-slate-700 transform transition-all scale-100">
+            <div class="p-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="font-bold text-lg dark:text-white">確認訓練</h3>
+            </div>
+            <div class="p-6 text-center">
+                <div
+                    class="w-16 h-16 mx-auto mb-4 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center">
+                    <img id="confirm-training-img" src="" class="w-10 h-10 object-contain">
+                </div>
+                <p class="text-slate-600 dark:text-slate-300 mb-2">確定要執行此訓練嗎？</p>
+                <p class="font-bold text-lg text-slate-800 dark:text-slate-100" id="confirm-training-name">Physical
+                    Training</p>
+            </div>
+            <div
+                class="p-4 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-2 bg-slate-50 dark:bg-slate-900/50 rounded-b-xl">
+                <button onclick="closeConfirmModal()"
+                    class="px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-medium transition-colors">取消</button>
+                <button id="confirm-btn"
+                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded shadow-sm transition-colors">確認</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

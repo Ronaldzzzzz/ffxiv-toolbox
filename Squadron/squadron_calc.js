@@ -152,6 +152,57 @@ function simulateLevelUp() {
  * @param {number} reqT - 需求 T
  * @returns {Object} 解結果
  */
+/**
+ * 計算單次訓練後的屬性結果 (包含溢出與倒扣邏輯)
+ * @param {number} p - 目前 P
+ * @param {number} m - 目前 M
+ * @param {number} t - 目前 T
+ * @param {string} opId - 訓練項目 ID
+ * @param {number} cap - 屬性池上限
+ * @returns {Object} { p, m, t } 新的屬性
+ */
+function calculateTrainingResult(p, m, t, opId, cap) {
+    const op = TRAINING_OPS.find(o => o.id === opId);
+    if (!op) return { p, m, t, isValid: false };
+
+    // Strict Constraint: Cannot reduce a stat below 0
+    // Note: This applies regardless of whether we are at the cap or not.
+    if (p + op.cost[0] < 0 || m + op.cost[1] < 0 || t + op.cost[2] < 0) {
+        return { p, m, t, isValid: false };
+    }
+
+    const currentSum = p + m + t;
+    let nextP, nextM, nextT;
+
+    // 遊戲機制：素質未滿時只加不減，已滿時完整套用訓練效果
+    if (currentSum < cap) {
+        // 未滿：只加正數部分
+        nextP = p + Math.max(0, op.cost[0]);
+        nextM = m + Math.max(0, op.cost[1]);
+        nextT = t + Math.max(0, op.cost[2]);
+    } else {
+        // 已滿：維持總和 (Spillover Logic)
+        // Since the initial check ensures no stat goes below 0, and all TRAINING_OPS costs sum to 0,
+        // applying the costs directly will maintain the sum at 'cap'.
+        nextP = p + op.cost[0];
+        nextM = m + op.cost[1];
+        nextT = t + op.cost[2];
+    }
+
+    return { p: nextP, m: nextM, t: nextT, isValid: true };
+}
+
+/**
+ * 訓練路徑求解函式 (BFS)
+ * @param {number} baseP - 基礎 P 屬性
+ * @param {number} baseM - 基礎 M 屬性
+ * @param {number} baseT - 基礎 T 屬性
+ * @param {number[]} currTrain - 目前訓練數值 [P, M, T]
+ * @param {number} reqP - 需求 P
+ * @param {number} reqM - 需求 M
+ * @param {number} reqT - 需求 T
+ * @returns {Object} 解結果
+ */
 function solveTraining(baseP, baseM, baseT, currTrain, reqP, reqM, reqT) {
     // 取得目前 Rank 的素質上限
     const rank = parseInt(document.getElementById('rank-selector').value);
@@ -212,61 +263,19 @@ function solveTraining(baseP, baseM, baseT, currTrain, reqP, reqM, reqT) {
         const current = queue.shift();
         if (current.path.length >= maxDepth) continue;
 
-        const currentSum = current.p + current.m + current.t;
-
         // Try all 6 training ops
         for (let op of TRAINING_OPS) {
-            let nextP, nextM, nextT;
 
-            // 遊戲機制：素質未滿時只加不減，已滿時完整套用訓練效果
-            if (currentSum < cap) {
-                // 未滿：只加正數部分
-                nextP = current.p + Math.max(0, op.cost[0]);
-                nextM = current.m + Math.max(0, op.cost[1]);
-                nextT = current.t + Math.max(0, op.cost[2]);
-            } else {
-                // 已滿：維持總和 (Spillover Logic)
-                // 當某屬性扣減至 0 以下時，將多餘的扣減量 (Debt) 轉移給其他屬性
-                let temp = [
-                    current.p + op.cost[0],
-                    current.m + op.cost[1],
-                    current.t + op.cost[2]
-                ];
-                let debt = 0;
-
-                // 1. 修正負值並累計 Debt
-                for (let i = 0; i < 3; i++) {
-                    if (temp[i] < 0) {
-                        debt += -temp[i];
-                        temp[i] = 0;
-                    }
-                }
-
-                // 2. 分配 Debt
-                if (debt > 0) {
-                    // 優先從其他「原本就要減少」的屬性 (Reducers) 扣除
-                    for (let i = 0; i < 3; i++) {
-                        if (debt <= 0) break;
-                        if (op.cost[i] < 0 && temp[i] > 0) {
-                            const deduct = Math.min(temp[i], debt);
-                            temp[i] -= deduct;
-                            debt -= deduct;
-                        }
-                    }
-
-                    // 依據遊戲機制：若無法從其他減少屬性分擔扣減量，則此訓練無效 (不可從增加屬性扣除)
-                    // "加法的優先度大於減法"
-                    if (debt > 0) continue;
-                }
-
-                nextP = temp[0];
-                nextM = temp[1];
-                nextT = temp[2];
-            }
+            const result = calculateTrainingResult(current.p, current.m, current.t, op.id, cap);
+            const nextP = result.p;
+            const nextM = result.m;
+            const nextT = result.t;
 
             // 素質不可超過上限，總和也不可超過上限
             if (nextP > cap || nextM > cap || nextT > cap) continue;
             const nextSum = nextP + nextM + nextT;
+
+            // 注意：這裡我們允許浮點數誤差範圍內的比較，或是整數運算
             if (nextSum > cap) continue;
 
             const stateKey = `${nextP},${nextM},${nextT}`;

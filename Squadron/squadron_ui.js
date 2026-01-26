@@ -192,6 +192,19 @@ function getSquadronDataObj() {
     };
 }
 
+// Utilities
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+const saveSquadronDataDebounced = debounce(() => {
+    saveSquadronData();
+}, 5000);
+
 function saveSquadronData() {
     const data = getSquadronDataObj();
     const jsonStr = JSON.stringify(data);
@@ -1030,3 +1043,343 @@ function toggleTheme() {
         loadSquadronData(true);
     }
 })();
+
+// ==========================================
+// Training Button Logic
+// ==========================================
+
+let preTrainingValues = null;
+
+// Hover Preview
+window.previewTraining = function (opId) {
+    const pInput = document.getElementById('curr-p');
+    const mInput = document.getElementById('curr-m');
+    const tInput = document.getElementById('curr-t');
+
+    // Current Values
+    const currentVals = {
+        p: parseInt(pInput.value) || 0,
+        m: parseInt(mInput.value) || 0,
+        t: parseInt(tInput.value) || 0
+    };
+
+    const rank = parseInt(document.getElementById('rank-selector').value);
+    const cap = RANK_CAPS[rank];
+
+    const result = calculateTrainingResult(currentVals.p, currentVals.m, currentVals.t, opId, cap);
+
+    if (!result.isValid) {
+        // Show unavailable indicator
+        updateDeltaDisplay('p', null, false);
+        updateDeltaDisplay('m', null, false);
+        updateDeltaDisplay('t', null, false);
+        return;
+    }
+
+    // Calculate Deltas
+    updateDeltaDisplay('p', result.p - currentVals.p, true);
+    updateDeltaDisplay('m', result.m - currentVals.m, true);
+    updateDeltaDisplay('t', result.t - currentVals.t, true);
+
+    // Apply Highlight to Inputs
+    applyHighlight(pInput, result.p, currentVals.p);
+    applyHighlight(mInput, result.m, currentVals.m);
+    applyHighlight(tInput, result.t, currentVals.t);
+}
+
+function updateDeltaDisplay(type, delta, isValid) {
+    const el = document.getElementById(`delta-${type}`);
+    // Reset classes
+    el.className = 'text-xs font-bold h-4 text-center mt-1 transition-all opacity-100';
+
+    if (isValid === false) {
+        el.innerText = '不足'; // Insufficient
+        el.classList.add('text-gray-400', 'dark:text-gray-500');
+        return;
+    }
+
+    if (delta > 0) {
+        el.innerText = `+${delta}`;
+        el.classList.add('text-green-600', 'dark:text-green-400');
+    } else if (delta < 0) {
+        el.innerText = `${delta}`;
+        el.classList.add('text-red-600', 'dark:text-red-400');
+    } else {
+        el.innerText = '';
+        el.classList.add('opacity-0');
+    }
+}
+
+function applyHighlight(input, newVal, oldVal) {
+    input.classList.remove('text-green-600', 'text-red-600', 'font-bold', 'bg-green-50', 'bg-red-50', 'dark:bg-green-900/30', 'dark:bg-red-900/30');
+    if (newVal > oldVal) {
+        input.classList.add('text-green-600', 'font-bold', 'bg-green-50', 'dark:bg-green-900/30');
+    } else if (newVal < oldVal) {
+        input.classList.add('text-red-600', 'font-bold', 'bg-red-50', 'dark:bg-red-900/30');
+    }
+}
+
+// Clear Preview
+window.clearPreview = function () {
+    ['p', 'm', 't'].forEach(type => {
+        const el = document.getElementById(`delta-${type}`);
+        if (el) {
+            el.classList.remove('opacity-100');
+            el.classList.add('opacity-0');
+            el.innerText = '';
+        }
+    });
+
+    const inputs = [
+        document.getElementById('curr-p'),
+        document.getElementById('curr-m'),
+        document.getElementById('curr-t')
+    ];
+    inputs.forEach(input => {
+        input.classList.remove('text-green-600', 'text-red-600', 'font-bold', 'bg-green-50', 'bg-red-50', 'dark:bg-green-900/30', 'dark:bg-red-900/30');
+    });
+}
+
+// Confirmation Modal
+let pendingOpId = null;
+
+window.confirmTraining = function (opId) {
+    // Check validation first
+    const pInput = document.getElementById('curr-p');
+    const mInput = document.getElementById('curr-m');
+    const tInput = document.getElementById('curr-t');
+
+    const p = parseInt(pInput.value) || 0;
+    const m = parseInt(mInput.value) || 0;
+    const t = parseInt(tInput.value) || 0;
+    const rank = parseInt(document.getElementById('rank-selector').value);
+    const cap = RANK_CAPS[rank];
+
+    const result = calculateTrainingResult(p, m, t, opId, cap);
+    if (!result.isValid) {
+        // Optional: Shake animation or visual feedback?
+        // For now, rely on Preview showing "不足"
+        // Also can show a Toast or simple alert if user insists on clicking
+        // alert("無法執行此訓練：屬性不足"); // Too intrusive?
+        return;
+    }
+
+    pendingOpId = opId;
+
+    // Update Modal
+    const tLang = TRANSLATIONS[currentLang] || TRANSLATIONS['zh-TW'];
+    let displayName = opId.replace(/_/g, ' ').toUpperCase();
+    if (tLang.training_ops && tLang.training_ops[opId]) {
+        displayName = tLang.training_ops[opId];
+    }
+
+    document.getElementById('confirm-training-name').innerText = displayName;
+    document.getElementById('confirm-training-img').src = `img/training/${getOpImage(opId)}`;
+
+    // Show Modal
+    document.getElementById('training-confirm-modal').classList.remove('hidden');
+
+    // Bind Confirm Button
+    const confirmBtn = document.getElementById('confirm-btn');
+    confirmBtn.onclick = () => {
+        applyTraining(pendingOpId);
+        closeConfirmModal();
+    };
+}
+
+function getOpImage(id) {
+    if (id.includes('phy') && id.includes('men')) return 'PM.png';
+    if (id.includes('phy') && id.includes('tac')) return 'PT.png';
+    if (id.includes('men') && id.includes('tac')) return 'MT.png';
+    if (id.includes('phy')) return 'P.png';
+    if (id.includes('men')) return 'M.png';
+    if (id.includes('tac')) return 'T.png';
+    return 'P.png';
+}
+
+window.closeConfirmModal = function () {
+    document.getElementById('training-confirm-modal').classList.add('hidden');
+    pendingOpId = null;
+    clearPreview(); // Ensure state is reset when cancelling
+}
+
+window.applyTraining = function (opId) {
+    const rank = parseInt(document.getElementById('rank-selector').value);
+    const cap = RANK_CAPS[rank];
+
+    // Apply based on PRE-TRAINING values (which are the real current database state)
+    const base = preTrainingValues || {
+        p: parseInt(document.getElementById('curr-p').value) || 0,
+        m: parseInt(document.getElementById('curr-m').value) || 0,
+        t: parseInt(document.getElementById('curr-t').value) || 0
+    };
+
+    const result = calculateTrainingResult(base.p, base.m, base.t, opId, cap);
+
+    // Apply permanent
+    document.getElementById('curr-p').value = result.p;
+    document.getElementById('curr-m').value = result.m;
+    document.getElementById('curr-t').value = result.t;
+
+    // Reset preview state as this is now the new truth
+    preTrainingValues = null;
+
+    // Clear highlights
+    const inputs = [
+        document.getElementById('curr-p'),
+        document.getElementById('curr-m'),
+        document.getElementById('curr-t')
+    ];
+    inputs.forEach(input => input.classList.remove('text-green-600', 'text-red-600', 'font-bold', 'bg-green-50', 'bg-red-50', 'dark:bg-green-900/30', 'dark:bg-red-900/30'));
+
+    validateSum();
+    saveSquadronData();
+}
+
+// --- Mission Selector Logic ---
+function initMissionSelectors() {
+    const listSelect = document.getElementById('mission-selector');
+    if (!listSelect) return;
+
+    const t = TRANSLATIONS[currentLang] || TRANSLATIONS['zh-TW'];
+    
+    // Clear and add Default
+    listSelect.innerHTML = '';
+    const defOpt = document.createElement('option');
+    defOpt.value = "";
+    defOpt.innerText = t.placeholder_mission || "Select Mission...";
+    listSelect.appendChild(defOpt);
+
+    // Use MISSION_DATA to populate optgroups
+    if (typeof MISSION_DATA === 'undefined') {
+        console.error("MISSION_DATA not found!");
+        return;
+    }
+
+    const categories = ["IMPORTANT", "TRAINEE", "ROUTINE", "PRIORITY"];
+
+    categories.forEach((catKey, index) => {
+        const group = document.createElement('optgroup');
+        
+        // Add alternating background colors for better visibility
+        if (index % 2 === 0) {
+            group.className = "bg-slate-100 dark:bg-slate-800";
+        } else {
+            group.className = "bg-slate-200 dark:bg-slate-900";
+        }
+        
+        // Use translation from data
+        let label = (t.mission_categories && t.mission_categories[catKey]) || catKey;
+        // Fallback for missing keys
+        if (!label) label = catKey;
+        
+        group.label = label;
+
+        // Filter flat MISSION_DATA by category
+        const missions = MISSION_DATA.filter(m => m.category === catKey);
+        missions.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m.id;
+            
+            const nameObj = m.name;
+            let name = nameObj[currentLang] || nameObj['en'];
+            // Fallback for zh-CN to zh-TW if mission name missing
+            if (!name && currentLang === 'zh-CN') name = nameObj['zh-TW']; 
+            if (!name) name = m.id;
+
+            if (m.lvl) {
+                name += ` - Lv ${m.lvl}`;
+            }
+
+            opt.innerText = name;
+            group.appendChild(opt);
+        });
+
+        if (missions.length > 0) {
+            listSelect.appendChild(group);
+        }
+    });
+
+    // Patterns
+    
+    const patternSelect = document.getElementById('mission-pattern');
+    if (patternSelect) {
+        patternSelect.innerHTML = '';
+        const defOpt = document.createElement('option');
+        defOpt.innerText = t.placeholder_pattern_locked || "Select Mission First";
+        patternSelect.appendChild(defOpt);
+        patternSelect.disabled = true;
+        patternSelect.dataset.missionId = ""; // Reset tracker
+    }
+}
+
+window.updateMissionReqs = function() {
+    const listSelect = document.getElementById('mission-selector');
+    const patternSelect = document.getElementById('mission-pattern');
+    if (!listSelect || !patternSelect) return;
+
+    const missionId = listSelect.value;
+    const lastMissionId = patternSelect.dataset.missionId;
+
+    // Find mission in flat array
+    let mission = null;
+    if (missionId && typeof MISSION_DATA !== 'undefined') {
+        mission = MISSION_DATA.find(m => m.id === missionId);
+    }
+
+    // Check if we need to regenerate options (Mission changed)
+    if (missionId !== lastMissionId) {
+        patternSelect.innerHTML = '';
+        patternSelect.dataset.missionId = missionId || "";
+
+        if (mission && mission.stats) {
+            patternSelect.disabled = false; // Enable
+            mission.stats.forEach((stats, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx;
+                opt.innerText = `${stats[0]} / ${stats[1]} / ${stats[2]}`;
+                patternSelect.appendChild(opt);
+            });
+            // Auto-select first (default behavior)
+        } else {
+            // No mission -> Disable and show prompt
+            patternSelect.disabled = true;
+            const t = (typeof TRANSLATIONS !== 'undefined' && TRANSLATIONS[currentLang]) ? TRANSLATIONS[currentLang] : (typeof TRANSLATIONS !== 'undefined' ? TRANSLATIONS['zh-TW'] : {});
+            const defOpt = document.createElement('option');
+            defOpt.innerText = t.placeholder_pattern_locked || "Select Mission First";
+            patternSelect.appendChild(defOpt);
+        }
+    }
+
+    // Update Inputs based on selection
+    if (!patternSelect.disabled && patternSelect.options.length > 0) {
+        const patternIdx = parseInt(patternSelect.value) || 0;
+        if (mission && mission.stats && mission.stats[patternIdx]) {
+            const stats = mission.stats[patternIdx];
+            document.getElementById('req-p').value = stats[0];
+            document.getElementById('req-m').value = stats[1];
+            document.getElementById('req-t').value = stats[2];
+        }
+    }
+}
+
+// Initialization Hooks
+document.addEventListener('DOMContentLoaded', () => {
+    // If initRoster wasn't called yet, we might need to call it if it wasn't in index.html logic
+    // Checking previous code, initRoster wasn't auto-called in global scope.
+    // It's likely intended to be called on load.
+    if (typeof initRoster === 'function') initRoster();
+    if (typeof loadSquadronData === 'function') loadSquadronData(true); // Silent load
+
+    initMissionSelectors();
+});
+
+// Hook into language change to refresh selectors
+// Store original reference if not already hooked
+if (!window._originalChangeLanguage) {
+    window._originalChangeLanguage = window.changeLanguage;
+    window.changeLanguage = function(lang) {
+        if (window._originalChangeLanguage) window._originalChangeLanguage(lang);
+        initMissionSelectors();
+    };
+}

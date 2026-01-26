@@ -133,12 +133,13 @@ const TRANSLATIONS = {
     "zh-TW": {
         "title": "FF14 冒險者分隊計算器",
         "nav_home": "回首頁",
-        "section_1_title": "1. 任務需求 & 分隊狀態",
+        "section_1_title": "1. 分隊狀態 & 任務需求",
         "rank_label": "分隊等級 (Rank)",
         "pool_cap_label": "訓練屬性池上限:",
         "current_sum_label": "目前輸入總和:",
         "sum_warning": "⚠️ 總和不符，請修正",
         "current_stats_title": "目前訓練數值 (Training Stats)",
+        "mission_list_title": "任務一覽 (Mission List)",
         "mission_req_title": "任務需求 (Mission Requirements)",
         "section_2_title": "2. 分隊成員 (8人)",
         "calc_btn": "計算最佳配置",
@@ -247,17 +248,28 @@ const TRANSLATIONS = {
             "gathering": "進行採集活動 (大地使者/尋寶)",
             "doh": "進行製作活動 (能工巧匠)",
             "pvp": "參與狼獄停船場演習 (PvP)"
-        }
+        },
+        "mission_categories": {
+            "TRAINEE": "簡單任務 (Trainee)",
+            "ROUTINE": "普通任務 (Routine)",
+            "PRIORITY": "特殊任務 (Priority)",
+            "IMPORTANT": "重要任務 (Important)"
+        },
+        "mission_label": "任務",
+        "pattern_label": "組別",
+        "placeholder_mission": "選擇任務...",
+        "placeholder_pattern_locked": "請先選擇任務"
     },
     "zh-CN": {
         "title": "FF14 冒险者分队计算器",
         "nav_home": "回首页",
-        "section_1_title": "1. 任务需求 & 分队状态",
+        "section_1_title": "1. 分队状态 & 任务需求",
         "rank_label": "分队等级 (Rank)",
         "pool_cap_label": "训练属性池上限:",
         "current_sum_label": "目前输入总和:",
         "sum_warning": "⚠️ 总和不符，请修正",
         "current_stats_title": "目前训练数值 (Training Stats)",
+        "mission_list_title": "任务一览 (Mission List)",
         "mission_req_title": "任务需求 (Mission Requirements)",
         "section_2_title": "2. 分队成员 (8人)",
         "calc_btn": "计算最佳配置",
@@ -365,17 +377,28 @@ const TRANSLATIONS = {
             "gathering": "进行采集活动 (大地使者/寻宝)",
             "doh": "进行制作活动 (能工巧匠)",
             "pvp": "参与狼狱停船场演习 (PvP)"
-        }
+        },
+        "mission_categories": {
+            "TRAINEE": "简单任务 (Trainee)",
+            "ROUTINE": "普通任务 (Routine)",
+            "PRIORITY": "特殊任务 (Priority)",
+            "IMPORTANT": "解锁任务 (Important)"
+        },
+        "mission_label": "任务",
+        "pattern_label": "组别",
+        "placeholder_mission": "选择任务...",
+        "placeholder_pattern_locked": "请先选择任务"
     },
     "ja": {
         "title": "FF14 冒険者小隊シミュレーター",
         "nav_home": "ホーム",
-        "section_1_title": "1. 任務条件 & 小隊ステータス",
+        "section_1_title": "1. 小隊ステータス & 任務条件",
         "rank_label": "小隊ランク (Rank)",
         "pool_cap_label": "訓練上限:",
         "current_sum_label": "現在の合計:",
         "sum_warning": "⚠️ 合計値が一致しません",
         "current_stats_title": "現在の訓練能力値 (Training Stats)",
+        "mission_list_title": "任務一覧 (Mission List)",
         "mission_req_title": "任務条件 (Mission Requirements)",
         "section_2_title": "2. 小隊員 (8人)",
         "calc_btn": "計算する",
@@ -483,17 +506,28 @@ const TRANSLATIONS = {
             "gathering": "採集活動を行う (ギャザラー/地図)",
             "doh": "製作活動を行う (クラフター)",
             "pvp": "ウルヴズジェイル演習に参加する (PvP)"
-        }
+        },
+        "mission_categories": {
+            "TRAINEE": "簡易任務 (Trainee)",
+            "ROUTINE": "通常任務 (Routine)",
+            "PRIORITY": "特殊任務 (Priority)",
+            "IMPORTANT": "重要任務 (Important)"
+        },
+        "mission_label": "任務",
+        "pattern_label": "パターン",
+        "placeholder_mission": "任務を選択...",
+        "placeholder_pattern_locked": "任務を選択してください"
     },
     "en": {
         "title": "FFXIV Squadron Calculator",
         "nav_home": "Home",
-        "section_1_title": "1. Mission & Status",
+        "section_1_title": "1. Status & Mission",
         "rank_label": "Squadron Rank",
         "pool_cap_label": "Training Limit:",
         "current_sum_label": "Current Sum:",
         "sum_warning": "⚠️ Sum Mismatch",
         "current_stats_title": "Current Training Stats",
+        "mission_list_title": "Mission List",
         "mission_req_title": "Mission Requirements",
         "section_2_title": "2. Squadron Members",
         "calc_btn": "Calculate Best Config",
@@ -601,12 +635,19 @@ const TRANSLATIONS = {
             "gathering": "Gathering activities (DoL/Maps)",
             "doh": "Crafting activities (Disciples of Hand)",
             "pvp": "Participate in PvP (Wolves' Den)"
-        }
+        },
+        "mission_categories": {
+            "TRAINEE": "Trainee Missions",
+            "ROUTINE": "Routine Missions",
+            "PRIORITY": "Priority Missions",
+            "IMPORTANT": "Flagged Missions"
+        },
+        "mission_label": "Mission",
+        "pattern_label": "Pattern",
+        "placeholder_mission": "Select Mission...",
+        "placeholder_pattern_locked": "Select Mission First"
     }
 };
-
-// CLASS_NAMES removed to prevent localization issues. Use TRANSLATIONS[currentLang].class_names dynamically.
-
 
 const RECRUIT_DATA = [
     { "name": "Auelin", "race": "Hyur", "img": "img/recruits/Auelin.jpg", "reasons": ["doh", "gs"], "unique": false, "gender": "F" },
@@ -678,12 +719,12 @@ const RECRUIT_DATA = [
 
 // Training Ops keys mapped to translation keys
 const TRAINING_OPS = [
-    { id: 'phy_40', cost: [40, -20, -20], img: 'img/P.png' },
-    { id: 'men_40', cost: [-20, 40, -20], img: 'img/M.png' },
-    { id: 'tac_40', cost: [-20, -20, 40], img: 'img/T.png' },
-    { id: 'phy_men_20', cost: [20, 20, -40], img: 'img/PM.png' },
-    { id: 'phy_tac_20', cost: [20, -40, 20], img: 'img/PT.png' },
-    { id: 'men_tac_20', cost: [-40, 20, 20], img: 'img/MT.png' }
+    { id: 'phy_40', cost: [40, -20, -20], img: 'img/training/P.png' },
+    { id: 'men_40', cost: [-20, 40, -20], img: 'img/training/M.png' },
+    { id: 'tac_40', cost: [-20, -20, 40], img: 'img/training/T.png' },
+    { id: 'phy_men_20', cost: [20, 20, -40], img: 'img/training/PM.png' },
+    { id: 'phy_tac_20', cost: [20, -40, 20], img: 'img/training/PT.png' },
+    { id: 'men_tac_20', cost: [-40, 20, 20], img: 'img/training/MT.png' }
 ];
 
 const RANK_CAPS = {
@@ -716,3 +757,471 @@ const CLASS_ICONS = {
     'ACN': 'https://xivapi.com/cj/companion/arcanist.png',
     'ROG': 'https://xivapi.com/cj/companion/rogue.png'
 }
+
+/*
+{
+    id: "",
+    category: "",
+    name: { "zh-TW": "", "zh-CN": "", "en": "", "ja": "" },
+    stats: [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+    ]
+},
+*/
+const MISSION_DATA = [
+    // IMPORTANT
+    {
+        id: "1",
+        category: "IMPORTANT",
+        lvl: 1,
+        name: { "zh-TW": "巡邏城內", "zh-CN": "巡逻城内", "en": "City Patrol", "ja": "都市内の巡察" },
+        stats: [
+            [145, 140, 140]
+        ]
+    },
+    {
+        id: "2",
+        category: "IMPORTANT",
+        lvl: 20,
+        name: { "zh-TW": "重要任務：消滅低級妖異", "zh-CN": "重要任务：消灭低级妖异", "en": "Flagged Mission: Voidsent Elimination", "ja": "重要任務：低級妖異の排除" },
+        stats: [
+            [235, 245, 255]
+        ]
+    },
+    {
+        id: "3",
+        category: "IMPORTANT",
+        lvl: 40,
+        name: { "zh-TW": "重要任務：奪取水晶", "zh-CN": "重要任务：夺取水晶", "en": "Flagged Mission: Crystal Recovery", "ja": "重要任務：クリスタル奪取作戦" },
+        stats: [
+            [315, 325, 340]
+        ]
+    },
+    {
+        id: "4",
+        category: "IMPORTANT",
+        lvl: 50,
+        name: { "zh-TW": "重要任務：殲滅帝國軍特殊部隊", "zh-CN": "重要任务：歼灭帝国军特殊部队", "en": "Flagged Mission: Sapper Strike", "ja": "重要任務：帝国軍特殊部隊の撃滅" },
+        stats: [
+            [370, 355, 345]
+        ]
+    },
+
+    // TRAINEE
+    {
+        id: "5",
+        category: "TRAINEE",
+        lvl: 1,
+        name: { "zh-TW": "向附近據點傳令", "zh-CN": "向附近据点传令", "ja": "近隣拠点への伝令", "en": "Military Courier" },
+        stats: [
+            [165, 160, 160],
+            [165, 160, 160],
+            [165, 170, 150],
+            [150, 170, 165],
+            [160, 150, 175],
+            [150, 160, 175]
+        ]
+    },
+    {
+        id: "6",
+        category: "TRAINEE",
+        lvl: 1,
+        name: { "zh-TW": "巡邏城市周邊道路", "zh-CN": "巡逻城市周边道路", "ja": "街道巡回", "en": "Outskirts Patrol" },
+        stats: [
+            [245, 155, 200],
+            [245, 200, 155],
+            [150, 255, 195],
+            [195, 255, 150],
+            [155, 195, 250],
+            [195, 155, 250]
+        ]
+    },
+    {
+        id: "7",
+        category: "TRAINEE",
+        lvl: 5,
+        name: { "zh-TW": "偵查蠻族部隊", "zh-CN": "侦查蛮族部队", "ja": "蛮族部隊の偵察", "en": "Beastmen Recon" },
+        stats: [
+            [150, 255, 195],
+            [195, 155, 250],
+            [155, 195, 250],
+            [245, 200, 155],
+            [245, 155, 200],
+            [195, 255, 150]
+        ]
+    },
+    {
+        id: "8",
+        category: "TRAINEE",
+        lvl: 10,
+        name: { "zh-TW": "護衛補給部隊", "zh-CN": "护卫补给部队", "ja": "補給部隊の護衛", "en": "Supply Wagon Escort" },
+        stats: [
+            [210, 125, 310],
+            [125, 210, 310],
+            [305, 210, 130],
+            [305, 130, 210],
+            [210, 320, 115],
+            [115, 320, 210]
+        ]
+    },
+    {
+        id: "9",
+        category: "TRAINEE",
+        lvl: 15,
+        name: { "zh-TW": "驅除魔物", "zh-CN": "驱除魔物", "ja": "害獣の駆除", "en": "Pest Eradication" },
+        stats: [
+            [140, 225, 325],
+            [225, 140, 325],
+            [320, 145, 225],
+            [320, 225, 145],
+            [130, 335, 225],
+            [225, 335, 130]
+        ]
+    },
+    //
+
+    // ROUTINE
+    {
+        id: "10",
+        category: "ROUTINE",
+        lvl: 20,
+        name: { "zh-TW": "支援前線部隊", "zh-CN": "支援前线部队", "ja": "蛮族迎撃の支援要請", "en": "Frontline Support" },
+        stats: [
+            [265, 140, 420],
+            [410, 145, 270],
+            [265, 435, 125],
+            [140, 265, 420],
+            [410, 270, 145],
+            [125, 435, 265]
+        ]
+    },
+    {
+        id: "11",
+        category: "ROUTINE",
+        lvl: 20,
+        name: { "zh-TW": "護衛同盟軍軍官", "zh-CN": "护卫同盟军军官", "ja": "同盟軍将校の護衛", "en": "Officer Escort" },
+        stats: [
+            [270, 440, 130],
+            [130, 440, 270],
+            [270, 145, 425],
+            [145, 270, 425],
+            [415, 275, 150],
+            [415, 150, 275]
+        ]
+    },
+    {
+        id: "12",
+        category: "ROUTINE",
+        lvl: 25,
+        name: { "zh-TW": "巡邏郊外道路", "zh-CN": "巡逻郊外道路", "ja": "街道巡回", "en": "Border Patrol" },
+        stats: [
+            [425, 285, 160],
+            [140, 450, 280],
+            [280, 155, 435],
+            [425, 160, 285],
+            [280, 450, 140],
+            [155, 280, 435]
+        ]
+    },
+    {
+        id: "13",
+        category: "ROUTINE",
+        lvl: 30,
+        name: { "zh-TW": "偵查蠻族據點", "zh-CN": "侦查蛮族据点", "ja": "蛮族拠点の威力偵察", "en": "Stronghold Recon" },
+        stats: [
+            [170, 295, 450],
+            [440, 300, 175],
+            [440, 175, 300],
+            [295, 465, 155],
+            [155, 465, 295],
+            [295, 170, 450]
+        ]
+    },
+    {
+        id: "14",
+        category: "ROUTINE",
+        lvl: 35,
+        name: { "zh-TW": "搜索失蹤人員", "zh-CN": "搜索失踪人员", "ja": "行方不明者の捜索", "en": "Search and Rescue" },
+        stats: [
+            [310, 480, 170],
+            [185, 310, 465],
+            [455, 315, 190],
+            [170, 480, 310],
+            [310, 185, 465],
+            [455, 190, 315]
+        ]
+    },
+    {
+        id: "15",
+        category: "ROUTINE",
+        lvl: 35,
+        name: { "zh-TW": "與同盟軍的聯合演習", "zh-CN": "与同盟军的联合演习", "ja": "合同演習", "en": "Allied Maneuvers" },
+        stats: [
+            [455, 190, 315],
+            [310, 480, 170],
+            [170, 480, 310],
+            [310, 185, 465],
+            [185, 310, 465],
+            [455, 315, 190]
+        ]
+    },
+
+    // PRIORITY
+    {
+        id: "16",
+        category: "PRIORITY",
+        lvl: 40,
+        name: { "zh-TW": "強襲蠻族據點", "zh-CN": "强袭蛮族据点", "ja": "蛮族拠点の強襲", "en": "Stronghold Assault" },
+        stats: [
+            [530, 385, 275],
+            [530, 275, 385],
+            [385, 560, 245],
+            [245, 560, 385],
+            [385, 265, 540],
+            [265, 385, 540]
+        ]
+    },
+    {
+        id: "17",
+        category: "PRIORITY",
+        lvl: 40,
+        name: { "zh-TW": "取締違法武器交易", "zh-CN": "取缔违法武器交易", "ja": "違法武器売買の摘発", "en": "Black Market Crackdown" },
+        stats: [
+            [385, 560, 245],
+            [245, 560, 385],
+            [385, 265, 540],
+            [265, 385, 540],
+            [530, 385, 275],
+            [530, 275, 385]
+        ]
+    },
+    {
+        id: "18",
+        category: "PRIORITY",
+        lvl: 40,
+        name: { "zh-TW": "偵查帝國軍據點", "zh-CN": "侦查帝国军据点", "ja": "帝国軍拠点の強行偵察", "en": "Imperial Recon" },
+        stats: [
+            [385, 265, 540],
+            [265, 385, 540],
+            [530, 385, 275],
+            [530, 275, 385],
+            [385, 560, 245],
+            [245, 560, 385]
+        ]
+    },
+    {
+        id: "19",
+        category: "PRIORITY",
+        lvl: 40,
+        name: { "zh-TW": "追蹤帝國軍逃兵", "zh-CN": "追踪帝国军逃兵", "ja": "帝国軍脱走兵の追跡", "en": "Imperial Pursuit" },
+        stats: [
+            [530, 275, 385],
+            [385, 560, 245],
+            [245, 560, 385],
+            [385, 265, 540],
+            [265, 385, 540],
+            [530, 385, 275]
+        ]
+    },
+    {
+        id: "20",
+        category: "PRIORITY",
+        lvl: 40,
+        name: { "zh-TW": "發動對帝國軍的牽制攻擊", "zh-CN": "发动对帝国军的牵制攻击", "ja": "帝国軍部隊への牽制", "en": "Imperial Feint" },
+        stats: [
+            [245, 560, 385],
+            [385, 265, 540],
+            [265, 385, 540],
+            [530, 385, 275],
+            [530, 275, 385],
+            [385, 560, 245]
+        ]
+    },
+    {
+        id: "21",
+        category: "PRIORITY",
+        lvl: 40,
+        name: { "zh-TW": "切斷蠻族補給線作戰", "zh-CN": "切断蛮族补给线作战", "ja": "蛮族補給線の分断作戦", "en": "Supply Line Disruption" },
+        stats: [
+            [265, 385, 540],
+            [530, 385, 275],
+            [530, 275, 385],
+            [385, 560, 245],
+            [245, 560, 385],
+            [385, 265, 540]
+        ]
+    },
+    {
+        id: "22",
+        category: "PRIORITY",
+        lvl: 40,
+        name: { "zh-TW": "追蹤通緝犯", "zh-CN": "追踪通缉犯", "ja": "指名手配犯の追跡", "en": "Criminal Pursuit" },
+        stats: [
+            [530, 275, 385],
+            [530, 385, 275],
+            [245, 560, 385],
+            [385, 560, 245],
+            [265, 385, 540],
+            [385, 265, 540]
+        ]
+    },
+    {
+        id: "23",
+        category: "PRIORITY",
+        lvl: 40,
+        name: { "zh-TW": "殲滅帝國軍補給部隊", "zh-CN": "歼灭帝国军补给部队", "ja": "帝国軍補給部隊の撃滅", "en": "Supply Wagon Destruction" },
+        stats: [
+            [245, 560, 385],
+            [385, 560, 245],
+            [265, 385, 540],
+            [385, 265, 540],
+            [530, 275, 385],
+            [530, 385, 275]
+        ]
+    },
+    {
+        id: "24",
+        category: "PRIORITY",
+        lvl: 40,
+        name: { "zh-TW": "消滅合成生物", "zh-CN": "消灭合成生物", "ja": "キメラ生物の排除", "en": "Chimerical Elimination" },
+        stats: [
+            [265, 385, 540],
+            [385, 265, 540],
+            [530, 275, 385],
+            [530, 385, 275],
+            [245, 560, 385],
+            [385, 560, 245]
+        ]
+    },
+    {
+        id: "25",
+        category: "PRIORITY",
+        lvl: 50,
+        name: { "zh-TW": "與拂曉的共同作戰", "zh-CN": "与拂晓的共同作战", "ja": "暁との共同作戦", "en": "Primal Recon" },
+        stats: [
+            [430, 620, 275],
+            [275, 620, 430],
+            [295, 430, 600],
+            [430, 295, 600],
+            [590, 305, 430],
+            [590, 430, 305]
+        ]
+    },
+    {
+        id: "26",
+        category: "PRIORITY",
+        lvl: 50,
+        name: { "zh-TW": "開發反魔導兵器戰術", "zh-CN": "开发反魔导兵器战术", "ja": "対魔導兵器戦術の開拓", "en": "Counter-magitek Exercises" },
+        stats: [
+            [590, 430, 305],
+            [275, 620, 430],
+            [295, 430, 600],
+            [430, 295, 600],
+            [430, 620, 275],
+            [590, 305, 430]
+        ]
+    },
+    {
+        id: "27",
+        category: "PRIORITY",
+        lvl: 50,
+        name: { "zh-TW": "市民救出作戰", "zh-CN": "市民救出作战", "ja": "蛮族からの人質の救出", "en": "Infiltrate and Rescue" },
+        stats: [
+            [430, 295, 600],
+            [275, 620, 430],
+            [295, 430, 600],
+            [430, 620, 275],
+            [590, 305, 430],
+            [590, 430, 305]
+        ]
+    },
+    {
+        id: "28",
+        category: "PRIORITY",
+        lvl: 50,
+        name: { "zh-TW": "消滅武裝集團", "zh-CN": "消灭武装集团", "ja": "武装集団の撃滅", "en": "Outlaw Subjugation" },
+        stats: [
+            [430, 295, 600],
+            [275, 620, 430],
+            [295, 430, 600],
+            [430, 620, 275],
+            [590, 305, 430],
+            [590, 430, 305]
+        ]
+    },
+    {
+        id: "29",
+        category: "PRIORITY",
+        lvl: 50,
+        name: { "zh-TW": "取締違法邪教教團", "zh-CN": "取缔违法邪教教团", "ja": "違法カルト教団の摘発", "en": "Cult Crackdown" },
+        stats: [
+            [430, 620, 275],
+            [275, 620, 430],
+            [295, 430, 600],
+            [430, 295, 600],
+            [590, 305, 430],
+            [590, 430, 305]
+        ]
+    },
+    {
+        id: "30",
+        category: "PRIORITY",
+        lvl: 50,
+        name: { "zh-TW": "消滅非法召喚的妖異", "zh-CN": "消灭非法召唤的妖异", "ja": "不法妖異の排除", "en": "Voidsent Elimination" },
+        stats: [
+            [590, 430, 305],
+            [275, 620, 430],
+            [295, 430, 600],
+            [430, 295, 600],
+            [430, 620, 275],
+            [590, 305, 430]
+        ]
+    },
+    {
+        id: "31",
+        category: "PRIORITY",
+        lvl: 50,
+        name: { "zh-TW": "擊破帝國軍廢棄兵器", "zh-CN": "击破帝国军废弃兵器", "ja": "帝国軍廃棄兵器の撃破", "en": "Armor Annihilation" },
+        stats: [
+            [275, 620, 430],
+            [295, 430, 600],
+            [430, 295, 600],
+            [430, 620, 275],
+            [590, 305, 430],
+            [590, 430, 305]
+        ]
+    },
+    {
+        id: "32",
+        category: "PRIORITY",
+        lvl: 50,
+        name: { "zh-TW": "排除哥布林族集團", "zh-CN": "排除哥布林族集团", "ja": "ゴブリン族集団の排除", "en": "Invasive Testing" },
+        stats: [
+            [590, 305, 430],
+            [275, 620, 430],
+            [295, 430, 600],
+            [430, 295, 600],
+            [430, 620, 275],
+            [590, 430, 305]
+        ]
+    },
+    {
+        id: "33",
+        category: "PRIORITY",
+        lvl: 50,
+        name: { "zh-TW": "揭發偽牙軍曹", "zh-CN": "揭发假副牙士", "ja": "偽牙軍曹の摘発", "en": "Imposter Alert" },
+        stats: [
+            [295, 430, 600],
+            [275, 620, 430],
+            [430, 295, 600],
+            [430, 620, 275],
+            [590, 305, 430],
+            [590, 430, 305]
+        ]
+    }
+];
