@@ -215,7 +215,7 @@ const TRANSLATIONS = {
             "Kelmomo": "克魯莫莫", "Liliba": "莉莉芭", "Sasashu": "薩薩修", "Tewawa": "特瓦瓦", "Totodi": "托托蒂",
             "Mujen Polajen": "姆吉恩·珀拉吉恩", "Mumutano": "穆穆塔諾", "Nanasomi": "納納索米", "Nunulupa Tatalupa": "努努魯帕·塔塔魯帕", "Seserikku": "塞塞力庫",
             "E'ptolmi": "艾·帕特爾密", "Jludaba": "嘉·魯達巴", "Oah Nelhah": "奧雅·奈爾赫", "V'nbolo": "維·恩波蘿", "Yehn Amariyo": "伊恩·雅瑪里約",
-            "B'benha": "比·貝納·提亞", "D'fhul Tia": "德·福爾·提亞", "G'otaa": "格塔·阿·帕尼帕爾", "Kehda'to Moui": "凱達·托·莫伊", "Z'iuza": "玖茲·阿·嘉奇亞",
+            "B'benha Tia": "比·貝納·提亞", "D'fhul Tia": "德·福爾·提亞", "G'otaa": "格塔·阿·帕尼帕爾", "Kehda'to Moui": "凱達·托·莫伊", "Z'iuza": "玖茲·阿·嘉奇亞",
             "Careless Whisper": "科爾蕾絲·威斯帕", "Fearless Fawn": "菲爾萊斯·馮", "Inghilswys": "因格希爾希斯", "Koenbryda": "庫恩布瑞達", "Raelthota": "雷爾托塔",
             "Callous Steed": "卡拉斯·斯泰德", "Gnawing Goat": "納因·戈特", "Hastaloeya": "哈斯塔爾烏雅", "Raging Ox": "瑞京·奧克斯", "Rhylharr": "里爾哈厄"
         },
@@ -344,7 +344,7 @@ const TRANSLATIONS = {
             "Kelmomo": "克魯莫莫", "Liliba": "莉莉芭", "Sasashu": "薩薩修", "Tewawa": "特瓦瓦", "Totodi": "托托蒂",
             "Mujen Polajen": "姆吉恩·珀拉吉恩", "Mumutano": "穆穆塔諾", "Nanasomi": "納納索米", "Nunulupa Tatalupa": "努努魯帕·塔塔魯帕", "Seserikku": "塞塞力庫",
             "E'ptolmi": "艾·帕特爾密", "Jludaba": "嘉·魯達巴", "Oah Nelhah": "奧雅·奈爾赫", "V'nbolo": "薇·恩波蘿", "Yehn Amariyo": "伊恩·雅瑪里約",
-            "B'benha": "比·貝納·提亞", "D'fhul Tia": "德·福爾·提亞", "G'otaa": "格塔·阿·帕尼帕爾", "Kehda'to Moui": "凱達·托·莫伊", "Z'iuza": "玖茲·阿·嘉奇亞",
+            "B'benha Tia": "比·貝納·提亞", "D'fhul Tia": "德·福爾·提亞", "G'otaa": "格塔·阿·帕尼帕爾", "Kehda'to Moui": "凱達·托·莫伊", "Z'iuza": "玖茲·阿·嘉奇亞",
             "Careless Whisper": "科爾蕾絲·威斯帕", "Fearless Fawn": "菲爾萊斯·馮", "Inghilswys": "因格希爾希斯", "Koenbryda": "庫恩布瑞達", "Raelthota": "雷爾托塔",
             "Callous Steed": "卡拉斯·斯泰德", "Gnawing Goat": "納因·戈特", "Hastaloeya": "哈斯塔爾烏雅", "Raging Ox": "瑞京·奧克斯", "Rhylharr": "里爾哈厄"
         },
@@ -473,7 +473,7 @@ const TRANSLATIONS = {
             "Kelmomo": "克魯莫莫", "Liliba": "莉莉芭", "Sasashu": "薩薩修", "Tewawa": "特瓦瓦", "Totodi": "托托蒂",
             "Mujen Polajen": "姆吉恩·珀拉吉恩", "Mumutano": "穆穆塔諾", "Nanasomi": "納納索米", "Nunulupa Tatalupa": "努努魯帕·塔塔魯帕", "Seserikku": "塞塞力庫",
             "E'ptolmi": "艾·帕特爾密", "Jludaba": "嘉·魯達巴", "Oah Nelhah": "奧雅·奈爾赫", "V'nbolo": "薇·恩波蘿", "Yehn Amariyo": "伊恩·雅瑪里約",
-            "B'benha": "比·貝納·提亞", "D'fhul Tia": "德·福爾·提亞", "G'otaa": "格塔·阿·帕尼帕爾", "Kehda'to Moui": "凱達·托·莫伊", "Z'iuza": "玖茲·阿·嘉奇亞",
+            "B'benha Tia": "比·貝納·提亞", "D'fhul Tia": "德·福爾·提亞", "G'otaa": "格塔·阿·帕尼帕爾", "Kehda'to Moui": "凱達·托·莫伊", "Z'iuza": "玖茲·阿·嘉奇亞",
             "Careless Whisper": "科爾蕾絲·威斯帕", "Fearless Fawn": "菲爾萊斯·馮", "Inghilswys": "因格希爾希斯", "Koenbryda": "庫恩布瑞達", "Raelthota": "雷爾托塔",
             "Callous Steed": "卡拉斯·斯泰德", "Gnawing Goat": "納因·戈特", "Hastaloeya": "哈斯塔爾烏雅", "Raging Ox": "瑞京·奧克斯", "Rhylharr": "里爾哈厄"
         },
@@ -602,7 +602,7 @@ const TRANSLATIONS = {
             "Kelmomo": "克魯莫莫", "Liliba": "莉莉芭", "Sasashu": "薩薩修", "Tewawa": "特瓦瓦", "Totodi": "托托蒂",
             "Mujen Polajen": "姆吉恩·珀拉吉恩", "Mumutano": "穆穆塔諾", "Nanasomi": "納納索米", "Nunulupa Tatalupa": "努努魯帕·塔塔魯帕", "Seserikku": "塞塞力庫",
             "E'ptolmi": "艾·帕特爾密", "Jludaba": "嘉·魯達巴", "Oah Nelhah": "奧雅·奈爾赫", "V'nbolo": "薇·恩波蘿", "Yehn Amariyo": "伊恩·雅瑪里約",
-            "B'benha": "比·貝納·提亞", "D'fhul Tia": "德·福爾·提亞", "G'otaa": "格塔·阿·帕尼帕爾", "Kehda'to Moui": "凱達·托·莫伊", "Z'iuza": "玖茲·阿·嘉奇亞",
+            "B'benha Tia": "比·貝納·提亞", "D'fhul Tia": "德·福爾·提亞", "G'otaa": "格塔·阿·帕尼帕爾", "Kehda'to Moui": "凱達·托·莫伊", "Z'iuza": "玖茲·阿·嘉奇亞",
             "Careless Whisper": "科爾蕾絲·威斯帕", "Fearless Fawn": "菲爾萊斯·馮", "Inghilswys": "因格希爾希斯", "Koenbryda": "庫恩布瑞達", "Raelthota": "雷爾托塔",
             "Callous Steed": "卡拉斯·斯泰德", "Gnawing Goat": "納因·戈特", "Hastaloeya": "哈斯塔爾烏雅", "Raging Ox": "瑞京·奧克斯", "Rhylharr": "里爾哈厄"
         },
@@ -687,7 +687,7 @@ const RECRUIT_DATA = [
     { "name": "Oah Nelhah", "race": "Miqo'te", "img": "img/recruits/Oah Nelhah.jpg", "reasons": ["fates", "gs"], "unique": false, "gender": "F" },
     { "name": "V'nbolo", "race": "Miqo'te", "img": "img/recruits/V'nbolo.jpg", "reasons": ["gathering"], "unique": false, "gender": "F" },
     { "name": "Yehn Amariyo", "race": "Miqo'te", "img": "img/recruits/Yehn Amariyo.jpg", "reasons": ["doh", "gs"], "unique": false, "gender": "F" },
-    { "name": "B'benha", "race": "Miqo'te", "img": "img/recruits/B'benha.jpg", "reasons": ["gathering"], "unique": false, "gender": "M" },
+    { "name": "B'benha Tia", "race": "Miqo'te", "img": "img/recruits/B'benha Tia.jpg", "reasons": ["gathering"], "unique": false, "gender": "M" },
     { "name": "D'fhul Tia", "race": "Miqo'te", "img": "img/recruits/D'fhul Tia.jpg", "reasons": ["gathering"], "unique": false, "gender": "M" },
     { "name": "G'otaa", "race": "Miqo'te", "img": "img/recruits/G'otaa.jpg", "reasons": ["dungeons", "gs"], "unique": false, "gender": "M" },
     { "name": "Z'iuza", "race": "Miqo'te", "img": "img/recruits/Z'iuza.jpg", "reasons": ["pvp", "gs"], "unique": false, "gender": "M" },
