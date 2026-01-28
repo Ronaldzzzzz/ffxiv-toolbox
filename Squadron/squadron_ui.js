@@ -89,6 +89,7 @@ window.updateLanguage = function () {
                     document.getElementById(`class-text-${i}`).innerText = TRANSLATIONS[currentLang].class_names[cls] || cls;
                 }
                 updateStatsDisplay(i); // Refresh stats labels
+                if (typeof updateChemistryDisplay === 'function') updateChemistryDisplay(i); // Refresh chemistry text
             }
 
         } else {
@@ -126,6 +127,7 @@ function validateSum() {
     const tVal = parseInt(document.getElementById('curr-t').value) || 0;
     const sum = p + m + tVal;
     document.getElementById('current-sum-display').innerText = sum;
+    if (typeof updateSection1Summary === 'function') updateSection1Summary();
     const warning = document.getElementById('sum-warning');
     if (sum !== cap) {
         warning.style.display = 'block';
@@ -165,6 +167,11 @@ function getSquadronDataObj() {
         const lvl = parseInt(document.getElementById(`lvl-${i}`).value) || 1;
         const rData = RECRUIT_DATA.find(r => r.name === name) || {};
 
+        // Chemistry
+        const chemCond = document.getElementById(`chem-cond-${i}`).value || "";
+        const chemEffect = document.getElementById(`chem-effect-${i}`).value || "";
+        const chemVal = parseInt(document.getElementById(`chem-val-${i}`).value) || 0;
+
         recruits[(i + 1).toString()] = {
             "used": isActive,
             "class": CLASS_MAP_EXPORT[cls] || cls.toLowerCase(),
@@ -172,7 +179,11 @@ function getSquadronDataObj() {
             "race": (rData.race || "Unknown").toLowerCase(),
             "name": name,
             "exp": 0,
-            "chemistry": ["none", 0, "none", false, 0] // Default placeholders as we don't track chemistry yet
+            "chemistry": {
+                "condition": chemCond,
+                "effect": chemEffect,
+                "value": chemVal
+            }
         };
     }
 
@@ -340,6 +351,18 @@ function loadSquadronData(silent = false, dataObj = null) {
 
                         // Level
                         document.getElementById(`lvl-${i}`).value = rec.level;
+                        
+                        // Chemistry - Load
+                        if (rec.chemistry && !Array.isArray(rec.chemistry)) {
+                            // New Object format
+                             if (document.getElementById(`chem-cond-${i}`)) document.getElementById(`chem-cond-${i}`).value = rec.chemistry.condition || "";
+                             if (document.getElementById(`chem-effect-${i}`)) document.getElementById(`chem-effect-${i}`).value = rec.chemistry.effect || "";
+                             if (document.getElementById(`chem-val-${i}`)) document.getElementById(`chem-val-${i}`).value = rec.chemistry.value || 20;
+                             
+                             if (typeof updateChemistryDisplay === 'function') updateChemistryDisplay(i);
+                        } else if (rec.chemistry && Array.isArray(rec.chemistry)) {
+                            // Legacy Legacy Array format? Just ignore or try to map if we had one
+                        }
 
                         // Active Status
                         const cb = document.getElementById(`active-${i}`);
@@ -362,6 +385,27 @@ function loadSquadronData(silent = false, dataObj = null) {
 }
 
 function initRoster() {
+    // Pre-build options for Chemistry
+    const t = TRANSLATIONS[currentLang] || TRANSLATIONS['zh-TW'];
+    
+    let condOpts = `<option value="">-</option>`;
+    if (typeof CHEMISTRY_CONDITIONS !== 'undefined') {
+        condOpts += Object.entries(CHEMISTRY_CONDITIONS).map(([k, v]) => 
+            `<option value="${k}">${v[currentLang] || v['zh-TW']}</option>`
+        ).join('');
+    }
+
+    let effectOpts = `<option value="">-</option>`;
+    if (typeof CHEMISTRY_EFFECTS !== 'undefined') {
+        effectOpts += Object.entries(CHEMISTRY_EFFECTS).map(([k, v]) => 
+            `<option value="${k}">${v[currentLang] || v['zh-TW']}</option>`
+        ).join('');
+    }
+
+    const valOpts = [10, 15, 20, 25, 30, 40, 50, 60, 100].map(v => 
+        `<option value="${v}">${v}%</option>`
+    ).join('');
+
     let html = '';
     for (let i = 0; i < 8; i++) {
         const def = defaultRecruits[i];
@@ -407,12 +451,34 @@ function initRoster() {
             </div>
         </div>
         
-        <div class="flex items-center justify-between text-sm">
-            <label class="font-bold text-slate-600 dark:text-slate-400" data-i18n="lvl_label">Lv:</label>
-            <input type="number" id="lvl-${i}" value="${lvl}" min="1" max="60" onchange="updateStatsDisplay(${i})" class="w-12 p-1 text-center border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100" ${!isDefined ? 'disabled' : ''}>
+        <!-- Level & Stats Row -->
+        <div class="flex items-center justify-between gap-2 p-1">
+            <div class="flex items-center gap-1 shrink-0">
+                <label class="font-bold text-xs text-slate-500 dark:text-slate-400 pr-4">Lv: </label>
+                <input type="number" id="lvl-${i}" value="${lvl}" min="1" max="60" onchange="updateStatsDisplay(${i})" class="w-10 p-0.5 text-center text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-blue-500" ${!isDefined ? 'disabled' : ''}>
+            </div>
+            <div class="h-4 w-px bg-slate-300 dark:bg-slate-600"></div>
+            <div class="text-xs font-mono font-medium text-slate-600 dark:text-slate-300 flex items-center justify-end w-full" id="stats-display-${i}" style="${!isDefined ? 'opacity: 0.5;' : ''}">
+                <span class="stat stat-phy">P:0</span>
+                <span class="stat stat-men">M:0</span>
+                <span class="stat stat-tac">T:0</span>
+            </div>
         </div>
-        
-        <div class="text-xs text-slate-500 dark:text-slate-400 font-mono mt-1" id="stats-display-${i}" style="${!isDefined ? 'opacity: 0.5;' : ''}">P:0 M:0 T:0</div>
+
+        <!-- Chemistry UI -->
+        <div class="mt-1 pt-2 border-t border-slate-200 dark:border-slate-700">
+             <!-- Hidden Inputs for Persistence -->
+             <input type="hidden" id="chem-cond-${i}" value="">
+             <input type="hidden" id="chem-effect-${i}" value="">
+             <input type="hidden" id="chem-val-${i}" value="">
+
+             <div id="chem-display-${i}" class="text-xs text-slate-700 dark:text-slate-300 leading-tight pb-2"></div>
+
+             <button type="button" onclick="openChemistryModal(${i})" class="w-full py-1.5 px-2 text-xs font-bold text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 rounded transition-colors flex items-center justify-center gap-1" ${!isDefined ? 'disabled' : ''}>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                設定吉兆
+             </button>
+        </div>
     </div>
     `;
     }
@@ -999,7 +1065,7 @@ window.updateStatsDisplay = function (index) {
     const lvl = parseInt(document.getElementById(`lvl-${index}`).value) || 1;
     const s = getStats(cls, lvl);
     document.getElementById(`stats-display-${index}`).innerHTML =
-        `<span class="stat-phy">${t.stat_p}:${s[0]}</span> <span class="stat-men">${t.stat_m}:${s[1]}</span> <span class="stat-tac">${t.stat_t}:${s[2]}</span>`;
+        `<span class="stat stat-phy">${t.stat_p}:${s[0]}</span> <span class="stat stat-men">${t.stat_m}:${s[1]}</span> <span class="stat stat-tac">${t.stat_t}:${s[2]}</span>`;
 }
 
 // Theme Logic
@@ -1236,6 +1302,235 @@ window.applyTraining = function (opId) {
     saveSquadronData();
 }
 
+
+// --- Chemistry Modal Logic ---
+
+let editingMemberIndex = -1;
+
+window.openChemistryModal = function(index) {
+    editingMemberIndex = index;
+    const condSelect = document.getElementById('chem-modal-cond');
+    const effectSelect = document.getElementById('chem-modal-effect');
+    const valSelect = document.getElementById('chem-modal-val');
+
+    // Populate Options if empty (Lazy init)
+    if (condSelect.options.length <= 1) { // Assuming default is 1 or 0
+        populateChemistryOptions(); // Helper to refactor shared logic
+    }
+
+    // Load current values
+    const currentCond = document.getElementById(`chem-cond-${index}`).value;
+    const currentEffect = document.getElementById(`chem-effect-${index}`).value;
+    const currentVal = document.getElementById(`chem-val-${index}`).value;
+
+    condSelect.value = currentCond;
+    effectSelect.value = currentEffect;
+    valSelect.value = currentVal || "10"; // Default to 10 if empty
+
+    document.getElementById('chemistry-modal').classList.remove('hidden');
+}
+
+window.closeChemistryModal = function() {
+    document.getElementById('chemistry-modal').classList.add('hidden');
+    editingMemberIndex = -1;
+}
+
+window.saveChemistry = function() {
+    if (editingMemberIndex === -1) return;
+
+    const cond = document.getElementById('chem-modal-cond').value;
+    const effect = document.getElementById('chem-modal-effect').value;
+    const val = document.getElementById('chem-modal-val').value;
+
+    // Save to hidden inputs
+    document.getElementById(`chem-cond-${editingMemberIndex}`).value = cond;
+    document.getElementById(`chem-effect-${editingMemberIndex}`).value = effect;
+    document.getElementById(`chem-val-${editingMemberIndex}`).value = val;
+
+    updateChemistryDisplay(editingMemberIndex);
+    closeChemistryModal();
+    saveSquadronData(); // Auto-save for convenience? Or let user click save squad. Let's auto-save per user preference or simple flow.
+}
+
+window.removeChemistry = function() {
+    if (editingMemberIndex === -1) return;
+
+    document.getElementById(`chem-cond-${editingMemberIndex}`).value = "";
+    document.getElementById(`chem-effect-${editingMemberIndex}`).value = "";
+    document.getElementById(`chem-val-${editingMemberIndex}`).value = "";
+
+    updateChemistryDisplay(editingMemberIndex);
+    closeChemistryModal();
+}
+
+function updateChemistryDisplay(index) {
+    const displayEl = document.getElementById(`chem-display-${index}`);
+    const cond = document.getElementById(`chem-cond-${index}`).value;
+    const effect = document.getElementById(`chem-effect-${index}`).value;
+    const val = document.getElementById(`chem-val-${index}`).value;
+
+    if (!cond || !effect) {
+        const noChem = { "zh-TW": "(無吉兆)", "zh-CN": "(无吉兆)", "ja": "(ジンクスなし)", "en": "(No Chemistry)" };
+        displayEl.innerText = noChem[currentLang] || noChem['zh-TW'];
+        
+        // Gray out
+        displayEl.classList.remove('text-slate-700', 'dark:text-slate-300');
+        displayEl.classList.add('text-slate-400', 'dark:text-slate-600');
+        return;
+    }
+
+    // Build description string
+    const tLang = TRANSLATIONS[currentLang] || TRANSLATIONS['zh-TW'];
+    
+    // Helper to safe get translation
+    const getT = (key, cat) => {
+        if (cat === 'cond') return (CHEMISTRY_CONDITIONS[key] && (CHEMISTRY_CONDITIONS[key][currentLang] || CHEMISTRY_CONDITIONS[key]['zh-TW'])) || key;
+        if (cat === 'effect') return (CHEMISTRY_EFFECTS[key] && (CHEMISTRY_EFFECTS[key][currentLang] || CHEMISTRY_EFFECTS[key]['zh-TW'])) || key;
+        return key;
+    };
+
+    const condText = getT(cond, 'cond');
+    const effectText = getT(effect, 'effect');
+    
+    // Formatting: User requested narrative style with colors
+    const cCond = `<span class="text-indigo-600 dark:text-indigo-400">${condText}</span>`;
+    const cEffect = `<span class="text-emerald-600 dark:text-emerald-400">${effectText}</span>`;
+    const cVal = `<span class="text-amber-600 dark:text-amber-400">${val}%</span>`;
+
+    let text = "";
+    if (currentLang === 'zh-TW' || currentLang === 'zh-CN') {
+         text = `當 ${cCond} 時，${cEffect} ${cVal}`;
+    } else if (currentLang === 'ja') {
+         text = `${cCond}の時、${cEffect} ${cVal}`;
+    } else {
+         text = `When ${cCond}, ${cEffect} ${cVal}`;
+    }
+
+    displayEl.innerHTML = `<div class="text-xs leading-tight">${text}</div>`;
+    
+    // Restore normal color
+    displayEl.classList.remove('text-slate-400', 'dark:text-slate-600');
+    displayEl.classList.add('text-slate-700', 'dark:text-slate-300');
+}
+
+function populateChemistryOptions() {
+    // Populate Modal Options from Data
+    const condSelect = document.getElementById('chem-modal-cond');
+    const effectSelect = document.getElementById('chem-modal-effect');
+    const valSelect = document.getElementById('chem-modal-val');
+
+    // Reset
+    condSelect.innerHTML = '<option value="">(無)</option>';
+    effectSelect.innerHTML = '<option value="">(無)</option>';
+    valSelect.innerHTML = '';
+
+    if (typeof CHEMISTRY_CONDITIONS !== 'undefined') {
+        Object.entries(CHEMISTRY_CONDITIONS).forEach(([k, v]) => {
+            const opt = document.createElement('option');
+            opt.value = k;
+            opt.innerText = v[currentLang] || v['zh-TW'];
+            condSelect.appendChild(opt);
+        });
+    }
+
+    if (typeof CHEMISTRY_EFFECTS !== 'undefined') {
+        Object.entries(CHEMISTRY_EFFECTS).forEach(([k, v]) => {
+            const opt = document.createElement('option');
+            opt.value = k;
+            opt.innerText = v[currentLang] || v['zh-TW'];
+            effectSelect.appendChild(opt);
+        });
+    }
+
+    [10, 15, 20, 25, 30, 40, 50, 60, 100].forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v;
+        opt.innerText = `${v}%`;
+        valSelect.appendChild(opt);
+    });
+}
+
+// --- Mission Affinity Logic ---
+window.initAffinitySelectors = function() {
+    const selectors = [
+        document.getElementById('mission-affinity-1'),
+        document.getElementById('mission-affinity-2'),
+        document.getElementById('mission-affinity-3')
+    ];
+
+    if (!selectors[0]) return;
+
+    const t = TRANSLATIONS[currentLang] || TRANSLATIONS['zh-TW'];
+    const raceNames = t.race_names || {};
+    const classNames = t.class_names || {};
+
+    // Preserve current selections if possible
+    const currentSelections = selectors.map(s => s.value);
+
+    selectors.forEach((sel, idx) => {
+        sel.innerHTML = '<option value="">-</option>';
+        
+        // Races
+        const groupRace = document.createElement('optgroup');
+        groupRace.label = t.label_race || (currentLang === 'en' ? 'Race' : '種族'); // Fallback label if not in data
+        Object.entries(raceNames).forEach(([k, v]) => {
+            const opt = document.createElement('option');
+            opt.value = k; // e.g. "Hyur"
+            opt.innerText = v;
+            groupRace.appendChild(opt);
+        });
+        sel.appendChild(groupRace);
+
+        // Classes
+        const groupClass = document.createElement('optgroup');
+        groupClass.label = t.label_class || (currentLang === 'en' ? 'Class' : '職業');
+        Object.entries(classNames).forEach(([k, v]) => {
+            const opt = document.createElement('option');
+            opt.value = k; // e.g. "GLA"
+            opt.innerText = v;
+            groupClass.appendChild(opt);
+        });
+        sel.appendChild(groupClass);
+
+        // Restore selection
+        if (currentSelections[idx]) {
+            sel.value = currentSelections[idx];
+        }
+    });
+
+    updateAffinityConfig();
+}
+
+window.updateAffinityConfig = function() {
+    const selectors = [
+        document.getElementById('mission-affinity-1'),
+        document.getElementById('mission-affinity-2'),
+        document.getElementById('mission-affinity-3')
+    ];
+    
+    // Get all currently selected values (excluding empty)
+    const selectedValues = selectors.map(s => s.value).filter(v => v);
+
+    // Update disabled state for uniqueness
+    selectors.forEach(sel => {
+        const myVal = sel.value;
+        Array.from(sel.options).forEach(opt => {
+            if (!opt.value) return; // Skip default
+            // Disable if selected elsewhere AND not self
+            if (selectedValues.includes(opt.value) && opt.value !== myVal) {
+                opt.disabled = true;
+                opt.innerText = opt.innerText.replace(' (Selected)', '') + ' (Selected)'; // Visual feedback? maybe overkill.
+                // Actually just disabled is enough usually.
+            } else {
+                opt.disabled = false;
+                opt.innerText = opt.innerText.replace(' (Selected)', '');
+            }
+        });
+    });
+
+    if (typeof updateMissionReqs === 'function') updateMissionReqs();
+}
+
 // --- Mission Selector Logic ---
 function initMissionSelectors() {
     const listSelect = document.getElementById('mission-selector');
@@ -1361,6 +1656,7 @@ window.updateMissionReqs = function() {
             document.getElementById('req-t').value = stats[2];
         }
     }
+    if (typeof updateSection1Summary === 'function') updateSection1Summary();
 }
 
 // Initialization Hooks
@@ -1372,6 +1668,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof loadSquadronData === 'function') loadSquadronData(true); // Silent load
 
     initMissionSelectors();
+    if (typeof initAffinitySelectors === 'function') initAffinitySelectors();
 });
 
 // Hook into language change to refresh selectors
@@ -1381,5 +1678,90 @@ if (!window._originalChangeLanguage) {
     window.changeLanguage = function(lang) {
         if (window._originalChangeLanguage) window._originalChangeLanguage(lang);
         initMissionSelectors();
+        if (typeof initAffinitySelectors === 'function') initAffinitySelectors();
     };
+}
+
+// --- Section 1 Collapsible Logic ---
+window.toggleSection1 = function() {
+    const content = document.getElementById('section-1-content');
+    const summary = document.getElementById('section-1-summary');
+    const btn = document.getElementById('btn-toggle-s1');
+    const container = document.getElementById('section-1-container') || content; // Ensure we target the right element
+
+    // Helper: Animation End
+    const onTransitionEnd = () => {
+        if (content.classList.contains('hidden-state')) {
+            summary.classList.remove('hidden');
+            summary.classList.add('flex');
+            // Hard hide after animation
+            content.style.display = 'none';
+        } else {
+             content.style.height = 'auto'; // Reset to auto after expand
+        }
+        content.removeEventListener('transitionend', onTransitionEnd);
+    };
+
+    if (content.classList.contains('hidden-state')) {
+        // EXPAND
+        content.style.display = 'block'; // Unhide to calculate height
+        const height = content.scrollHeight; // Get natural height
+        content.style.height = '0px'; // Force 0 start
+        content.classList.remove('hidden-state', 'opacity-0', 'scale-y-0'); // Remove hide logic
+        
+        // Hide summary immediately on expand start
+        summary.classList.add('hidden');
+        summary.classList.remove('flex');
+        
+        // Trigger reflow
+        void content.offsetWidth;
+        
+        // Animate to full height
+        content.style.transition = 'height 0.3s ease-out, opacity 0.3s ease-out';
+        content.style.height = height + 'px';
+        content.style.opacity = '1';
+        
+        btn.style.transform = 'rotate(0deg)';
+        
+        content.addEventListener('transitionend', onTransitionEnd);
+        
+    } else {
+        // COLLAPSE
+        updateSection1Summary();
+        
+        // Freeze height for animation
+        content.style.height = content.scrollHeight + 'px';
+        content.style.opacity = '1';
+        
+        // Trigger reflow
+        void content.offsetWidth;
+        
+        // Animate to 0
+        content.style.transition = 'height 0.3s ease-out, opacity 0.3s ease-out';
+        content.style.height = '0px';
+        content.style.opacity = '0';
+        
+        content.classList.add('hidden-state'); // logical state
+        btn.style.transform = 'rotate(-90deg)';
+        
+        content.addEventListener('transitionend', onTransitionEnd);
+    }
+}
+
+window.updateSection1Summary = function() {
+    const p = document.getElementById('curr-p').value || "0";
+    const m = document.getElementById('curr-m').value || "0";
+    const t = document.getElementById('curr-t').value || "0";
+    
+    document.getElementById('sum-p').innerText = p;
+    document.getElementById('sum-m').innerText = m;
+    document.getElementById('sum-t').innerText = t;
+
+    const reqP = document.getElementById('req-p').value || "0";
+    const reqM = document.getElementById('req-m').value || "0";
+    const reqT = document.getElementById('req-t').value || "0";
+
+    document.getElementById('sum-req-p').innerText = reqP;
+    document.getElementById('sum-req-m').innerText = reqM;
+    document.getElementById('sum-req-t').innerText = reqT;
 }

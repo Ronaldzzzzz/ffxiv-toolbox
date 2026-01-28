@@ -258,7 +258,14 @@ const TRANSLATIONS = {
         "mission_label": "任務",
         "pattern_label": "組別",
         "placeholder_mission": "選擇任務...",
-        "placeholder_pattern_locked": "請先選擇任務"
+        "placeholder_pattern_locked": "請先選擇任務",
+        "mission_affinity_title": "隨機獎勵 (Affinity)",
+        "affinity_none": "(無)",
+        "affinity_phy": "體能 (Physical)",
+        "affinity_men": "心智 (Mental)",
+        "affinity_tac": "戰術 (Tactical)",
+        "label_race": "種族 (Race)",
+        "label_class": "職業 (Class)"
     },
     "zh-CN": {
         "title": "FF14 冒险者分队计算器",
@@ -387,7 +394,14 @@ const TRANSLATIONS = {
         "mission_label": "任务",
         "pattern_label": "组别",
         "placeholder_mission": "选择任务...",
-        "placeholder_pattern_locked": "请先选择任务"
+        "placeholder_pattern_locked": "请先选择任务",
+        "mission_affinity_title": "随机奖励 (Affinity)",
+        "affinity_none": "(无)",
+        "affinity_phy": "体能 (Physical)",
+        "affinity_men": "心智 (Mental)",
+        "affinity_tac": "战术 (Tactical)",
+        "label_race": "种族 (Race)",
+        "label_class": "职业 (Class)"
     },
     "ja": {
         "title": "FF14 冒険者小隊シミュレーター",
@@ -516,7 +530,14 @@ const TRANSLATIONS = {
         "mission_label": "任務",
         "pattern_label": "パターン",
         "placeholder_mission": "任務を選択...",
-        "placeholder_pattern_locked": "任務を選択してください"
+        "placeholder_pattern_locked": "任務を選択してください",
+        "mission_affinity_title": "任務適性 (Affinity)",
+        "affinity_none": "(なし)",
+        "affinity_phy": "体能 (Physical)",
+        "affinity_men": "心智 (Mental)",
+        "affinity_tac": "戦術 (Tactical)",
+        "label_race": "種族 (Race)",
+        "label_class": "クラス (Class)"
     },
     "en": {
         "title": "FFXIV Squadron Calculator",
@@ -645,7 +666,14 @@ const TRANSLATIONS = {
         "mission_label": "Mission",
         "pattern_label": "Pattern",
         "placeholder_mission": "Select Mission...",
-        "placeholder_pattern_locked": "Select Mission First"
+        "placeholder_pattern_locked": "Select Mission First",
+        "mission_affinity_title": "Mission Affinity",
+        "affinity_none": "(None)",
+        "affinity_phy": "Physical",
+        "affinity_men": "Mental",
+        "affinity_tac": "Tactical",
+        "label_race": "Race",
+        "label_class": "Class"
     }
 };
 
@@ -1224,4 +1252,66 @@ const MISSION_DATA = [
             [590, 430, 305]
         ]
     }
+];
+
+// --- Chemistry Data ---
+const CHEMISTRY_CONDITIONS = {
+    // Member Composition
+    "race_hyur": { "zh-TW": "隊伍有 (人族)", "zh-CN": "队伍有 (人族)", "ja": "種族：ヒューランがいる", "en": "Member: Hyur" },
+    "race_elezen": { "zh-TW": "隊伍有 (精靈族)", "zh-CN": "队伍有 (精灵族)", "ja": "種族：エレゼンがいる", "en": "Member: Elezen" },
+    "race_lalafell": { "zh-TW": "隊伍有 (拉拉菲爾族)", "zh-CN": "队伍有 (拉拉菲尔族)", "ja": "種族：ララフェルがいる", "en": "Member: Lalafell" },
+    "race_miqote": { "zh-TW": "隊伍有 (貓魅族)", "zh-CN": "队伍有 (猫魅族)", "ja": "種族：ミコッテがいる", "en": "Member: Miqo'te" },
+    "race_roegadyn": { "zh-TW": "隊伍有 (魯加族)", "zh-CN": "队伍有 (鲁加族)", "ja": "種族：ルガディンがいる", "en": "Member: Roegadyn" },
+    "race_aura": { "zh-TW": "隊伍有 (敖龍族)", "zh-CN": "队伍有 (敖龙族)", "ja": "種族：アウラがいる", "en": "Member: Au Ra" },
+    "class_tank": { "zh-TW": "隊伍有 (防護職業)", "zh-CN": "队伍有 (防护职业)", "ja": "クラス：タンクがいる", "en": "Member: Tank" },
+    "class_dps": { "zh-TW": "隊伍有 (進攻職業)", "zh-CN": "队伍有 (进攻职业)", "ja": "クラス：DPSがいる", "en": "Member: DPS" },
+    "class_healer": { "zh-TW": "隊伍有 (治療職業)", "zh-CN": "队伍有 (治疗职业)", "ja": "クラス：ヒーラーがいる", "en": "Member: Healer" },
+    "gender_male": { "zh-TW": "隊伍有 (男性)", "zh-CN": "队伍有 (男性)", "ja": "性別：男性がいる", "en": "Member: Male" },
+    "gender_female": { "zh-TW": "隊伍有 (女性)", "zh-CN": "队伍有 (女性)", "ja": "性別：女性がいる", "en": "Member: Female" },
+    "race_same": { "zh-TW": "隊伍有 (相同種族)", "zh-CN": "队伍有 (相同种族)", "ja": "種族：同じ種族がいる", "en": "Member: Same Race" },
+    "class_same": { "zh-TW": "隊伍有 (相同職業)", "zh-CN": "队伍有 (相同职业)", "ja": "クラス：同じクラスがいる", "en": "Member: Same Class" },
+    
+    // Mission Affinity
+    "affinity_phy": { "zh-TW": "任務獎勵 (身體能力)", "zh-CN": "任务奖励 (身体能力)", "ja": "任務：身体能力ボーナス", "en": "Mission: Physical Affinity" },
+    "affinity_men": { "zh-TW": "任務獎勵 (精神力)", "zh-CN": "任务奖励 (精神力)", "ja": "任務：精神力ボーナス", "en": "Mission: Mental Affinity" },
+    "affinity_tac": { "zh-TW": "任務獎勵 (戰術演習)", "zh-CN": "任务奖励 (战术演习)", "ja": "任務：戦術演習ボーナス", "en": "Mission: Tactical Affinity" },
+    "affinity_all": { "zh-TW": "任務獎勵 (全屬性)", "zh-CN": "任务奖励 (全属性)", "ja": "任務：全能力ボーナス", "en": "Mission: All Stats Affinity" },
+
+    // Level
+    "level_50_plus": { "zh-TW": "全員 Lv50 以上", "zh-CN": "全员 Lv50 以上", "ja": "全員 Lv50 以上", "en": "All Members Lv 50+" },
+};
+
+const CHEMISTRY_EFFECTS = {
+    "stats_phy": { "zh-TW": "身體能力提升", "zh-CN": "身体能力提升", "ja": "身体能力アップ", "en": "Increase Physical" },
+    "stats_men": { "zh-TW": "精神力提升", "zh-CN": "精神力提升", "ja": "精神力アップ", "en": "Increase Mental" },
+    "stats_tac": { "zh-TW": "戰術演習提升", "zh-CN": "战术演习提升", "ja": "戦術演習アップ", "en": "Increase Tactical" },
+    "stats_all": { "zh-TW": "全屬性提升", "zh-CN": "全属性提升", "ja": "全能力アップ", "en": "Increase All Stats" },
+    "rate_trigger": { "zh-TW": "吉兆觸發率提升", "zh-CN": "吉兆触发率提升", "ja": "ジンクス発動率アップ", "en": "Increase Chemistry Trigger Rate" },
+    "exp_boost": { "zh-TW": "經驗值增加", "zh-CN": "经验值增加", "ja": "経験値アップ", "en": "Increase EXP" },
+    "scrips_mgp": { "zh-TW": "獲得 MGP", "zh-CN": "获得 MGP", "ja": "MGP獲得", "en": "Get MGP" },
+    "scrips_gil": { "zh-TW": "獲得 Gil", "zh-CN": "获得 Gil", "ja": "ギル獲得", "en": "Get Gil" },
+    "scrips_scrip": { "zh-TW": "獲得 票據", "zh-CN": "获得 票据", "ja": "スクリップ獲得", "en": "Get Scrips" },
+    "reward_materia": { "zh-TW": "獲得 魔石", "zh-CN": "获得 魔石", "ja": "マテリア獲得", "en": "Get Materia" },
+    "reward_cluster": { "zh-TW": "獲得 晶簇", "zh-CN": "获得 晶簇", "ja": "クラスター獲得", "en": "Get Cluster" }
+};
+
+const CHEMISTRY_TARGET_TYPES = [
+    { value: "none", label: "-" },
+    { value: "race_hyur", label: "Race: Hyur" },
+    { value: "race_elezen", label: "Race: Elezen" },
+    { value: "race_lalafell", label: "Race: Lalafell" },
+    { value: "race_miqote", label: "Race: Miqo'te" },
+    { value: "race_roegadyn", label: "Race: Roegadyn" },
+    { value: "race_aura", label: "Race: Au Ra" },
+    { value: "class_tank", label: "Class: Tank" },
+    { value: "class_dps", label: "Class: DPS" },
+    { value: "class_healer", label: "Class: Healer" },
+    { value: "gender_male", label: "Gender: Male" },
+    { value: "gender_female", label: "Gender: Female" },
+    { value: "race_same", label: "Same Race" },
+    { value: "class_same", label: "Same Class" },
+    { value: "affinity_phy", label: "Affinity: Phy" },
+    { value: "affinity_men", label: "Affinity: Men" },
+    { value: "affinity_tac", label: "Affinity: Tac" },
+    { value: "level_50_plus", label: "Level 50+" }
 ];

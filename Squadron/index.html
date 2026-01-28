@@ -59,11 +59,39 @@
 
         <div
             class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 mb-8 transition-colors">
-            <h2 class="text-lg font-bold mb-4 text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700 pb-2"
-                data-i18n="section_1_title">
-                1. 分隊狀態 & 任務需求</h2>
+            <div class="flex justify-between items-center mb-4 border-b border-slate-200 dark:border-slate-700 pb-2">
+                <h2 class="text-lg font-bold text-slate-800 dark:text-slate-200" data-i18n="section_1_title">
+                    1. 分隊狀態 & 任務需求</h2>
+                <button onclick="toggleSection1()" id="btn-toggle-s1" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-600 transition-all duration-200 transform">
+                    ▼
+                </button>
+            </div>
 
-            <!-- Row 1: Rank & Training Stats (Unified) -->
+            <!-- Summary View (Hidden by default) -->
+            <div id="section-1-summary" class="hidden p-4 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 items-center justify-between gap-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" onclick="toggleSection1()">
+                 <div class="flex items-center gap-6 text-base flex-wrap justify-center w-full">
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-slate-600 dark:text-slate-400" data-i18n="current_stats_title">目前訓練 (Stats):</span>
+                        <div class="font-mono font-bold flex gap-2 text-lg">
+                             <span class="text-red-500">P:<span id="sum-p">0</span></span>
+                             <span class="text-blue-500">M:<span id="sum-m">0</span></span>
+                             <span class="text-yellow-500">T:<span id="sum-t">0</span></span>
+                        </div>
+                    </div>
+                    <div class="w-px h-4 bg-slate-300 dark:bg-slate-600 hidden sm:block"></div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-slate-600 dark:text-slate-400" data-i18n="mission_req_title">任務需求 (Req):</span>
+                        <div class="font-mono font-bold flex gap-2 text-lg">
+                             <span class="text-red-500">P:<span id="sum-req-p">0</span></span>
+                             <span class="text-blue-500">M:<span id="sum-req-m">0</span></span>
+                             <span class="text-yellow-500">T:<span id="sum-req-t">0</span></span>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+
+            <div id="section-1-content" class="transition-all duration-300 ease-in-out origin-top">
+                <!-- Row 1: Rank & Training Stats (Unified) -->
             <div
                 class="bg-slate-50 dark:bg-slate-900 p-6 rounded-lg mb-6 border border-slate-200 dark:border-slate-700">
                 <div class="flex flex-col lg:flex-row gap-8 items-center justify-center">
@@ -233,6 +261,24 @@
                     </div>
                 </div>
 
+                <!-- NEW: Affinity Selector (Multi-slot) -->
+                <div class="flex flex-col items-center justify-center border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-700 pb-4 lg:pb-0 lg:pr-4">
+                     <p class="text-center mb-2 font-bold text-slate-600 dark:text-slate-400 text-sm" data-i18n="mission_affinity_title">
+                        隨機獎勵 (Affinity)
+                    </p>
+                    <div class="flex flex-col gap-2">
+                        <select id="mission-affinity-1" class="p-1.5 rounded border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-blue-500 outline-none w-40" onchange="updateAffinityConfig()">
+                            <option value="">-</option>
+                        </select>
+                        <select id="mission-affinity-2" class="p-1.5 rounded border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-blue-500 outline-none w-40" onchange="updateAffinityConfig()">
+                            <option value="">-</option>
+                        </select>
+                        <select id="mission-affinity-3" class="p-1.5 rounded border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-blue-500 outline-none w-40" onchange="updateAffinityConfig()">
+                            <option value="">-</option>
+                        </select>
+                    </div>
+                </div>
+
                 <!-- Right: Title & Inputs -->
                 <div class="flex flex-col items-center justify-start flex-1 w-full">
                     <p class="text-center mb-4 font-bold text-slate-600 dark:text-slate-400"
@@ -258,7 +304,9 @@
                     </div>
                 </div>
             </div>
+            </div>
         </div>
+
 
         <div
             class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 mb-8 transition-colors">
@@ -393,6 +441,54 @@
 
     <script src="squadron_ui.js"></script>
 
+
+    <!-- Chemistry Editor Modal -->
+    <div id="chemistry-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-800 rounded-lg shadow-2xl w-full max-w-sm mx-4 overflow-hidden border border-slate-200 dark:border-slate-700">
+            <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900">
+                <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100">編輯隊員吉兆</h3>
+                <button onclick="closeChemistryModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <div class="p-4 space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">觸發條件 (Condition)</label>
+                    <select id="chem-modal-cond" class="w-full p-2 border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-colors focus:ring-2 focus:ring-blue-500 outline-none">
+                        <!-- Options populated by JS -->
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">發動效果 (Effect)</label>
+                    <select id="chem-modal-effect" class="w-full p-2 border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-colors focus:ring-2 focus:ring-blue-500 outline-none">
+                         <!-- Options populated by JS -->
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">數值 (Value)</label>
+                    <select id="chem-modal-val" class="w-full p-2 border border-slate-300 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-colors focus:ring-2 focus:ring-blue-500 outline-none">
+                        <!-- Options populated by JS -->
+                    </select>
+                </div>
+
+                <div class="pt-2 text-xs text-slate-500 dark:text-slate-400">
+                    <p class="mb-1">說明：當滿足觸發條件時，將發動指定效果。</p>
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-slate-200 dark:border-slate-700 flex gap-3 bg-slate-50 dark:bg-slate-900">
+                 <button onclick="removeChemistry()" class="flex-1 py-2 px-4 rounded bg-red-100 hover:bg-red-200 text-red-700 font-bold transition-colors">
+                    移除
+                </button>
+                <button onclick="saveChemistry()" class="flex-1 py-2 px-4 rounded bg-blue-600 hover:bg-blue-700 text-white font-bold transition-colors shadow-sm">
+                    確認儲存
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Training Confirmation Modal -->
     <div id="training-confirm-modal"

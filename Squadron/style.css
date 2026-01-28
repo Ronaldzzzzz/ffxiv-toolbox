@@ -29,6 +29,11 @@ input[type=range]::-webkit-slider-runnable-track {
     background: #475569;
 }
 
+.stat {
+    font-size: 14px;
+    margin-right: 5px;
+}
+
 .stat-phy {
     color: #ef4444;
 }
