@@ -1272,9 +1272,9 @@ const CHEMISTRY_CONDITIONS = {
     "class_same": { "zh-TW": "隊伍有 (相同職業)", "zh-CN": "队伍有 (相同职业)", "ja": "クラス：同じクラスがいる", "en": "Member: Same Class" },
     
     // Mission Affinity
-    "affinity_phy": { "zh-TW": "任務獎勵 (身體能力)", "zh-CN": "任务奖励 (身体能力)", "ja": "任務：身体能力ボーナス", "en": "Mission: Physical Affinity" },
-    "affinity_men": { "zh-TW": "任務獎勵 (精神力)", "zh-CN": "任务奖励 (精神力)", "ja": "任務：精神力ボーナス", "en": "Mission: Mental Affinity" },
-    "affinity_tac": { "zh-TW": "任務獎勵 (戰術演習)", "zh-CN": "任务奖励 (战术演习)", "ja": "任務：戦術演習ボーナス", "en": "Mission: Tactical Affinity" },
+    "affinity_phy": { "zh-TW": "任務獎勵 (體能)", "zh-CN": "任务奖励 (体能)", "ja": "任務：体能ボーナス", "en": "Mission: Physical Affinity" },
+    "affinity_men": { "zh-TW": "任務獎勵 (心智)", "zh-CN": "任务奖励 (心智)", "ja": "任務：精神力ボーナス", "en": "Mission: Mental Affinity" },
+    "affinity_tac": { "zh-TW": "任務獎勵 (戰術)", "zh-CN": "任务奖励 (战术)", "ja": "任務：戦術演習ボーナス", "en": "Mission: Tactical Affinity" },
     "affinity_all": { "zh-TW": "任務獎勵 (全屬性)", "zh-CN": "任务奖励 (全属性)", "ja": "任務：全能力ボーナス", "en": "Mission: All Stats Affinity" },
 
     // Level
@@ -1282,9 +1282,9 @@ const CHEMISTRY_CONDITIONS = {
 };
 
 const CHEMISTRY_EFFECTS = {
-    "stats_phy": { "zh-TW": "身體能力提升", "zh-CN": "身体能力提升", "ja": "身体能力アップ", "en": "Increase Physical" },
-    "stats_men": { "zh-TW": "精神力提升", "zh-CN": "精神力提升", "ja": "精神力アップ", "en": "Increase Mental" },
-    "stats_tac": { "zh-TW": "戰術演習提升", "zh-CN": "战术演习提升", "ja": "戦術演習アップ", "en": "Increase Tactical" },
+    "stats_phy": { "zh-TW": "體能提升", "zh-CN": "体能提升", "ja": "体能アップ", "en": "Increase Physical" },
+    "stats_men": { "zh-TW": "心智提升", "zh-CN": "精神力提升", "ja": "精神力アップ", "en": "Increase Mental" },
+    "stats_tac": { "zh-TW": "戰術提升", "zh-CN": "战术提升", "ja": "戦術アップ", "en": "Increase Tactical" },
     "stats_all": { "zh-TW": "全屬性提升", "zh-CN": "全属性提升", "ja": "全能力アップ", "en": "Increase All Stats" },
     "rate_trigger": { "zh-TW": "吉兆觸發率提升", "zh-CN": "吉兆触发率提升", "ja": "ジンクス発動率アップ", "en": "Increase Chemistry Trigger Rate" },
     "exp_boost": { "zh-TW": "經驗值增加", "zh-CN": "经验值增加", "ja": "経験値アップ", "en": "Increase EXP" },

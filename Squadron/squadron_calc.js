@@ -25,6 +25,85 @@ function getCombinations(arr, k) {
 }
 
 /**
+ * 計算小隊的綜合屬性 (包含吉兆加成)
+ * @param {Array} squad - 隊員陣列
+ * @param {Array} affinities - 任務相性
+ * @returns {Object} { bp, bm, bt, rawP, rawM, rawT, chemStats, activeChems }
+ */
+function calculateSquadStats(squad, affinities) {
+    let bp = 0, bm = 0, bt = 0;
+    
+    // 1. Base Stats
+    squad.forEach(m => { 
+        bp += m.stats[0]; 
+        bm += m.stats[1]; 
+        bt += m.stats[2]; 
+    });
+    const rawP = bp, rawM = bm, rawT = bt;
+
+        // 2. Chemistry
+    const activeChems = [];
+    squad.forEach(member => {
+        if (!member.chem || !member.chem.cond || !member.chem.effect) return;
+
+        let isActive = false;
+        let checksOut = "";
+        let multiplier = 1;
+
+        if (affinities.includes(member.race) || affinities.includes(member.cls)) {
+            isActive = true;
+            checksOut = "Affinity (x2)";
+            multiplier = 2;
+        } else {
+            const cond = member.chem.cond;
+            const others = squad.filter(m => m.id !== member.id);
+            
+            if (cond.startsWith('race_')) {
+                if (cond === 'race_same') {
+                    isActive = others.some(m => m.race === member.race);
+                } else {
+                    const targetRaceMap = {
+                        'race_hyur': 'Hyur', 'race_elezen': 'Elezen', 'race_lalafell': 'Lalafell',
+                        'race_miqote': "Miqo'te", 'race_roegadyn': 'Roegadyn', 'race_aura': 'Au Ra'
+                    };
+                    const target = targetRaceMap[cond];
+                    if (target) isActive = others.some(m => m.race === target);
+                }
+            } else if (cond.startsWith('class_')) {
+                if (cond === 'class_same') {
+                    isActive = others.some(m => m.cls === member.cls);
+                } else {
+                    isActive = others.some(m => m.role === cond);
+                }
+            } else if (cond.startsWith('gender_')) {
+                    isActive = others.some(m => m.gender === cond);
+            } else if (cond === 'level_50_plus') {
+                isActive = squad.every(m => m.lvl >= 50);
+            }
+        }
+
+        if (isActive) {
+            const val = member.chem.val * multiplier;
+            const type = member.chem.effect;
+            const bonus = (stat) => Math.floor(stat * val / 100);
+
+            if (type === 'stats_phy' || type === 'stats_all') bp += bonus(member.stats[0]);
+            if (type === 'stats_men' || type === 'stats_all') bm += bonus(member.stats[1]);
+            if (type === 'stats_tac' || type === 'stats_all') bt += bonus(member.stats[2]);
+            
+            activeChems.push({ memberId: member.id, type, val, reason: checksOut });
+        }
+    });
+
+    return { 
+        bp, bm, bt, 
+        rawP, rawM, rawT, 
+        chemStats: { p: bp - rawP, m: bm - rawM, t: bt - rawT },
+        activeChems 
+    };
+}
+
+/**
  * 等級提升模擬函式
  * 模擬隊員升級後是否能達成任務需求
  */
@@ -37,7 +116,7 @@ function simulateLevelUp() {
         return;
     }
 
-    const { members, currTrain, reqP, reqM, reqT } = window._lastCalcParams;
+    const { members, currTrain, reqP, reqM, reqT, affinities } = window._lastCalcParams;
     const rank = parseInt(document.getElementById('rank-selector').value);
     const cap = RANK_CAPS[rank];
 
@@ -59,15 +138,16 @@ function simulateLevelUp() {
 
             for (const squad of squads) {
                 // 模擬升級後的屬性
-                let bp = 0, bm = 0, bt = 0;
                 const boostedSquad = squad.map(m => {
                     const newLvl = Math.min(60, m.lvl + levelBoost);
                     const newStats = getStats(m.cls, newLvl);
-                    bp += newStats[0];
-                    bm += newStats[1];
-                    bt += newStats[2];
+                    // Pass existing chemistry data
                     return { ...m, lvl: newLvl, stats: newStats, originalLvl: m.lvl };
                 });
+
+                // Calculate Stats including Chemistry with new Levels
+                // Note: affinities need to be passed from calculate()
+                const { bp, bm, bt } = calculateSquadStats(boostedSquad, affinities || []);
 
                 // 測試是否可達標
                 const solution = solveTraining(bp, bm, bt, currTrain, reqP, reqM, reqT);
@@ -89,6 +169,8 @@ function simulateLevelUp() {
                 break; // 找到足夠的建議就停止
             }
         }
+    // ... (rest of simulateLevelUp display logic preserved)
+
 
         // 顯示結果
         if (suggestions.length === 0) {
@@ -367,6 +449,19 @@ function calculate() {
 
     // Gather Members (Only Active Ones)
     const members = [];
+    const affinities = [
+        document.getElementById('mission-affinity-1').value,
+        document.getElementById('mission-affinity-2').value,
+        document.getElementById('mission-affinity-3').value
+    ].filter(v => v);
+
+    // Class to Role Mapping
+    const getRole = (cls) => {
+        if (['GLA', 'MRD'].includes(cls)) return 'class_tank';
+        if (['CNJ'].includes(cls)) return 'class_healer'; // ACN in Squadron is usually DPS
+        return 'class_dps';
+    };
+
     for (let i = 0; i < 8; i++) {
         const isActive = document.getElementById(`active-${i}`).checked;
         if (!isActive) continue;
@@ -376,9 +471,19 @@ function calculate() {
         const cls = document.getElementById(`class-${i}`).value;
         const lvl = parseInt(document.getElementById(`lvl-${i}`).value);
         const rData = RECRUIT_DATA.find(r => r.name === name);
+        
+        // Chemistry Data
+        const chemCond = document.getElementById(`chem-cond-${i}`).value;
+        const chemEffect = document.getElementById(`chem-effect-${i}`).value;
+        const chemVal = parseInt(document.getElementById(`chem-val-${i}`).value) || 0;
+
         members.push({
             id: i, name, cls, lvl, stats: getStats(cls, lvl),
-            img: rData ? rData.img : null
+            img: rData ? rData.img : null,
+            race: rData ? rData.race : null,
+            gender: rData ? (`gender_${rData.gender.toLowerCase()}`) : null, // gender_male / gender_female
+            role: getRole(cls),
+            chem: { cond: chemCond, effect: chemEffect, val: chemVal }
         });
     }
 
@@ -391,8 +496,8 @@ function calculate() {
     let solutions = [];
 
     squads.forEach(squad => {
-        let bp = 0, bm = 0, bt = 0;
-        squad.forEach(m => { bp += m.stats[0]; bm += m.stats[1]; bt += m.stats[2]; });
+        // Use Helper
+        const { bp, bm, bt, chemStats, activeChems } = calculateSquadStats(squad, affinities);
 
         const solution = solveTraining(bp, bm, bt, currTrain, reqP, reqM, reqT);
 
@@ -402,7 +507,9 @@ function calculate() {
                 steps: solution.path.length,
                 path: solution.path,
                 finalStats: solution.finalStats,
-                isPartial: false
+                isPartial: false,
+                chemStats,
+                activeChems // Pass to result
             });
         } else if (solution.partialSuccess) {
             solutions.push({
@@ -412,7 +519,9 @@ function calculate() {
                 finalStats: solution.finalStats,
                 isPartial: true,
                 matchedStats: solution.matchedStats,
-                missing: solution.missing
+                missing: solution.missing,
+                chemStats,
+                activeChems // Pass to result
             });
         }
     });
@@ -447,7 +556,7 @@ function calculate() {
                 </div>
             </div>
         `;
-        window._lastCalcParams = { members, currTrain, reqP, reqM, reqT };
+        window._lastCalcParams = { members, currTrain, reqP, reqM, reqT, affinities }; // Save affinities too
         return;
     }
 
@@ -500,16 +609,27 @@ function calculate() {
             </h3>
             
             <div class="flex justify-center gap-2 mb-4 flex-wrap">
-                ${sol.squad.map(m => `
-                    <div class="text-center p-2 bg-slate-50 dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 flex flex-col items-center w-24">
+                ${sol.squad.map(m => {
+                    const chem = sol.activeChems ? sol.activeChems.find(c => c.memberId === m.id) : null;
+                    let statLabel = "Stats";
+                    if (chem) {
+                        if (chem.type === 'stats_phy') statLabel = "Phy";
+                        if (chem.type === 'stats_men') statLabel = "Men";
+                        if (chem.type === 'stats_tac') statLabel = "Tac";
+                        if (chem.type === 'stats_all') statLabel = "All";
+                    }
+                    return `
+                    <div class="text-center p-2 bg-slate-50 dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 flex flex-col items-center w-24 relative">
                         <div class="w-20 h-28 bg-slate-200 dark:bg-slate-600 rounded-md mb-1 overflow-hidden flex justify-center items-center shadow-sm border border-slate-300 dark:border-slate-500 relative">
                             ${m.img ? `<img src="${m.img}" class="w-full h-full object-cover">` : `<span class="font-bold text-slate-500">${m.name.substring(0, 2)}</span>`}
                             <img src="${CLASS_ICONS[m.cls]}" class="absolute bottom-1 right-1 w-6 h-6 drop-shadow-md z-10" title="${(t.class_names && t.class_names[m.cls]) || m.cls}">
+                            ${chem ? `<div class="absolute top-0 right-0 bg-emerald-100 text-emerald-800 text-[12px] font-bold px-1.5 py-0.5 rounded-bl-lg shadow-sm border-b border-l border-emerald-200 leading-none backdrop-blur-sm bg-opacity-90" title="Active: ${chem.reason || 'Condition Met'}">🍀</div>` : ''}
                         </div>
                         <div class="font-bold text-xs text-slate-800 dark:text-slate-200 truncate w-full">${(t.recruit_names && t.recruit_names[m.name]) || m.name}</div>
                         <div class="text-[10px] text-slate-500 dark:text-slate-400 truncate w-full">${(t.class_names && t.class_names[m.cls]) || m.cls} Lv${m.lvl}</div>
+                        ${chem ? `<div class="text-[9px] text-emerald-600 dark:text-emerald-400 font-bold mt-0.5 leading-none px-1 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 rounded">+${chem.val}% ${statLabel}</div>` : ''}
                     </div>
-                `).join('')}
+                `}).join('')}
             </div>
 
             <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg mb-4 text-sm border-l-4 border-slate-300 dark:border-slate-600">
@@ -518,9 +638,17 @@ function calculate() {
                     <div>
                         <div class="text-slate-500 dark:text-slate-400 mb-1">${t.msg_base}</div>
                         <div class="font-mono font-bold text-slate-700 dark:text-slate-300">
-                            <span class="stat-phy">P:${sol.squad.reduce((a, b) => a + b.stats[0], 0)}</span>
-                            <span class="stat-men">M:${sol.squad.reduce((a, b) => a + b.stats[1], 0)}</span>
-                            <span class="stat-tac">T:${sol.squad.reduce((a, b) => a + b.stats[2], 0)}</span>
+                            <div class="grid grid-cols-3 gap-x-1">
+                                <span class="stat-phy">P:${sol.squad.reduce((a, b) => a + b.stats[0], 0)}</span>
+                                <span class="stat-men">M:${sol.squad.reduce((a, b) => a + b.stats[1], 0)}</span>
+                                <span class="stat-tac">T:${sol.squad.reduce((a, b) => a + b.stats[2], 0)}</span>
+                                
+                                ${sol.chemStats && (sol.chemStats.p > 0 || sol.chemStats.m > 0 || sol.chemStats.t > 0) ? `
+                                    <span class="text-[10px] text-emerald-600 dark:text-emerald-400 self-start">${sol.chemStats.p > 0 ? `+${sol.chemStats.p}` : ''}</span>
+                                    <span class="text-[10px] text-emerald-600 dark:text-emerald-400 self-start">${sol.chemStats.m > 0 ? `+${sol.chemStats.m}` : ''}</span>
+                                    <span class="text-[10px] text-emerald-600 dark:text-emerald-400 self-start">${sol.chemStats.t > 0 ? `+${sol.chemStats.t}` : ''}</span>
+                                ` : ''}
+                            </div>
                         </div>
                     </div>
                     <div>
@@ -534,9 +662,9 @@ function calculate() {
                     <div class="col-span-2 md:col-span-2">
                          <div class="text-slate-500 dark:text-slate-400 mb-1">${t.msg_final_total}</div>
                          <div class="font-mono text-lg font-bold text-green-600 dark:text-green-400">
-                              <span class="stat-phy mr-2">P:${sol.finalStats.p + sol.squad.reduce((a, b) => a + b.stats[0], 0)}</span>
-                              <span class="stat-men mr-2">M:${sol.finalStats.m + sol.squad.reduce((a, b) => a + b.stats[1], 0)}</span>
-                              <span class="stat-tac">T:${sol.finalStats.t + sol.squad.reduce((a, b) => a + b.stats[2], 0)}</span>
+                              <span class="stat-phy mr-2">P:${sol.finalStats.p + sol.squad.reduce((a, b) => a + b.stats[0], 0) + (sol.chemStats ? sol.chemStats.p : 0)}</span>
+                              <span class="stat-men mr-2">M:${sol.finalStats.m + sol.squad.reduce((a, b) => a + b.stats[1], 0) + (sol.chemStats ? sol.chemStats.m : 0)}</span>
+                              <span class="stat-tac">T:${sol.finalStats.t + sol.squad.reduce((a, b) => a + b.stats[2], 0) + (sol.chemStats ? sol.chemStats.t : 0)}</span>
                          </div>
                     </div>
                 </div>

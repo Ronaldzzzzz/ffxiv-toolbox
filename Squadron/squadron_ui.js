@@ -1399,11 +1399,11 @@ function updateChemistryDisplay(index) {
 
     let text = "";
     if (currentLang === 'zh-TW' || currentLang === 'zh-CN') {
-         text = `當 ${cCond} 時，${cEffect} ${cVal}`;
+         text = `當 ${cCond}，自身 ${cEffect} ${cVal}`;
     } else if (currentLang === 'ja') {
-         text = `${cCond}の時、${cEffect} ${cVal}`;
+         text = `${cCond}、自分 ${cEffect} ${cVal}`;
     } else {
-         text = `When ${cCond}, ${cEffect} ${cVal}`;
+         text = `When ${cCond}, self ${cEffect} ${cVal}`;
     }
 
     displayEl.innerHTML = `<div class="text-xs leading-tight">${text}</div>`;
