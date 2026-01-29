@@ -120,6 +120,19 @@ function simulateLevelUp() {
     const rank = parseInt(document.getElementById('rank-selector').value);
     const cap = RANK_CAPS[rank];
 
+    // Check if all members are already max level (60)
+    if (members.every(m => m.lvl >= 60)) {
+         resultContent.innerHTML = `
+            <div class="bg-slate-100 dark:bg-slate-800 p-8 rounded-lg text-center border-2 border-slate-200 dark:border-slate-700">
+                <div class="text-4xl mb-3">🎓</div>
+                <h3 class="text-slate-700 dark:text-slate-200 font-bold mb-2 text-lg">${t.msg_all_max_level || '全員已達等級上限'}</h3>
+                <p class="text-slate-500 dark:text-slate-400 mb-6">${t.msg_all_max_level_desc || '目前選取的隊員皆已達到 Lv 60，無法進行升級模擬。建議嘗試「轉職模擬」尋找突破口。'}</p>
+                <button onclick="calculate()" class="px-6 py-2 bg-slate-500 hover:bg-slate-600 text-white rounded-lg shadow transition-colors font-bold">${t.btn_back || '返回計算'}</button>
+            </div>
+         `;
+         return;
+    }
+
     resultContent.innerHTML = `
         <div class="text-center py-8">
             <div class="animate-spin inline-block w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full mb-4"></div>
@@ -132,10 +145,28 @@ function simulateLevelUp() {
         const suggestions = [];
         const squads = getCombinations(members, 4);
 
+
+        // Calculate Baseline (Best Partial of current squads)
+        const currentSquads = getCombinations(members, 4);
+        let baselineTotalMissing = Infinity;
+        
+        for (const squad of currentSquads) {
+             const { bp, bm, bt } = calculateSquadStats(squad, affinities || []);
+             const solution = solveTraining(bp, bm, bt, currTrain, reqP, reqM, reqT);
+             if (solution.success) {
+                 baselineTotalMissing = 0; 
+                 break; 
+             } else if (solution.partialSuccess) {
+                 const missing = solution.missing.missingP + solution.missing.missingM + solution.missing.missingT;
+                 if (missing < baselineTotalMissing) baselineTotalMissing = missing;
+             }
+        }
+        
+        console.log("Level Sim - Baseline Missing:", baselineTotalMissing);
+
         // 嘗試不同的等級增量 (1-20)
         for (let levelBoost = 1; levelBoost <= 20; levelBoost++) {
-            let foundSolution = false;
-
+            
             for (const squad of squads) {
                 // 模擬升級後的屬性
                 const boostedSquad = squad.map(m => {
@@ -146,94 +177,573 @@ function simulateLevelUp() {
                 });
 
                 // Calculate Stats including Chemistry with new Levels
-                // Note: affinities need to be passed from calculate()
-                const { bp, bm, bt } = calculateSquadStats(boostedSquad, affinities || []);
+                const { bp, bm, bt, chemStats, activeChems } = calculateSquadStats(boostedSquad, affinities || []);
 
                 // 測試是否可達標
                 const solution = solveTraining(bp, bm, bt, currTrain, reqP, reqM, reqT);
 
+                let isValid = false;
+                let isChemCritical = false;
+
                 if (solution.success) {
+                    isValid = true;
+                    if (chemStats.p > 0 && (solution.finalStats.p - chemStats.p < reqP)) isChemCritical = true;
+                    if (chemStats.m > 0 && (solution.finalStats.m - chemStats.m < reqM)) isChemCritical = true;
+                    if (chemStats.t > 0 && (solution.finalStats.t - chemStats.t < reqT)) isChemCritical = true;
+                } else if (solution.partialSuccess) {
+                    const totalMissing = solution.missing.missingP + solution.missing.missingM + solution.missing.missingT;
+                    // Strictly better than baseline
+                    if (totalMissing < baselineTotalMissing) {
+                        isValid = true;
+                    }
+                }
+
+                if (isValid) {
                     suggestions.push({
                         squad: boostedSquad,
                         levelBoost,
                         steps: solution.path.length,
                         path: solution.path,
-                        finalStats: solution.finalStats
+                        finalStats: solution.finalStats,
+                        chemStats,
+                        activeChems,
+                        isChemCritical,
+                        isPartial: !solution.success,
+                        missing: solution.missing,
+                        totalMissing: !solution.success ? (solution.missing.missingP + solution.missing.missingM + solution.missing.missingT) : 0
                     });
-                    foundSolution = true;
-                    break; // 找到一個就跳出
                 }
             }
 
-            if (foundSolution && suggestions.length >= 3) {
-                break; // 找到足夠的建議就停止
-            }
+            // Optimization: If we found 100% solutions, we can probably stop looking excessively, or just collect enough unique ones.
+            // But since we want "Minimum Level Boost", iterating 1..20 is correct.
+            // If we found a 100% solution at this level, we might want to stop searching higher levels unless we want to find "more options"
+            // Let's filter later.
+            if (suggestions.filter(s => !s.isPartial).length >= 5) break; 
         }
-    // ... (rest of simulateLevelUp display logic preserved)
+        
+        // Sort Suggestions
+        // 1. Success first
+        // 2. Lower Level Boost (cheaper)
+        // 3. Lower Missing (if partial)
+        suggestions.sort((a, b) => {
+             if (a.isPartial !== b.isPartial) return a.isPartial ? 1 : -1;
+             
+             if (a.levelBoost !== b.levelBoost) return a.levelBoost - b.levelBoost;
+             
+             if (a.isPartial) {
+                  return a.totalMissing - b.totalMissing;
+             }
+             return a.steps - b.steps;
+        });
+        
+        // Filter unique and take top
+        const uniqueSuggestions = [];
+        const seen = new Set();
+        for(let s of suggestions) {
+             // Simple unique key based on member IDs and level boost
+             const key = s.squad.map(m=>m.id).sort().join(',') + '-' + s.levelBoost;
+             if(!seen.has(key)) {
+                 uniqueSuggestions.push(s);
+                 seen.add(key);
+             }
+             if(uniqueSuggestions.length >= 5) break;
+        }
+        const topSuggestions = uniqueSuggestions;
 
-
-        // 顯示結果
-        if (suggestions.length === 0) {
+        if (topSuggestions.length === 0) {
             resultContent.innerHTML = `
-                <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-6 text-center">
-                    <h3 class="text-red-700 dark:text-red-400 font-bold mb-2">${t.msg_no_level_solution || '即使升至 60 級仍無法達成'}</h3>
-                    <p class="text-red-600 dark:text-red-300">${t.msg_no_level_solution_desc || '建議：提升分隊等級 (Rank) 以增加訓練上限，或調整任務需求。'}</p>
+                 <div class="bg-slate-100 dark:bg-slate-700/50 p-6 rounded-lg text-center">
+                    <p class="text-slate-600 dark:text-slate-400 mb-2">${t.msg_no_level_solution || '即使模擬升級，也未發現可行的方案。'}</p>
+                    <button onclick="calculate()" class="text-blue-500 hover:text-blue-600 underline text-sm">${t.btn_back || '返回計算'}</button>
                 </div>
             `;
         } else {
-            let html = `
-                <div class="mb-4 text-center font-bold text-amber-600 dark:text-amber-400 text-lg">
-                    ${(t.msg_level_suggestions || '💡 找到 {count} 個升級建議').replace('{count}', suggestions.length)}
-                </div>
-            `;
+             // 顯示結果
+             let html = `<div class="mb-4 text-center font-bold text-amber-600 dark:text-amber-400 text-lg">💡 ${t.msg_suggestions || '升級建議'}</div>`;
+             
+             topSuggestions.forEach((sol, idx) => {
+                 // Stats Analysis preparation
+                 const borderColor = sol.isPartial
+                     ? 'border-orange-300 dark:border-orange-600'
+                     : 'border-green-200 dark:border-green-700';
+                 
+                 const partialBadge = sol.isPartial
+                    ? `<span class="ml-2 px-2 py-0.5 text-xs rounded bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-700">⚠️ 2/3 達標</span>`
+                    : '';
 
-            suggestions.forEach((sug, idx) => {
-                const levelInfo = sug.squad.map(m =>
-                    m.originalLvl < m.lvl ? `<span class="text-amber-600 dark:text-amber-400">${(t.recruit_names && t.recruit_names[m.name]) || m.name}: Lv${m.originalLvl}→${m.lvl}</span>` : ''
-                ).filter(x => x).join(', ');
+                 let missingHint = '';
+                 if (sol.isPartial && sol.missing) {
+                    const missingParts = [];
+                    if (sol.missing.missingP > 0) missingParts.push(`P -${sol.missing.missingP}`);
+                    if (sol.missing.missingM > 0) missingParts.push(`M -${sol.missing.missingM}`);
+                    if (sol.missing.missingT > 0) missingParts.push(`T -${sol.missing.missingT}`);
+                    missingHint = `<div class="text-xs text-red-500 font-bold mt-1">缺少: ${missingParts.join(', ')}</div>`;
+                 }
 
-                html += `
-                    <div class="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg border-2 border-amber-300 dark:border-amber-600 mb-4 shadow-sm">
-                        <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300 mb-2 flex justify-between items-center flex-wrap">
-                            <span>#${idx + 1} - ${(t.msg_level_boost || '升 {boost} 級後可達成').replace('{boost}', sug.levelBoost)}</span>
-                            <span class="text-xs font-normal px-2 py-1 bg-amber-100 dark:bg-amber-800 rounded text-amber-700 dark:text-amber-300">
-                                ${t.msg_success_found.replace('{steps}', sug.steps)}
-                            </span>
-                        </h3>
-                        <div class="text-sm text-amber-800 dark:text-amber-200 mb-3">${levelInfo || '所有隊員已達 60 級'}</div>
-                        <div class="flex justify-center gap-2 flex-wrap">
-                            ${sug.squad.map(m => `
-                                <div class="text-center p-2 bg-white dark:bg-slate-800 rounded-lg border border-amber-200 dark:border-amber-700 flex flex-col items-center w-20">
-                                    <div class="w-16 h-20 bg-slate-200 dark:bg-slate-600 rounded-md mb-1 overflow-hidden flex justify-center items-center shadow-sm relative">
-                                        ${m.img ? `<img src="${m.img}" class="w-full h-full object-cover">` : `<span class="font-bold text-slate-500">${m.name.substring(0, 2)}</span>`}
-                                    </div>
-                                    <div class="font-bold text-[10px] text-slate-800 dark:text-slate-200 truncate w-full">${(t.recruit_names && t.recruit_names[m.name]) || m.name}</div>
-                                    <div class="text-[10px] ${m.originalLvl < m.lvl ? 'text-amber-600 dark:text-amber-400 font-bold' : 'text-slate-500'}">
-                                        Lv${m.originalLvl}${m.originalLvl < m.lvl ? '→' + m.lvl : ''}
+                 const finalP = sol.finalStats.p;
+                 const finalM = sol.finalStats.m;
+                 const finalT = sol.finalStats.t;
+                 const rank = parseInt(document.getElementById('rank-selector').value);
+
+                 html += `
+                 <div class="bg-white dark:bg-slate-800 p-4 rounded-lg border-2 ${borderColor} mb-6 shadow-sm relative overflow-hidden">
+                     ${sol.isChemCritical ? `<div class="absolute top-0 right-0 bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-1 rounded-bl shadow z-10 border-b border-l border-rose-200">⚠️ Chemistry Critical</div>` : ''}
+                     
+                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3 border-b border-slate-100 dark:border-slate-700 pb-2">
+                        <div class="flex items-center gap-2">
+                             <div class="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-full text-xs font-bold">
+                                 方案 #${idx + 1}
+                             </div>
+                             <div class="text-sm text-slate-700 dark:text-slate-300">
+                                  全員等級 <span class="font-bold text-amber-600 dark:text-amber-400">+${sol.levelBoost}</span>
+                                  ${partialBadge}
+                             </div>
+                        </div>
+                        <div class="text-right flex flex-col gap-0.5">
+                            <div class="text-[10px] text-slate-400 dark:text-slate-500 font-mono">
+                                需求: P:${reqP} M:${reqM} T:${reqT}
+                            </div>
+                            <div class="text-xs font-mono font-bold text-slate-600 dark:text-slate-400">
+                                總和: <span class="text-blue-600 dark:text-blue-400">P:${finalP} M:${finalM} T:${finalT}</span>
+                            </div>
+                            ${missingHint}
+                        </div>
+                     </div>
+ 
+                     <div class="flex justify-center gap-2 mb-4 flex-wrap">
+                        ${sol.squad.map(m => {
+                            const chem = sol.activeChems ? sol.activeChems.find(c => c.memberId === m.id) : null;
+                            let statLabel = "Stats";
+                            if (chem) {
+                                if (chem.type === 'stats_phy') statLabel = "Phy";
+                                if (chem.type === 'stats_men') statLabel = "Men";
+                                if (chem.type === 'stats_tac') statLabel = "Tac";
+                                if (chem.type === 'stats_all') statLabel = "All";
+                            }
+                            return `
+                            <div class="text-center p-2 bg-slate-50 dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 flex flex-col items-center w-24 relative">
+                                <div class="w-20 h-28 bg-slate-200 dark:bg-slate-600 rounded-md mb-1 overflow-hidden flex justify-center items-center shadow-sm relative">
+                                    ${m.img ? `<img src="${m.img}" class="w-full h-full object-cover">` : `<span class="font-bold text-slate-500">${m.name.substring(0, 2)}</span>`}
+                                    <img src="${CLASS_ICONS[m.cls]}" class="absolute bottom-1 right-1 w-6 h-6 drop-shadow-md z-10">
+                                    ${chem ? `<div class="absolute top-0 right-0 bg-emerald-100 text-emerald-800 text-[12px] font-bold px-1.5 py-0.5 rounded-bl-lg shadow-sm border-b border-l border-emerald-200 leading-none backdrop-blur-sm bg-opacity-90 z-20" title="Active: ${chem.reason || 'Condition Met'}">🍀</div>` : ''}
+                                </div>
+                                <div class="font-bold text-xs text-slate-800 dark:text-slate-200 truncate w-full">${(t.recruit_names && t.recruit_names[m.name]) || m.name}</div>
+                                <div class="text-[10px] text-slate-500 dark:text-slate-400 truncate w-full">${(t.class_names && (t.class_names[m.cls] || CLASS_NAMES_ZH[m.cls])) || m.cls} <span class="text-amber-600 dark:text-amber-400 font-bold">Lv${m.lvl}</span></div>
+                                ${chem ? `<div class="text-[9px] text-emerald-600 dark:text-emerald-400 font-bold mt-0.5 leading-none px-1 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 rounded">+${chem.val}% ${statLabel}</div>` : ''}
+                            </div>
+                        `}).join('')}
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg mb-4 text-sm border-l-4 ${sol.isPartial ? 'border-orange-300 dark:border-orange-600' : 'border-green-300 dark:border-green-600'}">
+                        <h4 class="font-bold mb-2 text-slate-700 dark:text-slate-300 text-xs uppercase tracking-wider">${t.msg_analysis.replace('{rank}', rank)}</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                            <div>
+                                <div class="text-slate-500 dark:text-slate-400 mb-1">${t.msg_base}</div>
+                                <div class="font-mono font-bold text-slate-700 dark:text-slate-300">
+                                    <div class="grid grid-cols-3 gap-x-1">
+                                        <span class="stat-phy">P:${sol.squad.reduce((a, b) => a + b.stats[0], 0)}</span>
+                                        <span class="stat-men">M:${sol.squad.reduce((a, b) => a + b.stats[1], 0)}</span>
+                                        <span class="stat-tac">T:${sol.squad.reduce((a, b) => a + b.stats[2], 0)}</span>
+                                        ${sol.chemStats && (sol.chemStats.p > 0 || sol.chemStats.m > 0 || sol.chemStats.t > 0) ? `
+                                            <span class="text-[10px] text-emerald-600 dark:text-emerald-400 self-start">${sol.chemStats.p > 0 ? `+${sol.chemStats.p}` : ''}</span>
+                                            <span class="text-[10px] text-emerald-600 dark:text-emerald-400 self-start">${sol.chemStats.m > 0 ? `+${sol.chemStats.m}` : ''}</span>
+                                            <span class="text-[10px] text-emerald-600 dark:text-emerald-400 self-start">${sol.chemStats.t > 0 ? `+${sol.chemStats.t}` : ''}</span>
+                                        ` : ''}
                                     </div>
                                 </div>
-                            `).join('')}
+                            </div>
+                            <div>
+                                <div class="text-slate-500 dark:text-slate-400 mb-1">${t.msg_target_train}</div>
+                                <div class="font-mono font-bold text-blue-600 dark:text-blue-400">
+                                    <span class="stat-phy">P:${sol.finalStats.p}</span>
+                                    <span class="stat-men">M:${sol.finalStats.m}</span>
+                                    <span class="stat-tac">T:${sol.finalStats.t}</span>
+                                </div>
+                            </div>
+                            <div class="col-span-2 md:col-span-2">
+                                 <div class="text-slate-500 dark:text-slate-400 mb-1">${t.msg_final_total}</div>
+                                 <div class="font-mono text-lg font-bold text-green-600 dark:text-green-400">
+                                      <span class="stat-phy mr-2">P:${sol.finalStats.p + sol.squad.reduce((a, b) => a + b.stats[0], 0) + (sol.chemStats ? sol.chemStats.p : 0)}</span>
+                                      <span class="stat-men mr-2">M:${sol.finalStats.m + sol.squad.reduce((a, b) => a + b.stats[1], 0) + (sol.chemStats ? sol.chemStats.m : 0)}</span>
+                                      <span class="stat-tac">T:${sol.finalStats.t + sol.squad.reduce((a, b) => a + b.stats[2], 0) + (sol.chemStats ? sol.chemStats.t : 0)}</span>
+                                 </div>
+                            </div>
                         </div>
                     </div>
-                `;
-            });
 
-            resultContent.innerHTML = html;
-        }
-    }, 100);
+                    <div class="bg-blue-50 dark:bg-blue-900/20 border-2 border-dashed border-blue-300 dark:border-blue-700 rounded-xl p-4 shadow-sm">
+                        <h4 class="font-bold mb-3 text-blue-800 dark:text-blue-100 text-lg flex items-center gap-2">
+                            <span class="text-xl">📋</span> ${t.msg_suggested_order}
+                        </h4>
+                        <div class="flex flex-col sm:flex-row flex-wrap gap-3">
+                            ${sol.path.length > 0 ?
+                        sol.path.map((opId, idx) => {
+                            return `
+                                <div class="bg-white dark:bg-slate-800 px-4 py-3 rounded-lg shadow-sm border border-blue-100 dark:border-blue-800 flex items-center gap-3">
+                                    <span class="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 font-bold text-sm shrink-0">${idx + 1}</span>
+                                    <div class="flex items-center gap-3">
+                                        ${(t.training_ops && t.training_ops[opId]) ?
+                                    ((TRAINING_OPS.find(o => o.id === opId)?.img) ? `<img src="${TRAINING_OPS.find(o => o.id === opId).img}" class="w-8 h-8 object-contain">` : '') +
+                                    `<span class="font-bold text-slate-800 dark:text-slate-100 text-base">${t.training_ops[opId]}</span>`
+                                    : `<span class="font-bold text-slate-800 dark:text-slate-100 text-base">${opId}</span>`}
+                                    </div>
+                                </div>`;
+                        }).join('') :
+                        `<div class="text-green-600 dark:text-green-400 font-bold text-lg flex items-center gap-2">✅ ${t.msg_no_training_needed}</div>`
+                    }
+                        </div>
+                    </div>
+
+                 </div>`;
+             });
+             
+             html += `<div class="text-center mt-6"><button onclick="calculate()" class="px-6 py-2 bg-slate-500 hover:bg-slate-600 text-white rounded-lg shadow transition-colors">${t.btn_back || '返回'}</button></div>`;
+             
+             resultContent.innerHTML = html;
+         }
+
+
+
+    }, 50);
 }
 
 /**
- * 訓練路徑求解函式 (BFS)
- * @param {number} baseP - 基礎 P 屬性
- * @param {number} baseM - 基礎 M 屬性
- * @param {number} baseT - 基礎 T 屬性
- * @param {number[]} currTrain - 目前訓練數值 [P, M, T]
- * @param {number} reqP - 需求 P
- * @param {number} reqM - 需求 M
- * @param {number} reqT - 需求 T
- * @returns {Object} 解結果
+ * 轉職模擬函式
+ * 模擬將隊員轉職為其他職業後，是否能讓隊伍達標
  */
+function simulateJobChange() {
+    const t = TRANSLATIONS[currentLang] || TRANSLATIONS['zh-TW'];
+    const resultContent = document.getElementById('result-content');
+
+    if (!window._lastCalcParams) {
+        resultContent.innerHTML = `<p class="text-red-600">${t.msg_error || '請先執行計算'}</p>`;
+        return;
+    }
+
+    const { members, currTrain, reqP, reqM, reqT, affinities } = window._lastCalcParams;
+    const rank = parseInt(document.getElementById('rank-selector').value);
+
+    resultContent.innerHTML = `
+        <div class="text-center py-8">
+            <div class="animate-spin inline-block w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full mb-4"></div>
+            <p class="text-indigo-600 dark:text-indigo-400">${t.msg_simulating_job || '正在模擬轉職方案...'}</p>
+        </div>
+    `;
+
+    setTimeout(() => {
+        const start = performance.now();
+        const suggestions = [];
+
+        // --- OLD LOGIC COMMENTED OUT START ---
+        /*
+        const squads = getCombinations(members, 4);
+        
+        // Define all classes to try
+        const ALL_CLASSES = ['GLA', 'MRD', 'CNJ', 'ACN', 'PGL', 'LNC', 'ROG', 'ARC', 'THM'];
+        const getRole = (cls) => {
+            if (['GLA', 'MRD'].includes(cls)) return 'class_tank';
+            if (['CNJ'].includes(cls)) return 'class_healer';
+            return 'class_dps';
+        };
+
+        // Try to change ONE member in each squad
+        let checkedCount = 0;
+        let bestPartial = null; // Track best partial solution
+
+        // Calculate Baseline (Best Partial of current squads)
+        let baselineTotalMissing = Infinity;
+        for (const squad of squads) {
+             const { bp, bm, bt } = calculateSquadStats(squad, affinities || []);
+             const solution = solveTraining(bp, bm, bt, currTrain, reqP, reqM, reqT);
+             if (!solution.success && solution.partialSuccess) {
+                 const missing = solution.missing.missingP + solution.missing.missingM + solution.missing.missingT;
+                 if (missing < baselineTotalMissing) baselineTotalMissing = missing;
+             }
+        }
+        
+        for (const squad of squads) {
+            for (let i = 0; i < squad.length; i++) {
+                // ... (old brute force on squad basis)
+            }
+            checkedCount++;
+        }
+        */
+        // --- OLD LOGIC COMMENTED OUT END ---
+        
+        // --- NEW BRUTE FORCE LOGIC START ---
+        // 1. Calculate Baseline from current roster (before any change)
+        const currentSquads = getCombinations(members, 4);
+        let baselineTotalMissing = Infinity;
+        
+        for (const squad of currentSquads) {
+             const { bp, bm, bt } = calculateSquadStats(squad, affinities || []);
+             const solution = solveTraining(bp, bm, bt, currTrain, reqP, reqM, reqT);
+             if (solution.success) {
+                 baselineTotalMissing = 0; // Already have a perfect solution
+                 break; 
+             } else if (solution.partialSuccess) {
+                 const missing = solution.missing.missingP + solution.missing.missingM + solution.missing.missingT;
+                 if (missing < baselineTotalMissing) baselineTotalMissing = missing;
+             }
+        }
+        
+        console.log("Baseline Missing:", baselineTotalMissing);
+
+        // Constants
+        const ALL_CLASSES = ['GLA', 'MRD', 'CNJ', 'ACN', 'PGL', 'LNC', 'ROG', 'ARC', 'THM'];
+        const getRole = (cls) => {
+            if (['GLA', 'MRD'].includes(cls)) return 'class_tank';
+            if (['CNJ'].includes(cls)) return 'class_healer';
+            return 'class_dps';
+        };
+
+        // 2. Iterate every member in the full list
+        for (let i = 0; i < members.length; i++) {
+            const targetMember = members[i];
+            const otherMembers = members.filter(m => m.id !== targetMember.id);
+            
+            // 3. Try every class change
+            for (const newClass of ALL_CLASSES) {
+                if (newClass === targetMember.cls) continue; // Skip same class
+
+                // Create modified member object
+                const newStats = getStats(newClass, targetMember.lvl);
+                const modifiedMember = {
+                    ...targetMember,
+                    cls: newClass,
+                    stats: newStats,
+                    role: getRole(newClass),
+                    isChanged: true,
+                    oldCls: targetMember.cls
+                };
+
+                // 4. Form squads: Modified Member + Any 3 from otherMembers
+                const otherCombinations = getCombinations(otherMembers, 3);
+                
+                for (const others of otherCombinations) {
+                    const testSquad = [modifiedMember, ...others];
+                    
+                    // Calc stats
+                    const { bp, bm, bt, chemStats, activeChems } = calculateSquadStats(testSquad, affinities || []);
+                    const solution = solveTraining(bp, bm, bt, currTrain, reqP, reqM, reqT);
+                    
+                    // Filter Logic
+                    let isValid = false;
+                    let isChemCritical = false;
+
+                    if (solution.success) {
+                        isValid = true;
+                        // Check Chem Critical
+                        if (chemStats.p > 0 && (solution.finalStats.p - chemStats.p < reqP)) isChemCritical = true;
+                        if (chemStats.m > 0 && (solution.finalStats.m - chemStats.m < reqM)) isChemCritical = true;
+                        if (chemStats.t > 0 && (solution.finalStats.t - chemStats.t < reqT)) isChemCritical = true;
+                    } else if (solution.partialSuccess) {
+                        const totalMissing = solution.missing.missingP + solution.missing.missingM + solution.missing.missingT;
+                        // Strictly better than baseline
+                        if (totalMissing < baselineTotalMissing) {
+                            isValid = true;
+                        }
+                    }
+
+                    if (isValid) {
+                         const currentResult = {
+                            squad: testSquad,
+                            steps: solution.path.length,
+                            path: solution.path,
+                            changedMemberId: targetMember.id,
+                            newClass: newClass,
+                            oldClass: targetMember.cls,
+                            finalStats: solution.finalStats,
+                            chemStats,
+                            activeChems,
+                            isChemCritical: isChemCritical,
+                            isPartial: !solution.success,
+                            missing: solution.missing,
+                            totalMissing: !solution.success ? (solution.missing.missingP + solution.missing.missingM + solution.missing.missingT) : 0
+                        };
+                        suggestions.push(currentResult);
+                    }
+                }
+            }
+        }
+
+        // 5. Sort & Unique & Top 2
+        // Sort: Success First -> Min Missing -> Min Steps
+        suggestions.sort((a, b) => {
+            if (a.isPartial !== b.isPartial) return a.isPartial ? 1 : -1; // Success first
+            if (a.isPartial) {
+                if (a.totalMissing !== b.totalMissing) return a.totalMissing - b.totalMissing;
+            }
+            return a.steps - b.steps;
+        });
+
+        // Filter duplicates (same squad composition and same job change typically identical, but just keep simple unique or top)
+        // Since we want top 2 distinct solutions, we can just slice.
+        // Optional: Filter to ensure we don't show identical squad suggestion twice if multiple paths exist (but solveTraining returns one path)
+        
+        const topSuggestions = suggestions.slice(0, 2);
+        
+        // --- NEW LOGIC END ---
+
+        if (topSuggestions.length === 0) {
+            resultContent.innerHTML = `
+                 <div class="bg-slate-100 dark:bg-slate-700/50 p-6 rounded-lg text-center">
+                    <p class="text-slate-600 dark:text-slate-400 mb-2">${t.msg_no_suggestions || '模擬結束，未發現可行的單人轉職方案。'}</p>
+                    <button onclick="calculate()" class="text-blue-500 hover:text-blue-600 underline text-sm">${t.btn_back || '返回計算'}</button>
+                </div>
+            `;
+        } else {
+             let html = `<div class="mb-4 text-center font-bold text-indigo-600 dark:text-indigo-400 text-lg">💡 ${t.msg_job_suggestions || '轉職建議 (Job Change Suggestions)'}</div>`;
+             
+             topSuggestions.forEach((sol, idx) => {
+                 const changedMember = sol.squad.find(m => m.isChanged);
+                 const mName = (t.recruit_names && t.recruit_names[changedMember.name]) || changedMember.name;
+                 const oldCName = (t.class_names && t.class_names[sol.oldClass]) || sol.oldClass;
+                 const newCName = (t.class_names && t.class_names[sol.newClass]) || sol.newClass;
+                 
+                 // Stats Analysis preparation
+                 const borderColor = sol.isPartial
+                     ? 'border-orange-300 dark:border-orange-600'
+                     : 'border-green-200 dark:border-green-700';
+                 
+                 const partialBadge = sol.isPartial
+                    ? `<span class="ml-2 px-2 py-0.5 text-xs rounded bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-700">⚠️ 2/3 達標</span>`
+                    : '';
+
+                 let missingHint = '';
+                 if (sol.isPartial && sol.missing) {
+                    const missingParts = [];
+                    if (sol.missing.missingP > 0) missingParts.push(`P -${sol.missing.missingP}`);
+                    if (sol.missing.missingM > 0) missingParts.push(`M -${sol.missing.missingM}`);
+                    if (sol.missing.missingT > 0) missingParts.push(`T -${sol.missing.missingT}`);
+                    missingHint = `<div class="text-xs text-red-500 font-bold mt-1">缺少: ${missingParts.join(', ')}</div>`;
+                 }
+
+                 const finalP = sol.finalStats.p;
+                 const finalM = sol.finalStats.m;
+                 const finalT = sol.finalStats.t;
+                 const rank = parseInt(document.getElementById('rank-selector').value);
+
+                 html += `
+                 <div class="bg-white dark:bg-slate-800 p-4 rounded-lg border-2 border-indigo-200 dark:border-indigo-700 mb-6 shadow-sm relative overflow-hidden">
+                     ${sol.isChemCritical ? `<div class="absolute top-0 right-0 bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-1 rounded-bl shadow z-10 border-b border-l border-rose-200">⚠️ Chemistry Critical</div>` : ''}
+                     
+                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3 border-b border-slate-100 dark:border-slate-700 pb-2">
+                        <div class="flex items-center gap-2">
+                             <div class="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-3 py-1 rounded-full text-xs font-bold">
+                                 方案 #${idx + 1}
+                             </div>
+                             <div class="text-sm text-slate-700 dark:text-slate-300">
+                                  將 <span class="font-bold">${mName}</span> 從 ${oldCName} 轉職為 <span class="font-bold text-indigo-600 dark:text-indigo-400">${newCName}</span>
+                                  ${partialBadge}
+                             </div>
+                        </div>
+                        <div class="text-right flex flex-col gap-0.5">
+                            <div class="text-[10px] text-slate-400 dark:text-slate-500 font-mono">
+                                需求: P:${reqP} M:${reqM} T:${reqT}
+                            </div>
+                            ${missingHint}
+                        </div>
+                     </div>
+ 
+                     <div class="flex justify-center gap-2 mb-4 flex-wrap">
+                        ${sol.squad.map(m => {
+                            const chem = sol.activeChems ? sol.activeChems.find(c => c.memberId === m.id) : null;
+                            let statLabel = "Stats";
+                            if (chem) {
+                                if (chem.type === 'stats_phy') statLabel = "Phy";
+                                if (chem.type === 'stats_men') statLabel = "Men";
+                                if (chem.type === 'stats_tac') statLabel = "Tac";
+                                if (chem.type === 'stats_all') statLabel = "All";
+                            }
+                            return `
+                            <div class="text-center p-2 ${m.isChanged ? 'bg-indigo-50 dark:bg-indigo-900/20 border-indigo-200' : 'bg-slate-50 dark:bg-slate-700 border-slate-200'} rounded-lg border flex flex-col items-center w-24 relative">
+                                <div class="w-20 h-28 bg-slate-200 dark:bg-slate-600 rounded-md mb-1 overflow-hidden flex justify-center items-center shadow-sm relative">
+                                    ${m.img ? `<img src="${m.img}" class="w-full h-full object-cover">` : `<span class="font-bold text-slate-500">${m.name.substring(0, 2)}</span>`}
+                                    <img src="${CLASS_ICONS[m.cls]}" class="absolute bottom-1 right-1 w-6 h-6 drop-shadow-md z-10">
+                                    ${m.isChanged ? `<div class="absolute inset-0 bg-indigo-500/20 flex items-center justify-center font-bold text-white text-lg drop-shadow shadow-black z-20">NEW</div>` : ''}
+                                    ${chem ? `<div class="absolute top-0 right-0 bg-emerald-100 text-emerald-800 text-[12px] font-bold px-1.5 py-0.5 rounded-bl-lg shadow-sm border-b border-l border-emerald-200 leading-none backdrop-blur-sm bg-opacity-90 z-20" title="Active: ${chem.reason || 'Condition Met'}">🍀</div>` : ''}
+                                </div>
+                                <div class="font-bold text-xs text-slate-800 dark:text-slate-200 truncate w-full">${(t.recruit_names && t.recruit_names[m.name]) || m.name}</div>
+                                <div class="text-[10px] text-slate-500 dark:text-slate-400 truncate w-full">${(t.class_names && (t.class_names[m.cls] || CLASS_NAMES_ZH[m.cls])) || m.cls} Lv${m.lvl}</div>
+                                ${chem ? `<div class="text-[9px] text-emerald-600 dark:text-emerald-400 font-bold mt-0.5 leading-none px-1 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 rounded">+${chem.val}% ${statLabel}</div>` : ''}
+                            </div>
+                        `}).join('')}
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg mb-4 text-sm border-l-4 border-indigo-300 dark:border-indigo-600">
+                        <h4 class="font-bold mb-2 text-slate-700 dark:text-slate-300 text-xs uppercase tracking-wider">${t.msg_analysis.replace('{rank}', rank)}</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                            <div>
+                                <div class="text-slate-500 dark:text-slate-400 mb-1">${t.msg_base}</div>
+                                <div class="font-mono font-bold text-slate-700 dark:text-slate-300">
+                                    <div class="grid grid-cols-3 gap-x-1">
+                                        <span class="stat-phy">P:${sol.squad.reduce((a, b) => a + b.stats[0], 0)}</span>
+                                        <span class="stat-men">M:${sol.squad.reduce((a, b) => a + b.stats[1], 0)}</span>
+                                        <span class="stat-tac">T:${sol.squad.reduce((a, b) => a + b.stats[2], 0)}</span>
+                                        
+                                        ${sol.chemStats && (sol.chemStats.p > 0 || sol.chemStats.m > 0 || sol.chemStats.t > 0) ? `
+                                            <span class="text-[10px] text-emerald-600 dark:text-emerald-400 self-start">${sol.chemStats.p > 0 ? `+${sol.chemStats.p}` : ''}</span>
+                                            <span class="text-[10px] text-emerald-600 dark:text-emerald-400 self-start">${sol.chemStats.m > 0 ? `+${sol.chemStats.m}` : ''}</span>
+                                            <span class="text-[10px] text-emerald-600 dark:text-emerald-400 self-start">${sol.chemStats.t > 0 ? `+${sol.chemStats.t}` : ''}</span>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-slate-500 dark:text-slate-400 mb-1">${t.msg_target_train}</div>
+                                <div class="font-mono font-bold text-blue-600 dark:text-blue-400">
+                                    <span class="stat-phy">P:${sol.finalStats.p}</span>
+                                    <span class="stat-men">M:${sol.finalStats.m}</span>
+                                    <span class="stat-tac">T:${sol.finalStats.t}</span>
+                                </div>
+                            </div>
+                            <div class="col-span-2 md:col-span-2">
+                                 <div class="text-slate-500 dark:text-slate-400 mb-1">${t.msg_final_total}</div>
+                                 <div class="font-mono text-lg font-bold text-green-600 dark:text-green-400">
+                                      <span class="stat-phy mr-2">P:${sol.finalStats.p + sol.squad.reduce((a, b) => a + b.stats[0], 0) + (sol.chemStats ? sol.chemStats.p : 0)}</span>
+                                      <span class="stat-men mr-2">M:${sol.finalStats.m + sol.squad.reduce((a, b) => a + b.stats[1], 0) + (sol.chemStats ? sol.chemStats.m : 0)}</span>
+                                      <span class="stat-tac">T:${sol.finalStats.t + sol.squad.reduce((a, b) => a + b.stats[2], 0) + (sol.chemStats ? sol.chemStats.t : 0)}</span>
+                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 dark:bg-blue-900/20 border-2 border-dashed border-blue-300 dark:border-blue-700 rounded-xl p-4 shadow-sm">
+                        <h4 class="font-bold mb-3 text-blue-800 dark:text-blue-100 text-lg flex items-center gap-2">
+                            <span class="text-xl">📋</span> ${t.msg_suggested_order}
+                        </h4>
+                        <div class="flex flex-col sm:flex-row flex-wrap gap-3">
+                            ${sol.path.length > 0 ?
+                        sol.path.map((opId, idx) => {
+                            return `
+                                <div class="bg-white dark:bg-slate-800 px-4 py-3 rounded-lg shadow-sm border border-blue-100 dark:border-blue-800 flex items-center gap-3">
+                                    <span class="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 font-bold text-sm shrink-0">${idx + 1}</span>
+                                    <div class="flex items-center gap-3">
+                                        ${(t.training_ops && t.training_ops[opId]) ?
+                                    ((TRAINING_OPS.find(o => o.id === opId)?.img) ? `<img src="${TRAINING_OPS.find(o => o.id === opId).img}" class="w-8 h-8 object-contain">` : '') +
+                                    `<span class="font-bold text-slate-800 dark:text-slate-100 text-base">${t.training_ops[opId]}</span>`
+                                    : `<span class="font-bold text-slate-800 dark:text-slate-100 text-base">${opId}</span>`}
+                                    </div>
+                                </div>`;
+                        }).join('') :
+                        `<div class="text-green-600 dark:text-green-400 font-bold text-lg flex items-center gap-2">✅ ${t.msg_no_training_needed}</div>`
+                    }
+                        </div>
+                    </div>
+
+                 </div>`;
+             });
+             
+             html += `<div class="text-center mt-6"><button onclick="calculate()" class="px-6 py-2 bg-slate-500 hover:bg-slate-600 text-white rounded-lg shadow transition-colors">${t.btn_back || '返回'}</button></div>`;
+             
+             resultContent.innerHTML = html;
+        }
+
+    }, 50);
+}
+
 /**
  * 計算單次訓練後的屬性結果 (包含溢出與倒扣邏輯)
  * @param {number} p - 目前 P
@@ -545,14 +1055,21 @@ function calculate() {
             <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-6 text-center">
                 <h3 class="text-red-700 dark:text-red-400 font-bold mb-2 text-lg">${t.msg_impossible}</h3>
                 <p class="text-red-600 dark:text-red-300 mb-4">${t.msg_impossible_desc}</p>
-                <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-4 mt-4">
-                    <p class="text-amber-700 dark:text-amber-300 mb-3">
-                        ${t.msg_level_hint || '💡 提升隊員等級可增加基礎屬性，可能達成任務需求。'}
-                    </p>
-                    <button onclick="simulateLevelUp()" 
-                        class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg shadow transition-colors">
-                        ${t.btn_simulate_level || '🔍 模擬升級後的可行性'}
-                    </button>
+                <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-4 mt-4 flex flex-col md:flex-row gap-4 justify-center items-center">
+                    <div>
+                         <p class="text-amber-700 dark:text-amber-300 font-bold mb-1">${t.msg_sim_options || '🔍 模擬選項 (Simulation Options)'}</p>
+                         <p class="text-xs text-amber-600 dark:text-amber-400 opacity-80">${t.msg_sim_desc || '嘗試尋找可行的替代方案'}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="simulateLevelUp()" 
+                            class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg shadow transition-colors text-sm">
+                            ${t.btn_simulate_level || '能夠透過升級解決嗎？'}
+                        </button>
+                        <button onclick="simulateJobChange()" 
+                            class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-lg shadow transition-colors text-sm">
+                            ${t.btn_simulate_job || '能夠透過轉職解決嗎？'}
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
@@ -602,11 +1119,20 @@ function calculate() {
 
         html += `
         <div class="bg-white dark:bg-slate-800 p-4 rounded-lg border-2 ${borderColor} mb-6 shadow-sm">
-            <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300 mb-2 border-b border-slate-100 dark:border-slate-700 pb-2 flex justify-between items-center flex-wrap">
-                <span>#${idx + 1} - ${t.msg_success_found.replace('{steps}', sol.steps)}${partialBadge}</span>
-                <span class="text-xs font-normal text-slate-500">${t.msg_req.replace('{reqP}', reqP).replace('{reqM}', reqM).replace('{reqT}', reqT)}</span>
-                ${missingHint}
-            </h3>
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3 border-b border-slate-100 dark:border-slate-700 pb-2">
+                <div class="flex items-center gap-2">
+                        <div class="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-3 py-1 rounded-full text-xs font-bold">
+                            方案 #${idx + 1}
+                        </div>
+                        <div class="text-sm text-slate-700 dark:text-slate-300 font-bold">
+                            ${t.msg_success_found.replace('{steps}', sol.steps)}${partialBadge}
+                        </div>
+                </div>
+                <div class="text-right flex flex-col gap-0.5">
+                     <div class="text-xs font-normal text-slate-500">${t.msg_req.replace('{reqP}', reqP).replace('{reqM}', reqM).replace('{reqT}', reqT)}</div>
+                     ${missingHint}
+                </div>
+            </div>
             
             <div class="flex justify-center gap-2 mb-4 flex-wrap">
                 ${sol.squad.map(m => {
@@ -699,14 +1225,21 @@ function calculate() {
     // 如果是顯示部分達標結果，在結果最後加入等級模擬按鈕
     if (isShowingPartial) {
         html += `
-            <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-4 mt-4 text-center">
-                <p class="text-amber-700 dark:text-amber-300 mb-3">
-                    ${t.msg_level_hint || '💡 提升隊員等級可增加基礎屬性，可能達成任務需求。'}
-                </p>
-                <button onclick="simulateLevelUp()" 
-                    class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg shadow transition-colors">
-                    ${t.btn_simulate_level || '🔍 模擬升級後的可行性'}
-                </button>
+            <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-4 mt-4 flex flex-col md:flex-row gap-4 justify-center items-center">
+                <div>
+                     <p class="text-amber-700 dark:text-amber-300 font-bold mb-1">${t.msg_sim_options || '🔍 模擬選項 (Simulation Options)'}</p>
+                     <p class="text-xs text-amber-600 dark:text-amber-400 opacity-80">${t.msg_sim_desc || '嘗試尋找可行的替代方案'}</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="simulateLevelUp()" 
+                        class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg shadow transition-colors text-sm">
+                        ${t.btn_simulate_level || '能夠透過升級解決嗎？'}
+                    </button>
+                    <button onclick="simulateJobChange()" 
+                        class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-lg shadow transition-colors text-sm">
+                        ${t.btn_simulate_job || '能夠透過轉職解決嗎？'}
+                    </button>
+                </div>
             </div>
         `;
         // 儲存計算參數供模擬使用
