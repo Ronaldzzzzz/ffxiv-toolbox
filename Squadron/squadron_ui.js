@@ -402,7 +402,7 @@ function initRoster() {
         ).join('');
     }
 
-    const valOpts = [10, 15, 20, 25, 30, 40, 50, 60, 100].map(v => 
+    const valOpts = [3, 5, 10, 15, 20].map(v => 
         `<option value="${v}">${v}%</option>`
     ).join('');
 
@@ -958,6 +958,9 @@ window.selectRecruit = function (name) {
     const headerDiv = nameInput.parentElement.previousElementSibling;
     headerDiv.innerHTML = `<img src="${rData.img}" class="w-full h-full object-cover">`;
 
+    // 隊員更新時清除模擬結果（保留訂選方案）
+    clearSimulationResults();
+
     closeRecruitModal();
 }
 
@@ -1008,6 +1011,9 @@ window.selectClass = function (index, clsKey, e) {
 
     // Update stats
     updateStatsDisplay(index);
+    
+    // 隊員職業更新時清除模擬結果（保留訂選方案）
+    clearSimulationResults();
 }
 
 // Global click to close dropdowns
@@ -1392,6 +1398,9 @@ function updateChemistryDisplay(index) {
     const condText = getT(cond, 'cond');
     const effectText = getT(effect, 'effect');
     
+    // 判斷是否為全員效果
+    const isTeamEffect = effect && effect.startsWith('stats_all_');
+    
     // Formatting: User requested narrative style with colors
     const cCond = `<span class="text-indigo-600 dark:text-indigo-400">${condText}</span>`;
     const cEffect = `<span class="text-emerald-600 dark:text-emerald-400">${effectText}</span>`;
@@ -1399,11 +1408,17 @@ function updateChemistryDisplay(index) {
 
     let text = "";
     if (currentLang === 'zh-TW' || currentLang === 'zh-CN') {
-         text = `當 ${cCond}，自身 ${cEffect} ${cVal}`;
+         text = isTeamEffect 
+             ? `當 ${cCond}，${cEffect} ${cVal}`
+             : `當 ${cCond}，自身 ${cEffect} ${cVal}`;
     } else if (currentLang === 'ja') {
-         text = `${cCond}、自分 ${cEffect} ${cVal}`;
+         text = isTeamEffect
+             ? `${cCond}、${cEffect} ${cVal}`
+             : `${cCond}、自分 ${cEffect} ${cVal}`;
     } else {
-         text = `When ${cCond}, self ${cEffect} ${cVal}`;
+         text = isTeamEffect
+             ? `When ${cCond}, ${cEffect} ${cVal}`
+             : `When ${cCond}, self ${cEffect} ${cVal}`;
     }
 
     displayEl.innerHTML = `<div class="text-xs leading-tight">${text}</div>`;
@@ -1418,36 +1433,116 @@ function populateChemistryOptions() {
     const condSelect = document.getElementById('chem-modal-cond');
     const effectSelect = document.getElementById('chem-modal-effect');
     const valSelect = document.getElementById('chem-modal-val');
+    const t = TRANSLATIONS[currentLang] || TRANSLATIONS['zh-TW'];
 
     // Reset
-    condSelect.innerHTML = '<option value="">(無)</option>';
-    effectSelect.innerHTML = '<option value="">(無)</option>';
+    const noneLabel = { "zh-TW": "(無)", "zh-CN": "(无)", "ja": "(なし)", "en": "(None)" };
+    condSelect.innerHTML = `<option value="">${noneLabel[currentLang] || noneLabel['zh-TW']}</option>`;
+    effectSelect.innerHTML = `<option value="">${noneLabel[currentLang] || noneLabel['zh-TW']}</option>`;
     valSelect.innerHTML = '';
 
-    if (typeof CHEMISTRY_CONDITIONS !== 'undefined') {
-        Object.entries(CHEMISTRY_CONDITIONS).forEach(([k, v]) => {
-            const opt = document.createElement('option');
-            opt.value = k;
-            opt.innerText = v[currentLang] || v['zh-TW'];
-            condSelect.appendChild(opt);
+    // Group labels for conditions
+    const groupLabels = {
+        mission: { "zh-TW": "任務相關", "zh-CN": "任务相关", "ja": "任務関連", "en": "Mission" },
+        race: { "zh-TW": "種族同行", "zh-CN": "种族同行", "ja": "種族同行", "en": "With Race" },
+        class: { "zh-TW": "職業同行", "zh-CN": "职业同行", "ja": "クラス同行", "en": "With Class" },
+        combo: { "zh-TW": "組合條件", "zh-CN": "组合条件", "ja": "組合条件", "en": "Combination" },
+    };
+
+    // Group labels for effects
+    const effectGroupLabels = {
+        personal: { "zh-TW": "個人提升", "zh-CN": "个人提升", "ja": "個人アップ", "en": "Personal Boost" },
+        all: { "zh-TW": "全員提升", "zh-CN": "全员提升", "ja": "全員アップ", "en": "Team Boost" },
+    };
+
+    // Build condition options with groups
+    if (typeof CHEMISTRY_CONDITION_OPTIONS !== 'undefined') {
+        const groups = {};
+        CHEMISTRY_CONDITION_OPTIONS.forEach(opt => {
+            if (opt.value === "none") return;
+            const g = opt.group || "other";
+            if (!groups[g]) groups[g] = [];
+            groups[g].push(opt.value);
+        });
+
+        Object.entries(groups).forEach(([grp, keys]) => {
+            const optGroup = document.createElement('optgroup');
+            optGroup.label = (groupLabels[grp] && groupLabels[grp][currentLang]) || grp;
+            keys.forEach(k => {
+                const optEl = document.createElement('option');
+                optEl.value = k;
+                optEl.innerText = (CHEMISTRY_CONDITIONS[k] && (CHEMISTRY_CONDITIONS[k][currentLang] || CHEMISTRY_CONDITIONS[k]['zh-TW'])) || k;
+                optGroup.appendChild(optEl);
+            });
+            condSelect.appendChild(optGroup);
         });
     }
 
-    if (typeof CHEMISTRY_EFFECTS !== 'undefined') {
-        Object.entries(CHEMISTRY_EFFECTS).forEach(([k, v]) => {
-            const opt = document.createElement('option');
-            opt.value = k;
-            opt.innerText = v[currentLang] || v['zh-TW'];
-            effectSelect.appendChild(opt);
+    // Build effect options with groups
+    if (typeof CHEMISTRY_EFFECT_OPTIONS !== 'undefined') {
+        const eGroups = {};
+        CHEMISTRY_EFFECT_OPTIONS.forEach(opt => {
+            if (opt.value === "none") return;
+            const g = opt.group || "other";
+            if (!eGroups[g]) eGroups[g] = [];
+            eGroups[g].push(opt.value);
+        });
+
+        Object.entries(eGroups).forEach(([grp, keys]) => {
+            const optGroup = document.createElement('optgroup');
+            optGroup.label = (effectGroupLabels[grp] && effectGroupLabels[grp][currentLang]) || grp;
+            keys.forEach(k => {
+                const optEl = document.createElement('option');
+                optEl.value = k;
+                optEl.innerText = (CHEMISTRY_EFFECTS[k] && (CHEMISTRY_EFFECTS[k][currentLang] || CHEMISTRY_EFFECTS[k]['zh-TW'])) || k;
+                optGroup.appendChild(optEl);
+            });
+            effectSelect.appendChild(optGroup);
         });
     }
 
-    [10, 15, 20, 25, 30, 40, 50, 60, 100].forEach(v => {
+    // Initial value options (personal boost values)
+    updateChemistryValueOptions();
+    
+    // Listen for effect change to update value options
+    effectSelect.addEventListener('change', updateChemistryValueOptions);
+}
+
+// 根據選擇的效果類型更新數值選項
+function updateChemistryValueOptions() {
+    const effectSelect = document.getElementById('chem-modal-effect');
+    const valSelect = document.getElementById('chem-modal-val');
+    const currentVal = valSelect.value;
+    
+    valSelect.innerHTML = '';
+    
+    const effect = effectSelect.value;
+    let values = [];
+    
+    if (typeof CHEMISTRY_VALUES !== 'undefined') {
+        // 全員效果使用較小的數值
+        if (effect && effect.startsWith('stats_all_')) {
+            values = CHEMISTRY_VALUES.all || [3, 5];
+        } else {
+            // 個人效果使用較大的數值
+            values = CHEMISTRY_VALUES.personal || [10, 15, 20];
+        }
+    } else {
+        // Fallback if CHEMISTRY_VALUES not defined
+        values = [10, 15, 20];
+    }
+    
+    values.forEach(v => {
         const opt = document.createElement('option');
         opt.value = v;
         opt.innerText = `${v}%`;
         valSelect.appendChild(opt);
     });
+    
+    // Try to restore previous value if valid
+    if (values.includes(parseInt(currentVal))) {
+        valSelect.value = currentVal;
+    }
 }
 
 // --- Mission Affinity Logic ---
@@ -1657,6 +1752,9 @@ window.updateMissionReqs = function() {
         }
     }
     if (typeof updateSection1Summary === 'function') updateSection1Summary();
+    
+    // 任務更新時清除模擬結果（但保留訂選方案）
+    clearSimulationResults();
 }
 
 // Initialization Hooks
@@ -1765,3 +1863,334 @@ window.updateSection1Summary = function() {
     document.getElementById('sum-req-m').innerText = reqM;
     document.getElementById('sum-req-t').innerText = reqT;
 }
+
+// ==========================================
+// Clear Results Logic
+// ==========================================
+
+/**
+ * 清除模擬結果（任務更新時呼叫）
+ * 保留訂選方案
+ */
+window.clearSimulationResults = function() {
+    // 清除一般計算結果
+    const resultContent = document.getElementById('result-content');
+    if (resultContent) {
+        resultContent.innerHTML = '<div class="text-center text-slate-400 dark:text-slate-500 py-8">請點擊「計算」開始</div>';
+    }
+    
+    // 清除等級模擬結果
+    const levelContent = document.getElementById('result-content-level');
+    if (levelContent) {
+        levelContent.innerHTML = '<div class="text-center text-slate-400 dark:text-slate-500 py-8">請先執行「計算最佳配置」</div>';
+    }
+    
+    // 清除轉職模擬結果
+    const jobContent = document.getElementById('result-content-job');
+    if (jobContent) {
+        jobContent.innerHTML = '<div class="text-center text-slate-400 dark:text-slate-500 py-8">請先執行「計算最佳配置」</div>';
+    }
+    
+    // 清除計算參數和 flag
+    window._lastCalcParams = null;
+    window._dataIsFresh = false;
+    window._hasFullSolution = false;
+    window._generalSolutions = null;
+    window._levelSolutions = null;
+    window._jobSolutions = null;
+    
+    // 隱藏結果區塊
+    const resultSection = document.getElementById('result-section');
+    if (resultSection) {
+        resultSection.classList.add('hidden');
+    }
+}
+
+/**
+ * 清除全部結果（隊員更新時呼叫）
+ * 包括訂選方案
+ */
+window.clearAllResults = function() {
+    // 先清除模擬結果
+    clearSimulationResults();
+    
+    // 清除訂選方案
+    pinnedSolutions = [];
+    pinIdCounter = 0;
+    updatePinCount();
+    renderPinnedSolutions();
+}
+
+// ==========================================
+// Result Tab Switching Logic
+// ==========================================
+
+// Flag 防止遞迴呼叫
+let _isSimulating = false;
+
+window.switchResultTab = function(tabId) {
+    // Update Tab Buttons
+    const tabs = document.querySelectorAll('.result-tab');
+    tabs.forEach(tab => {
+        if (tab.dataset.tab === tabId) {
+            // Active State
+            tab.classList.remove('text-slate-500', 'dark:text-slate-400', 'border-transparent');
+            tab.classList.add('text-blue-600', 'dark:text-blue-400', 'border-blue-600', 'dark:border-blue-400', 'bg-blue-50', 'dark:bg-blue-900/20');
+        } else {
+            // Inactive State
+            tab.classList.remove('text-blue-600', 'dark:text-blue-400', 'border-blue-600', 'dark:border-blue-400', 'bg-blue-50', 'dark:bg-blue-900/20');
+            tab.classList.add('text-slate-500', 'dark:text-slate-400', 'border-transparent');
+        }
+    });
+
+    // Update Panels
+    const panels = document.querySelectorAll('.result-panel');
+    panels.forEach(panel => {
+        if (panel.id === `panel-${tabId}`) {
+            panel.classList.remove('hidden');
+        } else {
+            panel.classList.add('hidden');
+        }
+    });
+    
+    // 切換到 level 或 job tab 時，若資料為最新則自動執行模擬
+    // 使用 _isSimulating flag 防止遞迴呼叫
+    if (!_isSimulating && window._dataIsFresh && window._lastCalcParams) {
+        if (tabId === 'level') {
+            _isSimulating = true;
+            simulateLevelUp();
+            _isSimulating = false;
+        } else if (tabId === 'job') {
+            _isSimulating = true;
+            simulateJobChange();
+            _isSimulating = false;
+        }
+    }
+}
+
+// ==========================================
+// Pinning Logic
+// ==========================================
+
+let pinnedSolutions = [];
+let pinIdCounter = 0;
+
+/**
+ * Adds a solution to pinned list
+ * @param {Object} solutionData - The solution object to pin (should contain all needed info for rendering)
+ * @param {string} sourceType - 'general', 'level', or 'job'
+ */
+window.pinSolution = function(solutionData, sourceType) {
+    pinIdCounter++;
+    const pinEntry = {
+        id: pinIdCounter,
+        source: sourceType,
+        data: solutionData,
+        pinnedAt: new Date().toISOString()
+    };
+    pinnedSolutions.push(pinEntry);
+    updatePinCount();
+    renderPinnedSolutions();
+    showToast('方案已訂選', 'success');
+}
+
+/**
+ * Removes a solution from pinned list
+ * @param {number} pinId 
+ */
+window.unpinSolution = function(pinId) {
+    pinnedSolutions = pinnedSolutions.filter(p => p.id !== pinId);
+    updatePinCount();
+    renderPinnedSolutions();
+    showToast('已取消訂選', 'info');
+}
+
+/**
+ * Updates the pin count badge
+ */
+function updatePinCount() {
+    const countEl = document.getElementById('pin-count');
+    if (countEl) {
+        countEl.textContent = pinnedSolutions.length;
+    }
+}
+
+/**
+ * Renders all pinned solutions in the Pinned tab
+ */
+function renderPinnedSolutions() {
+    const container = document.getElementById('result-content-pinned');
+    if (!container) return;
+
+    if (pinnedSolutions.length === 0) {
+        container.innerHTML = `<div class="text-center text-slate-400 dark:text-slate-500 py-8">尚未訂選任何方案</div>`;
+        return;
+    }
+
+    const t = TRANSLATIONS[currentLang] || TRANSLATIONS['zh-TW'];
+    const rank = parseInt(document.getElementById('rank-selector').value) || 3;
+    let html = `<div class="mb-4 text-center font-bold text-amber-600 dark:text-amber-400 text-lg">📌 已訂選 ${pinnedSolutions.length} 個方案</div>`;
+
+    pinnedSolutions.forEach((pin, idx) => {
+        const sol = pin.data;
+        const sourceLabel = {
+            'general': '📊 一般計算',
+            'level': '📈 等級模擬',
+            'job': '🔄 轉職模擬'
+        }[pin.source] || pin.source;
+
+        // 根據來源類型設定邊框顏色，與原始計算結果一致
+        let borderColor;
+        if (pin.source === 'level') {
+            // 等級模擬：琥珀色/橘色
+            borderColor = sol.isPartial
+                ? 'border-orange-300 dark:border-orange-600'
+                : 'border-green-200 dark:border-green-700';
+        } else if (pin.source === 'job') {
+            // 轉職模擬：靛藍色
+            borderColor = 'border-indigo-200 dark:border-indigo-700';
+        } else {
+            // 一般計算：綠色/橘色
+            borderColor = sol.isPartial
+                ? 'border-orange-300 dark:border-orange-600'
+                : 'border-green-200 dark:border-green-700';
+        }
+
+        const partialBadge = sol.isPartial
+            ? `<span class="ml-2 px-2 py-0.5 text-xs rounded bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-700">⚠️ 2/3 達標</span>`
+            : '';
+
+        let missingHint = '';
+        if (sol.isPartial && sol.missing) {
+            const missingParts = [];
+            if (sol.missing.missingP > 0) missingParts.push(`P -${sol.missing.missingP}`);
+            if (sol.missing.missingM > 0) missingParts.push(`M -${sol.missing.missingM}`);
+            if (sol.missing.missingT > 0) missingParts.push(`T -${sol.missing.missingT}`);
+            missingHint = `<div class="text-xs text-red-500 font-bold mt-1">缺少: ${missingParts.join(', ')}</div>`;
+        }
+
+        // Calculate base stats from squad
+        const baseP = sol.squad.reduce((a, b) => a + b.stats[0], 0);
+        const baseM = sol.squad.reduce((a, b) => a + b.stats[1], 0);
+        const baseT = sol.squad.reduce((a, b) => a + b.stats[2], 0);
+        const chemP = sol.chemStats ? sol.chemStats.p : 0;
+        const chemM = sol.chemStats ? sol.chemStats.m : 0;
+        const chemT = sol.chemStats ? sol.chemStats.t : 0;
+        const trainP = sol.finalStats ? sol.finalStats.p : 0;
+        const trainM = sol.finalStats ? sol.finalStats.m : 0;
+        const trainT = sol.finalStats ? sol.finalStats.t : 0;
+
+        html += `
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-lg border-2 ${borderColor} mb-6 shadow-sm relative">
+            <button onclick="unpinSolution(${pin.id})" class="absolute top-2 right-2 text-slate-400 hover:text-red-500 transition-colors" title="取消訂選">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3 border-b border-slate-100 dark:border-slate-700 pb-2">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <div class="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-3 py-1 rounded-full text-xs font-bold">
+                        訂選 #${idx + 1}
+                    </div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 px-2 py-0.5 bg-slate-100 dark:bg-slate-700 rounded">
+                        ${sourceLabel}
+                    </div>
+                    ${sol.levelBoost ? `<div class="text-xs text-amber-600 dark:text-amber-400 font-bold">+${sol.levelBoost} 等級</div>` : ''}
+                    ${sol.newClass ? `<div class="text-xs text-indigo-600 dark:text-indigo-400 font-bold">轉職: ${(t.class_names && t.class_names[sol.newClass]) || sol.newClass}</div>` : ''}
+                    ${partialBadge}
+                </div>
+                <div class="text-right flex flex-col gap-0.5 mr-6">
+                    <div class="text-xs text-slate-400">${sol.steps !== undefined ? `${sol.steps} 步訓練` : ''}</div>
+                    ${missingHint}
+                </div>
+            </div>
+
+            <div class="flex justify-center gap-2 mb-4 flex-wrap">
+                ${sol.squad.map(m => {
+                    const chem = sol.activeChems ? sol.activeChems.find(c => c.memberId === m.id) : null;
+                    let statLabel = "Stats";
+                    if (chem) {
+                        if (chem.type === 'stats_phy') statLabel = "Phy";
+                        if (chem.type === 'stats_men') statLabel = "Men";
+                        if (chem.type === 'stats_tac') statLabel = "Tac";
+                        if (chem.type === 'stats_all') statLabel = "All";
+                    }
+                    return `
+                    <div class="text-center p-2 bg-slate-50 dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 flex flex-col items-center w-24 relative">
+                        <div class="w-20 h-28 bg-slate-200 dark:bg-slate-600 rounded-md mb-1 overflow-hidden flex justify-center items-center shadow-sm relative">
+                            ${m.img ? `<img src="${m.img}" class="w-full h-full object-cover">` : `<span class="font-bold text-slate-500">${m.name.substring(0, 2)}</span>`}
+                            <img src="${CLASS_ICONS[m.cls]}" class="absolute bottom-1 right-1 w-6 h-6 drop-shadow-md z-10">
+                            ${chem ? `<div class="absolute top-0 right-0 bg-emerald-100 text-emerald-800 text-[12px] font-bold px-1.5 py-0.5 rounded-bl-lg shadow-sm border-b border-l border-emerald-200 leading-none backdrop-blur-sm bg-opacity-90 z-20" title="Active">🍀</div>` : ''}
+                            ${m.isChanged ? `<div class="absolute inset-0 bg-indigo-500/20 flex items-center justify-center font-bold text-white text-xs drop-shadow z-20">NEW</div>` : ''}
+                        </div>
+                        <div class="font-bold text-xs text-slate-800 dark:text-slate-200 truncate w-full">${(t.recruit_names && t.recruit_names[m.name]) || m.name}</div>
+                        <div class="text-[10px] text-slate-500 dark:text-slate-400 truncate w-full">${(t.class_names && t.class_names[m.cls]) || m.cls} Lv${m.lvl}</div>
+                        ${chem ? `<div class="text-[9px] text-emerald-600 dark:text-emerald-400 font-bold mt-0.5 leading-none px-1 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 rounded">+${chem.val}% ${statLabel}</div>` : ''}
+                    </div>
+                    `}).join('')}
+            </div>
+
+            <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg mb-4 text-sm border-l-4 ${sol.isPartial ? 'border-orange-300 dark:border-orange-600' : 'border-green-300 dark:border-green-600'}">
+                <h4 class="font-bold mb-2 text-slate-700 dark:text-slate-300 text-xs uppercase tracking-wider">${t.msg_analysis ? t.msg_analysis.replace('{rank}', rank) : '屬性分析'}</h4>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                    <div>
+                        <div class="text-slate-500 dark:text-slate-400 mb-1">${t.msg_base || '隊員基礎'}</div>
+                        <div class="font-mono font-bold text-slate-700 dark:text-slate-300">
+                            <div class="grid grid-cols-3 gap-x-1">
+                                <span class="stat-phy">P:${baseP}</span>
+                                <span class="stat-men">M:${baseM}</span>
+                                <span class="stat-tac">T:${baseT}</span>
+                                ${(chemP > 0 || chemM > 0 || chemT > 0) ? `
+                                    <span class="text-[10px] text-emerald-600 dark:text-emerald-400">${chemP > 0 ? `+${chemP}` : ''}</span>
+                                    <span class="text-[10px] text-emerald-600 dark:text-emerald-400">${chemM > 0 ? `+${chemM}` : ''}</span>
+                                    <span class="text-[10px] text-emerald-600 dark:text-emerald-400">${chemT > 0 ? `+${chemT}` : ''}</span>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="text-slate-500 dark:text-slate-400 mb-1">${t.msg_target_train || '訓練加成'}</div>
+                        <div class="font-mono font-bold text-blue-600 dark:text-blue-400">
+                            <span class="stat-phy">P:${trainP}</span>
+                            <span class="stat-men">M:${trainM}</span>
+                            <span class="stat-tac">T:${trainT}</span>
+                        </div>
+                    </div>
+                    <div class="col-span-2 md:col-span-2">
+                        <div class="text-slate-500 dark:text-slate-400 mb-1">${t.msg_final_total || '最終總和'}</div>
+                        <div class="font-mono text-lg font-bold text-green-600 dark:text-green-400">
+                            <span class="stat-phy mr-2">P:${trainP + baseP + chemP}</span>
+                            <span class="stat-men mr-2">M:${trainM + baseM + chemM}</span>
+                            <span class="stat-tac">T:${trainT + baseT + chemT}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 dark:bg-blue-900/20 border-2 border-dashed border-blue-300 dark:border-blue-700 rounded-xl p-4 shadow-sm">
+                <h4 class="font-bold mb-3 text-blue-800 dark:text-blue-100 text-lg flex items-center gap-2">
+                    <span class="text-xl">📋</span> ${t.msg_suggested_order || '建議訓練順序'}
+                </h4>
+                <div class="flex flex-col sm:flex-row flex-wrap gap-3">
+                    ${sol.path && sol.path.length > 0 ?
+                        sol.path.map((opId, stepIdx) => {
+                            const op = TRAINING_OPS.find(o => o.id === opId);
+                            return `
+                            <div class="bg-white dark:bg-slate-800 px-4 py-3 rounded-lg shadow-sm border border-blue-100 dark:border-blue-800 flex items-center gap-3">
+                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 font-bold text-sm shrink-0">${stepIdx + 1}</span>
+                                <div class="flex items-center gap-3">
+                                    ${op && op.img ? `<img src="${op.img}" class="w-8 h-8 object-contain">` : ''}
+                                    <span class="font-bold text-slate-800 dark:text-slate-100 text-base">${(t.training_ops && t.training_ops[opId]) || opId}</span>
+                                </div>
+                            </div>`;
+                        }).join('') :
+                        `<div class="text-green-600 dark:text-green-400 font-bold text-lg flex items-center gap-2">✅ ${t.msg_no_training_needed || '無需訓練'}</div>`
+                    }
+                </div>
+            </div>
+        </div>
+        `;
+    });
+
+    container.innerHTML = html;
+}
+

@@ -26,7 +26,7 @@
                 <span data-i18n="title">FF14 冒險者分隊計算器</span>
                 <span
                     class="text-xs px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 ml-2 border border-blue-200 dark:border-blue-700">
-                    V2.5</span>
+                    V2.5.1</span>
             </h1>
             <div class="flex items-center gap-4">
                 <a href="../index.html"
@@ -346,10 +346,45 @@
             class="w-full py-4 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700 transition-all transform active:scale-95 text-lg mb-8"
             onclick="calculate()" data-i18n="calc_btn">計算最佳配置</button>
 
-        <div class="bg-orange-50 dark:bg-orange-900/10 p-6 rounded-xl shadow-lg border-2 border-orange-200 dark:border-orange-500/30 hidden transition-colors"
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 hidden transition-colors"
             id="result-section">
-            <h2 class="text-lg font-bold mb-4 text-orange-800 dark:text-orange-200" data-i18n="result_title">計算結果</h2>
-            <div id="result-content"></div>
+            <!-- Tab Navigation -->
+            <div id="result-tabs" class="flex border-b border-slate-200 dark:border-slate-700 mb-4 overflow-x-auto gap-1">
+                <button class="result-tab px-4 py-2 font-bold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-t-lg transition-colors" data-tab="general" onclick="switchResultTab('general')">
+                    📊 一般計算
+                </button>
+                <button class="result-tab px-4 py-2 font-bold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 border-b-2 border-transparent hover:border-slate-300 rounded-t-lg transition-colors" data-tab="level" onclick="switchResultTab('level')">
+                    📈 等級模擬
+                </button>
+                <button class="result-tab px-4 py-2 font-bold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 border-b-2 border-transparent hover:border-slate-300 rounded-t-lg transition-colors" data-tab="job" onclick="switchResultTab('job')">
+                    🔄 轉職模擬
+                </button>
+                <button class="result-tab px-4 py-2 font-bold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 border-b-2 border-transparent hover:border-slate-300 rounded-t-lg transition-colors flex items-center gap-1" data-tab="pinned" onclick="switchResultTab('pinned')">
+                    📌 訂選方案 <span id="pin-count" class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-1.5 rounded-full text-xs ml-1">0</span>
+                </button>
+            </div>
+
+            <!-- Content Panels -->
+            <div id="panel-general" class="result-panel">
+                <div id="result-content">
+                    <div class="text-center text-slate-400 dark:text-slate-500 py-8">請點擊「計算」開始</div>
+                </div>
+            </div>
+            <div id="panel-level" class="result-panel hidden">
+                <div id="result-content-level">
+                    <div class="text-center text-slate-400 dark:text-slate-500 py-8">請點擊「等級模擬」按鈕</div>
+                </div>
+            </div>
+            <div id="panel-job" class="result-panel hidden">
+                <div id="result-content-job">
+                    <div class="text-center text-slate-400 dark:text-slate-500 py-8">請點擊「轉職模擬」按鈕</div>
+                </div>
+            </div>
+            <div id="panel-pinned" class="result-panel hidden">
+                <div id="result-content-pinned">
+                    <div class="text-center text-slate-400 dark:text-slate-500 py-8">尚未訂選任何方案</div>
+                </div>
+            </div>
         </div>
     </div>
 

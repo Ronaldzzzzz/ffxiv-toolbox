@@ -1,6 +1,9 @@
 // Squadron Calculator - Calculation Logic
 // 運算邏輯獨立檔案
 
+// Flag: 資料是否為最新（計算後設為 true，切換 tab 時依據此 flag 執行模擬）
+window._dataIsFresh = false;
+
 /**
  * 計算 n 取 k 的所有組合
  * @param {Array} arr - 原始陣列
@@ -28,9 +31,10 @@ function getCombinations(arr, k) {
  * 計算小隊的綜合屬性 (包含吉兆加成)
  * @param {Array} squad - 隊員陣列
  * @param {Array} affinities - 任務相性
+ * @param {number} missionLevel - 任務所需等級 (可選)
  * @returns {Object} { bp, bm, bt, rawP, rawM, rawT, chemStats, activeChems }
  */
-function calculateSquadStats(squad, affinities) {
+function calculateSquadStats(squad, affinities, missionLevel = 0) {
     let bp = 0, bm = 0, bt = 0;
     
     // 1. Base Stats
@@ -41,59 +45,71 @@ function calculateSquadStats(squad, affinities) {
     });
     const rawP = bp, rawM = bm, rawT = bt;
 
-        // 2. Chemistry
+    // 建立統計資料供條件檢查使用
+    const races = squad.map(m => m.race);
+    const classes = squad.map(m => m.cls);
+    const raceCounts = {};
+    const classCounts = {};
+    races.forEach(r => { raceCounts[r] = (raceCounts[r] || 0) + 1; });
+    classes.forEach(c => { classCounts[c] = (classCounts[c] || 0) + 1; });
+
+    // 2. Chemistry
     const activeChems = [];
+    const teamBonuses = { p: 0, m: 0, t: 0 }; // 全員加成
+
     squad.forEach(member => {
         if (!member.chem || !member.chem.cond || !member.chem.effect) return;
 
         let isActive = false;
-        let checksOut = "";
         let multiplier = 1;
+        let reason = "";
 
-        if (affinities.includes(member.race) || affinities.includes(member.cls)) {
-            isActive = true;
-            checksOut = "Affinity (x2)";
+        // 檢查是否有相性加成 (x2)
+        const hasAffinity = affinities.includes(member.race) || affinities.includes(member.cls);
+        if (hasAffinity) {
             multiplier = 2;
-        } else {
-            const cond = member.chem.cond;
-            const others = squad.filter(m => m.id !== member.id);
-            
-            if (cond.startsWith('race_')) {
-                if (cond === 'race_same') {
-                    isActive = others.some(m => m.race === member.race);
-                } else {
-                    const targetRaceMap = {
-                        'race_hyur': 'Hyur', 'race_elezen': 'Elezen', 'race_lalafell': 'Lalafell',
-                        'race_miqote': "Miqo'te", 'race_roegadyn': 'Roegadyn', 'race_aura': 'Au Ra'
-                    };
-                    const target = targetRaceMap[cond];
-                    if (target) isActive = others.some(m => m.race === target);
-                }
-            } else if (cond.startsWith('class_')) {
-                if (cond === 'class_same') {
-                    isActive = others.some(m => m.cls === member.cls);
-                } else {
-                    isActive = others.some(m => m.role === cond);
-                }
-            } else if (cond.startsWith('gender_')) {
-                    isActive = others.some(m => m.gender === cond);
-            } else if (cond === 'level_50_plus') {
-                isActive = squad.every(m => m.lvl >= 50);
-            }
+            reason = "Affinity (x2)";
         }
+
+        // 檢查條件是否滿足
+        isActive = checkChemistryCondition(
+            member.chem.cond, 
+            member, 
+            squad, 
+            races, 
+            classes, 
+            raceCounts, 
+            classCounts, 
+            missionLevel
+        );
 
         if (isActive) {
             const val = member.chem.val * multiplier;
-            const type = member.chem.effect;
-            const bonus = (stat) => Math.floor(stat * val / 100);
-
-            if (type === 'stats_phy' || type === 'stats_all') bp += bonus(member.stats[0]);
-            if (type === 'stats_men' || type === 'stats_all') bm += bonus(member.stats[1]);
-            if (type === 'stats_tac' || type === 'stats_all') bt += bonus(member.stats[2]);
+            const effect = member.chem.effect;
+            const isTeamEffect = effect.startsWith('stats_all_');
             
-            activeChems.push({ memberId: member.id, type, val, reason: checksOut });
+            if (isTeamEffect) {
+                // 全員效果：加成應用到全隊基礎數值
+                const bonus = (stat) => Math.floor(stat * val / 100);
+                if (effect === 'stats_all_phy') teamBonuses.p += bonus(rawP);
+                if (effect === 'stats_all_men') teamBonuses.m += bonus(rawM);
+                if (effect === 'stats_all_tac') teamBonuses.t += bonus(rawT);
+            } else {
+                // 個人效果：加成應用到該成員的個人數值
+                const bonus = (stat) => Math.floor(stat * val / 100);
+                if (effect === 'stats_phy') bp += bonus(member.stats[0]);
+                if (effect === 'stats_men') bm += bonus(member.stats[1]);
+                if (effect === 'stats_tac') bt += bonus(member.stats[2]);
+            }
+            
+            activeChems.push({ memberId: member.id, effect, val, reason, isTeamEffect });
         }
     });
+
+    // 應用全員加成
+    bp += teamBonuses.p;
+    bm += teamBonuses.m;
+    bt += teamBonuses.t;
 
     return { 
         bp, bm, bt, 
@@ -104,12 +120,102 @@ function calculateSquadStats(squad, affinities) {
 }
 
 /**
+ * 檢查吉兆條件是否滿足
+ */
+function checkChemistryCondition(cond, member, squad, races, classes, raceCounts, classCounts, missionLevel) {
+    const others = squad.filter(m => m.id !== member.id);
+    
+    // 種族同行條件
+    const raceMap = {
+        'with_race_hyur': 'Hyur', 'with_race_elezen': 'Elezen', 'with_race_lalafell': 'Lalafell',
+        'with_race_miqote': "Miqo'te", 'with_race_roegadyn': 'Roegadyn', 'with_race_aura': 'Au Ra'
+    };
+    
+    // 職業同行條件
+    const classMap = {
+        'with_class_gla': 'GLA', 'with_class_mrd': 'MRD', 'with_class_arc': 'ARC',
+        'with_class_lnc': 'LNC', 'with_class_rog': 'ROG', 'with_class_pgl': 'PGL',
+        'with_class_cnj': 'CNJ', 'with_class_thm': 'THM', 'with_class_acn': 'ACN'
+    };
+    
+    switch (cond) {
+        // 任務相關
+        case 'in_squad':
+            return true; // 執行任務時總是 true
+        case 'm_level':
+            return missionLevel > 0 && member.lvl >= missionLevel;
+        case 'above_50':
+            return member.lvl >= 50;
+            
+        // 種族同行
+        case 'with_race_hyur':
+        case 'with_race_elezen':
+        case 'with_race_miqote':
+        case 'with_race_lalafell':
+        case 'with_race_roegadyn':
+        case 'with_race_aura':
+            return others.some(m => m.race === raceMap[cond]);
+            
+        // 職業同行
+        case 'with_class_gla':
+        case 'with_class_mrd':
+        case 'with_class_arc':
+        case 'with_class_lnc':
+        case 'with_class_rog':
+        case 'with_class_pgl':
+        case 'with_class_cnj':
+        case 'with_class_thm':
+        case 'with_class_acn':
+            return others.some(m => m.cls === classMap[cond]);
+            
+        // 種族組合條件
+        case 'same_race':
+            return raceCounts[member.race] >= 2;
+        case 'no_same_race':
+            return raceCounts[member.race] === 1;
+        case 'all_diff_race':
+            return Object.keys(raceCounts).length === squad.length;
+        case '3+_race':
+            return races.some(r => races.filter(x => x === r).length >= 3);
+            
+        // 職業組合條件
+        case 'same_class':
+            return classCounts[member.cls] >= 2;
+        case 'no_same_class':
+            return classCounts[member.cls] === 1;
+        case 'all_diff_class':
+            return Object.keys(classCounts).length === squad.length;
+        case '3+_class':
+            return classes.some(c => classes.filter(x => x === c).length >= 3);
+            
+        default:
+            return false;
+    }
+}
+
+/**
  * 等級提升模擬函式
  * 模擬隊員升級後是否能達成任務需求
  */
 function simulateLevelUp() {
     const t = TRANSLATIONS[currentLang] || TRANSLATIONS['zh-TW'];
-    const resultContent = document.getElementById('result-content');
+    const resultSection = document.getElementById('result-section');
+    const resultContent = document.getElementById('result-content-level');
+    
+    resultSection.classList.remove('hidden'); // Ensure visible
+    switchResultTab('level'); // Activate Level tab
+
+    // 檢查是否已有 100% 達標方案
+    if (window._hasFullSolution) {
+        resultContent.innerHTML = `
+            <div class="bg-green-50 dark:bg-green-900/20 p-8 rounded-lg text-center border-2 border-green-200 dark:border-green-700">
+                <div class="text-4xl mb-3">✅</div>
+                <h3 class="text-green-700 dark:text-green-300 font-bold mb-2 text-lg">${t.msg_already_full || '方案已達標'}</h3>
+                <p class="text-green-600 dark:text-green-400 mb-6">${t.msg_already_full_desc || '已找到 100% 達標方案，不需額外模擬。'}</p>
+            </div>
+        `;
+        return;
+    }
 
     if (!window._lastCalcParams) {
         resultContent.innerHTML = `<p class="text-red-600">${t.msg_error || '請先執行計算'}</p>`;
@@ -251,6 +357,9 @@ function simulateLevelUp() {
         }
         const topSuggestions = uniqueSuggestions;
 
+        // Store solutions in global for pinning
+        window._levelSolutions = topSuggestions;
+
         if (topSuggestions.length === 0) {
             resultContent.innerHTML = `
                  <div class="bg-slate-100 dark:bg-slate-700/50 p-6 rounded-lg text-center">
@@ -288,7 +397,10 @@ function simulateLevelUp() {
 
                  html += `
                  <div class="bg-white dark:bg-slate-800 p-4 rounded-lg border-2 ${borderColor} mb-6 shadow-sm relative overflow-hidden">
-                     ${sol.isChemCritical ? `<div class="absolute top-0 right-0 bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-1 rounded-bl shadow z-10 border-b border-l border-rose-200">⚠️ Chemistry Critical</div>` : ''}
+                     <button onclick="pinSolution(window._levelSolutions[${idx}], 'level')" class="absolute top-2 right-2 text-slate-400 hover:text-amber-500 transition-colors z-20" title="訂選此方案">
+                         📌
+                     </button>
+                     ${sol.isChemCritical ? `<div class="absolute top-0 right-0 bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-1 rounded-bl shadow z-10 border-b border-l border-rose-200 mr-8">⚠️ Chemistry Critical</div>` : ''}
                      
                      <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3 border-b border-slate-100 dark:border-slate-700 pb-2">
                         <div class="flex items-center gap-2">
@@ -314,12 +426,15 @@ function simulateLevelUp() {
                      <div class="flex justify-center gap-2 mb-4 flex-wrap">
                         ${sol.squad.map(m => {
                             const chem = sol.activeChems ? sol.activeChems.find(c => c.memberId === m.id) : null;
-                            let statLabel = "Stats";
+                            let statLabel = "";
                             if (chem) {
-                                if (chem.type === 'stats_phy') statLabel = "Phy";
-                                if (chem.type === 'stats_men') statLabel = "Men";
-                                if (chem.type === 'stats_tac') statLabel = "Tac";
-                                if (chem.type === 'stats_all') statLabel = "All";
+                                if (chem.effect === 'stats_phy') statLabel = "P";
+                                else if (chem.effect === 'stats_men') statLabel = "M";
+                                else if (chem.effect === 'stats_tac') statLabel = "T";
+                                else if (chem.effect === 'stats_all_phy') statLabel = "全P";
+                                else if (chem.effect === 'stats_all_men') statLabel = "全M";
+                                else if (chem.effect === 'stats_all_tac') statLabel = "全T";
+                                else statLabel = "?";
                             }
                             return `
                             <div class="text-center p-2 bg-slate-50 dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 flex flex-col items-center w-24 relative">
@@ -403,6 +518,8 @@ function simulateLevelUp() {
              resultContent.innerHTML = html;
          }
 
+         // 模擬完成後設定資料為非最新，避免重複觸發
+         window._dataIsFresh = false;
 
 
     }, 50);
@@ -414,7 +531,23 @@ function simulateLevelUp() {
  */
 function simulateJobChange() {
     const t = TRANSLATIONS[currentLang] || TRANSLATIONS['zh-TW'];
-    const resultContent = document.getElementById('result-content');
+    const resultSection = document.getElementById('result-section');
+    const resultContent = document.getElementById('result-content-job');
+    
+    resultSection.classList.remove('hidden'); // Ensure visible
+    switchResultTab('job'); // Activate Job tab
+
+    // 檢查是否已有 100% 達標方案
+    if (window._hasFullSolution) {
+        resultContent.innerHTML = `
+            <div class="bg-green-50 dark:bg-green-900/20 p-8 rounded-lg text-center border-2 border-green-200 dark:border-green-700">
+                <div class="text-4xl mb-3">✅</div>
+                <h3 class="text-green-700 dark:text-green-300 font-bold mb-2 text-lg">${t.msg_already_full || '方案已達標'}</h3>
+                <p class="text-green-600 dark:text-green-400 mb-6">${t.msg_already_full_desc || '已找到 100% 達標方案，不需額外模擬。'}</p>
+            </div>
+        `;
+        return;
+    }
 
     if (!window._lastCalcParams) {
         resultContent.innerHTML = `<p class="text-red-600">${t.msg_error || '請先執行計算'}</p>`;
@@ -584,6 +717,9 @@ function simulateJobChange() {
         
         const topSuggestions = suggestions.slice(0, 2);
         
+        // Store solutions in global for pinning
+        window._jobSolutions = topSuggestions;
+        
         // --- NEW LOGIC END ---
 
         if (topSuggestions.length === 0) {
@@ -627,15 +763,21 @@ function simulateJobChange() {
 
                  html += `
                  <div class="bg-white dark:bg-slate-800 p-4 rounded-lg border-2 border-indigo-200 dark:border-indigo-700 mb-6 shadow-sm relative overflow-hidden">
-                     ${sol.isChemCritical ? `<div class="absolute top-0 right-0 bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-1 rounded-bl shadow z-10 border-b border-l border-rose-200">⚠️ Chemistry Critical</div>` : ''}
+                     <button onclick="pinSolution(window._jobSolutions[${idx}], 'job')" class="absolute top-2 right-2 text-slate-400 hover:text-amber-500 transition-colors z-20" title="訂選此方案">
+                         📌
+                     </button>
+                     ${sol.isChemCritical ? `<div class="absolute top-0 right-0 bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-1 rounded-bl shadow z-10 border-b border-l border-rose-200 mr-8">⚠️ Chemistry Critical</div>` : ''}
                      
-                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3 border-b border-slate-100 dark:border-slate-700 pb-2">
+                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3 border-b border-slate-100 dark:border-slate-700 pb-2 pr-8">
                         <div class="flex items-center gap-2">
                              <div class="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-3 py-1 rounded-full text-xs font-bold">
                                  方案 #${idx + 1}
                              </div>
-                             <div class="text-sm text-slate-700 dark:text-slate-300">
-                                  將 <span class="font-bold">${mName}</span> 從 ${oldCName} 轉職為 <span class="font-bold text-indigo-600 dark:text-indigo-400">${newCName}</span>
+                             <div class="text-sm text-slate-700 dark:text-slate-300 flex items-center gap-1 flex-wrap">
+                                  將 <span class="font-bold">${mName}</span> 從 
+                                  <img src="${CLASS_ICONS[sol.oldClass]}" class="inline w-4 h-4">${oldCName} 
+                                  轉職為 
+                                  <img src="${CLASS_ICONS[sol.newClass]}" class="inline w-4 h-4"><span class="font-bold text-indigo-600 dark:text-indigo-400">${newCName}</span>
                                   ${partialBadge}
                              </div>
                         </div>
@@ -650,12 +792,15 @@ function simulateJobChange() {
                      <div class="flex justify-center gap-2 mb-4 flex-wrap">
                         ${sol.squad.map(m => {
                             const chem = sol.activeChems ? sol.activeChems.find(c => c.memberId === m.id) : null;
-                            let statLabel = "Stats";
+                            let statLabel = "";
                             if (chem) {
-                                if (chem.type === 'stats_phy') statLabel = "Phy";
-                                if (chem.type === 'stats_men') statLabel = "Men";
-                                if (chem.type === 'stats_tac') statLabel = "Tac";
-                                if (chem.type === 'stats_all') statLabel = "All";
+                                if (chem.effect === 'stats_phy') statLabel = "P";
+                                else if (chem.effect === 'stats_men') statLabel = "M";
+                                else if (chem.effect === 'stats_tac') statLabel = "T";
+                                else if (chem.effect === 'stats_all_phy') statLabel = "全P";
+                                else if (chem.effect === 'stats_all_men') statLabel = "全M";
+                                else if (chem.effect === 'stats_all_tac') statLabel = "全T";
+                                else statLabel = "?";
                             }
                             return `
                             <div class="text-center p-2 ${m.isChanged ? 'bg-indigo-50 dark:bg-indigo-900/20 border-indigo-200' : 'bg-slate-50 dark:bg-slate-700 border-slate-200'} rounded-lg border flex flex-col items-center w-24 relative">
@@ -740,6 +885,9 @@ function simulateJobChange() {
              
              resultContent.innerHTML = html;
         }
+
+        // 模擬完成後設定資料為非最新，避免重複觸發
+        window._dataIsFresh = false;
 
     }, 50);
 }
@@ -938,7 +1086,11 @@ function calculate() {
     const t = TRANSLATIONS[currentLang] || TRANSLATIONS['zh-TW'];
     const resultSection = document.getElementById('result-section');
     const resultContent = document.getElementById('result-content');
-    resultSection.style.display = 'block';
+    resultSection.classList.remove('hidden'); // Show result section
+    switchResultTab('general'); // Activate General tab
+    
+    // 計算執行時設定資料為最新，讓 tab 切換時可以自動執行模擬
+    window._dataIsFresh = true;
     resultContent.innerHTML = t.msg_calculating;
 
     // Check if sum matches rank
@@ -1022,6 +1174,7 @@ function calculate() {
                 activeChems // Pass to result
             });
         } else if (solution.partialSuccess) {
+            const totalMissing = solution.missing.missingP + solution.missing.missingM + solution.missing.missingT;
             solutions.push({
                 squad: squad,
                 steps: solution.path.length,
@@ -1030,6 +1183,7 @@ function calculate() {
                 isPartial: true,
                 matchedStats: solution.matchedStats,
                 missing: solution.missing,
+                totalMissing: totalMissing, // 用於激進策略排序
                 chemStats,
                 activeChems // Pass to result
             });
@@ -1046,9 +1200,13 @@ function calculate() {
 
     if (fullSolutions.length > 0) {
         displaySolutions = fullSolutions;
+        window._hasFullSolution = true; // 有 100% 達標方案
+        window._lastCalcParams = { members, currTrain, reqP, reqM, reqT, affinities }; // 儲存計算參數
     } else if (partialSolutions.length > 0) {
         displaySolutions = partialSolutions;
         isShowingPartial = true;
+        window._hasFullSolution = false; // 沒有 100% 達標方案
+        window._lastCalcParams = { members, currTrain, reqP, reqM, reqT, affinities }; // 儲存計算參數
     } else {
         // 完全無解 - 顯示簡易提示 + 進階模擬按鈕
         resultContent.innerHTML = `
@@ -1058,39 +1216,36 @@ function calculate() {
                 <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-4 mt-4 flex flex-col md:flex-row gap-4 justify-center items-center">
                     <div>
                          <p class="text-amber-700 dark:text-amber-300 font-bold mb-1">${t.msg_sim_options || '🔍 模擬選項 (Simulation Options)'}</p>
-                         <p class="text-xs text-amber-600 dark:text-amber-400 opacity-80">${t.msg_sim_desc || '嘗試尋找可行的替代方案'}</p>
+                         <p class="text-xs text-amber-600 dark:text-amber-400 opacity-80">${t.msg_sim_desc || '嘗試尋找可行的替代方案，請點擊上方分頁'}</p>
                     </div>
-                    <div class="flex gap-2">
-                        <button onclick="simulateLevelUp()" 
-                            class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg shadow transition-colors text-sm">
-                            ${t.btn_simulate_level || '能夠透過升級解決嗎？'}
-                        </button>
-                        <button onclick="simulateJobChange()" 
-                            class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-lg shadow transition-colors text-sm">
-                            ${t.btn_simulate_job || '能夠透過轉職解決嗎？'}
-                        </button>
-                    </div>
+                    <!-- 按鈕已移除，改為透過 Tab 切換自動觸發模擬 -->
                 </div>
             </div>
         `;
         window._lastCalcParams = { members, currTrain, reqP, reqM, reqT, affinities }; // Save affinities too
+        window._hasFullSolution = false; // 沒有 100% 達標方案
         return;
     }
 
-    // Sort by steps (asc), partial results also by total missing
+    // Sort: 
+    // - Full solutions: by steps (asc)
+    // - Partial solutions: by totalMissing (asc) FIRST, then steps (激進策略)
     displaySolutions.sort((a, b) => {
-        if (a.steps !== b.steps) return a.steps - b.steps;
         if (a.isPartial && b.isPartial) {
-            const aMissing = a.missing.missingP + a.missing.missingM + a.missing.missingT;
-            const bMissing = b.missing.missingP + b.missing.missingM + b.missing.missingT;
-            return aMissing - bMissing;
+            // 激進策略：缺少值越低越好，優先於步數
+            if (a.totalMissing !== b.totalMissing) return a.totalMissing - b.totalMissing;
+            return a.steps - b.steps;
         }
-        return 0;
+        // Full solutions: by steps
+        return a.steps - b.steps;
     });
 
     // Take top 8
     const bestSolutions = displaySolutions.slice(0, 8);
     const rank = parseInt(document.getElementById('rank-selector').value);
+
+    // Store solutions in global for pinning
+    window._generalSolutions = bestSolutions;
 
     // Render Result
     const headerColor = isShowingPartial ? 'text-orange-600 dark:text-orange-400' : 'text-green-700 dark:text-green-400';
@@ -1118,7 +1273,10 @@ function calculate() {
         }
 
         html += `
-        <div class="bg-white dark:bg-slate-800 p-4 rounded-lg border-2 ${borderColor} mb-6 shadow-sm">
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-lg border-2 ${borderColor} mb-6 shadow-sm relative">
+            <button onclick="pinSolution(window._generalSolutions[${idx}], 'general')" class="absolute top-2 right-2 text-slate-400 hover:text-amber-500 transition-colors" title="訂選此方案">
+                📌
+            </button>
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3 border-b border-slate-100 dark:border-slate-700 pb-2">
                 <div class="flex items-center gap-2">
                         <div class="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-3 py-1 rounded-full text-xs font-bold">
@@ -1128,7 +1286,7 @@ function calculate() {
                             ${t.msg_success_found.replace('{steps}', sol.steps)}${partialBadge}
                         </div>
                 </div>
-                <div class="text-right flex flex-col gap-0.5">
+                <div class="text-right flex flex-col gap-0.5 mr-6">
                      <div class="text-xs font-normal text-slate-500">${t.msg_req.replace('{reqP}', reqP).replace('{reqM}', reqM).replace('{reqT}', reqT)}</div>
                      ${missingHint}
                 </div>
@@ -1137,12 +1295,15 @@ function calculate() {
             <div class="flex justify-center gap-2 mb-4 flex-wrap">
                 ${sol.squad.map(m => {
                     const chem = sol.activeChems ? sol.activeChems.find(c => c.memberId === m.id) : null;
-                    let statLabel = "Stats";
+                    let statLabel = "";
                     if (chem) {
-                        if (chem.type === 'stats_phy') statLabel = "Phy";
-                        if (chem.type === 'stats_men') statLabel = "Men";
-                        if (chem.type === 'stats_tac') statLabel = "Tac";
-                        if (chem.type === 'stats_all') statLabel = "All";
+                        if (chem.effect === 'stats_phy') statLabel = "P";
+                        else if (chem.effect === 'stats_men') statLabel = "M";
+                        else if (chem.effect === 'stats_tac') statLabel = "T";
+                        else if (chem.effect === 'stats_all_phy') statLabel = "全P";
+                        else if (chem.effect === 'stats_all_men') statLabel = "全M";
+                        else if (chem.effect === 'stats_all_tac') statLabel = "全T";
+                        else statLabel = "?";
                     }
                     return `
                     <div class="text-center p-2 bg-slate-50 dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 flex flex-col items-center w-24 relative">
@@ -1228,9 +1389,10 @@ function calculate() {
             <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-4 mt-4 flex flex-col md:flex-row gap-4 justify-center items-center">
                 <div>
                      <p class="text-amber-700 dark:text-amber-300 font-bold mb-1">${t.msg_sim_options || '🔍 模擬選項 (Simulation Options)'}</p>
-                     <p class="text-xs text-amber-600 dark:text-amber-400 opacity-80">${t.msg_sim_desc || '嘗試尋找可行的替代方案'}</p>
+                     <p class="text-xs text-amber-600 dark:text-amber-400 opacity-80">${t.msg_sim_desc || '嘗試尋找可行的替代方案，請點擊上方分頁'}</p>
                 </div>
-                <div class="flex gap-2">
+                <!-- 按鈕已移除，改為透過 Tab 切換自動觸發模擬 -->
+                <!-- <div class="flex gap-2">
                     <button onclick="simulateLevelUp()" 
                         class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg shadow transition-colors text-sm">
                         ${t.btn_simulate_level || '能夠透過升級解決嗎？'}
@@ -1239,11 +1401,10 @@ function calculate() {
                         class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-lg shadow transition-colors text-sm">
                         ${t.btn_simulate_job || '能夠透過轉職解決嗎？'}
                     </button>
-                </div>
-            </div>
+                </div> -->
         `;
         // 儲存計算參數供模擬使用
-        window._lastCalcParams = { members, currTrain, reqP, reqM, reqT };
+        window._lastCalcParams = { members, currTrain, reqP, reqM, reqT, affinities };
     }
 
     resultContent.innerHTML = html;

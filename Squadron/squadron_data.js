@@ -1255,63 +1255,119 @@ const MISSION_DATA = [
 ];
 
 // --- Chemistry Data ---
-const CHEMISTRY_CONDITIONS = {
-    // Member Composition
-    "race_hyur": { "zh-TW": "隊伍有 (人族)", "zh-CN": "队伍有 (人族)", "ja": "種族：ヒューランがいる", "en": "Member: Hyur" },
-    "race_elezen": { "zh-TW": "隊伍有 (精靈族)", "zh-CN": "队伍有 (精灵族)", "ja": "種族：エレゼンがいる", "en": "Member: Elezen" },
-    "race_lalafell": { "zh-TW": "隊伍有 (拉拉菲爾族)", "zh-CN": "队伍有 (拉拉菲尔族)", "ja": "種族：ララフェルがいる", "en": "Member: Lalafell" },
-    "race_miqote": { "zh-TW": "隊伍有 (貓魅族)", "zh-CN": "队伍有 (猫魅族)", "ja": "種族：ミコッテがいる", "en": "Member: Miqo'te" },
-    "race_roegadyn": { "zh-TW": "隊伍有 (魯加族)", "zh-CN": "队伍有 (鲁加族)", "ja": "種族：ルガディンがいる", "en": "Member: Roegadyn" },
-    "race_aura": { "zh-TW": "隊伍有 (敖龍族)", "zh-CN": "队伍有 (敖龙族)", "ja": "種族：アウラがいる", "en": "Member: Au Ra" },
-    "class_tank": { "zh-TW": "隊伍有 (防護職業)", "zh-CN": "队伍有 (防护职业)", "ja": "クラス：タンクがいる", "en": "Member: Tank" },
-    "class_dps": { "zh-TW": "隊伍有 (進攻職業)", "zh-CN": "队伍有 (进攻职业)", "ja": "クラス：DPSがいる", "en": "Member: DPS" },
-    "class_healer": { "zh-TW": "隊伍有 (治療職業)", "zh-CN": "队伍有 (治疗职业)", "ja": "クラス：ヒーラーがいる", "en": "Member: Healer" },
-    "gender_male": { "zh-TW": "隊伍有 (男性)", "zh-CN": "队伍有 (男性)", "ja": "性別：男性がいる", "en": "Member: Male" },
-    "gender_female": { "zh-TW": "隊伍有 (女性)", "zh-CN": "队伍有 (女性)", "ja": "性別：女性がいる", "en": "Member: Female" },
-    "race_same": { "zh-TW": "隊伍有 (相同種族)", "zh-CN": "队伍有 (相同种族)", "ja": "種族：同じ種族がいる", "en": "Member: Same Race" },
-    "class_same": { "zh-TW": "隊伍有 (相同職業)", "zh-CN": "队伍有 (相同职业)", "ja": "クラス：同じクラスがいる", "en": "Member: Same Class" },
-    
-    // Mission Affinity
-    "affinity_phy": { "zh-TW": "任務獎勵 (體能)", "zh-CN": "任务奖励 (体能)", "ja": "任務：体能ボーナス", "en": "Mission: Physical Affinity" },
-    "affinity_men": { "zh-TW": "任務獎勵 (心智)", "zh-CN": "任务奖励 (心智)", "ja": "任務：精神力ボーナス", "en": "Mission: Mental Affinity" },
-    "affinity_tac": { "zh-TW": "任務獎勵 (戰術)", "zh-CN": "任务奖励 (战术)", "ja": "任務：戦術演習ボーナス", "en": "Mission: Tactical Affinity" },
-    "affinity_all": { "zh-TW": "任務獎勵 (全屬性)", "zh-CN": "任务奖励 (全属性)", "ja": "任務：全能力ボーナス", "en": "Mission: All Stats Affinity" },
+// 吉兆條件：任一條件可配合任一效果，為對應關係非硬組合
 
-    // Level
-    "level_50_plus": { "zh-TW": "全員 Lv50 以上", "zh-CN": "全员 Lv50 以上", "ja": "全員 Lv50 以上", "en": "All Members Lv 50+" },
+const CHEMISTRY_CONDITIONS = {
+    // === 任務相關 ===
+    "in_squad": { "zh-TW": "執行任務", "zh-CN": "执行任务", "ja": "任務中", "en": "On Mission" },
+    "m_level": { "zh-TW": "達到任務所需等級", "zh-CN": "达到任务所需等级", "ja": "任務レベル達成", "en": "Meets Mission Level" },
+    "above_50": { "zh-TW": "等級達到50以上", "zh-CN": "等级达到50以上", "ja": "Lv50以上", "en": "Level 50+" },
+
+    // === 種族條件：與某種族同行 ===
+    "with_race_hyur": { "zh-TW": "與人族同行", "zh-CN": "与人族同行", "ja": "ヒューランと同行", "en": "With Hyur" },
+    "with_race_elezen": { "zh-TW": "與精靈族同行", "zh-CN": "与精灵族同行", "ja": "エレゼンと同行", "en": "With Elezen" },
+    "with_race_miqote": { "zh-TW": "與貓魅族同行", "zh-CN": "与猫魅族同行", "ja": "ミコッテと同行", "en": "With Miqo'te" },
+    "with_race_lalafell": { "zh-TW": "與拉拉菲爾族同行", "zh-CN": "与拉拉菲尔族同行", "ja": "ララフェルと同行", "en": "With Lalafell" },
+    "with_race_roegadyn": { "zh-TW": "與魯加族同行", "zh-CN": "与鲁加族同行", "ja": "ルガディンと同行", "en": "With Roegadyn" },
+    "with_race_aura": { "zh-TW": "與敖龍族同行", "zh-CN": "与敖龙族同行", "ja": "アウラと同行", "en": "With Au Ra" },
+
+    // === 職業條件：與某職業同行 ===
+    "with_class_gla": { "zh-TW": "與劍術師同行", "zh-CN": "与剑术师同行", "ja": "剣術士と同行", "en": "With Gladiator" },
+    "with_class_mrd": { "zh-TW": "與斧術師同行", "zh-CN": "与斧术师同行", "ja": "斧術士と同行", "en": "With Marauder" },
+    "with_class_arc": { "zh-TW": "與弓箭手同行", "zh-CN": "与弓箭手同行", "ja": "弓術士と同行", "en": "With Archer" },
+    "with_class_lnc": { "zh-TW": "與槍術師同行", "zh-CN": "与枪术师同行", "ja": "槍術士と同行", "en": "With Lancer" },
+    "with_class_rog": { "zh-TW": "與雙劍師同行", "zh-CN": "与双剑师同行", "ja": "双剣士と同行", "en": "With Rogue" },
+    "with_class_pgl": { "zh-TW": "與格鬥家同行", "zh-CN": "与格斗家同行", "ja": "格闘士と同行", "en": "With Pugilist" },
+    "with_class_cnj": { "zh-TW": "與幻術師同行", "zh-CN": "与幻术师同行", "ja": "幻術士と同行", "en": "With Conjurer" },
+    "with_class_thm": { "zh-TW": "與咒術師同行", "zh-CN": "与咒术师同行", "ja": "呪術士と同行", "en": "With Thaumaturge" },
+    "with_class_acn": { "zh-TW": "與祕術師同行", "zh-CN": "与秘术师同行", "ja": "巴術士と同行", "en": "With Arcanist" },
+
+    // === 種族組合條件 ===
+    "same_race": { "zh-TW": "同行者與自己的種族相同", "zh-CN": "同行者与自己的种族相同", "ja": "同種族の隊員がいる", "en": "Same Race in Squad" },
+    "no_same_race": { "zh-TW": "同行者與自己的種族不同", "zh-CN": "同行者与自己的种族不同", "ja": "同種族の隊員がいない", "en": "No Same Race in Squad" },
+    "all_diff_race": { "zh-TW": "同行者的種族均不相同", "zh-CN": "同行者的种族均不相同", "ja": "全員種族が異なる", "en": "All Different Races" },
+    "3+_race": { "zh-TW": "同種族的同行者三人以上", "zh-CN": "同种族的同行者三人以上", "ja": "同種族が3人以上", "en": "3+ Same Race" },
+
+    // === 職業組合條件 ===
+    "same_class": { "zh-TW": "同行者與自己的職業相同", "zh-CN": "同行者与自己的职业相同", "ja": "同クラスの隊員がいる", "en": "Same Class in Squad" },
+    "no_same_class": { "zh-TW": "同行者與自己的職業不同", "zh-CN": "同行者与自己的职业不同", "ja": "同クラスの隊員がいない", "en": "No Same Class in Squad" },
+    "all_diff_class": { "zh-TW": "同行者的職業均不相同", "zh-CN": "同行者的职业均不相同", "ja": "全員クラスが異なる", "en": "All Different Classes" },
+    "3+_class": { "zh-TW": "同職業的同行者三人以上", "zh-CN": "同职业的同行者三人以上", "ja": "同クラスが3人以上", "en": "3+ Same Class" },
 };
 
 const CHEMISTRY_EFFECTS = {
-    "stats_phy": { "zh-TW": "體能提升", "zh-CN": "体能提升", "ja": "体能アップ", "en": "Increase Physical" },
-    "stats_men": { "zh-TW": "心智提升", "zh-CN": "精神力提升", "ja": "精神力アップ", "en": "Increase Mental" },
-    "stats_tac": { "zh-TW": "戰術提升", "zh-CN": "战术提升", "ja": "戦術アップ", "en": "Increase Tactical" },
-    "stats_all": { "zh-TW": "全屬性提升", "zh-CN": "全属性提升", "ja": "全能力アップ", "en": "Increase All Stats" },
-    "rate_trigger": { "zh-TW": "吉兆觸發率提升", "zh-CN": "吉兆触发率提升", "ja": "ジンクス発動率アップ", "en": "Increase Chemistry Trigger Rate" },
-    "exp_boost": { "zh-TW": "經驗值增加", "zh-CN": "经验值增加", "ja": "経験値アップ", "en": "Increase EXP" },
-    "scrips_mgp": { "zh-TW": "獲得 MGP", "zh-CN": "获得 MGP", "ja": "MGP獲得", "en": "Get MGP" },
-    "scrips_gil": { "zh-TW": "獲得 Gil", "zh-CN": "获得 Gil", "ja": "ギル獲得", "en": "Get Gil" },
-    "scrips_scrip": { "zh-TW": "獲得 票據", "zh-CN": "获得 票据", "ja": "スクリップ獲得", "en": "Get Scrips" },
-    "reward_materia": { "zh-TW": "獲得 魔石", "zh-CN": "获得 魔石", "ja": "マテリア獲得", "en": "Get Materia" },
-    "reward_cluster": { "zh-TW": "獲得 晶簇", "zh-CN": "获得 晶簇", "ja": "クラスター獲得", "en": "Get Cluster" }
+    // === 個人屬性提升 (10%/15%/20%) ===
+    "stats_phy": { "zh-TW": "體能提升", "zh-CN": "体能提升", "ja": "体能アップ", "en": "Physical +" },
+    "stats_men": { "zh-TW": "心智提升", "zh-CN": "心智提升", "ja": "精神力アップ", "en": "Mental +" },
+    "stats_tac": { "zh-TW": "戰術提升", "zh-CN": "战术提升", "ja": "戦術アップ", "en": "Tactical +" },
+    
+    // === 全員屬性提升 (3%/5%) ===
+    "stats_all_phy": { "zh-TW": "全員體能提升", "zh-CN": "全员体能提升", "ja": "全員体能アップ", "en": "All Physical +" },
+    "stats_all_men": { "zh-TW": "全員心智提升", "zh-CN": "全员心智提升", "ja": "全員精神力アップ", "en": "All Mental +" },
+    "stats_all_tac": { "zh-TW": "全員戰術提升", "zh-CN": "全员战术提升", "ja": "全員戦術アップ", "en": "All Tactical +" },
 };
 
-const CHEMISTRY_TARGET_TYPES = [
-    { value: "none", label: "-" },
-    { value: "race_hyur", label: "Race: Hyur" },
-    { value: "race_elezen", label: "Race: Elezen" },
-    { value: "race_lalafell", label: "Race: Lalafell" },
-    { value: "race_miqote", label: "Race: Miqo'te" },
-    { value: "race_roegadyn", label: "Race: Roegadyn" },
-    { value: "race_aura", label: "Race: Au Ra" },
-    { value: "class_tank", label: "Class: Tank" },
-    { value: "class_dps", label: "Class: DPS" },
-    { value: "class_healer", label: "Class: Healer" },
-    { value: "gender_male", label: "Gender: Male" },
-    { value: "gender_female", label: "Gender: Female" },
-    { value: "race_same", label: "Same Race" },
-    { value: "class_same", label: "Same Class" },
-    { value: "affinity_phy", label: "Affinity: Phy" },
-    { value: "affinity_men", label: "Affinity: Men" },
-    { value: "affinity_tac", label: "Affinity: Tac" },
-    { value: "level_50_plus", label: "Level 50+" }
+// 吉兆數值選項
+const CHEMISTRY_VALUES = {
+    // 個人屬性提升數值
+    "personal": [10, 15, 20],
+    // 全員屬性提升數值
+    "all": [3, 5],
+    // 強化倍率
+    "enhanced_multiplier": 2
+};
+
+// 用於 UI 下拉選單的條件列表
+const CHEMISTRY_CONDITION_OPTIONS = [
+    { value: "none", label: { "zh-TW": "(無)", "zh-CN": "(无)", "ja": "(なし)", "en": "(None)" } },
+    // 任務相關
+    { value: "in_squad", group: "mission" },
+    { value: "m_level", group: "mission" },
+    { value: "above_50", group: "mission" },
+    // 種族同行
+    { value: "with_race_hyur", group: "race" },
+    { value: "with_race_elezen", group: "race" },
+    { value: "with_race_miqote", group: "race" },
+    { value: "with_race_lalafell", group: "race" },
+    { value: "with_race_roegadyn", group: "race" },
+    { value: "with_race_aura", group: "race" },
+    // 職業同行
+    { value: "with_class_gla", group: "class" },
+    { value: "with_class_mrd", group: "class" },
+    { value: "with_class_arc", group: "class" },
+    { value: "with_class_lnc", group: "class" },
+    { value: "with_class_rog", group: "class" },
+    { value: "with_class_pgl", group: "class" },
+    { value: "with_class_cnj", group: "class" },
+    { value: "with_class_thm", group: "class" },
+    { value: "with_class_acn", group: "class" },
+    // 種族組合
+    { value: "same_race", group: "combo" },
+    { value: "no_same_race", group: "combo" },
+    { value: "all_diff_race", group: "combo" },
+    { value: "3+_race", group: "combo" },
+    // 職業組合
+    { value: "same_class", group: "combo" },
+    { value: "no_same_class", group: "combo" },
+    { value: "all_diff_class", group: "combo" },
+    { value: "3+_class", group: "combo" },
 ];
+
+// 用於 UI 下拉選單的效果列表
+const CHEMISTRY_EFFECT_OPTIONS = [
+    { value: "none", label: { "zh-TW": "(無)", "zh-CN": "(无)", "ja": "(なし)", "en": "(None)" } },
+    { value: "stats_phy", group: "personal" },
+    { value: "stats_men", group: "personal" },
+    { value: "stats_tac", group: "personal" },
+    { value: "stats_all_phy", group: "all" },
+    { value: "stats_all_men", group: "all" },
+    { value: "stats_all_tac", group: "all" },
+];
+
+// 保留舊的 CHEMISTRY_TARGET_TYPES 以維持向後相容
+/*
+const CHEMISTRY_TARGET_TYPES = CHEMISTRY_CONDITION_OPTIONS.map(opt => ({
+    value: opt.value,
+    label: opt.value === "none" ? "-" : (CHEMISTRY_CONDITIONS[opt.value] ? CHEMISTRY_CONDITIONS[opt.value]["en"] : opt.value)
+}));
+*/
