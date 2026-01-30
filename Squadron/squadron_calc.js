@@ -288,23 +288,14 @@ function simulateLevelUp() {
                 // 測試是否可達標
                 const solution = solveTraining(bp, bm, bt, currTrain, reqP, reqM, reqT);
 
-                let isValid = false;
                 let isChemCritical = false;
 
+                // 只接受 100% 達標的方案
                 if (solution.success) {
-                    isValid = true;
                     if (chemStats.p > 0 && (solution.finalStats.p - chemStats.p < reqP)) isChemCritical = true;
                     if (chemStats.m > 0 && (solution.finalStats.m - chemStats.m < reqM)) isChemCritical = true;
                     if (chemStats.t > 0 && (solution.finalStats.t - chemStats.t < reqT)) isChemCritical = true;
-                } else if (solution.partialSuccess) {
-                    const totalMissing = solution.missing.missingP + solution.missing.missingM + solution.missing.missingT;
-                    // Strictly better than baseline
-                    if (totalMissing < baselineTotalMissing) {
-                        isValid = true;
-                    }
-                }
-
-                if (isValid) {
+                    
                     suggestions.push({
                         squad: boostedSquad,
                         levelBoost,
@@ -314,9 +305,7 @@ function simulateLevelUp() {
                         chemStats,
                         activeChems,
                         isChemCritical,
-                        isPartial: !solution.success,
-                        missing: solution.missing,
-                        totalMissing: !solution.success ? (solution.missing.missingP + solution.missing.missingM + solution.missing.missingT) : 0
+                        isPartial: false
                     });
                 }
             }
@@ -329,17 +318,10 @@ function simulateLevelUp() {
         }
         
         // Sort Suggestions
-        // 1. Success first
-        // 2. Lower Level Boost (cheaper)
-        // 3. Lower Missing (if partial)
+        // 1. Lower Level Boost (cheaper)
+        // 2. Lower Steps
         suggestions.sort((a, b) => {
-             if (a.isPartial !== b.isPartial) return a.isPartial ? 1 : -1;
-             
              if (a.levelBoost !== b.levelBoost) return a.levelBoost - b.levelBoost;
-             
-             if (a.isPartial) {
-                  return a.totalMissing - b.totalMissing;
-             }
              return a.steps - b.steps;
         });
         
@@ -363,8 +345,9 @@ function simulateLevelUp() {
         if (topSuggestions.length === 0) {
             resultContent.innerHTML = `
                  <div class="bg-slate-100 dark:bg-slate-700/50 p-6 rounded-lg text-center">
-                    <p class="text-slate-600 dark:text-slate-400 mb-2">${t.msg_no_level_solution || '即使模擬升級，也未發現可行的方案。'}</p>
-                    <button onclick="calculate()" class="text-blue-500 hover:text-blue-600 underline text-sm">${t.btn_back || '返回計算'}</button>
+                    <div class="text-3xl mb-3">📊</div>
+                    <p class="text-slate-700 dark:text-slate-300 font-bold mb-2">${t.msg_no_level_solution || '即使升級也無法達成 100% 達標'}</p>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm mb-4">${t.msg_no_level_solution_desc || '僅透過等級提升無法達成任務需求，請嘗試轉職模擬或調整隊伍吉兆。'}</p>
                 </div>
             `;
         } else {
@@ -412,14 +395,10 @@ function simulateLevelUp() {
                                   ${partialBadge}
                              </div>
                         </div>
-                        <div class="text-right flex flex-col gap-0.5">
+                        <div class="text-right">
                             <div class="text-[10px] text-slate-400 dark:text-slate-500 font-mono">
                                 需求: P:${reqP} M:${reqM} T:${reqT}
                             </div>
-                            <div class="text-xs font-mono font-bold text-slate-600 dark:text-slate-400">
-                                總和: <span class="text-blue-600 dark:text-blue-400">P:${finalP} M:${finalM} T:${finalT}</span>
-                            </div>
-                            ${missingHint}
                         </div>
                      </div>
  

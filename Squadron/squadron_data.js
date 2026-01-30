@@ -172,7 +172,7 @@ const TRANSLATIONS = {
         "class_names": {
             'GLA': '劍術師 (Gladiator)', 'MRD': '斧術師 (Marauder)', 'CNJ': '幻術師 (Conjurer)',
             'THM': '咒術師 (Thaumaturge)', 'ACN': '巴術師 (Arcanist)', 'LNC': '槍術師 (Lancer)',
-            'PGL': '格鬥家 (Pugilist)', 'ROG': '雙劍師 (Rogue)', 'ARC': '弓箭手 (Archer)'
+            'PGL': '格鬥家 (Pugilist)', 'ROG': '雙劍師 (Rogue)', 'ARC': '弓術士 (Archer)'
         },
         "training_ops": {
             "phy_40": "體能訓練 (Phy +40)", "men_40": "心理訓練 (Men +40)", "tac_40": "戰術訓練 (Tac +40)",
@@ -308,7 +308,7 @@ const TRANSLATIONS = {
         "class_names": {
             'GLA': '剑术师 (Gladiator)', 'MRD': '斧术师 (Marauder)', 'CNJ': '幻术师 (Conjurer)',
             'THM': '咒术师 (Thaumaturge)', 'ACN': '巴术师 (Arcanist)', 'LNC': '枪术师 (Lancer)',
-            'PGL': '格斗家 (Pugilist)', 'ROG': '双剑师 (Rogue)', 'ARC': '弓箭手 (Archer)'
+            'PGL': '格斗家 (Pugilist)', 'ROG': '双剑师 (Rogue)', 'ARC': '弓術士 (Archer)'
         },
         "training_ops": {
             "phy_40": "体能训练 (Phy +40)", "men_40": "心智训练 (Men +40)", "tac_40": "战术训练 (Tac +40)",
@@ -1274,7 +1274,7 @@ const CHEMISTRY_CONDITIONS = {
     // === 職業條件：與某職業同行 ===
     "with_class_gla": { "zh-TW": "與劍術師同行", "zh-CN": "与剑术师同行", "ja": "剣術士と同行", "en": "With Gladiator" },
     "with_class_mrd": { "zh-TW": "與斧術師同行", "zh-CN": "与斧术师同行", "ja": "斧術士と同行", "en": "With Marauder" },
-    "with_class_arc": { "zh-TW": "與弓箭手同行", "zh-CN": "与弓箭手同行", "ja": "弓術士と同行", "en": "With Archer" },
+    "with_class_arc": { "zh-TW": "與弓術士同行", "zh-CN": "与弓術士同行", "ja": "弓術士と同行", "en": "With Archer" },
     "with_class_lnc": { "zh-TW": "與槍術師同行", "zh-CN": "与枪术师同行", "ja": "槍術士と同行", "en": "With Lancer" },
     "with_class_rog": { "zh-TW": "與雙劍師同行", "zh-CN": "与双剑师同行", "ja": "双剣士と同行", "en": "With Rogue" },
     "with_class_pgl": { "zh-TW": "與格鬥家同行", "zh-CN": "与格斗家同行", "ja": "格闘士と同行", "en": "With Pugilist" },
