@@ -2176,6 +2176,27 @@
     "fr": "Agrégat de matière sombre",
     "tw": "黑暗物質晶簇"
   },
+  "12238": {
+    "en": "Tome of Geological Folklore - Coerthas",
+    "de": "Coerthischer Bergbau-Almanach",
+    "ja": "鉱物伝承録:クルザス",
+    "fr": "Légendes géologiques du Coerthas",
+    "tw": "礦物傳承錄·庫爾札斯篇"
+  },
+  "12239": {
+    "en": "Tome of Geological Folklore - Dravania",
+    "de": "Dravanischer Bergbau-Almanach",
+    "ja": "鉱物伝承録:ドラヴァニア",
+    "fr": "Légendes géologiques de Dravania",
+    "tw": "礦物傳承錄·德拉瓦尼亞篇"
+  },
+  "12240": {
+    "en": "Tome of Geological Folklore - Abalathia's Spine",
+    "de": "Abalathischer Bergbau-Almanach",
+    "ja": "鉱物伝承録:アバラシア",
+    "fr": "Légendes géologiques d'Abalathia",
+    "tw": "礦物傳承錄·阿巴拉提亞篇"
+  },
   "12531": {
     "en": "Mythrite Sand",
     "de": "Mythrit-Sandklumpen",
@@ -2427,6 +2448,27 @@
     "ja": "コリアンダー",
     "fr": "Coriandre",
     "tw": "香菜"
+  },
+  "12698": {
+    "en": "Tome of Botanical Folklore - Coerthas",
+    "de": "Coerthischer Botanik-Almanach",
+    "ja": "草木伝承録:クルザス",
+    "fr": "Légendes botaniques du Coerthas",
+    "tw": "草木傳承錄·庫爾札斯篇"
+  },
+  "12699": {
+    "en": "Tome of Botanical Folklore - Dravania",
+    "de": "Dravanischer Botanik-Almanach",
+    "ja": "草木伝承録:ドラヴァニア",
+    "fr": "Légendes botaniques de Dravania",
+    "tw": "草木傳承錄·德拉瓦尼亞篇"
+  },
+  "12700": {
+    "en": "Tome of Botanical Folklore - Abalathia's Spine",
+    "de": "Abalathischer Botanik-Almanach",
+    "ja": "草木伝承録:アバラシア",
+    "fr": "Légendes botaniques d'Abalathia",
+    "tw": "草木傳承錄·阿巴拉提亞篇"
   },
   "12877": {
     "en": "Pearl Sprouts",
@@ -2938,6 +2980,34 @@
     "ja": "レインボーピグメント",
     "fr": "Pigment arc-en-ciel",
     "tw": "彩虹色素"
+  },
+  "17838": {
+    "en": "Tome of Geological Folklore - Gyr Abania",
+    "de": "Abanischer Bergbau-Almanach",
+    "ja": "鉱物伝承録:ギラバニア",
+    "fr": "Légendes géologiques de Gyr Abania",
+    "tw": "礦物傳承錄·基拉巴尼亞篇"
+  },
+  "17839": {
+    "en": "Tome of Geological Folklore - Othard",
+    "de": "Othardischer Bergbau-Almanach",
+    "ja": "鉱物伝承録:オサード",
+    "fr": "Légendes géologiques d'Othard",
+    "tw": "礦物傳承錄·奧薩德篇"
+  },
+  "17840": {
+    "en": "Tome of Botanical Folklore - Gyr Abania",
+    "de": "Abanischer Botanik-Almanach",
+    "ja": "草木伝承録:ギラバニア",
+    "fr": "Légendes botaniques de Gyr Abania",
+    "tw": "草木傳承錄·基拉巴尼亞篇"
+  },
+  "17841": {
+    "en": "Tome of Botanical Folklore - Othard",
+    "de": "Othardischer Botanik-Almanach",
+    "ja": "草木伝承録:オサード",
+    "fr": "Légendes botaniques d'Othard",
+    "tw": "草木傳承錄·奧薩德篇"
   },
   "19850": {
     "en": "Buckwheat Kernels",
@@ -3673,6 +3743,20 @@
     "ja": "巨大生物の痕跡",
     "fr": "Trace d'animal géant",
     "tw": "巨大生物的痕跡"
+  },
+  "26808": {
+    "en": "Tome of Geological Folklore - Norvrandt",
+    "de": "Vrandtischer Bergbau-Almanach",
+    "ja": "鉱物伝承録:ノルヴラント",
+    "fr": "Légendes géologiques de Norvrandt",
+    "tw": "礦物傳承錄·諾弗蘭特篇"
+  },
+  "26809": {
+    "en": "Tome of Botanical Folklore - Norvrandt",
+    "de": "Vrandtischer Botanik-Almanach",
+    "ja": "草木伝承録:ノルヴラント",
+    "fr": "Légendes botaniques de Norvrandt",
+    "tw": "草木傳承錄·諾弗蘭特篇"
   },
   "27683": {
     "en": "White Oak Log",
@@ -4801,6 +4885,48 @@
     "fr": "Écorce de palmier",
     "tw": "棕櫚碎皮"
   },
+  "36598": {
+    "en": "Tome of Geological Folklore - Ilsabard and the Northern Empty",
+    "de": "Nordmeerbergbau-Almanach",
+    "ja": "鉱物伝承録:北洋地域・イルサバード",
+    "fr": "Légendes géologiques des mers du Nord et d'Ilsabard",
+    "tw": "礦物傳承錄·北洋地域&伊爾薩巴德篇"
+  },
+  "36600": {
+    "en": "Tome of Geological Folklore - The Sea of Stars",
+    "de": "Kosmischer Bergbau-Almanach",
+    "ja": "鉱物伝承録:星外宙域",
+    "fr": "Légendes géologiques de l'espace intersidéral",
+    "tw": "礦物傳承錄·星外天域篇"
+  },
+  "36601": {
+    "en": "Tome of Geological Folklore - The World Unsundered",
+    "de": "Unzersplitterter Bergbau-Almanach",
+    "ja": "鉱物伝承録:古代世界",
+    "fr": "Légendes géologiques de l'ancien monde",
+    "tw": "礦物傳承錄·古代世界篇"
+  },
+  "36602": {
+    "en": "Tome of Botanical Folklore - Ilsabard and the Northern Empty",
+    "de": "Nordmeerbotanik-Almanach",
+    "ja": "草木伝承録:北洋地域・イルサバード",
+    "fr": "Légendes botaniques des mers du Nord et d'Ilsabard",
+    "tw": "草木傳承錄·北洋地域&伊爾薩巴德篇"
+  },
+  "36604": {
+    "en": "Tome of Botanical Folklore - The Sea of Stars",
+    "de": "Kosmischer Botanik-Almanach",
+    "ja": "草木伝承録:星外宙域",
+    "fr": "Légendes botaniques de l'espace intersidéral",
+    "tw": "草木傳承錄·星外天域篇"
+  },
+  "36605": {
+    "en": "Tome of Botanical Folklore - The World Unsundered",
+    "de": "Unzersplitterter Botanik-Almanach",
+    "ja": "草木伝承録:古代世界",
+    "fr": "Légendes botaniques de l'ancien monde",
+    "tw": "草木傳承錄·古代世界篇"
+  },
   "36669": {
     "en": "Aetheroconductive Feather",
     "de": "Feder für ein akademisches Schreibset",
@@ -5143,6 +5269,48 @@
     "ja": "昇華古竜の鱗",
     "fr": "Écaille de dragon ancien sublimée",
     "tw": "昇華古龍鱗"
+  },
+  "43878": {
+    "en": "Tome of Geological Folklore - Yok Tural",
+    "de": "Yok-turalischer Bergbau-Almanach",
+    "ja": "鉱物伝承録:ヨカ・トラル",
+    "fr": "Légendes géologiques du Yok Tural",
+    "tw": "礦物傳承錄·尤卡圖拉爾篇"
+  },
+  "43879": {
+    "en": "Tome of Geological Folklore - Xak Tural",
+    "de": "Xak-turalischer Bergbau-Almanach",
+    "ja": "鉱物伝承録:サカ・トラル",
+    "fr": "Légendes géologiques du Xak Tural",
+    "tw": "礦物傳承錄·薩卡圖拉爾篇"
+  },
+  "43880": {
+    "en": "Tome of Geological Folklore - Alexandria",
+    "de": "Alexandrischer Bergbau-Almanach",
+    "ja": "鉱物伝承録:アレクサンドリア",
+    "fr": "Légendes géologiques d'Alexandrie",
+    "tw": "礦物傳承錄·亞歷山德里亞篇"
+  },
+  "43881": {
+    "en": "Tome of Botanical Folklore - Yok Tural",
+    "de": "Yok-turalischer Botanik-Almanach",
+    "ja": "草木伝承録:ヨカ・トラル",
+    "fr": "Légendes botaniques du Yok Tural",
+    "tw": "草木傳承錄·尤卡圖拉爾篇"
+  },
+  "43882": {
+    "en": "Tome of Botanical Folklore - Xak Tural",
+    "de": "Xak-turalischer Botanik-Almanach",
+    "ja": "草木伝承録:サカ・トラル",
+    "fr": "Légendes botaniques du Xak Tural",
+    "tw": "草木傳承錄·薩卡圖拉爾篇"
+  },
+  "43883": {
+    "en": "Tome of Botanical Folklore - Alexandria",
+    "de": "Alexandrischer Botanik-Almanach",
+    "ja": "草木伝承録:アレクサンドリア",
+    "fr": "Légendes botaniques d'Alexandrie",
+    "tw": "草木傳承錄·亞歷山德里亞篇"
   },
   "43931": {
     "en": "Electrocoal",

@@ -17,7 +17,12 @@
     "exp_5": "5.0 暗影之逆焰",
     "exp_6": "6.0 曉月之終途",
     "exp_7": "7.0 黃金的遺產",
-    "hide_completed": "隱藏已完成"
+    "hide_completed": "隱藏已完成",
+    "all_types": "全部",
+    "mining": "採掘",
+    "quarrying": "碎石",
+    "logging": "伐木",
+    "harvesting": "割草"
   },
   "zh-CN": {
     "title": "FFXIV 采集手册",
@@ -37,7 +42,12 @@
     "exp_5": "5.0 暗影之逆焰",
     "exp_6": "6.0 晓月之终途",
     "exp_7": "7.0 黄金的遗产",
-    "hide_completed": "隐藏已完成"
+    "hide_completed": "隐藏已完成",
+    "all_types": "全部",
+    "mining": "采掘",
+    "quarrying": "碎石",
+    "logging": "伐木",
+    "harvesting": "割草"
   },
   "en": {
     "title": "FFXIV Gathering Log",
@@ -57,7 +67,12 @@
     "exp_5": "5.0 Shadowbringers",
     "exp_6": "6.0 Endwalker",
     "exp_7": "7.0 Dawntrail",
-    "hide_completed": "Hide Completed"
+    "hide_completed": "Hide Completed",
+    "all_types": "All",
+    "mining": "Mining",
+    "quarrying": "Quarrying",
+    "logging": "Logging",
+    "harvesting": "Harvesting"
   },
   "ja": {
     "title": "採集手帳",
@@ -77,6 +92,11 @@
     "exp_5": "5.0 漆黒のヴィランズ",
     "exp_6": "6.0 暁月のフィナーレ",
     "exp_7": "7.0 黄金のレガシー",
-    "hide_completed": "コンプリートを非表示"
+    "hide_completed": "コンプリートを非表示",
+    "all_types": "全て",
+    "mining": "採掘",
+    "quarrying": "砕岩",
+    "logging": "伐採",
+    "harvesting": "草刈"
   }
 }

@@ -37,10 +37,39 @@ let gPlaces = {};
 let gNodes = {};
 let gMaps = {}; // New container for maps
 let gItemNodes = {}; // Reverse lookup: ItemID -> [Node Info]
-let gUiLocales = {}; // New container for UI text
+const gUiLocales = {
+    "en": { "title": "FFXIV Gathering Log", "progress": "Progress", "jump_to": "JUMP TO", "hide_completed": "Hide Completed", "miner": "Miner", "botanist": "Botanist", "all_types": "All", "mining": "Mining", "quarrying": "Quarrying", "logging": "Logging", "harvesting": "Harvesting", "ui_omitted": "(others omitted)", "time_any": "Any Time", "copied": "Copied", "copy_name": "Copy Name", "all_regions": "All Regions", "exp_2": "A Realm Reborn", "exp_3": "Heavensward", "exp_4": "Stormblood", "exp_5": "Shadowbringers", "exp_6": "Endwalker", "exp_7": "Dawntrail", "others": "Others" },
+    "zh-TW": { "title": "FFXIV 採集手冊", "progress": "進度", "jump_to": "快速跳轉", "hide_completed": "隱藏已完成", "miner": "採礦工", "botanist": "園藝工", "all_types": "全部", "mining": "採掘", "quarrying": "碎石", "logging": "伐木", "harvesting": "割草", "ui_omitted": "(其餘已省略)", "time_any": "任意時間", "copied": "已複製", "copy_name": "複製名稱", "all_regions": "所有地區", "exp_2": "新生艾奧傑亞", "exp_3": "蒼天的伊修加德", "exp_4": "紅蓮的解放者", "exp_5": "漆黑的反逆者", "exp_6": "曉月之終途", "exp_7": "黃金的遺產", "others": "其他" },
+    "zh-CN": { "title": "FFXIV 采集手册", "progress": "进度", "jump_to": "快速跳转", "hide_completed": "隐藏已完成", "miner": "采矿工", "botanist": "园艺工", "all_types": "全部", "mining": "采掘", "quarrying": "碎石", "logging": "伐木", "harvesting": "割草", "ui_omitted": "(其余已省略)", "time_any": "任意时间", "copied": "已复制", "copy_name": "复制名称", "all_regions": "所有地区", "exp_2": "新生艾欧泽亚", "exp_3": "苍穹之禁城", "exp_4": "红莲之狂潮", "exp_5": "暗影之逆焰", "exp_6": "晓月之终途", "exp_7": "黄金的遗产", "others": "其他" },
+    "ja": { "title": "FFXIV 採集手帳", "progress": "進捗", "jump_to": "ジャンプ", "hide_completed": "完了を表示しない", "miner": "採掘師", "botanist": "園芸師", "all_types": "すべて", "mining": "採掘", "quarrying": "砕岩", "logging": "伐採", "harvesting": "草刈", "ui_omitted": "(その他省略)", "time_any": "常時", "copied": "コピーしました", "copy_name": "名前をコピー", "all_regions": "全地域", "exp_2": "新生エオルゼア", "exp_3": "蒼天のイシュガルド", "exp_4": "紅蓮のリベレーター", "exp_5": "漆黒のヴィランズ", "exp_6": "暁月のフィナーレ", "exp_7": "黄金のレガシー", "others": "その他" }
+};
 let gCollapsedExpansions = new Set(); // Track collapsed specific expansion sections
 let gLastAvailableZones = null; // Store for re-rendering sidebar
 let gHideCompleted = false;
+let currentGatherType = 'all'; // 'all', 'mining', 'quarrying', 'logging', 'harvesting'
+
+// Type configuration: maps gather type to page indices in gLogPages
+// gLogPages structure: [0]=Mining, [1]=Quarrying, [2]=Harvesting, [3]=Logging
+const PAGE_INDEX_CONFIG = {
+    miner: {
+        all: [0, 1],      // Both Mining and Quarrying
+        mining: [0],      // Mining only (node type 1)
+        quarrying: [1]    // Quarrying only (node type 0)
+    },
+    botanist: {
+        all: [2, 3],      // Both Harvesting and Logging
+        harvesting: [2],  // Harvesting only (node type 2)
+        logging: [3]      // Logging only (node type 3)
+    }
+};
+
+const UI_ICONS = {
+    folklore: 'https://xivapi.com/i/026000/026168_hr1.png',
+    mining: 'https://xivapi.com/i/062000/062201_hr1.png',
+    quarrying: 'https://xivapi.com/i/062000/062202_hr1.png',
+    logging: 'https://xivapi.com/i/062000/062203_hr1.png',
+    harvesting: 'https://xivapi.com/i/062000/062204_hr1.png'
+};
 
 const STORAGE_KEY = 'ffxiv_gathering_log_progress';
 const EXPANSION_MAP = {
@@ -65,14 +94,13 @@ async function init() {
         if (saved) completedItems = new Set(JSON.parse(saved));
 
         // Load JSON data in parallel
-        const [pagesRes, itemsRes, iconsRes, placesRes, nodesRes, mapsRes, uiRes] = await Promise.all([
+        const [pagesRes, itemsRes, iconsRes, placesRes, nodesRes, mapsRes] = await Promise.all([
             fetch('data/gathering-log-pages.json'),
             fetch('data/items.json'),
             fetch('data/icons.json'), // Load icons.json
             fetch('data/places.json'),
             fetch('data/nodes.json'),
-            fetch('data/maps.json'),
-            fetch('data/ui_locales.json')
+            fetch('data/maps.json')
         ]);
 
         if (!pagesRes.ok || !itemsRes.ok || !iconsRes.ok) throw new Error("Failed to load data files");
@@ -83,7 +111,6 @@ async function init() {
         gPlaces = await placesRes.json();
         gNodes = await nodesRes.json();
         gMaps = await mapsRes.json();
-        gUiLocales = await uiRes.json(); // Load UI locales
 
         processNodes();
         updateLangButtons();
@@ -134,7 +161,8 @@ function processNodes() {
                 ...node, 
                 id: nodeId, 
                 regionId: info.regionId,
-                mapPlaceId: info.placeId 
+                mapPlaceId: info.placeId,
+                folklore: node.folklore // Capture folklore ID if present
             });
         });
     }
@@ -149,32 +177,31 @@ function getIconUrl(itemId) {
     return `https://xivapi.com${iconPath}`;
 }
 
-function t(id, type = 'ui') {
+// Helper to get localized text
+// type: 'ui' | 'item' | 'place'
+function t(key, type = 'ui') {
+    const lang = currentLang === 'zh-TW' ? 'tw' : (currentLang === 'zh-CN' ? 'zh' : currentLang);
+
     if (type === 'ui') {
-        const langData = gUiLocales[currentLang] || gUiLocales['en'];
-        return (langData && langData[id]) || id;
+        if (!gUiLocales[currentLang]) return key;
+        return gUiLocales[currentLang][key] || key;
     }
     
     if (type === 'item') {
-        if (gItems[id]) {
-            // Fallbacks: TW -> EN -> ID
-            if (currentLang === 'zh-TW' && gItems[id].tw) return gItems[id].tw;
-            if (gItems[id][currentLang]) return gItems[id][currentLang];
-            if (gItems[id].en) return gItems[id].en;
-        }
-        return `Item #${id}`;
-    }
-    
-    if (type === 'place') { 
-            if (gPlaces[id]) {
-            if (currentLang === 'zh-TW' && gPlaces[id].tw) return gPlaces[id].tw;
-            if (gPlaces[id][currentLang]) return gPlaces[id][currentLang];
-            if (gPlaces[id].en) return gPlaces[id].en;
-            }
-            return id;
+        const item = gItems[key];
+        if (!item) return `Item#${key}`;
+        if (lang === 'tw' && !item.tw && item.zh) return item.zh;
+        return item[lang] || item.en || `Item#${key}`;
     }
 
-    return id;
+    if (type === 'place') {
+        const place = gPlaces[key];
+        if (!place) return `Place#${key}`;
+        if (lang === 'tw' && !place.tw && place.zh) return place.zh;
+        return place[lang] || place.en || `Place#${key}`;
+    }
+
+    return key;
 }
 
 function updateStickyOffsets() {
@@ -223,6 +250,7 @@ function render() {
     document.getElementById('btn-miner').innerText = t('miner');
     document.getElementById('btn-botanist').innerText = t('botanist');
     updateJobButtons();
+    updateTypeButtons();
 
     // Setup Layout
     document.getElementById('region-sidebar').style.display = 'block'; 
@@ -234,12 +262,19 @@ function render() {
     listContainer.innerHTML = '';
     navGrid.innerHTML = '';
 
-    // Determine Job Pages
-    // 0: Miner, 1: Botanist, 2: Fisher (usually)
-    const jobIndex = currentJob === 'miner' ? 0 : 1;
-    const jobPages = gLogPages[jobIndex];
+    // Determine Job Pages based on job and gather type
+    // gLogPages: [0]=Mining, [1]=Quarrying, [2]=Harvesting, [3]=Logging
+    const pageIndices = PAGE_INDEX_CONFIG[currentJob][currentGatherType] || PAGE_INDEX_CONFIG[currentJob].all;
+    
+    // Combine pages from selected indices
+    let allJobPages = [];
+    pageIndices.forEach(idx => {
+        if (gLogPages[idx]) {
+            allJobPages = allJobPages.concat(gLogPages[idx]);
+        }
+    });
 
-    if (!jobPages) {
+    if (allJobPages.length === 0) {
         listContainer.innerHTML = '<div class="p-5 text-center col-span-full">No data found for this job.</div>';
         return;
     }
@@ -251,7 +286,7 @@ function render() {
     let totalItemsCount = 0;
     let totalCompletedCount = 0;
 
-    jobPages.forEach(page => {
+    allJobPages.forEach(page => {
         // Page Grouping Logic
         const startLvl = page.startLevel;
         const pageId = page.id;
@@ -286,6 +321,7 @@ function render() {
                 if (nodes.some(n => String(n.mapPlaceId) === currentRegion)) inRegion = true;
             }
 
+            // No need to filter by type here - pages are already separated by gather type
             if (inRegion) {
                 relevantItems.push(itemEntry);
             }
@@ -352,12 +388,54 @@ function render() {
             
             const itemRow = document.createElement('div');
             itemRow.className = `group flex items-start p-3 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all ${isChecked ? 'checked-item bg-slate-50 dark:bg-slate-800/50' : ''}`;
-
+            
+            // Icon Html
             const iconUrl = getIconUrl(itemId);
             const iconHtml = `<img src="${iconUrl}" class="w-10 h-10 rounded mr-3 border border-slate-300 dark:border-slate-600 shadow-sm shrink-0 bg-slate-800" alt="" loading="lazy" onerror="this.src='https://xivapi.com/i/066000/066313_hr1.png'">`;
             
-            // Location Html
-            const locHtml = getLocationHtml(itemId);
+            // Locations & Time
+            let locHtml = '';
+            let timeHtml = '';
+            let folkloreHtml = '';
+
+            const nodes = gItemNodes[String(itemId)] || []; 
+            if (nodes.length > 0) {
+                // Special handling for Shards/Crystals/Clusters (IDs < 20) which are everywhere
+                // Collapse them to avoid clutter
+                if (parseInt(itemId) < 20) {
+                    locHtml = `<div class="text-xs mt-1 text-slate-500 dark:text-slate-400">📍 ${t('ui_omitted')}</div>`;
+                } else {
+                    // Determine Locations
+                    const locs = nodes.map(n => {
+                        if (!n.mapPlaceId) return null; // Skip invalid places
+                        const placeName = t(n.mapPlaceId, 'place');
+                        const coords = (n.x && n.y) ? `(X:${n.x}, Y:${n.y})` : '';
+                        return `<span class="text-slate-500 dark:text-slate-400">📍 ${placeName} <span class="text-xs ml-1 opacity-75">${coords}</span></span>`;
+                    }).filter(Boolean).join('<br>'); // Filter out nulls
+                    
+                    if (locs) {
+                        locHtml = `<div class="text-xs mt-1 items-center gap-1">${locs}</div>`;
+                    } else {
+                        // Fallback if no valid locations found (e.g. only map 0)
+                        locHtml = `<div class="text-xs mt-1 text-slate-500 dark:text-slate-400">📍 ${t('time_any')}</div>`; 
+                    }
+                }
+
+                // Determine Folklore
+                if (nodes[0].folklore) {
+                    const bookName = t(nodes[0].folklore, 'item');
+                    folkloreHtml = `<img src="${UI_ICONS.folklore}" title="${bookName}" onclick="copyToClipboard('${bookName.replace(/'/g, "\\'")}', event)" class="inline-block w-5 h-5 ml-1 cursor-pointer hover:scale-110 transition-transform active:scale-95" alt="Folklore">`;
+                }
+
+                // Determine Time (Placeholder)
+                const times = nodes.map(n => {
+                    if (n.duration || n.spawns) {
+                         // Simple formatted time if available (future implementation)
+                    }
+                    return '';
+                }).filter(Boolean).join(', ');
+                if (times) timeHtml = `<div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">⏰ ${times}</div>`;
+            }
 
             itemRow.innerHTML = `
                 <div class="mr-3 mt-1 shrink-0 flex items-center">
@@ -372,11 +450,16 @@ function render() {
                     <div class="flex-grow min-w-0 flex flex-col justify-center">
                         <div class="flex items-center gap-2 flex-wrap">
                             <span class="font-bold text-slate-800 dark:text-slate-100 item-name text-base leading-tight">${itemName}</span>
+                            <button onclick="copyToClipboard('${itemName.replace(/'/g, "\\'")}', event)" class="text-slate-400 hover:text-blue-500 transition-colors opacity-0 group-hover:opacity-100" title="${t('copy_name')}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            </button>
                             ${item.stars ? `<span class="text-yellow-500 text-xs font-bold border border-yellow-500/30 px-1 rounded">★${item.stars}</span>` : ''}
                             ${item.hidden ? `<span class="text-red-400 text-xs border border-red-400/30 px-1 rounded">Hidden</span>` : ''}
+                            ${folkloreHtml}
                         </div>
                         <div class="mt-1 space-y-0.5">
                             ${locHtml}
+                            ${timeHtml}
                         </div>
                         <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                             Lv. ${item.lvl}
@@ -420,7 +503,44 @@ function render() {
 function setJob(job) {
     currentJob = job;
     currentRegion = 'all';
+    currentGatherType = 'all'; // Reset gather type when switching job
     render();
+}
+
+function setGatherType(type) {
+    currentGatherType = type;
+    render();
+}
+
+function updateTypeButtons() {
+    const container = document.getElementById('type-buttons');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    // Define types for current job
+    const types = currentJob === 'miner' 
+        ? ['all', 'mining', 'quarrying'] 
+        : ['all', 'logging', 'harvesting'];
+    
+    const activeClass = "bg-blue-600 text-white font-bold shadow";
+    const inactiveClass = "hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors";
+    
+    types.forEach(type => {
+        const btn = document.createElement('button');
+        // Add flex layout for icon alignment
+        btn.className = `px-2 py-0.5 text-xs rounded flex items-center gap-1 ${currentGatherType === type ? activeClass : inactiveClass}`;
+        
+        // Add Icon if available (skip for 'all')
+        let iconHtml = '';
+        if (UI_ICONS[type]) {
+            iconHtml = `<img src="${UI_ICONS[type]}" class="w-4 h-4">`;
+        }
+
+        btn.innerHTML = `${iconHtml}${t(type === 'all' ? 'all_types' : type)}`;
+        btn.onclick = () => setGatherType(type);
+        container.appendChild(btn);
+    });
 }
 
 function updateJobButtons() {
@@ -687,5 +807,89 @@ function getLocationHtml(itemId) {
 
     return html;
 }
+
+// Copy to Clipboard Utility
+function copyToClipboard(text, event) {
+    if (event) {
+        event.stopPropagation();
+        event.preventDefault(); // Prevent default button behavior
+    }
+    
+    // Fallback for older browsers or if navigator.clipboard is blocked
+    // But for a local tool, we assume modern browser env.
+    if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast(`${t('copied')}: ${text}`);
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            // Fallback?
+        });
+    } else {
+        // Simple fallback
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            showToast(`${t('copied')}: ${text}`);
+        } catch (err) {
+            console.error('Fallback copy failed', err);
+        }
+        document.body.removeChild(textArea);
+    }
+}
+
+// Simple Toast Notification
+function showToast(message) {
+    let toast = document.getElementById('toast-notification');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast-notification';
+        toast.className = 'fixed bottom-4 right-4 bg-slate-800 text-white px-4 py-2 rounded shadow-lg z-50 transform transition-all duration-300 translate-y-20 opacity-0';
+        document.body.appendChild(toast);
+    }
+    
+    toast.innerText = message;
+    
+    // Show
+    // Force reflow
+    void toast.offsetWidth;
+    
+    toast.classList.remove('translate-y-20', 'opacity-0');
+    
+    // Hide after 2s
+    if (toast.timeoutId) clearTimeout(toast.timeoutId);
+    toast.timeoutId = setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+    }, 2000);
+}
+
+// --- Eorzea Time Clock ---
+const EORZEA_MULTIPLIER = 3600 / 175;
+
+function getEorzeaTime() {
+  // Calculate how many milliseconds have elapsed since 1/1/1970
+  const epoch = new Date().getTime();
+  // Multiply by the Eorzea multiplier
+  const eorzeaMilliseconds = epoch * EORZEA_MULTIPLIER;
+  
+  // Create a new Date object for Eorzea time
+  return new Date(eorzeaMilliseconds);
+}
+
+function updateClock() {
+    const etDate = getEorzeaTime();
+    const hours = etDate.getUTCHours().toString().padStart(2, '0');
+    const minutes = etDate.getUTCMinutes().toString().padStart(2, '0');
+    
+    const clockElement = document.getElementById('et-clock');
+    if (clockElement) {
+        clockElement.innerText = `ET ${hours}:${minutes}`;
+    }
+}
+
+// Update clock every second (real-time) which is plenty for HH:MM
+setInterval(updateClock, 1000);
 
 init();

@@ -173,9 +173,10 @@ async function step3_filterData() {
     const logPages = loadJson(LOG_PAGES_PATH);
     const rawIcons = loadJson(ICONS_SOURCE_PATH);
 
-    // Find all Item IDs used in the Gathering Log
+    // Find all Item IDs used in the Gathering Log (and Folklore)
     const allowedItemIds = new Set();
     
+    // 1. From Log Pages
     function extractItemIds(obj) {
         if (Array.isArray(obj)) {
             obj.forEach(item => extractItemIds(item));
@@ -187,7 +188,20 @@ async function step3_filterData() {
         }
     }
     extractItemIds(logPages);
-    console.log(`Found ${allowedItemIds.size} unique items in Log.`);
+
+    // 2. From Nodes (Folklore Books)
+    const NODES_PATH = path.join(APP_DATA_DIR, 'nodes.json');
+    if (fs.existsSync(NODES_PATH)) {
+        const nodes = loadJson(NODES_PATH);
+        for (const nodeId in nodes) {
+            const node = nodes[nodeId];
+            if (node.folklore) {
+                allowedItemIds.add(String(node.folklore));
+            }
+        }
+    }
+
+    console.log(`Found ${allowedItemIds.size} unique items in Log & Folklore.`);
 
     // Filter Items
     const filteredItems = {};
