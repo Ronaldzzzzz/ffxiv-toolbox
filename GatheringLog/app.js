@@ -37,16 +37,11 @@ let gPlaces = {};
 let gNodes = {};
 let gMaps = {}; // New container for maps
 let gItemNodes = {}; // Reverse lookup: ItemID -> [Node Info]
-const gUiLocales = {
-    "en": { "title": "FFXIV Gathering Log", "progress": "Progress", "jump_to": "JUMP TO", "hide_completed": "Hide Completed", "miner": "Miner", "botanist": "Botanist", "all_types": "All", "mining": "Mining", "quarrying": "Quarrying", "logging": "Logging", "harvesting": "Harvesting", "ui_omitted": "(others omitted)", "time_any": "Any Time", "copied": "Copied", "copy_name": "Copy Name", "all_regions": "All Regions", "exp_2": "A Realm Reborn", "exp_3": "Heavensward", "exp_4": "Stormblood", "exp_5": "Shadowbringers", "exp_6": "Endwalker", "exp_7": "Dawntrail", "others": "Others" },
-    "zh-TW": { "title": "FFXIV 採集手冊", "progress": "進度", "jump_to": "快速跳轉", "hide_completed": "隱藏已完成", "miner": "採礦工", "botanist": "園藝工", "all_types": "全部", "mining": "採掘", "quarrying": "碎石", "logging": "伐木", "harvesting": "割草", "ui_omitted": "(其餘已省略)", "time_any": "任意時間", "copied": "已複製", "copy_name": "複製名稱", "all_regions": "所有地區", "exp_2": "新生艾奧傑亞", "exp_3": "蒼天的伊修加德", "exp_4": "紅蓮的解放者", "exp_5": "漆黑的反逆者", "exp_6": "曉月之終途", "exp_7": "黃金的遺產", "others": "其他" },
-    "zh-CN": { "title": "FFXIV 采集手册", "progress": "进度", "jump_to": "快速跳转", "hide_completed": "隐藏已完成", "miner": "采矿工", "botanist": "园艺工", "all_types": "全部", "mining": "采掘", "quarrying": "碎石", "logging": "伐木", "harvesting": "割草", "ui_omitted": "(其余已省略)", "time_any": "任意时间", "copied": "已复制", "copy_name": "复制名称", "all_regions": "所有地区", "exp_2": "新生艾欧泽亚", "exp_3": "苍穹之禁城", "exp_4": "红莲之狂潮", "exp_5": "暗影之逆焰", "exp_6": "晓月之终途", "exp_7": "黄金的遗产", "others": "其他" },
-    "ja": { "title": "FFXIV 採集手帳", "progress": "進捗", "jump_to": "ジャンプ", "hide_completed": "完了を表示しない", "miner": "採掘師", "botanist": "園芸師", "all_types": "すべて", "mining": "採掘", "quarrying": "砕岩", "logging": "伐採", "harvesting": "草刈", "ui_omitted": "(その他省略)", "time_any": "常時", "copied": "コピーしました", "copy_name": "名前をコピー", "all_regions": "全地域", "exp_2": "新生エオルゼア", "exp_3": "蒼天のイシュガルド", "exp_4": "紅蓮のリベレーター", "exp_5": "漆黒のヴィランズ", "exp_6": "暁月のフィナーレ", "exp_7": "黄金のレガシー", "others": "その他" }
-};
+let gUiLocales = {};
 let gCollapsedExpansions = new Set(); // Track collapsed specific expansion sections
 let gLastAvailableZones = null; // Store for re-rendering sidebar
 let gHideCompleted = false;
-let currentGatherType = 'all'; // 'all', 'mining', 'quarrying', 'logging', 'harvesting'
+let currentGatherType = 'mining'; // Default to first type
 
 // Type configuration: maps gather type to page indices in gLogPages
 // gLogPages structure: [0]=Mining, [1]=Quarrying, [2]=Harvesting, [3]=Logging
@@ -94,13 +89,15 @@ async function init() {
         if (saved) completedItems = new Set(JSON.parse(saved));
 
         // Load JSON data in parallel
-        const [pagesRes, itemsRes, iconsRes, placesRes, nodesRes, mapsRes] = await Promise.all([
+        // Load JSON data in parallel
+        const [pagesRes, itemsRes, iconsRes, placesRes, nodesRes, mapsRes, uiRes] = await Promise.all([
             fetch('data/gathering-log-pages.json'),
             fetch('data/items.json'),
             fetch('data/icons.json'), // Load icons.json
             fetch('data/places.json'),
             fetch('data/nodes.json'),
-            fetch('data/maps.json')
+            fetch('data/maps.json'),
+            fetch('data/ui_locales.json')
         ]);
 
         if (!pagesRes.ok || !itemsRes.ok || !iconsRes.ok) throw new Error("Failed to load data files");
@@ -111,13 +108,15 @@ async function init() {
         gPlaces = await placesRes.json();
         gNodes = await nodesRes.json();
         gMaps = await mapsRes.json();
+        gUiLocales = await uiRes.json();
 
         processNodes();
         updateLangButtons();
         render();
         
-        // Setup sticky header
+        // Setup sticky header & observer
         setTimeout(updateStickyOffsets, 100);
+        setTimeout(setupStickyObserver, 150); // Small delay to ensure offsets are ready
         window.addEventListener('resize', updateStickyOffsets);
         window.addEventListener('scroll', updateStickyOffsets);
 
@@ -247,9 +246,9 @@ function render() {
     document.getElementById('ui-progress').innerText = t('progress');
     document.getElementById('ui-jump-to').innerText = t('jump_to');
     document.getElementById('ui-hide-completed').innerText = t('hide_completed');
-    document.getElementById('btn-miner').innerText = t('miner');
-    document.getElementById('btn-botanist').innerText = t('botanist');
-    updateJobButtons();
+    document.getElementById('btn-miner')?.setAttribute('hidden', true); // Cleanup if exists
+    document.getElementById('btn-botanist')?.setAttribute('hidden', true);
+    // updateJobButtons(); // Removed
     updateTypeButtons();
 
     // Setup Layout
@@ -285,22 +284,32 @@ function render() {
     // --- Render Logic ---
     let totalItemsCount = 0;
     let totalCompletedCount = 0;
+    
+    // Reset Folklore Break Flag
+    window._hasInsertedFolkloreBreak = false;
 
     allJobPages.forEach(page => {
         // Page Grouping Logic
         const startLvl = page.startLevel;
         const pageId = page.id;
-        const levelRange = `Lv. ${startLvl} - ${startLvl + 4}`;
+        let levelRange = `Lv. ${startLvl} - ${startLvl + 4}`;
         const sectionId = `section-${pageId}`;
         
         const itemsInPage = page.items;
         
         // Filter items by Region (and collect zones)
         const relevantItems = [];
+        let detectedFolkloreId = null;
+
         itemsInPage.forEach(itemEntry => {
             const itemId = String(itemEntry.itemId);
             const nodes = gItemNodes[itemId] || [];
             
+            // Check for Folklore (Use first found)
+            if (!detectedFolkloreId && nodes.length > 0 && nodes[0].folklore) {
+                detectedFolkloreId = nodes[0].folklore;
+            }
+
             // Collect Maps for sidebar (from ALL items in this job book)
             // We store the MapPlaceID (e.g. Central Thanalan ID) not the RegionID (Thanalan)
             // But we need the RegionID for grouping. 
@@ -331,6 +340,11 @@ function render() {
         // If currentRegion filters out all items in a page, we might still want to show the page header or just skip?
         // Let's skip empty sections if filtered
         if (relevantItems.length === 0) return;
+
+        // Update Title if Folklore
+        if (detectedFolkloreId) {
+            levelRange = t(detectedFolkloreId, 'item');
+        }
 
         const pTotal = relevantItems.length;
         const pCompleted = relevantItems.filter(i => completedItems.has(String(i.itemId))).length;
@@ -364,8 +378,22 @@ function render() {
         const disabledClasses = isDisabled ? 'opacity-50 cursor-not-allowed grayscale' : ''; // Removed hover effects for disabled
         
         navBtn.className = `px-3 py-1.5 rounded-md border text-xs font-bold transition-all flex items-center gap-2 shadow-sm shrink-0 ${btnClass} ${disabledClasses}`;
+        
+        let btnLabel = `Lv${startLvl}~${startLvl + 4}`;
+        if (detectedFolkloreId) btnLabel = levelRange; // Use the full name (or could truncate)
+        
+        // --- Folklore Line Break Logic ---
+        // If this is a folklore item and we haven't broken the line yet
+        if (detectedFolkloreId && !window._hasInsertedFolkloreBreak) {
+             const breakDiv = document.createElement('div');
+             breakDiv.className = "w-full h-0 basis-full my-1"; // Force new line
+             // Add a small label or separator if needed? user just said "jump line"
+             navGrid.appendChild(breakDiv);
+             window._hasInsertedFolkloreBreak = true;
+        }
+
         navBtn.innerHTML = `
-            <span>Lv${startLvl}~${startLvl + 4}</span>
+            <span class="truncate max-w-[150px]">${btnLabel}</span>
             <span class="${progressColor} font-mono opacity-80 text-[10px] border-l border-slate-300 dark:border-white/10 pl-2">
                 ${Math.round((pCompleted / pTotal) * 100)}%
             </span>
@@ -427,14 +455,26 @@ function render() {
                     folkloreHtml = `<img src="${UI_ICONS.folklore}" title="${bookName}" onclick="copyToClipboard('${bookName.replace(/'/g, "\\'")}', event)" class="inline-block w-5 h-5 ml-1 cursor-pointer hover:scale-110 transition-transform active:scale-95" alt="Folklore">`;
                 }
 
-                // Determine Time (Placeholder)
+                // Determine Time & Timer
+                const activeNodes = nodes.filter(n => n.spawns && n.spawns.length > 0);
+                
+                // Static Time Text
                 const times = nodes.map(n => {
-                    if (n.duration || n.spawns) {
-                         // Simple formatted time if available (future implementation)
+                    if (n.spawns && n.spawns.length > 0) {
+                        return n.spawns.map(h => `${String(h).padStart(2, '0')}:00`).join('/');
                     }
                     return '';
                 }).filter(Boolean).join(', ');
+                
                 if (times) timeHtml = `<div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">⏰ ${times}</div>`;
+
+                // Live Timer Placeholder
+                if (activeNodes.length > 0) {
+                    // Use the first active node for timer (usually items only have one timed node source?)
+                    // If multiple, just pick first for UI simplicity
+                    const node = activeNodes[0];
+                    timeHtml += `<div class="timed-node-timer mt-1" data-node-id="${node.id}" data-spawns="${node.spawns.join(',')}" data-duration="${node.duration || 0}"></div>`;
+                }
             }
 
             itemRow.innerHTML = `
@@ -503,12 +543,26 @@ function render() {
 function setJob(job) {
     currentJob = job;
     currentRegion = 'all';
-    currentGatherType = 'all'; // Reset gather type when switching job
+    // Default to first type for the job
+    if (job === 'miner') currentGatherType = 'mining';
+    else currentGatherType = 'logging'; 
     render();
 }
 
 function setGatherType(type) {
     currentGatherType = type;
+    render();
+}
+
+function switchGatherType(type) {
+    // Determine job from type
+    if (['mining', 'quarrying'].includes(type)) {
+        currentJob = 'miner';
+    } else {
+        currentJob = 'botanist';
+    }
+    currentGatherType = type;
+    currentRegion = 'all';
     render();
 }
 
@@ -518,40 +572,28 @@ function updateTypeButtons() {
     
     container.innerHTML = '';
     
-    // Define types for current job
-    const types = currentJob === 'miner' 
-        ? ['all', 'mining', 'quarrying'] 
-        : ['all', 'logging', 'harvesting'];
+    // Flattened: Show all 4 types
+    const types = ['mining', 'quarrying', 'logging', 'harvesting'];
     
-    const activeClass = "bg-blue-600 text-white font-bold shadow";
-    const inactiveClass = "hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors";
+    const activeClass = "bg-blue-600 text-white font-bold shadow-md shadow-blue-500/20 ring-2 ring-blue-500 border-transparent scale-105";
+    const inactiveClass = "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50";
     
     types.forEach(type => {
         const btn = document.createElement('button');
-        // Add flex layout for icon alignment
-        btn.className = `px-2 py-0.5 text-xs rounded flex items-center gap-1 ${currentGatherType === type ? activeClass : inactiveClass}`;
+        btn.className = `px-4 py-1 rounded-full text-md font-bold transition-all hover:scale-105 flex items-center justify-center gap-2 border shadow-sm ${currentGatherType === type ? activeClass : inactiveClass}`;
         
-        // Add Icon if available (skip for 'all')
+        // Add Icon if available
         let iconHtml = '';
         if (UI_ICONS[type]) {
-            iconHtml = `<img src="${UI_ICONS[type]}" class="w-4 h-4">`;
+            iconHtml = `<img src="${UI_ICONS[type]}" class="w-5 h-5">`;
         }
 
-        btn.innerHTML = `${iconHtml}${t(type === 'all' ? 'all_types' : type)}`;
-        btn.onclick = () => setGatherType(type);
+        btn.innerHTML = `${iconHtml}${t(type)}`;
+        btn.onclick = () => switchGatherType(type);
         container.appendChild(btn);
     });
 }
-
-function updateJobButtons() {
-    const btnMiner = document.getElementById('btn-miner');
-    const btnBotanist = document.getElementById('btn-botanist');
-    const activeClass = "bg-blue-600 text-white ring-2 ring-blue-400 border-blue-500 shadow-lg shadow-blue-900/50";
-    const inactiveClass = "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-200";
-
-    btnMiner.className = `flex-1 md:flex-none px-6 py-2 rounded-lg font-bold transition-all border ${currentJob === 'miner' ? activeClass : inactiveClass}`;
-    btnBotanist.className = `flex-1 md:flex-none px-6 py-2 rounded-lg font-bold transition-all border ${currentJob === 'botanist' ? activeClass : inactiveClass}`;
-}
+// updateJobButtons removed
 
 function toggleItem(id) {
     if (completedItems.has(id)) completedItems.delete(id);
@@ -587,6 +629,45 @@ function setRegion(regionId) {
 function toggleHideCompleted() {
     gHideCompleted = !gHideCompleted;
     render();
+}
+
+// Setup Sticky Observer
+function setupStickyObserver() {
+    const sentinel = document.getElementById('sticky-sentinel');
+    const navContainer = document.getElementById('level-nav-container');
+
+    if (!sentinel || !navContainer) return;
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            // If sentinel is NOT overlapping/visible (scrolled past), we are pinned
+            // Wait, usually sentinel is placed *above* the sticky element.
+            // When we scroll down, sentinel goes out of view (off top).
+            // So !isIntersecting && boundingClientRect.top < 0 means we passed it.
+            
+            // Simpler approach:
+            // Sentinel is at top: -1px.
+            // When we scroll, it moves up.
+            // If it is off-screen (top < 0), we are sticky.
+            
+            // However, IntersectionObserver triggers when it enters/leaves viewport.
+            // If sticking at top-24 (approx 96px), the sentinel (at top of content) leaves viewport way earlier?
+            // Wait, top of content area is below the sidebar top.
+            // Nav sticky top is `var(--nav-height)`.
+            // Let's rely on standard: toggle class when sentinel moves out of visible area at the top.
+            
+            if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+                navContainer.classList.add('is-pinned');
+            } else {
+                navContainer.classList.remove('is-pinned');
+            }
+        });
+    }, {
+        threshold: 0,
+        rootMargin: `-${getComputedStyle(document.documentElement).getPropertyValue('--header-offset') || '100px'} 0px 0px 0px`
+    });
+
+    observer.observe(sentinel);
 }
 
 function updateSidebar(availableZones) {
@@ -887,6 +968,116 @@ function updateClock() {
     if (clockElement) {
         clockElement.innerText = `ET ${hours}:${minutes}`;
     }
+
+    updateTimers(etDate);
+}
+
+function updateTimers(etDate) {
+    const timers = document.querySelectorAll('.timed-node-timer');
+    if (timers.length === 0) return;
+
+    // Current ET in minutes (0 - 1439)
+    const currentEth = etDate.getUTCHours();
+    const currentEtm = etDate.getUTCMinutes();
+    const currentEtTotalMin = currentEth * 60 + currentEtm;
+
+    // Current Real Time for countdown
+    const now = new Date().getTime();
+
+    timers.forEach(timer => {
+        const spawns = timer.dataset.spawns.split(',').map(Number);
+        const durationMin = parseInt(timer.dataset.duration) || 0; // Eorzea Minutes
+
+        // Find nearest future state
+        // States: Active (Now), or Waiting (Next Spawn)
+        
+        let activeSpawn = -1;
+        let nextSpawn = -1;
+        let minDiff = Infinity;
+
+        // Check if currently active
+        for (const spawnHour of spawns) {
+            const spawnMin = spawnHour * 60;
+            let endMin = spawnMin + durationMin;
+            
+            // Check formatted ranges handling day wrap
+            // Simple approach: Shift time to linear if needed? 
+            // Or just check intervals.
+            
+            // Case 1: Normal (e.g. 10:00 - 13:00)
+            // Case 2: Wrap (e.g. 23:00 - 02:00 -> Duration 180)
+            
+            // Normalize current time relative to spawn for wrap check
+            let diff = currentEtTotalMin - spawnMin;
+            if (diff < 0) diff += 1440; // Wrap day
+
+            if (diff >= 0 && diff < durationMin) {
+                activeSpawn = spawnHour;
+                break;
+            }
+        }
+
+        if (activeSpawn !== -1) {
+            // --- STATE: ACTIVE ---
+            const spawnMin = activeSpawn * 60;
+            // Calculate remaining ET minutes
+            let elapsed = currentEtTotalMin - spawnMin;
+            if (elapsed < 0) elapsed += 1440;
+            
+            const remainingEtMin = durationMin - elapsed;
+            
+            // Convert to Real Seconds
+            // 1 ET Min = (175 / 60) Real Seconds ~= 2.916s
+            // Or: (Remaining ET Min / 1440) * 70 min (4200 sec)
+            // Exact multiplier is 175/60 = 2.916666_
+            const remainingRealSec = remainingEtMin * (175 / 60);
+            
+            // Progress Bar Calculation
+            const percent = Math.min(100, Math.max(0, (elapsed / durationMin) * 100));
+            
+            // Format Time
+            const m = Math.floor(remainingRealSec / 60);
+            const s = Math.floor(remainingRealSec % 60);
+
+            timer.innerHTML = `
+                <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-4 relative overflow-hidden mt-1">
+                    <div class="bg-green-500 h-4 transition-all duration-1000 linear" style="width: ${100 - percent}%"></div>
+                    <span class="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-slate-700 dark:text-slate-200 drop-shadow-sm">
+                        Active! ${m}:${s.toString().padStart(2, '0')}
+                    </span>
+                </div>
+            `;
+        } else {
+            // --- STATE: WAITING ---
+            // Find closest NEXT spawn
+            let bestDist = Infinity;
+            
+            for (const spawnHour of spawns) {
+                const spawnMin = spawnHour * 60;
+                let dist = spawnMin - currentEtTotalMin;
+                if (dist <= 0) dist += 1440; // Next day
+                
+                if (dist < bestDist) {
+                    bestDist = dist;
+                    nextSpawn = spawnHour;
+                }
+            }
+
+            // Convert dist (ET mins) to Real Seconds
+            const realSec = bestDist * (175 / 60);
+            
+            // Format
+            const m = Math.floor(realSec / 60);
+            const s = Math.floor(realSec % 60);
+
+            timer.innerHTML = `
+                <div class="text-[10px] text-slate-400 dark:text-slate-500 font-mono">
+                    <span class="mr-1">Next: ${String(nextSpawn).padStart(2, '0')}:00</span>
+                    <span>(in ${m}m ${s}s)</span>
+                </div>
+            `;
+        }
+    });
 }
 
 // Update clock every second (real-time) which is plenty for HH:MM
