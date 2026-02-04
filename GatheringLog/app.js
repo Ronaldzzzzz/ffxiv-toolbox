@@ -114,11 +114,13 @@ async function init() {
         updateLangButtons();
         render();
         
-        // Setup sticky header & observer
+        // Setup sticky header calculations
         setTimeout(updateStickyOffsets, 100);
-        setTimeout(setupStickyObserver, 150); // Small delay to ensure offsets are ready
         window.addEventListener('resize', updateStickyOffsets);
         window.addEventListener('scroll', updateStickyOffsets);
+        
+        // Enable drag scroll for grid
+        enableDragScroll(document.getElementById('level-grid'));
 
     } catch (err) {
         console.error(err);
@@ -490,7 +492,7 @@ function render() {
                     <div class="flex-grow min-w-0 flex flex-col justify-center">
                         <div class="flex items-center gap-2 flex-wrap">
                             <span class="font-bold text-slate-800 dark:text-slate-100 item-name text-base leading-tight">${itemName}</span>
-                            <button onclick="copyToClipboard('${itemName.replace(/'/g, "\\'")}', event)" class="text-slate-400 hover:text-blue-500 transition-colors opacity-0 group-hover:opacity-100" title="${t('copy_name')}">
+                            <button onclick="copyToClipboard('${itemName.replace(/'/g, "\\'")}', event)" class="text-slate-400 hover:text-blue-500 transition-colors" title="${t('copy_name')}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                             </button>
                             ${item.stars ? `<span class="text-yellow-500 text-xs font-bold border border-yellow-500/30 px-1 rounded">★${item.stars}</span>` : ''}
@@ -632,43 +634,118 @@ function toggleHideCompleted() {
 }
 
 // Setup Sticky Observer
-function setupStickyObserver() {
-    const sentinel = document.getElementById('sticky-sentinel');
+// Update Sticky Offsets
+
+// Update Sticky Offsets
+// Update Sticky Offsets
+function updateStickyOffsets() {
+    const headerEl = document.getElementById('main-nav');
+    const headerHeight = headerEl ? headerEl.offsetHeight : 0;
+    
+    document.documentElement.style.setProperty('--header-offset', `${headerHeight}px`);
+    document.documentElement.style.setProperty('--nav-height', `${headerHeight}px`);
+    document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
+
+    // Handle Sticky State using Sentinel for stability
     const navContainer = document.getElementById('level-nav-container');
+    const sentinel = document.getElementById('sticky-sentinel');
 
-    if (!sentinel || !navContainer) return;
+    if (navContainer && sentinel) {
+        const sentinelRect = sentinel.getBoundingClientRect();
+        // Trigger when sentinel slides under the header
+        // Use a small buffer (1px) to ensure smooth snap
+        const isStuck = sentinelRect.top <= (headerHeight + 1);
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            // If sentinel is NOT overlapping/visible (scrolled past), we are pinned
-            // Wait, usually sentinel is placed *above* the sticky element.
-            // When we scroll down, sentinel goes out of view (off top).
-            // So !isIntersecting && boundingClientRect.top < 0 means we passed it.
-            
-            // Simpler approach:
-            // Sentinel is at top: -1px.
-            // When we scroll, it moves up.
-            // If it is off-screen (top < 0), we are sticky.
-            
-            // However, IntersectionObserver triggers when it enters/leaves viewport.
-            // If sticking at top-24 (approx 96px), the sentinel (at top of content) leaves viewport way earlier?
-            // Wait, top of content area is below the sidebar top.
-            // Nav sticky top is `var(--nav-height)`.
-            // Let's rely on standard: toggle class when sentinel moves out of visible area at the top.
-            
-            if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
-                navContainer.classList.add('is-pinned');
-            } else {
-                navContainer.classList.remove('is-pinned');
-            }
-        });
-    }, {
-        threshold: 0,
-        rootMargin: `-${getComputedStyle(document.documentElement).getPropertyValue('--header-offset') || '100px'} 0px 0px 0px`
+        if (isStuck) {
+            navContainer.classList.add('is-pinned');
+        } else {
+            navContainer.classList.remove('is-pinned');
+        }
+    }
+}
+
+// Drag to Scroll Logic for Level Grid (with Momentum/Inertia)
+function enableDragScroll(el) {
+    if (!el) return;
+    
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+    let velX = 0;
+    let momentumID;
+
+    const cancelMomentum = () => {
+        cancelAnimationFrame(momentumID);
+    };
+
+    el.addEventListener('mousedown', (e) => {
+        isDown = true;
+        el.style.cursor = 'grabbing';
+        startX = e.pageX - el.offsetLeft;
+        scrollLeft = el.scrollLeft;
+        
+        // Stop any existing momentum
+        cancelMomentum();
     });
 
-    observer.observe(sentinel);
+    el.addEventListener('mouseleave', () => {
+        isDown = false;
+        el.style.removeProperty('cursor');
+        
+        // Trigger momentum on leave if we were dragging
+        beginMomentum();
+    });
+
+    el.addEventListener('mouseup', () => {
+        isDown = false;
+        el.style.removeProperty('cursor');
+        
+        // Trigger momentum
+        beginMomentum();
+    });
+
+    el.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        
+        const x = e.pageX - el.offsetLeft;
+        const walk = (x - startX) * 2; // Scroll speed multiplier
+        
+        // Calculate velocity (difference since last move) in a simple way
+        // Ideally we track time, but simple delta works for mouse
+        const prevScrollLeft = el.scrollLeft;
+        el.scrollLeft = scrollLeft - walk;
+        
+        // Update velocity: Current - Previous
+        // Note: we want the direction. 
+        // If we moved right (scroll decreases), velocity is negative?
+        // Wait, scrollLeft = initial - walk. 
+        // If we drag left (x < startX), walk is negative, scrollLeft increases.
+        // We want velocity to be the change in scrollLeft.
+        velX = el.scrollLeft - prevScrollLeft; 
+    });
+    
+    // Momentum Loop
+    function beginMomentum() {
+        cancelMomentum();
+        
+        const loop = () => {
+            // Apply Friction
+            velX *= 0.95; 
+            
+            if (Math.abs(velX) > 0.5) {
+                el.scrollLeft += velX;
+                momentumID = requestAnimationFrame(loop);
+            }
+        };
+        
+        loop();
+    }
+    
+    // Wheel event should stop momentum?
+    el.addEventListener('wheel', cancelMomentum);
 }
+
 
 function updateSidebar(availableZones) {
     if (availableZones) gLastAvailableZones = availableZones;
