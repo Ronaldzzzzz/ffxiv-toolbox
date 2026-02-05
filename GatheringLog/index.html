@@ -21,6 +21,21 @@
             scrollbar-width: none;
         }
 
+        /* Custom Thin Scrollbar */
+        .thin-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .thin-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .thin-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1; /* slate-300 */
+            border-radius: 20px;
+        }
+        .dark .thin-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #475569; /* slate-600 */
+        }
+
         .checked-item {
             opacity: 0.5;
             filter: grayscale(100%);
@@ -73,6 +88,15 @@
             position: sticky;
             top: var(--header-offset);
             z-index: 20;
+            transition: top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: top;
+        }
+
+        /* Temp Disable Sticky during layout animation */
+        .no-sticky .section-header-sticky {
+            position: relative !important;
+            top: auto !important;
+            transition: none !important;
         }
 
         /* --- STICKY PINNED STATE --- */
@@ -86,25 +110,25 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth transition for container */
         }
 
-        /* Smooth Collapse for Main Controls */
-        #main-controls, #ui-jump-to {
-            max-height: 150px; /* Approximate max height */
+        /* Smooth Collapse with Grid */
+        #collapsible-header {
+            display: grid;
+            grid-template-rows: 1fr;
+            transition: grid-template-rows 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                        opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             opacity: 1;
-            overflow: hidden;
-            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-                        opacity 0.3s ease-out,
-                        margin 0.4s ease;
+            will-change: grid-template-rows, opacity;
         }
 
-        /* Hide Top Controls when pinned (Animated) */
-        .is-pinned #main-controls, 
-        .is-pinned #ui-jump-to {
-            max-height: 0 !important;
+        /* Collapsed State */
+        .is-pinned #collapsible-header {
+            grid-template-rows: 0fr !important;
             opacity: 0 !important;
-            margin-top: 0 !important;
-            margin-bottom: 0 !important;
-            pointer-events: none; /* Prevent clicks while hiding */
-            display: block !important; /* Ensure default is block for animation to work, override earlier none if any */
+        }
+        
+        .collapsible-inner {
+            overflow: hidden;
+            min-height: 0; /* Important for grid responsiveness */
         }
 
         /* Switch to Horizontal Scroll when Pinned */
@@ -151,11 +175,28 @@
             display: flex;
             flex-wrap: wrap; /* Default: Wrap */
             gap: 0.5rem;
+            contain: layout; /* Isolate layout */
+        }
+        
+        #level-grid > button {
+            contain: layout style; /* Optimize button rendering */
+            content-visibility: auto; /* Browser optimization */
         }
 
         /* Hide the folklore break div when pinned */
         .is-pinned #level-grid > div.basis-full {
              display: none !important;
+        }
+
+        /* Show pinned job label when pinned */
+        .is-pinned #pinned-job-label {
+            display: flex !important;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         body {
@@ -167,7 +208,7 @@
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 min-h-screen font-sans pb-20">
 
     <nav id="main-nav"
-        class="sticky top-0 z-50 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md shadow-md border-b border-slate-200 dark:border-slate-700 transition-all">
+        class="sticky top-0 z-50 bg-white/95 dark:bg-slate-800/95 shadow-md border-b border-slate-200 dark:border-slate-700 transition-all">
         <div class="max-w-[1600px] mx-auto px-4 py-3">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
@@ -177,7 +218,7 @@
                             Gathering Guide</h1>
                         <span
                             class="text-xs px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 ml-2 border border-blue-200 dark:border-blue-700">
-                            V2.1</span>
+                            V2.2</span>
                     </div>
                     <div class="flex items-center gap-2 mt-1">
                         <div class="text-xs font-mono text-blue-600 dark:text-blue-300">
@@ -193,7 +234,28 @@
                             <div class="relative w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                             <span id="ui-hide-completed" class="text-xs font-medium text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-200 transition-colors">Hide Completed</span>
                         </label>
+                        <label class="inline-flex items-center cursor-pointer ml-3 gap-2 group">
+                            <input type="checkbox" id="show-bookmarks-check" class="sr-only peer" onchange="toggleShowBookmarks()">
+                            <div class="relative w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-yellow-300 dark:peer-focus:ring-yellow-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-yellow-500"></div>
+                            <span id="ui-show-bookmarks" class="text-xs font-medium text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-200 transition-colors">⭐ Bookmarks</span>
+                        </label>
                     </div>
+                </div>
+
+                <!-- View Mode Buttons (Centered) -->
+                <div id="view-mode-buttons" class="flex items-center bg-slate-200 dark:bg-slate-700 p-1 rounded-lg w-full md:w-auto md:absolute md:left-1/2 md:-translate-x-1/2 mt-4 md:mt-0">
+                    <button id="view-mode-level" onclick="switchToLevelView()" 
+                        class="px-4 py-2 rounded-md text-sm font-bold transition-all flex items-center gap-2 bg-white dark:bg-slate-600 shadow-sm text-blue-600 dark:text-blue-300">
+                        📊 <span data-i18n="level_view">等級視角</span>
+                    </button>
+                    <button id="view-mode-timed" onclick="switchToTimedView()" 
+                        class="px-4 py-2 rounded-md text-sm font-bold transition-all flex items-center gap-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">
+                        ⏱️ <span data-i18n="timed_nodes">限時點</span>
+                    </button>
+                    <button id="view-mode-map" onclick="switchToMapView()" 
+                        class="px-4 py-2 rounded-md text-sm font-bold transition-all flex items-center gap-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">
+                        🗺️ <span data-i18n="map_view">地圖視角</span>
+                    </button>
                 </div>
 
                 <div class="flex gap-3 items-center ml-auto">
@@ -224,7 +286,7 @@
     <div class="max-w-[1600px] mx-auto p-4 flex flex-col md:flex-row gap-6 items-start">
 
         <aside id="region-sidebar"
-            class="w-full md:w-56 shrink-0 bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 sticky top-24 max-h-[85vh] overflow-y-auto no-scrollbar shadow-lg z-40 transition-colors hidden">
+            class="w-full md:w-56 shrink-0 bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 sticky top-24 max-h-[85vh] overflow-y-auto thin-scrollbar shadow-lg z-40 transition-colors hidden overscroll-contain">
             <h3 id="ui-region-title"
                 class="text-slate-800 dark:text-yellow-500 font-bold mb-3 uppercase text-xs tracking-wider border-b border-slate-200 dark:border-slate-700 pb-2">
                 Regions</h3>
@@ -235,20 +297,52 @@
 
             <div id="sticky-sentinel" class="absolute -top-[1px] w-full h-[1px]"></div>
             <div id="level-nav-container"
-                class="sticky z-30 mb-4 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-md p-3 rounded-lg border border-slate-200 dark:border-slate-700 shadow-md transition-all"
+                class="sticky z-30 mb-4 bg-slate-50/95 dark:bg-slate-900/95 p-3 rounded-lg border border-slate-200 dark:border-slate-700 shadow-md transition-all overflow-visible"
                 style="top: var(--nav-height, 0px);">
 
-                <!-- Main Controls -->
-                <div id="main-controls" class="mb-6 flex flex-col items-start gap-4 w-full">
-                    <!-- Type Switcher (Chips) -->
-                    <div id="type-buttons" class="flex flex-wrap justify-start gap-3 mt-2 p-1 pl-2">
-                        <!-- Buttons will be generated by JS -->
+                <!-- Collapsible Header Content -->
+                <div id="collapsible-header">
+                    <div class="collapsible-inner">
+                        <!-- Main Controls -->
+                        <div id="main-controls" class="mb-6 flex flex-col md:flex-row items-center justify-between gap-4 w-full overflow-visible">
+                            <!-- Type Switcher (Left) -->
+                            <div id="type-buttons" class="flex flex-wrap justify-start gap-3 p-1 pl-2 order-2 md:order-1">
+                                <!-- Buttons will be generated by JS -->
+                            </div>
+
+                            <!-- Search Bar (Right) -->
+                            <div id="search-container" class="relative w-full md:w-72 z-[60] order-1 md:order-2">
+                                <div class="relative">
+                                    <input type="text" id="search-input" 
+                                        placeholder="搜尋物品..."
+                                        class="w-full px-4 py-2.5 pl-10 pr-10 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                        oninput="handleSearchInput(event)"
+                                        onkeydown="handleSearchKeydown(event)">
+                                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                    <button id="search-clear" onclick="clearSearch()" 
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hidden transition-colors"
+                                        title="清除">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 id="ui-jump-to"
+                                class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Jump To
+                                Level</h3>
+                        </div>
                     </div>
                 </div>
-                <div class="flex justify-between items-center mb-2">
-                    <h3 id="ui-jump-to"
-                        class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Jump To
-                        Level</h3>
+
+                <!-- Pinned Header Job Label -->
+                <div id="pinned-job-label" class="hidden mb-1 px-1 flex items-center gap-2 text-sm font-bold text-slate-500 dark:text-slate-400">
+                    <!-- JS will populate this -->
                 </div>
                 <div id="level-grid" class="flex flex-wrap gap-2"></div>
             </div>
@@ -288,6 +382,36 @@
                 XIVAPI</a>
         </p>
     </footer>
+
+    <!-- Search Results Dropdown (fixed position to avoid parent clipping) -->
+    <div id="search-results" 
+        class="fixed bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-2xl max-h-[400px] overflow-y-auto z-[200] hidden"
+        style="width: 400px;">
+    </div>
+
+    <!-- Map Modal -->
+    <div id="map-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4" onclick="closeMapModal(event)">
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/50">
+                <h3 id="map-modal-title" class="font-bold text-slate-800 dark:text-slate-200"></h3>
+                <button onclick="closeMapModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-4">
+                <div id="map-modal-container" class="relative aspect-square bg-slate-900 rounded-lg overflow-hidden">
+                    <img id="map-modal-image" class="w-full h-full object-contain" src="" alt="Map" loading="lazy">
+                    <div id="map-modal-marker" class="absolute w-6 h-6 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                        <div class="w-full h-full bg-red-500 rounded-full animate-ping opacity-75"></div>
+                        <div class="absolute inset-0 bg-red-600 rounded-full border-2 border-white shadow-lg"></div>
+                    </div>
+                </div>
+                <div id="map-modal-coords" class="mt-3 text-center text-slate-600 dark:text-slate-400 font-mono"></div>
+            </div>
+        </div>
+    </div>
 
     <script src="app.js"></script>
     </body>
