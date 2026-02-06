@@ -64,24 +64,27 @@ function calculateSquadStats(squad, affinities, missionLevel = 0) {
         let multiplier = 1;
         let reason = "";
 
-        // 檢查是否有相性加成 (x2)
+        // 檢查是否有相性加成
         const hasAffinity = affinities.includes(member.race) || affinities.includes(member.cls);
+        
         if (hasAffinity) {
+            // Affinity 觸發：條件無條件達成且效果翻倍
+            isActive = true;
             multiplier = 2;
-            reason = "Affinity (x2)";
+            reason = "Affinity (Active & x2)";
+        } else {
+            // 一般情況：檢查條件是否滿足
+            isActive = checkChemistryCondition(
+                member.chem.cond, 
+                member, 
+                squad, 
+                races, 
+                classes, 
+                raceCounts, 
+                classCounts, 
+                missionLevel
+            );
         }
-
-        // 檢查條件是否滿足
-        isActive = checkChemistryCondition(
-            member.chem.cond, 
-            member, 
-            squad, 
-            races, 
-            classes, 
-            raceCounts, 
-            classCounts, 
-            missionLevel
-        );
 
         if (isActive) {
             const val = member.chem.val * multiplier;
