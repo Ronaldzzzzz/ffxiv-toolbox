@@ -1,0 +1,42 @@
+import { useState, useEffect } from 'react';
+import { GatheringData } from '../types';
+
+export function useGatheringData() {
+  const [data, setData] = useState<GatheringData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [pages, items, icons, places, nodes, maps, uiLocales] = await Promise.all([
+          fetch('/data/gathering-log/gathering-log-pages.json').then(res => res.json()),
+          fetch('/data/gathering-log/items.json').then(res => res.json()),
+          fetch('/data/gathering-log/icons.json').then(res => res.json()),
+          fetch('/data/gathering-log/places.json').then(res => res.json()),
+          fetch('/data/gathering-log/nodes.json').then(res => res.json()),
+          fetch('/data/gathering-log/maps.json').then(res => res.json()),
+          fetch('/data/gathering-log/ui_locales.json').then(res => res.json()),
+        ]);
+
+        setData({
+          pages,
+          items,
+          icons,
+          places,
+          nodes,
+          maps,
+          uiLocales,
+        });
+      } catch (err) {
+        setError(err as Error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, []);
+
+  return { data, loading, error };
+}

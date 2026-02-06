@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --header-height: 4rem;
+  --header-offset: 8.5rem; /* 精確調整：4rem (Header) + ~4.5rem (Collapsed Nav) */
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  @apply bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300;
+}
+
+/* Custom Thin Scrollbar */
+.thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+.dark .thin-scrollbar {
+  scrollbar-color: #475569 transparent;
+}
+
+.thin-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 20px;
+}
+.dark .thin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #475569;
+}
+
+.checked-item {
+  opacity: 0.5;
+  filter: grayscale(100%);
+  transition: all 0.3s;
+}
+
+.checked-item .item-name {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.custom-checkbox {
+  appearance: none;
+  background-color: transparent;
+  border: 2px solid currentColor;
+  border-radius: 4px;
+  display: grid;
+  place-content: center;
+}
+
+.custom-checkbox::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em #3b82f6;
+  transform-origin: center;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.custom-checkbox:checked::before {
+  transform: scale(1);
+}
+
+.custom-checkbox:checked {
+  border-color: #3b82f6;
+}
+
+/* Sticky Header Offset */
+.section-header-sticky {
+  position: sticky;
+  top: var(--header-offset);
+  z-index: 20;
+  @apply bg-white dark:bg-slate-800 shadow-sm transition-all;
+}
