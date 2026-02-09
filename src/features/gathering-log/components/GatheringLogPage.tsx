@@ -12,7 +12,7 @@ export const GatheringLogPage: React.FC = () => {
   const { data, loading, error } = useGatheringData();
   const { setProgress, setToolInfo, setHeaderActions, setCenterActions, setEtTime } = useTool();
   const { t: i18n } = useLanguage();
-  
+
   const [currentType, setCurrentType] = useState<GatherType>('mining');
   const [currentRegion, setCurrentRegion] = useState<string>('all');
   const [viewMode, setViewMode] = useState<ViewMode>('level');
@@ -26,7 +26,7 @@ export const GatheringLogPage: React.FC = () => {
   useEffect(() => {
     const savedProgress = localStorage.getItem('ffxiv_gathering_log_progress');
     if (savedProgress) setCompletedItems(new Set(JSON.parse(savedProgress)));
-    
+
     const savedBookmarks = localStorage.getItem('ffxiv_gathering_log_bookmarks');
     if (savedBookmarks) setBookmarkedItems(new Set(JSON.parse(savedBookmarks)));
   }, []);
@@ -49,9 +49,9 @@ export const GatheringLogPage: React.FC = () => {
     const current = Array.from(completedItems).filter(id => {
       return pages.some(p => p.items.some(i => i.itemId === id));
     }).length;
-    
+
     setProgress({ current, total });
-    setToolInfo({ version: 'V2.2' });
+    setToolInfo({ version: 'V2.3' });
 
     // 1. 中間：視角切換按鈕
     setCenterActions(
@@ -64,7 +64,7 @@ export const GatheringLogPage: React.FC = () => {
           <button
             key={mode.id}
             onClick={() => setViewMode(mode.id as ViewMode)}
-            className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-2 ${viewMode === mode.id ? 'bg-white dark:bg-slate-600 shadow-sm text-blue-600 dark:text-blue-300' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'}`}
+            className={`px-4 py-1.5 rounded-md text-md font-bold transition-all flex items-center gap-2 ${viewMode === mode.id ? 'bg-white dark:bg-slate-600 shadow-sm text-blue-600 dark:text-blue-300' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'}`}
           >
             <span>{mode.icon}</span>
             <span>{mode.label}</span>
@@ -89,7 +89,7 @@ export const GatheringLogPage: React.FC = () => {
         </label>
       </div>
     );
-    
+
     return () => {
       setProgress(null);
       setToolInfo(null);
@@ -114,6 +114,16 @@ export const GatheringLogPage: React.FC = () => {
     localStorage.setItem('ffxiv_gathering_log_bookmarks', JSON.stringify(Array.from(newSet)));
   };
 
+  const toggleBatch = (ids: number[], action: 'add' | 'remove') => {
+    const newSet = new Set(completedItems);
+    ids.forEach(id => {
+      if (action === 'add') newSet.add(id);
+      else newSet.delete(id);
+    });
+    setCompletedItems(newSet);
+    localStorage.setItem('ffxiv_gathering_log_progress', JSON.stringify(Array.from(newSet)));
+  };
+
   if (loading) return <div className="p-8 text-center text-slate-500">{i18n.common.loading}</div>;
   if (error) return <div className="p-8 text-center text-red-500">{i18n.common.error_loading}: {error.message}</div>;
   if (!data) return null;
@@ -125,35 +135,36 @@ export const GatheringLogPage: React.FC = () => {
     <div className="max-w-[1600px] mx-auto p-4 flex flex-col md:flex-row gap-6 items-start">
       <Sidebar data={data} currentRegion={currentRegion} setCurrentRegion={setCurrentRegion} pages={pages} />
       <main className="flex-grow w-full min-w-0 relative">
-        <LevelNav 
-          data={data} 
-          currentType={currentType} 
-          setCurrentType={(type) => { setCurrentType(type); setCurrentRegion('all'); }} 
-          pages={pages} 
-          completedItems={completedItems} 
+        <LevelNav
+          data={data}
+          currentType={currentType}
+          setCurrentType={setCurrentType}
+          pages={pages}
+          completedItems={completedItems}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
         />
-        <ItemList 
-          data={data} 
-          currentType={currentType} 
-          currentRegion={currentRegion} 
-          hideCompleted={hideCompleted} 
-          showBookmarks={showBookmarks} 
-          completedItems={completedItems} 
-          bookmarkedItems={bookmarkedItems} 
-          toggleComplete={toggleComplete} 
-          toggleBookmark={toggleBookmark} 
+        <ItemList
+          data={data}
+          currentType={currentType}
+          currentRegion={currentRegion}
+          hideCompleted={hideCompleted}
+          showBookmarks={showBookmarks}
+          completedItems={completedItems}
+          bookmarkedItems={bookmarkedItems}
+          toggleComplete={toggleComplete}
+          toggleBookmark={toggleBookmark}
+          toggleBatch={toggleBatch}
         />
 
         {/* Go to Top Button */}
-        <button 
+        <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="fixed bottom-8 right-8 p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg shadow-blue-600/30 transition-all active:scale-95 z-50 group"
           title={i18n.pages.gathering_log.back_to_top}
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-y-1 transition-transform duration-300">
-            <path d="M12 19V5M5 12l7-7 7 7"/>
+            <path d="M12 19V5M5 12l7-7 7 7" />
           </svg>
         </button>
       </main>

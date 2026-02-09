@@ -14,13 +14,14 @@ interface ItemListProps {
   bookmarkedItems: Set<number>;
   toggleComplete: (id: number) => void;
   toggleBookmark: (id: number) => void;
+  toggleBatch: (ids: number[], action: 'add' | 'remove') => void;
 }
 
 export const ItemList: React.FC<ItemListProps> = ({ 
   data, currentType, currentRegion, hideCompleted, showBookmarks,
-  completedItems, bookmarkedItems, toggleComplete, toggleBookmark 
+  completedItems, bookmarkedItems, toggleComplete, toggleBookmark, toggleBatch
 }) => {
-  const { lang } = useLanguage();
+  const { lang, t: i18n } = useLanguage();
   const { highlightItem, setHighlightItem } = useTool();
   const itemRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
@@ -30,10 +31,10 @@ export const ItemList: React.FC<ItemListProps> = ({
       const element = itemRefs.current[highlightItem];
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        element.classList.add('ring-2', 'ring-yellow-500', 'ring-offset-2', 'dark:ring-offset-slate-800');
+        element.classList.add('ring-2', 'ring-yellow-500', 'ring-offset-2', 'dark:ring-offset-slate-800', 'relative', 'z-30');
         
         const timer = setTimeout(() => {
-          element.classList.remove('ring-2', 'ring-yellow-500', 'ring-offset-2', 'dark:ring-offset-slate-800');
+          element.classList.remove('ring-2', 'ring-yellow-500', 'ring-offset-2', 'dark:ring-offset-slate-800', 'relative', 'z-30');
           setHighlightItem(null); 
         }, 2000);
         
@@ -71,6 +72,9 @@ export const ItemList: React.FC<ItemListProps> = ({
 
         if (filteredItems.length === 0) return null;
 
+        const visibleItemIds = filteredItems.map(i => i.itemId);
+        const allVisibleCompleted = visibleItemIds.every(id => completedItems.has(id));
+
         const completedInPage = page.items.filter(i => completedItems.has(i.itemId)).length;
         const totalInPage = page.items.length;
         const isPageDone = completedInPage === totalInPage;
@@ -84,6 +88,13 @@ export const ItemList: React.FC<ItemListProps> = ({
             <div className="section-header-sticky px-4 py-2 flex justify-between items-center border-b border-slate-200 dark:border-slate-700 z-10 rounded-t-xl bg-white dark:bg-slate-800">
               <h3 className="font-bold text-slate-800 dark:text-slate-200">Lv. {page.startLevel} - {page.startLevel + 4}</h3>
               <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => toggleBatch(visibleItemIds, allVisibleCompleted ? 'remove' : 'add')}
+                  className="text-xs font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                >
+                  {allVisibleCompleted ? i18n.pages.gathering_log.deselect_all : i18n.pages.gathering_log.select_all}
+                </button>
+                <div className="w-px h-3 bg-slate-300 dark:bg-slate-600"></div>
                 <span className={`text-xs font-mono ${isPageDone ? 'text-green-600 dark:text-green-400' : 'text-slate-500'}`}>
                   {completedInPage}/{totalInPage}
                 </span>

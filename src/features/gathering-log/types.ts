@@ -37,6 +37,7 @@ export interface NodeData {
   duration?: number;
   limited?: number;
   folklore?: number;
+  zoneid?: number;
 }
 
 export interface PlaceData extends LocalizedText {}

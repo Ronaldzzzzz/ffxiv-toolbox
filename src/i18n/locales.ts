@@ -33,6 +33,10 @@ export interface Translation {
       all_regions: string;
       omitted: string;
       back_to_top: string;
+      select_all: string;
+      deselect_all: string;
+      active: string;
+      wait: string;
     };
     aether_current: {
       title: string;
@@ -68,12 +72,12 @@ export const translations: Record<LangCode, Translation> = {
       loading: '載入中...',
       error_loading: '載入失敗',
       expansions: {
-        exp_2: '新生艾歐澤亞 (2.0)',
-        exp_3: '蒼天之龍騎士 (3.0)',
-        exp_4: '紅蓮之狂潮 (4.0)',
-        exp_5: '漆黑之反逆者 (5.0)',
-        exp_6: '曉月之終途 (6.0)',
-        exp_7: '黃金之遺產 (7.0)'
+        exp_2: '2.0 新生艾奧傑亞',
+        exp_3: '3.0 蒼天伊修加爾德',
+        exp_4: '4.0 紅蓮解放者',
+        exp_5: '5.0 漆黑反逆者',
+        exp_6: '6.0 曉月之終途',
+        exp_7: '7.0 黃金遺產'
       }
     },
     pages: {
@@ -82,7 +86,9 @@ export const translations: Record<LangCode, Translation> = {
         title: 'FFXIV 採集手冊',
         mining: '採掘', quarrying: '碎石', logging: '伐木', harvesting: '割草',
         progress: '目前進度', hide_completed: '隱藏已完成', show_bookmarks: '僅顯示書籤', jump_to: '等級跳轉',
-        search_placeholder: '搜尋物品...', all_regions: '全部地區', omitted: '已省略詳細地點', back_to_top: '返回頂部'
+        search_placeholder: '搜尋物品...', all_regions: '全部地區', omitted: '已省略詳細地點', back_to_top: '返回頂部',
+        select_all: '全選', deselect_all: '取消全選',
+        active: '可採集', wait: '等待'
       },
       aether_current: { title: '風脈泉路徑', desc: '自動辨識風脈泉並計算最短路徑' },
       squadron: { title: '分隊計算器', desc: '冒險者分隊任務成功率計算' },
@@ -111,7 +117,9 @@ export const translations: Record<LangCode, Translation> = {
         title: 'FFXIV Gathering Log',
         mining: 'Mining', quarrying: 'Quarrying', logging: 'Logging', harvesting: 'Harvesting',
         progress: 'Progress', hide_completed: 'Hide Completed', show_bookmarks: 'Bookmarks', jump_to: 'Jump to Level',
-        search_placeholder: 'Search items...', all_regions: 'All Regions', omitted: 'Locations omitted', back_to_top: 'Back to Top'
+        search_placeholder: 'Search items...', all_regions: 'All Regions', omitted: 'Locations omitted', back_to_top: 'Back to Top',
+        select_all: 'Select All', deselect_all: 'Deselect All',
+        active: 'Active', wait: 'Wait'
       },
       aether_current: { title: 'Aether Current', desc: 'Pathfinding for currents' },
       squadron: { title: 'Squadron Calc', desc: 'Adventurer Squadron simulator' },
@@ -140,7 +148,9 @@ export const translations: Record<LangCode, Translation> = {
         title: 'FFXIV 採集手帳',
         mining: '採掘', quarrying: '砕岩', logging: '伐採', harvesting: '草刈',
         progress: '進捗', hide_completed: '完了を隠す', show_bookmarks: 'ブックマークのみ', jump_to: 'レベルジャンプ',
-        search_placeholder: 'アイテムを検索...', all_regions: 'すべての地域', omitted: '場所を省略しました', back_to_top: 'トップに戻る'
+        search_placeholder: 'アイテムを検索...', all_regions: 'すべての地域', omitted: '場所を省略しました', back_to_top: 'トップに戻る',
+        select_all: 'すべて選択', deselect_all: 'すべて解除',
+        active: '出現中', wait: '待機'
       },
       aether_current: { title: '風脈泉パス', desc: '風脈泉の位置を自動認識' },
       squadron: { title: '小隊計算機', desc: '冒険者小隊の任務成功率' },
@@ -169,7 +179,9 @@ export const translations: Record<LangCode, Translation> = {
         title: 'FFXIV 采集手册',
         mining: '采掘', quarrying: '碎石', logging: '伐木', harvesting: '割草',
         progress: '进度', hide_completed: '隐藏已完成', show_bookmarks: '仅显示书签', jump_to: '等级跳转',
-        search_placeholder: '搜索物品...', all_regions: '全部地区', omitted: '已省略详细地点', back_to_top: '返回顶部'
+        search_placeholder: '搜索物品...', all_regions: '全部地区', omitted: '已省略详细地点', back_to_top: '返回顶部',
+        select_all: '全选', deselect_all: '取消全选',
+        active: '可采集', wait: '等待'
       },
       aether_current: { title: '风脉泉路径', desc: '自动辨识风脉泉并計算最短路径' },
       squadron: { title: '分队计算器', desc: '冒险者分队任务成功率计算' },

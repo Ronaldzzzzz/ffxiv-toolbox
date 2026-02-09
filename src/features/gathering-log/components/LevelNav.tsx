@@ -217,20 +217,41 @@ export const LevelNav: React.FC<LevelNavProps> = ({
           onMouseMove={handleMouseMove}
           className={`flex gap-2 flex-grow transition-all duration-300 overflow-y-hidden ${isSticky ? 'overflow-x-auto pb-2 thin-scrollbar flex-nowrap items-center cursor-grab active:cursor-grabbing' : 'flex-wrap'}`}
         >
-          {pages.map(page => {
+          {pages.map((page, index) => {
             let label = `Lv.${page.startLevel}~${page.startLevel + 4}`;
+            let isFolklore = false;
             
-            const firstItemWithFolklore = page.items.find(item => {
-               const nodes = Object.values(data.nodes).filter(n => n.items.includes(item.itemId));
-               return nodes.some(n => n.folklore);
-            });
+            const getPageLabelAndFolklore = (p: typeof page) => {
+              const firstItemWithFolklore = p.items.find(item => {
+                 const nodes = Object.values(data.nodes).filter(n => n.items.includes(item.itemId));
+                 return nodes.some(n => n.folklore);
+              });
+  
+              let pLabel = `Lv.${p.startLevel}~${p.startLevel + 4}`;
+              let pIsFolklore = false;
+  
+              if (firstItemWithFolklore) {
+                  const nodes = Object.values(data.nodes).filter(n => n.items.includes(firstItemWithFolklore.itemId));
+                  const folkloreNode = nodes.find(n => n.folklore);
+                  if (folkloreNode && folkloreNode.folklore) {
+                      pLabel = getLocalizedText(data.items[folkloreNode.folklore], lang);
+                      pIsFolklore = true;
+                  }
+              }
+              return { label: pLabel, isFolklore: pIsFolklore };
+            };
 
-            if (firstItemWithFolklore) {
-                const nodes = Object.values(data.nodes).filter(n => n.items.includes(firstItemWithFolklore.itemId));
-                const folkloreNode = nodes.find(n => n.folklore);
-                if (folkloreNode && folkloreNode.folklore) {
-                    label = getLocalizedText(data.items[folkloreNode.folklore], lang);
-                }
+            const current = getPageLabelAndFolklore(page);
+            label = current.label;
+            isFolklore = current.isFolklore;
+
+            let showBreak = false;
+            if (!isSticky && index > 0) {
+              const prev = getPageLabelAndFolklore(pages[index - 1]);
+              // Only break when transitioning from normal levels to folklore
+              if (isFolklore && !prev.isFolklore) {
+                showBreak = true;
+              }
             }
 
             const completedInPage = page.items.filter(i => completedItems.has(i.itemId)).length;
@@ -250,17 +271,19 @@ export const LevelNav: React.FC<LevelNavProps> = ({
             }
 
             return (
-              <button
-                key={page.id}
-                onClick={() => scrollToSection(`section-${page.id}`)}
-                className={`px-3 py-1.5 rounded-md border text-xs font-bold transition-all flex items-center gap-2 shrink-0 shadow-sm select-none ${btnClass}`}
-                title={label}
-              >
-                <span className="truncate max-w-[150px]">{label}</span>
-                <span className={`font-mono text-[10px] border-l pl-2 ${progressColor} border-slate-300 dark:border-white/10 opacity-80`}>
-                    {percent}%
-                </span>
-              </button>
+              <React.Fragment key={page.id}>
+                {showBreak && <div className="basis-full h-0"></div>}
+                <button
+                  onClick={() => scrollToSection(`section-${page.id}`)}
+                  className={`px-3 py-1.5 rounded-md border text-xs font-bold transition-all flex items-center gap-2 shrink-0 shadow-sm select-none ${btnClass}`}
+                  title={label}
+                >
+                  <span className="truncate max-w-[150px]">{label}</span>
+                  <span className={`font-mono text-[10px] border-l pl-2 ${progressColor} border-slate-300 dark:border-white/10 opacity-80`}>
+                      {percent}%
+                  </span>
+                </button>
+              </React.Fragment>
             );
           })}
         </div>
