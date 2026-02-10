@@ -18,8 +18,8 @@ function Home() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-        <Link 
-          to="/gathering-log" 
+        <Link
+          to="/gathering-log"
           className="group relative p-8 bg-white dark:bg-slate-800 rounded-2xl shadow-xl hover:shadow-2xl transition-all border border-slate-200 dark:border-slate-700 overflow-hidden"
         >
           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
@@ -34,8 +34,8 @@ function Home() {
           </div>
         </Link>
 
-        <a 
-          href="/AetherCurrent/index.html" 
+        <a
+          href={`${import.meta.env.BASE_URL}AetherCurrent/index.html`}
           className="group relative p-8 bg-white dark:bg-slate-800 rounded-2xl shadow-xl hover:shadow-2xl transition-all border border-slate-200 dark:border-slate-700 overflow-hidden"
         >
           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
@@ -50,8 +50,8 @@ function Home() {
           </div>
         </a>
 
-        <a 
-          href="/Squadron/index.html" 
+        <a
+          href={`${import.meta.env.BASE_URL}Squadron/index.html`}
           className="group relative p-8 bg-white dark:bg-slate-800 rounded-2xl shadow-xl hover:shadow-2xl transition-all border border-slate-200 dark:border-slate-700 overflow-hidden"
         >
           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
@@ -72,7 +72,7 @@ function Home() {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
         <Header title="FFXIV Toolbox" version="" />
         <div className="flex-grow">
