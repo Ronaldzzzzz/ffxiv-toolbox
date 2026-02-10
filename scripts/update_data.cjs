@@ -5,16 +5,23 @@ const https = require('https');
 // --- Configuration ---
 const BASE_URL = 'https://raw.githubusercontent.com/ffxiv-teamcraft/ffxiv-teamcraft/staging/libs/data/src/lib/json';
 const RAW_DATA_DIR = path.join(__dirname, 'temp_raw_data');
-const TW_DIR = path.join(RAW_DATA_DIR, 'tw');
 // Output to public/data/gathering-log so the app can read it
 const APP_DATA_DIR = path.join(__dirname, '../public/data/gathering-log');
 
+const LOCALES = [
+    { code: 'tw', remoteDir: 'tw', prefix: 'tw-' }, // Key in source might be 'tw' or just matching ID
+    { code: 'zh', remoteDir: 'zh', prefix: 'zh-' }
+];
+
 // Ensure directories exist
 if (!fs.existsSync(RAW_DATA_DIR)) fs.mkdirSync(RAW_DATA_DIR, { recursive: true });
-if (!fs.existsSync(TW_DIR)) fs.mkdirSync(TW_DIR, { recursive: true });
 if (!fs.existsSync(APP_DATA_DIR)) fs.mkdirSync(APP_DATA_DIR, { recursive: true });
+LOCALES.forEach(loc => {
+    const locDir = path.join(RAW_DATA_DIR, loc.code);
+    if (!fs.existsSync(locDir)) fs.mkdirSync(locDir, { recursive: true });
+});
 
-// --- Helper Functions ---
+// ... (Helper Functions remain the same) ...
 
 function downloadFile(url, dest) {
     return new Promise((resolve, reject) => {
@@ -70,6 +77,7 @@ function saveJson(filePath, data) {
     console.log(`Saved data to: ${path.basename(filePath)}`);
 }
 
+
 // --- Main Workflow Steps ---
 
 async function step1_downloadData() {
@@ -78,7 +86,9 @@ async function step1_downloadData() {
     // Ensure Clean Start
     if (fs.existsSync(RAW_DATA_DIR)) fs.rmSync(RAW_DATA_DIR, { recursive: true, force: true });
     fs.mkdirSync(RAW_DATA_DIR, { recursive: true });
-    fs.mkdirSync(TW_DIR, { recursive: true });
+    LOCALES.forEach(loc => {
+        fs.mkdirSync(path.join(RAW_DATA_DIR, loc.code), { recursive: true });
+    });
 
     const FILES_TO_DOWNLOAD = [
         { url: `${BASE_URL}/items.json`, dest: path.join(RAW_DATA_DIR, 'items.json') },
@@ -87,14 +97,24 @@ async function step1_downloadData() {
         { url: `${BASE_URL}/places.json`, dest: path.join(RAW_DATA_DIR, 'places.json') },
         { url: `${BASE_URL}/maps.json`, dest: path.join(RAW_DATA_DIR, 'maps.json') },
         { url: `${BASE_URL}/aetherytes.json`, dest: path.join(RAW_DATA_DIR, 'aetherytes.json') },
-        // TW files
-        { url: `${BASE_URL}/tw/tw-items.json`, dest: path.join(TW_DIR, 'items.json') },
-        { url: `${BASE_URL}/tw/tw-places.json`, dest: path.join(TW_DIR, 'places.json') },
-        //{ url: `${BASE_URL}/tw/tw-gathering-items.json`, dest: path.join(TW_DIR, 'gathering-items.json') },
         // App specific
         { url: `${BASE_URL}/gathering-log-pages.json`, dest: path.join(RAW_DATA_DIR, 'gathering-log-pages.json') },
         { url: `${BASE_URL}/item-icons.json`, dest: path.join(RAW_DATA_DIR, 'item-icons.json') },
     ];
+
+    // Add Locale Files
+    LOCALES.forEach(loc => {
+        const locDir = path.join(RAW_DATA_DIR, loc.code);
+        FILES_TO_DOWNLOAD.push({ 
+            url: `${BASE_URL}/${loc.remoteDir}/${loc.prefix}items.json`, 
+            dest: path.join(locDir, 'items.json') 
+        });
+        FILES_TO_DOWNLOAD.push({ 
+            url: `${BASE_URL}/${loc.remoteDir}/${loc.prefix}places.json`, 
+            dest: path.join(locDir, 'places.json') 
+        });
+        // Note: gathering-items skipped for locales as per previous manual edit
+    });
 
     for (const fileInfo of FILES_TO_DOWNLOAD) {
         await downloadFile(fileInfo.url, fileInfo.dest);
@@ -104,51 +124,109 @@ async function step1_downloadData() {
 async function step2_mergeData() {
     console.log('\n--- Step 2: Merging Locale Data ---');
 
-    function merge(baseFile, twFile, outputFile, keyName = 'tw') {
+    // Generic merge function
+    function merge(baseFile, localeFile, outputFile, keyName) {
         if (!fs.existsSync(baseFile)) {
              console.warn(`Base file not found: ${baseFile}, skipping merge.`);
              return;
         }
         
         const baseData = loadJson(baseFile);
-        const twData = fs.existsSync(twFile) ? loadJson(twFile) : {}; 
+        const locData = fs.existsSync(localeFile) ? loadJson(localeFile) : {}; 
         
         let mergedCount = 0;
 
+        // Teamcraft locale files usually have structure { id: { en:..., ja:..., [keyName]:... } } 
+        // OR sometimes { id: { ... } } where keys are directly properties.
+        // But specifically for 'tw'/'zh' folder files from Teamcraft, they are often partials.
+        // Let's assume standard structure or the specific structure for TW/ZH.
+        // Based on previous code: `twData[id].tw` implies the structure is `{ id: { tw: "String" } }` or `{ id: { ..., tw: "..." } }`
+
         for (const id in baseData) {
-            if (twData[id] && twData[id].tw) {
-                baseData[id][keyName] = twData[id].tw;
-                mergedCount++;
+            // Check if locale data exists for this ID
+            if (locData[id]) {
+                const val = locData[id][keyName]; // e.g. locData[123]['zh']
+                if (val) {
+                    baseData[id][keyName] = val;
+                    mergedCount++;
+                }
             }
         }
         
-         for (const id in twData) {
-            if (!baseData[id]) {
-                 baseData[id] = { [keyName]: twData[id].tw };
+        // Also add entries that might exist in locale file but not in base (though rare for Items/Places usually)
+         for (const id in locData) {
+            if (!baseData[id] && locData[id][keyName]) {
+                 baseData[id] = { [keyName]: locData[id][keyName] };
             }
         }
 
-        console.log(`Merged ${path.basename(baseFile)}: Updated ${mergedCount} entries.`);
+        console.log(`Merged ${keyName} into ${path.basename(baseFile)}: Updated ${mergedCount} entries.`);
         saveJson(outputFile, baseData);
     }
 
-    // Merge Items
-    merge(
-        path.join(RAW_DATA_DIR, 'items.json'),
-        path.join(TW_DIR, 'items.json'),
-        path.join(APP_DATA_DIR, 'items.json')
-    );
+    // Process each locale
+    LOCALES.forEach(loc => {
+        console.log(`\nProcessing locale: ${loc.code}`);
+        const locDir = path.join(RAW_DATA_DIR, loc.code);
 
-    // Merge Places
-    merge(
-        path.join(RAW_DATA_DIR, 'places.json'),
-        path.join(TW_DIR, 'places.json'),
-        path.join(APP_DATA_DIR, 'places.json')
-    );
+        // Merge Items
+        merge(
+            path.join(APP_DATA_DIR, 'items.json'), // Merge ON TOP of existing (accumulate changes)
+            path.join(locDir, 'items.json'),
+            path.join(APP_DATA_DIR, 'items.json'), // Output back to same file
+            loc.code // key name e.g. 'zh'
+        );
 
-    // Copy exact files
-    const filesToCopy = ['nodes.json', 'gathering-items.json', 'gathering-log-pages.json', 'item-icons.json', 'maps.json', 'aetherytes.json'];
+        // Merge Places
+        merge(
+            path.join(APP_DATA_DIR, 'places.json'),
+            path.join(locDir, 'places.json'),
+            path.join(APP_DATA_DIR, 'places.json'),
+            loc.code
+        );
+    });
+
+    // Copy exact files (Base files first to initialize APP_DATA_DIR for partial merges above?)
+    // Wait, the partial merge above reads from APP_DATA_DIR, but if it's the first run, APP_DATA_DIR might be empty or have old data.
+    // Correct order: 
+    // 1. Copy fresh Base files (English/Japanese/etc from main) to APP_DATA_DIR.
+    // 2. Loop locales and merge INTO APP_DATA_DIR files.
+
+    console.log('\nInitializing base files...');
+    const filesToCopy = ['items.json', 'places.json', 'nodes.json', 'gathering-items.json', 'gathering-log-pages.json', 'item-icons.json', 'maps.json', 'aetherytes.json'];
+    
+    // We copy items.json and places.json FIRST to ensure they exist for merging
+    ['items.json', 'places.json'].forEach(file => {
+        const src = path.join(RAW_DATA_DIR, file);
+        const dest = path.join(APP_DATA_DIR, file);
+        if (fs.existsSync(src)) {
+            fs.copyFileSync(src, dest);
+        }
+    });
+
+    // NOW merge locales
+    LOCALES.forEach(loc => {
+        console.log(`Processing locale: ${loc.code}`);
+        const locDir = path.join(RAW_DATA_DIR, loc.code);
+
+        merge(
+            path.join(APP_DATA_DIR, 'items.json'), 
+            path.join(locDir, 'items.json'),
+            path.join(APP_DATA_DIR, 'items.json'), 
+            loc.code
+        );
+
+        merge(
+            path.join(APP_DATA_DIR, 'places.json'),
+            path.join(locDir, 'places.json'),
+            path.join(APP_DATA_DIR, 'places.json'),
+            loc.code
+        );
+    });
+
+    // Copy remaining static files
     filesToCopy.forEach(file => {
+        if (file === 'items.json' || file === 'places.json') return; // Already handled
         const src = path.join(RAW_DATA_DIR, file);
         const dest = path.join(APP_DATA_DIR, file);
         if (fs.existsSync(src)) {

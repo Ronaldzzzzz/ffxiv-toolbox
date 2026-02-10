@@ -61,9 +61,9 @@ export const GatheringLogPage: React.FC = () => {
     setCenterActions(
       <div className="flex items-center bg-slate-200 dark:bg-slate-700 p-1 rounded-lg">
         {[
-          { id: 'level', label: '等級視角', icon: '📊' },
-          { id: 'timed', label: '限時視角', icon: '⏱️' },
-          { id: 'map', label: '地圖視角', icon: '🗺️' }
+          { id: 'level', label: i18n.pages.gathering_log.view_level, icon: '📊' },
+          { id: 'timed', label: i18n.pages.gathering_log.view_timed, icon: '⏱️' },
+          { id: 'map', label: i18n.pages.gathering_log.view_map, icon: '🗺️' }
         ].map(mode => (
           <button
             key={mode.id}

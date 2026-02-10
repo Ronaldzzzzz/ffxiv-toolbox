@@ -54,6 +54,9 @@ export interface Translation {
       map_select_prompt: string;
       level_short: string;
       data_updated: string;
+      view_level: string;
+      view_timed: string;
+      view_map: string;
     };
     aether_current: {
       title: string;
@@ -136,7 +139,10 @@ export const translations: Record<LangCode, Translation> = {
         unknown_region: '未知區域',
         map_select_prompt: '請從側邊欄選擇地圖以檢視節點',
         level_short: 'Lv.',
-        data_updated: '資料最後更新於：{date}'
+        data_updated: '資料最後更新於：{date}',
+        view_level: '等級視角',
+        view_timed: '限時視角',
+        view_map: '地圖視角'
       },
       aether_current: {
         title: '風脈泉路徑',
@@ -208,7 +214,10 @@ export const translations: Record<LangCode, Translation> = {
         unknown_region: 'Unknown Region',
         map_select_prompt: 'Select a map from the sidebar to view nodes',
         level_short: 'Lv.',
-        data_updated: 'Data Updated: {date}'
+        data_updated: 'Data Updated: {date}',
+        view_level: 'Level View',
+        view_timed: 'Timed View',
+        view_map: 'Map View'
       },
       aether_current: {
         title: 'Aether Current',
@@ -280,7 +289,10 @@ export const translations: Record<LangCode, Translation> = {
         unknown_region: '不明な地域',
         map_select_prompt: 'サイドバーからマップを選択してノードを表示',
         level_short: 'Lv.',
-        data_updated: 'データ更新日：{date}'
+        data_updated: 'データ更新日：{date}',
+        view_level: 'レベル別',
+        view_timed: '時間別',
+        view_map: 'マップ'
       },
       aether_current: {
         title: '風脈泉パス',
@@ -352,7 +364,10 @@ export const translations: Record<LangCode, Translation> = {
         unknown_region: '未知区域',
         map_select_prompt: '请从侧边栏选择地图以查看节点',
         level_short: 'Lv.',
-        data_updated: '资料最后更新于：{date}'
+        data_updated: '资料最后更新于：{date}',
+        view_level: '等级视角',
+        view_timed: '限时视角',
+        view_map: '地图视角'
       },
       aether_current: {
         title: '风脉泉路径',
