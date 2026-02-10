@@ -10,6 +10,14 @@ interface ToolInfo {
   version?: string;
 }
 
+export interface MapModalData {
+  isOpen: boolean;
+  mapId: number;
+  x: number;
+  y: number;
+  itemName?: string;
+}
+
 interface ToolContextType {
   progress: ToolProgress | null;
   setProgress: (progress: ToolProgress | null) => void;
@@ -23,6 +31,8 @@ interface ToolContextType {
   setEtTime: (time: string | null) => void;
   highlightItem: number | null;
   setHighlightItem: (id: number | null) => void;
+  mapModal: MapModalData;
+  setMapModal: (data: MapModalData) => void;
 }
 
 const ToolContext = createContext<ToolContextType | undefined>(undefined);
@@ -34,15 +44,17 @@ export const ToolProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [centerActions, setCenterActions] = useState<ReactNode | null>(null);
   const [etTime, setEtTime] = useState<string | null>(null);
   const [highlightItem, setHighlightItem] = useState<number | null>(null);
+  const [mapModal, setMapModal] = useState<MapModalData>({ isOpen: false, mapId: 0, x: 0, y: 0 });
 
   return (
-    <ToolContext.Provider value={{ 
-      progress, setProgress, 
+    <ToolContext.Provider value={{
+      progress, setProgress,
       toolInfo, setToolInfo,
       headerActions, setHeaderActions,
       centerActions, setCenterActions,
       etTime, setEtTime,
-      highlightItem, setHighlightItem
+      highlightItem, setHighlightItem,
+      mapModal, setMapModal
     }}>
       {children}
     </ToolContext.Provider>

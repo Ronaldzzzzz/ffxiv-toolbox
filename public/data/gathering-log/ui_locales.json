@@ -43,7 +43,13 @@
     "optimal_path": "最佳路徑",
     "gathering_nodes": "採集點",
     "level_view": "等級視角",
-    "unknown_location": "未知區域"
+    "unknown_location": "未知區域",
+    "regions_header": "區域",
+    "active_label": "出現中",
+    "wait_label": "等待中",
+    "in_label": "還有",
+    "mins_left": "分 剩餘",
+    "mins": "分"
   },
   "zh-CN": {
     "title": "FFXIV 采集手册",
@@ -89,7 +95,13 @@
     "optimal_path": "最佳路径",
     "gathering_nodes": "采集点",
     "level_view": "等级视角",
-    "unknown_location": "未知区域"
+    "unknown_location": "未知区域",
+    "regions_header": "区域",
+    "active_label": "出现中",
+    "wait_label": "等待中",
+    "in_label": "还有",
+    "mins_left": "分 剩余",
+    "mins": "分"
   },
   "en": {
     "title": "FFXIV Gathering Log",
@@ -135,7 +147,13 @@
     "optimal_path": "Optimal Path",
     "gathering_nodes": "Gathering Nodes",
     "level_view": "Level View",
-    "unknown_location": "Unknown Location"
+    "unknown_location": "Unknown Location",
+    "regions_header": "Regions",
+    "active_label": "Active",
+    "wait_label": "Wait",
+    "in_label": "In",
+    "mins_left": "m left",
+    "mins": "m"
   },
   "ja": {
     "title": "採集手帳",
@@ -181,6 +199,12 @@
     "optimal_path": "最適ルート",
     "gathering_nodes": "採集ポイント",
     "level_view": "レベルビュー",
-    "unknown_location": "未知の場所"
+    "unknown_location": "未知の場所",
+    "regions_header": "エリア",
+    "active_label": "出現中",
+    "wait_label": "待機中",
+    "in_label": "あと",
+    "mins_left": "分 残り",
+    "mins": "分"
   }
 }

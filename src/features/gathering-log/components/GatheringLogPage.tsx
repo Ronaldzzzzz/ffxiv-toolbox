@@ -3,10 +3,13 @@ import { useGatheringData } from '../hooks/useGatheringData';
 import { Sidebar } from './Sidebar';
 import { ItemList } from './ItemList';
 import { LevelNav } from './LevelNav';
+import { MapModal } from './MapModal';
+import { TimedNodeList } from './TimedNodeList';
+import { MapView } from './MapView';
 import { useTool } from '../../../context/ToolContext';
 import { useLanguage } from '../../../i18n/LanguageContext';
-import { getEorzeaTime } from '../utils';
-import { JobType, GatherType, ViewMode } from '../types';
+import { getEorzeaTime, GATHERING_ICONS } from '../utils';
+import { GatherType, ViewMode } from '../types';
 
 export const GatheringLogPage: React.FC = () => {
   const { data, loading, error } = useGatheringData();
@@ -14,6 +17,7 @@ export const GatheringLogPage: React.FC = () => {
   const { t: i18n } = useLanguage();
 
   const [currentType, setCurrentType] = useState<GatherType>('mining');
+  const [timedType, setTimedType] = useState<GatherType | 'all'>('all'); // Independent state for Timed View
   const [currentRegion, setCurrentRegion] = useState<string>('all');
   const [viewMode, setViewMode] = useState<ViewMode>('level');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -51,14 +55,14 @@ export const GatheringLogPage: React.FC = () => {
     }).length;
 
     setProgress({ current, total });
-    setToolInfo({ version: 'V2.3' });
+    setToolInfo({ version: 'V2.4' });
 
     // 1. 中間：視角切換按鈕
     setCenterActions(
       <div className="flex items-center bg-slate-200 dark:bg-slate-700 p-1 rounded-lg">
         {[
           { id: 'level', label: '等級視角', icon: '📊' },
-          { id: 'timed', label: '限時點', icon: '⏱️' },
+          { id: 'timed', label: '限時視角', icon: '⏱️' },
           { id: 'map', label: '地圖視角', icon: '🗺️' }
         ].map(mode => (
           <button
@@ -134,28 +138,99 @@ export const GatheringLogPage: React.FC = () => {
   return (
     <div className="max-w-[1600px] mx-auto p-4 flex flex-col md:flex-row gap-6 items-start">
       <Sidebar data={data} currentRegion={currentRegion} setCurrentRegion={setCurrentRegion} pages={pages} />
+
       <main className="flex-grow w-full min-w-0 relative">
-        <LevelNav
-          data={data}
-          currentType={currentType}
-          setCurrentType={setCurrentType}
-          pages={pages}
-          completedItems={completedItems}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-        />
-        <ItemList
-          data={data}
-          currentType={currentType}
-          currentRegion={currentRegion}
-          hideCompleted={hideCompleted}
-          showBookmarks={showBookmarks}
-          completedItems={completedItems}
-          bookmarkedItems={bookmarkedItems}
-          toggleComplete={toggleComplete}
-          toggleBookmark={toggleBookmark}
-          toggleBatch={toggleBatch}
-        />
+        {viewMode === 'level' && (
+          <>
+            <LevelNav
+              data={data}
+              currentType={currentType}
+              setCurrentType={setCurrentType}
+              pages={pages}
+              completedItems={completedItems}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+            />
+            <ItemList
+              data={data}
+              currentType={currentType}
+              currentRegion={currentRegion}
+              hideCompleted={hideCompleted}
+              showBookmarks={showBookmarks}
+              completedItems={completedItems}
+              bookmarkedItems={bookmarkedItems}
+              toggleComplete={toggleComplete}
+              toggleBookmark={toggleBookmark}
+              toggleBatch={toggleBatch}
+            />
+          </>
+        )}
+
+        {viewMode === 'timed' && (
+          <div className="px-4 py-6">
+            <div className="flex gap-4 mb-6 sticky top-0 bg-slate-100 dark:bg-slate-900 z-20 py-2 px-1 overflow-x-auto">
+              {/* Type Toggles for Timed View */}
+              {(['all', 'mining', 'quarrying', 'logging', 'harvesting'] as const).map(type => {
+                const isAll = type === 'all';
+                // @ts-ignore
+                const label = isAll ? i18n.pages.gathering_log.all_types : i18n.pages.gathering_log[type];
+                const icon = isAll ? null : GATHERING_ICONS[type];
+                
+                return (
+                  <button
+                    key={type}
+                    onClick={() => setTimedType(type)}
+                    className={`px-4 py-1.5 rounded-full text-sm font-bold border transition-all flex items-center gap-2 shrink-0 ${timedType === type
+                      ? 'bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/20 scale-105'
+                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700'
+                      }`}
+                  >
+                    {icon && <img src={icon} className="w-5 h-5" alt="" />}
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+            <TimedNodeList
+              data={data}
+              currentType={timedType}
+              completedItems={completedItems}
+              toggleComplete={toggleComplete}
+              hideCompleted={hideCompleted}
+            />
+          </div>
+        )}
+
+
+
+        {viewMode === 'map' && (
+          <div className="px-4 py-6">
+             <div className="flex gap-4 mb-6 sticky top-0 bg-slate-100 dark:bg-slate-900 z-20 py-2 px-1 overflow-x-auto">
+              {/* Reuse Type Toggles */}
+              {(['mining', 'quarrying', 'logging', 'harvesting'] as GatherType[]).map(type => (
+                <button
+                  key={type}
+                  onClick={() => setCurrentType(type)}
+                  className={`px-4 py-1.5 rounded-full text-sm font-bold border transition-all flex items-center gap-2 shrink-0 ${currentType === type
+                    ? 'bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/20 scale-105'
+                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700'
+                    }`}
+                >
+                  <img src={GATHERING_ICONS[type]} className="w-5 h-5" alt="" />
+                  {/* @ts-ignore */}
+                  {i18n.pages.gathering_log[type]}
+                </button>
+              ))}
+            </div>
+            <MapView
+              data={data}
+              currentType={currentType}
+              completedItems={completedItems}
+              toggleComplete={toggleComplete}
+              hideCompleted={hideCompleted}
+            />
+          </div>
+        )}
 
         {/* Go to Top Button */}
         <button
@@ -168,6 +243,8 @@ export const GatheringLogPage: React.FC = () => {
           </svg>
         </button>
       </main>
-    </div>
+
+      <MapModal data={data} />
+    </div >
   );
 };

@@ -19,12 +19,28 @@ export function useGatheringData() {
           fetch('/data/gathering-log/ui_locales.json').then(res => res.json()),
         ]);
 
+        // Preprocess nodes to include hiddenItems in the main items list and inject ID
+
+        const processedNodes = { ...nodes };
+        Object.entries(processedNodes).forEach(([key, node]: [string, any]) => {
+          node.id = Number(key); // Inject ID from key
+
+          if (node.hiddenItems && Array.isArray(node.hiddenItems)) {
+            // Merge hiddenItems into items if not already present
+            node.hiddenItems.forEach((hiddenId: number) => {
+              if (!node.items.includes(hiddenId)) {
+                node.items.push(hiddenId);
+              }
+            });
+          }
+        });
+
         setData({
           pages,
           items,
           icons,
           places,
-          nodes,
+          nodes: processedNodes,
           maps,
           uiLocales,
         });

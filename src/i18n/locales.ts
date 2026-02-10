@@ -30,6 +30,7 @@ export interface Translation {
       show_bookmarks: string;
       jump_to: string;
       search_placeholder: string;
+      regions_header: string;
       all_regions: string;
       omitted: string;
       back_to_top: string;
@@ -37,6 +38,14 @@ export interface Translation {
       deselect_all: string;
       active: string;
       wait: string;
+      in_label: string;
+      mins_left: string;
+      mins: string;
+      timed_active: string;
+      timed_soon: string;
+      timed_later: string;
+      no_timed_nodes: string;
+      all_types: string;
     };
     aether_current: {
       title: string;
@@ -81,19 +90,52 @@ export const translations: Record<LangCode, Translation> = {
       }
     },
     pages: {
-      home: { title: 'FFXIV Toolbox', subtitle: '為艾歐澤亞的光之戰士提供的網頁輔助工具集' },
+      home: {
+        title: 'FFXIV Toolbox',
+        subtitle: '為艾歐澤亞的光之戰士提供的網頁輔助工具集'
+      },
       gathering_log: {
         title: 'FFXIV 採集手冊',
-        mining: '採掘', quarrying: '碎石', logging: '伐木', harvesting: '割草',
-        progress: '目前進度', hide_completed: '隱藏已完成', show_bookmarks: '僅顯示書籤', jump_to: '等級跳轉',
-        search_placeholder: '搜尋物品...', all_regions: '全部地區', omitted: '已省略詳細地點', back_to_top: '返回頂部',
-        select_all: '全選', deselect_all: '取消全選',
-        active: '可採集', wait: '等待'
+        mining: '採掘',
+        quarrying: '碎石',
+        logging: '伐木',
+        harvesting: '割草',
+        progress: '目前進度',
+        hide_completed: '隱藏已完成',
+        show_bookmarks: '僅顯示書籤',
+        jump_to: '等級跳轉',
+        search_placeholder: '搜尋物品...',
+        regions_header: '區域',
+        all_regions: '全部地區',
+        omitted: '已省略詳細地點',
+        back_to_top: '返回頂部',
+        select_all: '全選',
+        deselect_all: '取消全選',
+        active: '可採集',
+        wait: '等待',
+        in_label: '還有',
+        mins_left: '剩餘',
+        mins: '分',
+        timed_active: '正在進行',
+        timed_soon: '即將出現',
+        timed_later: '稍後出現',
+        no_timed_nodes: '沒有可顯示的限時節點',
+        all_types: '全部'
       },
-      aether_current: { title: '風脈泉路徑', desc: '自動辨識風脈泉並計算最短路徑' },
-      squadron: { title: '分隊計算器', desc: '冒險者分隊任務成功率計算' },
+      aether_current: {
+        title: '風脈泉路徑',
+        desc: '自動辨識風脈泉並計算最短路徑'
+      },
+      squadron: {
+        title: '分隊計算器',
+        desc: '冒險者分隊任務成功率計算'
+      },
     },
-    footer: { copyright: '版權所有', sources: '參考資料來源', repo: '原始碼' }
+    footer: {
+      copyright: '版權所有',
+      sources: '參考資料來源',
+      repo: '原始碼'
+    }
   },
   'en': {
     common: {
@@ -112,19 +154,52 @@ export const translations: Record<LangCode, Translation> = {
       }
     },
     pages: {
-      home: { title: 'FFXIV Toolbox', subtitle: 'Web tools for Warriors of Light' },
+      home: {
+        title: 'FFXIV Toolbox',
+        subtitle: 'Web tools for Warriors of Light'
+      },
       gathering_log: {
         title: 'FFXIV Gathering Log',
-        mining: 'Mining', quarrying: 'Quarrying', logging: 'Logging', harvesting: 'Harvesting',
-        progress: 'Progress', hide_completed: 'Hide Completed', show_bookmarks: 'Bookmarks', jump_to: 'Jump to Level',
-        search_placeholder: 'Search items...', all_regions: 'All Regions', omitted: 'Locations omitted', back_to_top: 'Back to Top',
-        select_all: 'Select All', deselect_all: 'Deselect All',
-        active: 'Active', wait: 'Wait'
+        mining: 'Mining',
+        quarrying: 'Quarrying',
+        logging: 'Logging',
+        harvesting: 'Harvesting',
+        progress: 'Progress',
+        hide_completed: 'Hide Completed',
+        show_bookmarks: 'Bookmarks',
+        jump_to: 'Jump to Level',
+        search_placeholder: 'Search items...',
+        regions_header: 'Regions',
+        all_regions: 'All Regions',
+        omitted: 'Locations omitted',
+        back_to_top: 'Back to Top',
+        select_all: 'Select All',
+        deselect_all: 'Deselect All',
+        active: 'Active',
+        wait: 'Wait',
+        in_label: 'In',
+        mins_left: 'left',
+        mins: 'm',
+        timed_active: 'Currently Active',
+        timed_soon: 'Coming Soon',
+        timed_later: 'Later',
+        no_timed_nodes: 'No timed nodes to display',
+        all_types: 'All'
       },
-      aether_current: { title: 'Aether Current', desc: 'Pathfinding for currents' },
-      squadron: { title: 'Squadron Calc', desc: 'Adventurer Squadron simulator' },
+      aether_current: {
+        title: 'Aether Current',
+        desc: 'Pathfinding for currents'
+      },
+      squadron: {
+        title: 'Squadron Calc',
+        desc: 'Adventurer Squadron simulator'
+      },
     },
-    footer: { copyright: 'All Rights Reserved', sources: 'Sources', repo: 'Repository' }
+    footer: {
+      copyright: 'All Rights Reserved',
+      sources: 'Sources',
+      repo: 'Repository'
+    }
   },
   'ja': {
     common: {
@@ -143,19 +218,52 @@ export const translations: Record<LangCode, Translation> = {
       }
     },
     pages: {
-      home: { title: 'FFXIV ツールボックス', subtitle: '光の戦士のためのWebツール' },
+      home: {
+        title: 'FFXIV ツールボックス',
+        subtitle: '光の戦士のためのWebツール'
+      },
       gathering_log: {
         title: 'FFXIV 採集手帳',
-        mining: '採掘', quarrying: '砕岩', logging: '伐採', harvesting: '草刈',
-        progress: '進捗', hide_completed: '完了を隠す', show_bookmarks: 'ブックマークのみ', jump_to: 'レベルジャンプ',
-        search_placeholder: 'アイテムを検索...', all_regions: 'すべての地域', omitted: '場所を省略しました', back_to_top: 'トップに戻る',
-        select_all: 'すべて選択', deselect_all: 'すべて解除',
-        active: '出現中', wait: '待機'
+        mining: '採掘',
+        quarrying: '砕岩',
+        logging: '伐採',
+        harvesting: '草刈',
+        progress: '進捗',
+        hide_completed: '完了を隠す',
+        show_bookmarks: 'ブックマークのみ',
+        jump_to: 'レベルジャンプ',
+        search_placeholder: 'アイテムを検索...',
+        regions_header: 'エリア',
+        all_regions: 'すべての地域',
+        omitted: '場所を省略しました',
+        back_to_top: 'トップに戻る',
+        select_all: 'すべて選択',
+        deselect_all: 'すべて解除',
+        active: '出現中',
+        wait: '待機',
+        in_label: 'あと',
+        mins_left: '残り',
+        mins: '分',
+        timed_active: '現在アクティブ',
+        timed_soon: 'もうすぐ出現',
+        timed_later: '後で出現',
+        no_timed_nodes: '表示する限時ノードがありません',
+        all_types: 'すべて'
       },
-      aether_current: { title: '風脈泉パス', desc: '風脈泉の位置を自動認識' },
-      squadron: { title: '小隊計算機', desc: '冒険者小隊の任務成功率' },
+      aether_current: {
+        title: '風脈泉パス',
+        desc: '風脈泉の位置を自動認識'
+      },
+      squadron: {
+        title: '小隊計算機',
+        desc: '冒険者小隊の任務成功率'
+      },
     },
-    footer: { copyright: 'Copyright © SQUARE ENIX', sources: '情報源', repo: 'リポジトリ' }
+    footer: {
+      copyright: 'Copyright © SQUARE ENIX',
+      sources: '情報源',
+      repo: 'リポジトリ'
+    }
   },
   'zh': {
     common: {
@@ -174,18 +282,51 @@ export const translations: Record<LangCode, Translation> = {
       }
     },
     pages: {
-      home: { title: 'FFXIV Toolbox', subtitle: '为艾欧泽亚的光之战士提供的网页辅助工具集' },
+      home: {
+        title: 'FFXIV Toolbox',
+        subtitle: '为艾欧泽亚的光之战士提供的网页辅助工具集'
+      },
       gathering_log: {
         title: 'FFXIV 采集手册',
-        mining: '采掘', quarrying: '碎石', logging: '伐木', harvesting: '割草',
-        progress: '进度', hide_completed: '隐藏已完成', show_bookmarks: '仅显示书签', jump_to: '等级跳转',
-        search_placeholder: '搜索物品...', all_regions: '全部地区', omitted: '已省略详细地点', back_to_top: '返回顶部',
-        select_all: '全选', deselect_all: '取消全选',
-        active: '可采集', wait: '等待'
+        mining: '采掘',
+        quarrying: '碎石',
+        logging: '伐木',
+        harvesting: '割草',
+        progress: '进度',
+        hide_completed: '隐藏已完成',
+        show_bookmarks: '仅显示书签',
+        jump_to: '等级跳转',
+        search_placeholder: '搜索物品...',
+        regions_header: '区域',
+        all_regions: '全部地区',
+        omitted: '已省略详细地点',
+        back_to_top: '返回顶部',
+        select_all: '全选',
+        deselect_all: '取消全选',
+        active: '可采集',
+        wait: '等待',
+        in_label: '还有',
+        mins_left: '剩余',
+        mins: '分',
+        timed_active: '正在进行',
+        timed_soon: '即将出现',
+        timed_later: '稍后出现',
+        no_timed_nodes: '没有可显示的限时节点',
+        all_types: '全部'
       },
-      aether_current: { title: '风脉泉路径', desc: '自动辨识风脉泉并計算最短路径' },
-      squadron: { title: '分队计算器', desc: '冒险者分队任务成功率计算' },
+      aether_current: {
+        title: '风脉泉路径',
+        desc: '自动辨识风脉泉并計算最短路径'
+      },
+      squadron: {
+        title: '分队计算器',
+        desc: '冒险者分队任务成功率计算'
+      },
     },
-    footer: { copyright: '版权所有', sources: '参考资料来源', repo: '源代码' }
+    footer: {
+      copyright: '版权所有',
+      sources: '参考资料来源',
+      repo: '源代码'
+    }
   }
 };

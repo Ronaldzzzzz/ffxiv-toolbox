@@ -15,7 +15,7 @@ interface LevelNavProps {
   setSearchQuery: (query: string) => void;
 }
 
-export const LevelNav: React.FC<LevelNavProps> = ({ 
+export const LevelNav: React.FC<LevelNavProps> = ({
   data, currentType, setCurrentType, pages, completedItems, searchQuery, setSearchQuery
 }) => {
   const { lang, t: i18n } = useLanguage();
@@ -23,14 +23,14 @@ export const LevelNav: React.FC<LevelNavProps> = ({
   const [isSticky, setIsSticky] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  
+
   // Search State
   // searchQuery moved to props
 
   const [searchResults, setSearchResults] = useState<{ id: number; name: string; level: number; icon: string }[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [inputRect, setInputRect] = useState<DOMRect | null>(null);
-  
+
   // Drag Scroll State
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -78,12 +78,15 @@ export const LevelNav: React.FC<LevelNavProps> = ({
 
   useEffect(() => {
     const handleScroll = () => {
+      // Manual toggle requested
+      /*
       const offset = window.scrollY;
-      if (!isSticky && offset > 270) {
+      if (!isSticky && offset > 310) {
         setIsSticky(true);
       } else if (isSticky && offset < 60) {
         setIsSticky(false);
       }
+      */
       if (showResults) updateInputRect();
     };
 
@@ -99,7 +102,7 @@ export const LevelNav: React.FC<LevelNavProps> = ({
     if (isDragging) return;
     const element = document.getElementById(id);
     if (element) {
-      const offset = 140; 
+      const offset = 140;
       const bodyRect = document.body.getBoundingClientRect().top;
       const elementRect = element.getBoundingClientRect().top;
       const elementPosition = elementRect - bodyRect;
@@ -121,15 +124,15 @@ export const LevelNav: React.FC<LevelNavProps> = ({
     if (!isDragging || !scrollContainerRef.current) return;
     e.preventDefault();
     const x = e.pageX - scrollContainerRef.current.offsetLeft;
-    const walk = (x - startX) * 2; 
+    const walk = (x - startX) * 2;
     scrollContainerRef.current.scrollLeft = scrollLeft - walk;
   };
 
   const types: GatherType[] = ['mining', 'quarrying', 'logging', 'harvesting'];
   const typeLabels: Record<GatherType, string> = {
-    mining: i18n.pages.gathering_log.mining, 
-    quarrying: i18n.pages.gathering_log.quarrying, 
-    logging: i18n.pages.gathering_log.logging, 
+    mining: i18n.pages.gathering_log.mining,
+    quarrying: i18n.pages.gathering_log.quarrying,
+    logging: i18n.pages.gathering_log.logging,
     harvesting: i18n.pages.gathering_log.harvesting
   };
   const typeIcons: Record<GatherType, string> = {
@@ -140,19 +143,21 @@ export const LevelNav: React.FC<LevelNavProps> = ({
   };
 
   return (
-    <div 
-      className={`sticky z-30 mb-6 bg-slate-50/95 dark:bg-slate-900/95 rounded-xl border border-slate-200 dark:border-slate-800 shadow-md transition-all duration-300 top-[4.5rem] ${isSticky ? 'rounded-t-none border-t-0 shadow-lg py-2 px-4' : 'p-4'}`}
+    <div
+      className={`sticky z-30 mb-6 bg-slate-50/95 dark:bg-slate-900/95 rounded-xl border border-slate-200 dark:border-slate-800 shadow-md transition-all duration-300 top-[4.5rem] ${isSticky ? 'rounded-t-none border-t-0 shadow-lg py-2 px-4' : 'p-4'} relative group/nav`}
     >
-      <div 
+
+
+      <div
         className="overflow-hidden transition-all duration-300 ease-in-out"
-        style={{ 
+        style={{
           maxHeight: isSticky ? '0px' : '200px',
           opacity: isSticky ? 0 : 1,
           marginBottom: isSticky ? '0' : '1rem'
         }}
       >
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pt-1 px-1">
-          <div className="flex flex-wrap gap-2"> 
+          <div className="flex flex-wrap gap-2">
             {types.map((type) => (
               <button
                 key={type}
@@ -164,11 +169,11 @@ export const LevelNav: React.FC<LevelNavProps> = ({
               </button>
             ))}
           </div>
-          
+
           <div className="w-full md:w-64 relative">
-            <input 
+            <input
               ref={inputRef}
-              type="text" 
+              type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => { updateInputRect(); if (searchQuery) setShowResults(true); }}
@@ -191,7 +196,7 @@ export const LevelNav: React.FC<LevelNavProps> = ({
               <span>{typeLabels[currentType]}</span>
               <span className="text-[10px] opacity-50">▼</span>
             </div>
-            
+
             <div className="absolute top-full left-0 mt-0 w-40 bg-white dark:bg-slate-800 rounded-lg shadow-2xl border border-slate-200 dark:border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-left translate-y-1">
               <div className="p-1">
                 {types.map((type) => (
@@ -209,7 +214,7 @@ export const LevelNav: React.FC<LevelNavProps> = ({
           </div>
         )}
 
-        <div 
+        <div
           ref={scrollContainerRef}
           onMouseDown={handleMouseDown}
           onMouseLeave={handleMouseLeave}
@@ -220,23 +225,23 @@ export const LevelNav: React.FC<LevelNavProps> = ({
           {pages.map((page, index) => {
             let label = `Lv.${page.startLevel}~${page.startLevel + 4}`;
             let isFolklore = false;
-            
+
             const getPageLabelAndFolklore = (p: typeof page) => {
               const firstItemWithFolklore = p.items.find(item => {
-                 const nodes = Object.values(data.nodes).filter(n => n.items.includes(item.itemId));
-                 return nodes.some(n => n.folklore);
+                const nodes = Object.values(data.nodes).filter(n => n.items.includes(item.itemId));
+                return nodes.some(n => n.folklore);
               });
-  
+
               let pLabel = `Lv.${p.startLevel}~${p.startLevel + 4}`;
               let pIsFolklore = false;
-  
+
               if (firstItemWithFolklore) {
-                  const nodes = Object.values(data.nodes).filter(n => n.items.includes(firstItemWithFolklore.itemId));
-                  const folkloreNode = nodes.find(n => n.folklore);
-                  if (folkloreNode && folkloreNode.folklore) {
-                      pLabel = getLocalizedText(data.items[folkloreNode.folklore], lang);
-                      pIsFolklore = true;
-                  }
+                const nodes = Object.values(data.nodes).filter(n => n.items.includes(firstItemWithFolklore.itemId));
+                const folkloreNode = nodes.find(n => n.folklore);
+                if (folkloreNode && folkloreNode.folklore) {
+                  pLabel = getLocalizedText(data.items[folkloreNode.folklore], lang);
+                  pIsFolklore = true;
+                }
               }
               return { label: pLabel, isFolklore: pIsFolklore };
             };
@@ -263,64 +268,105 @@ export const LevelNav: React.FC<LevelNavProps> = ({
             let progressColor = "text-slate-400 dark:text-slate-500";
 
             if (isDone) {
-                btnClass = "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 border-green-300 dark:border-green-700/50";
-                progressColor = "text-green-600 dark:text-green-300";
+              btnClass = "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 border-green-300 dark:border-green-700/50";
+              progressColor = "text-green-600 dark:text-green-300";
             } else if (percent > 0) {
-                btnClass = "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700/50";
-                progressColor = "text-blue-600 dark:text-blue-300";
+              btnClass = "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700/50";
+              progressColor = "text-blue-600 dark:text-blue-300";
+            }
+
+            let displayName = label;
+
+            if (isFolklore) {
+              const separators = ['·', '・', '-', ':'];
+              const separator = separators.find(s => label.includes(s));
+              if (separator) {
+                const parts = label.split(separator);
+                if (parts.length > 1) {
+                  displayName = parts[parts.length - 1]; // Take the last part (e.g., "星外天域篇")
+                }
+              }
             }
 
             return (
               <React.Fragment key={page.id}>
-                {showBreak && <div className="basis-full h-0"></div>}
+                {showBreak && (
+                    <div className="basis-full h-8 flex items-center gap-2 px-2 mt-2 mb-1">
+                      <div className="h-px bg-slate-200 dark:bg-slate-700 flex-grow"></div>
+                      <div className="flex items-center gap-1 text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                        <img src={GATHERING_ICONS.folklore} className="w-3 h-3 opacity-70" alt="" />
+                        {label.split(/·|・|-|:/)[0]}
+                      </div>
+                      <div className="h-px bg-slate-200 dark:bg-slate-700 flex-grow"></div>
+                    </div>
+                )}
                 <button
                   onClick={() => scrollToSection(`section-${page.id}`)}
-                  className={`px-3 py-1.5 rounded-md border text-xs font-bold transition-all flex items-center gap-2 shrink-0 shadow-sm select-none ${btnClass}`}
+                  className={`px-3 py-1.5 rounded-md border text-xs transition-all flex items-center gap-2 shrink-0 shadow-sm select-none ${btnClass}`}
                   title={label}
                 >
-                  <span className="truncate max-w-[150px]">{label}</span>
+                  <span className="truncate max-w-[150px]">{displayName}</span>
                   <span className={`font-mono text-[10px] border-l pl-2 ${progressColor} border-slate-300 dark:border-white/10 opacity-80`}>
-                      {percent}%
+                    {percent}%
                   </span>
                 </button>
               </React.Fragment>
             );
           })}
         </div>
+
+
+        <button
+          onClick={() => setIsSticky(!isSticky)}
+          className={`p-1.5 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 dark:text-slate-500 transition-colors z-40 ${isSticky ? 'ml-2 shrink-0 relative' : 'absolute bottom-2 right-2'}`}
+          title={isSticky ? "Expand" : "Collapse"}
+        >
+          {isSticky ? (
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+          )}
+        </button>
       </div>
 
-      {showResults && inputRect && createPortal(
-        <div 
-          className="fixed bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-2xl overflow-hidden z-[9999] flex flex-col"
-          style={{ 
-            top: `${inputRect.bottom + window.scrollY + 4}px`, 
-            left: `${inputRect.left + window.scrollX}px`,
-            width: `${Math.max(inputRect.width, 250)}px`,
-            position: 'absolute'
-          }}
-        >
-          <div className="max-h-[350px] overflow-y-auto thin-scrollbar">
-            {searchResults.length > 0 ? (
-              searchResults.map(result => (
-                <div 
-                  key={result.id}
-                  onClick={() => handleSearchResultClick(result.id)}
-                  className="px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer flex items-center gap-3 text-sm text-slate-700 dark:text-slate-200 border-b border-slate-100 dark:border-slate-700/50 last:border-0"
-                >
-                  <img src={result.icon} className="w-8 h-8 rounded border border-slate-200 dark:border-slate-600 bg-slate-100 dark:bg-slate-900 shrink-0" alt="" />
-                  <div className="flex-grow min-w-0">
-                    <div className="font-bold truncate">{result.name}</div>
-                    <div className="text-[10px] text-slate-400">Lv.{result.level}</div>
+      {
+        showResults && inputRect && createPortal(
+          <div
+            className="fixed bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-2xl overflow-hidden z-[9999] flex flex-col"
+            style={{
+              top: `${inputRect.bottom + window.scrollY + 4}px`,
+              left: `${inputRect.left + window.scrollX}px`,
+              width: `${Math.max(inputRect.width, 250)}px`,
+              position: 'absolute'
+            }}
+          >
+            <div className="max-h-[350px] overflow-y-auto thin-scrollbar">
+              {searchResults.length > 0 ? (
+                searchResults.map(result => (
+                  <div
+                    key={result.id}
+                    onClick={() => handleSearchResultClick(result.id)}
+                    className="px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer flex items-center gap-3 text-sm text-slate-700 dark:text-slate-200 border-b border-slate-100 dark:border-slate-700/50 last:border-0"
+                  >
+                    <img src={result.icon} className="w-8 h-8 rounded border border-slate-200 dark:border-slate-600 bg-slate-100 dark:bg-slate-900 shrink-0" alt="" />
+                    <div className="flex-grow min-w-0">
+                      <div className="font-bold truncate">{result.name}</div>
+                      <div className="text-[10px] text-slate-400">Lv.{result.level}</div>
+                    </div>
                   </div>
-                </div>
-              ))
-            ) : (
-              <div className="p-3 text-center text-sm text-slate-500 italic">No results</div>
-            )}
-          </div>
-        </div>,
-        document.body
-      )}
-    </div>
+                ))
+              ) : (
+                <div className="p-3 text-center text-sm text-slate-500 italic">No results</div>
+              )}
+            </div>
+          </div>,
+          document.body
+        )
+      }
+    </div >
   );
 };

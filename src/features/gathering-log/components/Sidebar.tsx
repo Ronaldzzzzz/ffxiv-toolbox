@@ -69,7 +69,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ data, currentRegion, setCurren
   return (
     <aside className="w-full md:w-56 shrink-0 bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto thin-scrollbar shadow-lg z-40 overscroll-contain">
       <h3 className="text-slate-800 dark:text-yellow-500 font-bold mb-3 uppercase text-xs tracking-wider border-b border-slate-200 dark:border-slate-700 pb-2">
-        Regions
+        {t.pages.gathering_log.regions_header}
       </h3>
       
       <button 
