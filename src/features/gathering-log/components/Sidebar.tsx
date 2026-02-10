@@ -12,7 +12,7 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ data, currentRegion, setCurrentRegion, pages }) => {
-  const { lang, t } = useLanguage();
+  const { lang, t: i18n } = useLanguage();
   const [collapsedExpansions, setCollapsedExpansions] = useState<Set<string>>(new Set());
   
   const toggleExpansion = (expKey: string) => {
@@ -69,14 +69,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ data, currentRegion, setCurren
   return (
     <aside className="w-full md:w-56 shrink-0 bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto thin-scrollbar shadow-lg z-40 overscroll-contain">
       <h3 className="text-slate-800 dark:text-yellow-500 font-bold mb-3 uppercase text-xs tracking-wider border-b border-slate-200 dark:border-slate-700 pb-2">
-        {t.pages.gathering_log.regions_header}
+        {i18n.pages.gathering_log.regions_header}
       </h3>
       
       <button 
         onClick={() => setCurrentRegion('all')}
         className={`w-full text-left px-2 py-1.5 rounded text-xs font-medium transition-colors mb-2 ${currentRegion === 'all' ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 ring-1 ring-blue-300 dark:ring-blue-800' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
       >
-        {t.pages.gathering_log.all_regions}
+        {i18n.pages.gathering_log.all_regions}
       </button>
 
       <div className="space-y-1">
@@ -94,7 +94,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ data, currentRegion, setCurren
                 className="w-full text-left text-xs font-extrabold mt-4 mb-2 px-3 py-1.5 rounded shadow-sm text-white flex items-center justify-between group transition-all hover:brightness-110 active:scale-[0.98]"
                 style={{ backgroundColor: EXPANSION_COLORS[expKey] }}
               >
-                <span>{t.common.expansions[expKey as keyof typeof t.common.expansions]}</span>
+                <span>{i18n.common.expansions[expKey as keyof typeof i18n.common.expansions]}</span>
                 {isCollapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
               </button>
               

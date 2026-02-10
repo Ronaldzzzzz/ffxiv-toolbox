@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GatheringData, GatherType, NodeData } from '../types';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
-import { calculateNodeStatus, getEorzeaMinutes, getLocalizedText, GATHERING_ICONS, NodeStatus, formatSeconds } from '../utils';
+import { calculateNodeStatus, getLocalizedText, GATHERING_ICONS, NodeStatus, formatSeconds } from '../utils';
 
 interface TimedNodeListProps {
     data: GatheringData;

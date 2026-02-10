@@ -1,6 +1,6 @@
 import React from 'react';
 import { GatheringItemEntry, GatheringData, NodeData } from '../types';
-import { getLocalizedText, GATHERING_ICONS, calculateNodeStatus, formatSeconds } from '../utils';
+import { getLocalizedText, calculateNodeStatus, formatSeconds } from '../utils';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
 
