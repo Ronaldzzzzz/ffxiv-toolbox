@@ -4,7 +4,7 @@ import { Sidebar } from './Sidebar';
 import { ItemList } from './ItemList';
 import { LevelNav } from './LevelNav';
 import { MapModal } from './MapModal';
-import { TimedNodeList } from './TimedNodeList';
+import { TimedView } from './TimedView';
 import { MapView } from './MapView';
 import { useTool } from '../../../context/ToolContext';
 import { useLanguage } from '../../../i18n/LanguageContext';
@@ -55,7 +55,7 @@ export const GatheringLogPage: React.FC = () => {
     }).length;
 
     setProgress({ current, total });
-    setToolInfo({ version: 'V2.4' });
+    setToolInfo({ version: 'V3' });
 
     // 1. 中間：視角切換按鈕
     setCenterActions(
@@ -137,7 +137,7 @@ export const GatheringLogPage: React.FC = () => {
 
   return (
     <div className="max-w-[1600px] mx-auto p-4 flex flex-col md:flex-row gap-6 items-start">
-      <Sidebar data={data} currentRegion={currentRegion} setCurrentRegion={setCurrentRegion} pages={pages} />
+      <Sidebar data={data} currentRegion={currentRegion} setCurrentRegion={setCurrentRegion} pages={pages} visible={viewMode === 'level'} />
 
       <main className="flex-grow w-full min-w-0 relative">
         {viewMode === 'level' && (
@@ -191,7 +191,7 @@ export const GatheringLogPage: React.FC = () => {
                 );
               })}
             </div>
-            <TimedNodeList
+            <TimedView
               data={data}
               currentType={timedType}
               completedItems={completedItems}
@@ -205,26 +205,9 @@ export const GatheringLogPage: React.FC = () => {
 
         {viewMode === 'map' && (
           <div className="px-4 py-6">
-             <div className="flex gap-4 mb-6 sticky top-0 bg-slate-100 dark:bg-slate-900 z-20 py-2 px-1 overflow-x-auto">
-              {/* Reuse Type Toggles */}
-              {(['mining', 'quarrying', 'logging', 'harvesting'] as GatherType[]).map(type => (
-                <button
-                  key={type}
-                  onClick={() => setCurrentType(type)}
-                  className={`px-4 py-1.5 rounded-full text-sm font-bold border transition-all flex items-center gap-2 shrink-0 ${currentType === type
-                    ? 'bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/20 scale-105'
-                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700'
-                    }`}
-                >
-                  <img src={GATHERING_ICONS[type]} className="w-5 h-5" alt="" />
-                  {/* @ts-ignore */}
-                  {i18n.pages.gathering_log[type]}
-                </button>
-              ))}
-            </div>
+
             <MapView
               data={data}
-              currentType={currentType}
               completedItems={completedItems}
               toggleComplete={toggleComplete}
               hideCompleted={hideCompleted}

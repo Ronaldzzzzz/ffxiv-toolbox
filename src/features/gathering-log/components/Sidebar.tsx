@@ -9,11 +9,22 @@ interface SidebarProps {
   currentRegion: string;
   setCurrentRegion: (region: string) => void;
   pages: GatheringLogPageData[];
+  visible?: boolean;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ data, currentRegion, setCurrentRegion, pages }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ data, currentRegion, setCurrentRegion, pages, visible = true }) => {
   const { lang, t: i18n } = useLanguage();
   const [collapsedExpansions, setCollapsedExpansions] = useState<Set<string>>(new Set());
+  const [dataUpdated, setDataUpdated] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    fetch('/data/gathering-log/metadata.json')
+      .then(res => res.json())
+      .then(data => setDataUpdated(data.lastUpdated))
+      .catch(() => {});
+  }, []);
+  
+
   
   const toggleExpansion = (expKey: string) => {
     const newCollapsed = new Set(collapsedExpansions);
@@ -65,6 +76,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ data, currentRegion, setCurren
     'exp_6': '#3D4E99',
     'exp_7': '#9B853F',
   };
+
+  if (!visible) return null;
 
   return (
     <aside className="w-full md:w-56 shrink-0 bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto thin-scrollbar shadow-lg z-40 overscroll-contain">
@@ -123,6 +136,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ data, currentRegion, setCurren
             </div>
           );
         })}
+      </div>
+      
+      <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 text-[10px] text-slate-400 text-center">
+        {dataUpdated && (
+          <div>
+            {i18n.pages.gathering_log.data_updated.replace('{date}', new Date(dataUpdated).toLocaleDateString())}
+          </div>
+        )}
       </div>
     </aside>
   );

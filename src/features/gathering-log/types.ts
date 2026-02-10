@@ -49,6 +49,17 @@ export interface MapData {
   size_factor: number;
 }
 
+export interface Aetheryte {
+  id: number;
+  zoneid: number;
+  map: number;
+  x: number;
+  y: number;
+  z: number;
+  type: number;
+  nameid: number;
+}
+
 export interface GatheringData {
   pages: GatheringLogPageData[][];
   items: Record<string, LocalizedText>;
@@ -56,5 +67,6 @@ export interface GatheringData {
   places: Record<string, PlaceData>;
   nodes: Record<string, NodeData>;
   maps: Record<string, MapData>;
+  aetherytes: Aetheryte[];
   uiLocales: Record<string, Record<string, string>>;
 }

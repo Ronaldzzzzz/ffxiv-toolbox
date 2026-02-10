@@ -224,7 +224,8 @@ export const ItemRow: React.FC<ItemRowProps> = ({
                                   mapId: node.map,
                                   x: node.x,
                                   y: node.y,
-                                  itemName: getLocalizedText(itemInfo, lang)
+                                  itemName: getLocalizedText(itemInfo, lang),
+                                  type: node.type
                                 });
                               }}
                               className="opacity-75 font-mono hover:text-blue-500 hover:opacity-100 hover:underline cursor-pointer transition-all"

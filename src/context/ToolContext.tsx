@@ -16,6 +16,7 @@ export interface MapModalData {
   x: number;
   y: number;
   itemName?: string;
+  type?: number;
 }
 
 interface ToolContextType {

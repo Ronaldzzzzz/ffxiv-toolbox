@@ -4,15 +4,15 @@ import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
 import { calculateNodeStatus, getLocalizedText, GATHERING_ICONS, NodeStatus, formatSeconds } from '../utils';
 
-interface TimedNodeListProps {
+interface TimedViewProps {
     data: GatheringData;
-    currentType: GatherType | 'all';
+    currentType: 'mining' | 'quarrying' | 'logging' | 'harvesting' | 'all';
     completedItems: Set<number>;
     toggleComplete: (id: number) => void;
     hideCompleted: boolean;
 }
 
-export const TimedNodeList: React.FC<TimedNodeListProps> = ({ data, currentType, completedItems, toggleComplete, hideCompleted }) => {
+export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, completedItems, toggleComplete, hideCompleted }) => {
     const { lang, t: i18n } = useLanguage();
     const { setMapModal } = useTool();
     const [now, setNow] = useState(Date.now());
@@ -142,7 +142,7 @@ export const TimedNodeList: React.FC<TimedNodeListProps> = ({ data, currentType,
                                 </div>
                                 {node.x && node.y && (
                                     <button
-                                        onClick={() => setMapModal({ isOpen: true, mapId: node.map, x: node.x, y: node.y, itemName: getLocalizedText(item, lang) })}
+                                        onClick={() => setMapModal({ isOpen: true, mapId: node.map, x: node.x, y: node.y, itemName: getLocalizedText(item, lang), type: node.type })}
                                         className="text-blue-500 hover:underline cursor-pointer text-left truncate"
                                     >
                                         (X:{node.x}, Y:{node.y})

@@ -60,6 +60,14 @@ export function getEorzeaMinutes(): number {
   return eorzeaDate.getUTCHours() * 60 + eorzeaDate.getUTCMinutes();
 }
 
+/**
+ * Convert Game Coordinate to Map CSS Percentage (0-100)
+ * Standard FFXIV Formula: ((Coord - 1) * (SizeFactor / 100)) / 41 * 100
+ */
+export function getMapPercentage(coord: number, sizeFactor: number = 100): number {
+  return ((coord - 1) * (sizeFactor / 100)) / 41 * 100;
+}
+
 export interface NodeStatus {
   status: 'active' | 'soon' | 'later';
   secondsUntil: number; // Real seconds

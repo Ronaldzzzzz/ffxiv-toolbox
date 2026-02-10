@@ -46,6 +46,14 @@ export interface Translation {
       timed_later: string;
       no_timed_nodes: string;
       all_types: string;
+      items_list: string;
+      items_select_prompt: string;
+      maps_available: string;
+      nodes_incomplete: string;
+      unknown_region: string;
+      map_select_prompt: string;
+      level_short: string;
+      data_updated: string;
     };
     aether_current: {
       title: string;
@@ -120,7 +128,15 @@ export const translations: Record<LangCode, Translation> = {
         timed_soon: '即將出現',
         timed_later: '稍後出現',
         no_timed_nodes: '沒有可顯示的限時節點',
-        all_types: '全部'
+        all_types: '全部',
+        items_list: '物品列表',
+        items_select_prompt: '請選擇地圖以檢視物品',
+        maps_available: '{count} 張地圖',
+        nodes_incomplete: '{count} 個未完成節點',
+        unknown_region: '未知區域',
+        map_select_prompt: '請從側邊欄選擇地圖以檢視節點',
+        level_short: 'Lv.',
+        data_updated: '資料最後更新於：{date}'
       },
       aether_current: {
         title: '風脈泉路徑',
@@ -184,7 +200,15 @@ export const translations: Record<LangCode, Translation> = {
         timed_soon: 'Coming Soon',
         timed_later: 'Later',
         no_timed_nodes: 'No timed nodes to display',
-        all_types: 'All'
+        all_types: 'All',
+        items_list: 'Items',
+        items_select_prompt: 'Select a map to view items',
+        maps_available: '{count} Maps Available',
+        nodes_incomplete: '{count} Nodes Incomplete',
+        unknown_region: 'Unknown Region',
+        map_select_prompt: 'Select a map from the sidebar to view nodes',
+        level_short: 'Lv.',
+        data_updated: 'Data Updated: {date}'
       },
       aether_current: {
         title: 'Aether Current',
@@ -248,7 +272,15 @@ export const translations: Record<LangCode, Translation> = {
         timed_soon: 'もうすぐ出現',
         timed_later: '後で出現',
         no_timed_nodes: '表示する限時ノードがありません',
-        all_types: 'すべて'
+        all_types: 'すべて',
+        items_list: 'アイテム',
+        items_select_prompt: 'マップを選択してアイテムを表示',
+        maps_available: '{count} マップ',
+        nodes_incomplete: '未完了 {count}',
+        unknown_region: '不明な地域',
+        map_select_prompt: 'サイドバーからマップを選択してノードを表示',
+        level_short: 'Lv.',
+        data_updated: 'データ更新日：{date}'
       },
       aether_current: {
         title: '風脈泉パス',
@@ -312,7 +344,15 @@ export const translations: Record<LangCode, Translation> = {
         timed_soon: '即将出现',
         timed_later: '稍后出现',
         no_timed_nodes: '没有可显示的限时节点',
-        all_types: '全部'
+        all_types: '全部',
+        items_list: '物品列表',
+        items_select_prompt: '请选择地图以查看物品',
+        maps_available: '{count} 张地图',
+        nodes_incomplete: '{count} 个未完成节点',
+        unknown_region: '未知区域',
+        map_select_prompt: '请从侧边栏选择地图以查看节点',
+        level_short: 'Lv.',
+        data_updated: '资料最后更新于：{date}'
       },
       aether_current: {
         title: '风脉泉路径',
