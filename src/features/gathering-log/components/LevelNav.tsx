@@ -23,6 +23,21 @@ export const LevelNav: React.FC<LevelNavProps> = ({
   const [isSticky, setIsSticky] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  
+  // Type Selector State (Sticky Mode)
+  const [isTypeSelectorOpen, setIsTypeSelectorOpen] = useState(false);
+  const typeSelectorRef = useRef<HTMLDivElement>(null);
+
+  // Close type selector on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: globalThis.MouseEvent) => {
+      if (typeSelectorRef.current && !typeSelectorRef.current.contains(event.target as Node)) {
+        setIsTypeSelectorOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Search State
   // searchQuery moved to props
@@ -144,7 +159,7 @@ export const LevelNav: React.FC<LevelNavProps> = ({
 
   return (
     <div
-      className={`sticky z-30 mb-6 bg-slate-50/95 dark:bg-slate-900/95 rounded-xl border border-slate-200 dark:border-slate-800 shadow-md transition-all duration-300 top-[4.5rem] ${isSticky ? 'rounded-t-none border-t-0 shadow-lg py-2 px-4' : 'p-4'} relative group/nav`}
+      className={`sticky z-40 mb-6 bg-slate-50/95 dark:bg-slate-900/95 rounded-xl border border-slate-200 dark:border-slate-800 shadow-md transition-all duration-300 top-[8rem] md:top-[4.5rem] ${isSticky ? 'rounded-t-none border-t-0 shadow-lg py-2 px-4' : 'p-4'} relative group/nav`}
     >
 
 
@@ -162,10 +177,10 @@ export const LevelNav: React.FC<LevelNavProps> = ({
               <button
                 key={type}
                 onClick={() => setCurrentType(type)}
-                className={`px-4 py-1.5 rounded-full text-sm font-bold border transition-all flex items-center gap-2 ${currentType === type ? 'bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/20 scale-105' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700'}`}
+                className={`px-3 py-1.5 md:px-4 md:py-1.5 rounded-full text-sm font-bold border transition-all flex items-center gap-2 ${currentType === type ? 'bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/20 scale-105' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700'}`}
               >
                 <img src={typeIcons[type]} className="w-5 h-5" alt="" />
-                {typeLabels[type]}
+                <span className="hidden md:inline">{typeLabels[type]}</span>
               </button>
             ))}
           </div>
@@ -190,27 +205,38 @@ export const LevelNav: React.FC<LevelNavProps> = ({
 
       <div className="flex items-center gap-0">
         {isSticky && (
-          <div className="relative group shrink-0 h-10 flex items-center pr-4 mr-2 border-r border-slate-200 dark:border-slate-700 animation-fade-in z-50">
-            <div className="flex items-center gap-2 font-bold text-slate-700 dark:text-slate-200 text-sm whitespace-nowrap cursor-pointer hover:text-blue-500 transition-colors">
+          <div 
+            ref={typeSelectorRef}
+            className="relative shrink-0 h-10 flex items-center pr-4 mr-2 border-r border-slate-200 dark:border-slate-700 animation-fade-in z-50"
+          >
+            <button 
+              onClick={() => setIsTypeSelectorOpen(!isTypeSelectorOpen)}
+              className="flex items-center gap-2 font-bold text-slate-700 dark:text-slate-200 text-sm whitespace-nowrap cursor-pointer hover:text-blue-500 transition-colors"
+            >
               <img src={typeIcons[currentType]} className="w-6 h-6" alt="" />
-              <span>{typeLabels[currentType]}</span>
+              <span className="hidden md:inline">{typeLabels[currentType]}</span>
               <span className="text-[10px] opacity-50">▼</span>
-            </div>
+            </button>
 
-            <div className="absolute top-full left-0 mt-0 w-40 bg-white dark:bg-slate-800 rounded-lg shadow-2xl border border-slate-200 dark:border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-left translate-y-1">
-              <div className="p-1">
-                {types.map((type) => (
-                  <button
-                    key={type}
-                    onClick={() => setCurrentType(type)}
-                    className={`w-full text-left px-3 py-2 rounded text-xs font-bold flex items-center gap-2 ${currentType === type ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
-                  >
-                    <img src={typeIcons[type]} className="w-4 h-4" alt="" />
-                    {typeLabels[type]}
-                  </button>
-                ))}
+            {isTypeSelectorOpen && (
+              <div className="absolute top-full left-0 mt-2 w-40 bg-white dark:bg-slate-800 rounded-lg shadow-2xl border border-slate-200 dark:border-slate-700 z-[60] overflow-hidden">
+                <div className="p-1">
+                  {types.map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => {
+                        setCurrentType(type);
+                        setIsTypeSelectorOpen(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 rounded text-xs font-bold flex items-center gap-2 ${currentType === type ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
+                    >
+                      <img src={typeIcons[type]} className="w-4 h-4" alt="" />
+                      {typeLabels[type]}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 
@@ -220,7 +246,9 @@ export const LevelNav: React.FC<LevelNavProps> = ({
           onMouseLeave={handleMouseLeave}
           onMouseUp={handleMouseUp}
           onMouseMove={handleMouseMove}
-          className={`flex gap-2 flex-grow transition-all duration-300 overflow-y-hidden ${isSticky ? 'overflow-x-auto pb-2 thin-scrollbar flex-nowrap items-center cursor-grab active:cursor-grabbing' : 'flex-wrap'}`}
+          className={`flex gap-2 flex-grow transition-all duration-300 overflow-y-hidden ${isSticky 
+            ? 'overflow-x-auto pb-2 thin-scrollbar flex-nowrap items-center cursor-grab active:cursor-grabbing' 
+            : 'overflow-x-auto pb-2 md:pb-0 flex-nowrap md:flex-wrap'}`}
         >
           {pages.map((page, index) => {
             let label = `Lv.${page.startLevel}~${page.startLevel + 4}`;

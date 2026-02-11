@@ -156,13 +156,13 @@ export const ItemRow: React.FC<ItemRowProps> = ({
   const isCrystal = item.itemId >= 2 && item.itemId <= 19;
 
   return (
-    <div className={`group flex items-start p-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all ${isCompleted ? 'checked-item bg-slate-50/50 dark:bg-slate-800/30' : ''}`}>
-      <div className="mr-3 shrink-0 flex items-center justify-center self-center">
+    <div className={`group flex items-start p-3 md:p-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all ${isCompleted ? 'checked-item bg-slate-50/50 dark:bg-slate-800/30' : ''}`}>
+      <div className="mr-3 shrink-0 flex items-center justify-center self-center min-h-[40px] min-w-[40px] md:min-h-0 md:min-w-0 -ml-2 md:ml-0">
         <input
           type="checkbox"
           checked={isCompleted}
           onChange={() => toggleComplete(item.itemId)}
-          className="custom-checkbox w-5 h-5 cursor-pointer text-slate-800 dark:text-slate-200"
+          className="custom-checkbox w-6 h-6 md:w-5 md:h-5 cursor-pointer text-slate-800 dark:text-slate-200"
         />
       </div>
 
@@ -214,11 +214,10 @@ export const ItemRow: React.FC<ItemRowProps> = ({
                     return (
                       <div key={idx} className="text-xs text-slate-500 dark:text-slate-400 flex flex-col gap-1 mt-1">
                         <div className="flex flex-wrap items-center gap-x-2">
-                          <span className="flex items-center gap-1">📍 {placeName}</span>
-                          {node.x && node.y && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (node.x && node.y) {
                                 setMapModal({
                                   isOpen: true,
                                   mapId: node.map,
@@ -227,13 +226,14 @@ export const ItemRow: React.FC<ItemRowProps> = ({
                                   itemName: getLocalizedText(itemInfo, lang),
                                   type: node.type
                                 });
-                              }}
-                              className="opacity-75 font-mono hover:text-blue-500 hover:opacity-100 hover:underline cursor-pointer transition-all"
-                              title="View on Map"
-                            >
-                              (X:{node.x}, Y:{node.y})
-                            </button>
-                          )}
+                              }
+                            }}
+                            className="flex items-center gap-1 opacity-75 hover:text-blue-500 hover:opacity-100 font-medium cursor-pointer transition-all text-left"
+                            title="View on Map"
+                          >
+                            <span>📍 {placeName}</span>
+                            {node.x && node.y && <span className="font-mono text-xs opacity-80">(X:{node.x}, Y:{node.y})</span>}
+                          </button>
                         </div>
                         {node.spawns && node.spawns.length > 0 && (
                           <div className="flex items-center gap-2 w-full">

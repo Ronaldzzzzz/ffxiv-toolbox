@@ -13,6 +13,7 @@ export interface Translation {
       exp_6: string;
       exp_7: string;
     };
+    language: string;
   };
   pages: {
     home: {
@@ -57,6 +58,7 @@ export interface Translation {
       view_level: string;
       view_timed: string;
       view_map: string;
+      filter: string;
     };
     aether_current: {
       title: string;
@@ -98,7 +100,8 @@ export const translations: Record<LangCode, Translation> = {
         exp_5: '5.0 漆黑反逆者',
         exp_6: '6.0 曉月之終途',
         exp_7: '7.0 黃金遺產'
-      }
+      },
+      language: '語言'
     },
     pages: {
       home: {
@@ -142,7 +145,8 @@ export const translations: Record<LangCode, Translation> = {
         data_updated: '資料最後更新於：{date}',
         view_level: '等級視角',
         view_timed: '限時視角',
-        view_map: '地圖視角'
+        view_map: '地圖視角',
+        filter: '篩選'
       },
       aether_current: {
         title: '風脈泉路徑',
@@ -173,7 +177,8 @@ export const translations: Record<LangCode, Translation> = {
         exp_5: 'Shadowbringers',
         exp_6: 'Endwalker',
         exp_7: 'Dawntrail'
-      }
+      },
+      language: 'Language'
     },
     pages: {
       home: {
@@ -217,7 +222,8 @@ export const translations: Record<LangCode, Translation> = {
         data_updated: 'Data Updated: {date}',
         view_level: 'Level View',
         view_timed: 'Timed View',
-        view_map: 'Map View'
+        view_map: 'Map View',
+        filter: 'Filter'
       },
       aether_current: {
         title: 'Aether Current',
@@ -248,7 +254,8 @@ export const translations: Record<LangCode, Translation> = {
         exp_5: '漆黒のヴィランズ',
         exp_6: '暁月のフィナーレ',
         exp_7: '黄金のレガシー'
-      }
+      },
+      language: '言語'
     },
     pages: {
       home: {
@@ -292,7 +299,8 @@ export const translations: Record<LangCode, Translation> = {
         data_updated: 'データ更新日：{date}',
         view_level: 'レベル別',
         view_timed: '時間別',
-        view_map: 'マップ'
+        view_map: 'マップ',
+        filter: 'フィルタ'
       },
       aether_current: {
         title: '風脈泉パス',
@@ -323,7 +331,8 @@ export const translations: Record<LangCode, Translation> = {
         exp_5: '漆黑之反逆者',
         exp_6: '晓月之终途',
         exp_7: '黄金之遗产'
-      }
+      },
+      language: '语言'
     },
     pages: {
       home: {
@@ -367,7 +376,8 @@ export const translations: Record<LangCode, Translation> = {
         data_updated: '资料最后更新于：{date}',
         view_level: '等级视角',
         view_timed: '限时视角',
-        view_map: '地图视角'
+        view_map: '地图视角',
+        filter: '过滤'
       },
       aether_current: {
         title: '风脉泉路径',

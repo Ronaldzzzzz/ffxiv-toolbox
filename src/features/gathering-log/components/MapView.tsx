@@ -3,7 +3,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { GatheringData, GatherType, NodeData } from '../types';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { getLocalizedText, GATHERING_ICONS, getMapPercentage, EXPANSION_MAP, calculateNodeStatus, formatSeconds} from '../utils';
-//import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 
 interface MapViewProps {
   data: GatheringData;
@@ -43,8 +43,8 @@ export const MapView: React.FC<MapViewProps> = ({
     }
 
     const sidebarItem = sidebarRefs.current[hoveredNodeId];
-    if (sidebarItem) {
-        // Scroll into view when hovered
+    if (sidebarItem && window.innerWidth >= 1024) {
+        // Scroll into view when hovered (Desktop only)
         sidebarItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
 
@@ -224,8 +224,23 @@ export const MapView: React.FC<MapViewProps> = ({
     return clusters;
   }, [selectedMapId, nodesByMap, data.maps, data.items]);
 
+  // Mobile: Auto-collapse map selector when map is selected
+  const [isMapSelectorOpen, setIsMapSelectorOpen] = useState(true);
+  
+  // Ref to scroll map selector to top when opened
+  const mapSelectorRef = useRef<HTMLDivElement>(null);
+
+  // Removed auto-scroll effect as it causes unwanted scrolling on mobile when switching views
+  /*
+  useEffect(() => {
+    if (isMapSelectorOpen && mapSelectorRef.current && window.innerWidth < 768) {
+        mapSelectorRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [isMapSelectorOpen]);
+  */
+
   return (
-    <div ref={containerRef} className="flex flex-col md:flex-row gap-3 h-[calc(100vh-300px)] relative">
+    <div ref={containerRef} className="flex flex-col lg:flex-row gap-3 min-h-[500px] lg:h-[calc(100vh-140px)] relative">
       {/* Connection Line Overlay */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none z-50 overflow-visible">
           {lineCoords && (
@@ -249,7 +264,10 @@ export const MapView: React.FC<MapViewProps> = ({
       </svg>
 
       {/* Map Selection Sidebar */}
-      <div className="w-full md:w-72 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col overflow-hidden shrink-0">
+      <div 
+        ref={mapSelectorRef}
+        className={`w-full lg:w-72 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex-col overflow-hidden shrink-0 ${!isMapSelectorOpen ? 'hidden lg:flex' : 'flex'}`}
+      >
         <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
            <h3 className="font-bold text-slate-700 dark:text-slate-200">{i18n.pages.gathering_log.all_regions}</h3>
            <div className="text-xs text-slate-500 mt-1">{i18n.pages.gathering_log.maps_available.replace('{count}', String(availableMaps.length))}</div>
@@ -298,7 +316,13 @@ export const MapView: React.FC<MapViewProps> = ({
                                 {maps.map(map => (
                                     <button
                                         key={map.id}
-                                        onClick={() => setSelectedMapId(map.id)}
+                                        onClick={() => {
+                                            setSelectedMapId(map.id);
+                                            setIsMapSelectorOpen(false); // Close on mobile selection
+                                            if (window.innerWidth < 1024) {
+                                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                                            }
+                                        }}
                                         className={`w-full text-left px-3 py-2 rounded-lg mb-0.5 transition-all flex items-center justify-between group ${
                                             selectedMapId === map.id 
                                             ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-700 font-bold' 
@@ -327,159 +351,187 @@ export const MapView: React.FC<MapViewProps> = ({
       </div>
 
       {/* Map Display & Node List */}
-      <div className="flex-grow bg-slate-100 dark:bg-slate-900 rounded-xl shadow-inner border border-slate-200 dark:border-slate-700 overflow-hidden relative flex flex-col">
+      <div className={`flex-grow bg-slate-100 dark:bg-slate-900 rounded-xl shadow-inner border border-slate-200 dark:border-slate-700 overflow-hidden relative flex flex-col ${isMapSelectorOpen ? 'hidden lg:flex' : 'flex'}`}>
             {selectedMapId && data.maps[selectedMapId] ? (
-                <div className="relative w-full h-full p-4 overflow-auto flex items-center justify-center">
-                    <div className="relative shadow-lg rounded-lg overflow-hidden bg-slate-800" style={{ width: 'min(100%, 580px)', aspectRatio: '1/1' }}>
-                        {/* Map Image */}
-                        {(() => {
-                             const map = data.maps[selectedMapId];
-                             const mapImage = map.image 
-                                ? (map.image.includes('xivapi.com') ? map.image : `https://xivapi.com${map.image.startsWith('/') ? '' : '/'}${map.image}`) 
-                                : `https://xivapi.com/m/${selectedMapId}/${selectedMapId}.00.jpg`;
-                             
-                             return (
-                                <img 
-                                    src={mapImage} 
-                                    alt="" 
-                                    className="w-full h-full object-cover"
-                                />
-                             );
-                        })()}
-                        
-                        {/* Aetherytes */}
-                        {selectedMapId && data.aetherytes && data.aetherytes
-                            .filter(a => a.map === selectedMapId)
-                            .map(aetheryte => {
-                                const mapInfo = data.maps[selectedMapId];
-                                const sizeFactor = mapInfo?.size_factor || 100;
-                                const left = getMapPercentage(aetheryte.x, sizeFactor);
-                                const top = getMapPercentage(aetheryte.y, sizeFactor);
-                                
-                                // Icon selection based on type
-                                // type 0: i/060000/060453_hr1.png (Large/Main)
-                                // type 1: i/060000/060430_hr1.png (Small/Sub)
-                                const iconUrl = aetheryte.type === 0 
-                                    ? 'https://xivapi.com/i/060000/060453_hr1.png'
-                                    : 'https://xivapi.com/i/060000/060430_hr1.png';
+                <>
+                    {/* Mobile Only: Back to Map List Button */}
+                    <div className="lg:hidden p-2 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center gap-2">
+                        <button 
+                            onClick={() => setIsMapSelectorOpen(true)}
+                            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+                        >
+                            <ChevronLeft size={16} />
+                            <span>{i18n.pages.gathering_log.all_regions}</span>
+                        </button>
+                        <div className="text-xs font-bold text-slate-500 truncate">
+                            {getLocalizedText(data.places[data.maps[selectedMapId].placename_id], lang)}
+                        </div>
+                    </div>
 
-                                return (
-                                    <div
-                                        key={`aetheryte-${aetheryte.id}`}
-                                        className="absolute w-8 h-8 -ml-4 -mt-4 flex items-center justify-center z-10 pointer-events-none"
-                                        style={{ left: `${left}%`, top: `${top}%` }}
-                                    >
-                                        <img 
-                                            src={iconUrl}
-                                            className="w-full h-full object-contain drop-shadow"
-                                            alt="" // Decorative
-                                        />
-                                        {/* Optional: Add name tooltip if needed in future */}
-                                    </div>
-                                );
-                            })
-                        }
-
-                        {/* Node Clusters */}
-                        {nodeClusters.map((cluster, cIdx) => (
-                            <div 
-                                key={cIdx} 
-                                className="absolute w-0 h-0 group/cluster flex justify-center items-center"
-                                style={{ left: `${cluster.left}%`, top: `${cluster.top}%` }}
-                            >
-                                {cluster.nodes.map((item) => {
-                                    const node = item.node;
-                                    const isStacked = cluster.nodes.length > 1;
-
-                                    let iconKey: GatherType = 'mining';
-                                    if (node.type === 0) iconKey = 'mining';
-                                    else if (node.type === 1) iconKey = 'quarrying';
-                                    else if (node.type === 2) iconKey = 'harvesting';
-                                    else if (node.type === 3) iconKey = 'logging';
-
-                                    const iconUrl = GATHERING_ICONS[iconKey] || GATHERING_ICONS.mining;
-                                    const validItems = node.items.filter(id => data.items[id]);
-                                    const isAllCompleted = validItems.every(id => completedItems.has(id));
-                                    const isHovered = hoveredNodeId === node.id;
-
-                                    // Pulse color
-                                    const pulseColor = 'bg-blue-400';
+                    <div className="relative w-full h-full p-4 overflow-auto flex items-center justify-center">
+                        <div className="relative shadow-lg rounded-lg overflow-hidden bg-slate-800" style={{ width: 'min(100%, 580px)', aspectRatio: '1/1' }}>
+                            {/* Map Image */}
+                            {(() => {
+                                 const map = data.maps[selectedMapId];
+                                 const mapImage = map.image 
+                                    ? (map.image.includes('xivapi.com') ? map.image : `https://xivapi.com${map.image.startsWith('/') ? '' : '/'}${map.image}`) 
+                                    : `https://xivapi.com/m/${selectedMapId}/${selectedMapId}.00.jpg`;
+                                 
+                                 return (
+                                    <img 
+                                        src={mapImage} 
+                                        alt="" 
+                                        className="w-full h-full object-cover"
+                                    />
+                                 );
+                            })()}
+                            
+                            {/* Aetherytes */}
+                            {selectedMapId && data.aetherytes && data.aetherytes
+                                .filter(a => a.map === selectedMapId)
+                                .map(aetheryte => {
+                                    const mapInfo = data.maps[selectedMapId];
+                                    const sizeFactor = mapInfo?.size_factor || 100;
+                                    const left = getMapPercentage(aetheryte.x, sizeFactor);
+                                    const top = getMapPercentage(aetheryte.y, sizeFactor);
+                                    
+                                    // Icon selection based on type
+                                    // type 0: i/060000/060453_hr1.png (Large/Main)
+                                    // type 1: i/060000/060430_hr1.png (Small/Sub)
+                                    const iconUrl = aetheryte.type === 0 
+                                        ? 'https://xivapi.com/i/060000/060453_hr1.png'
+                                        : 'https://xivapi.com/i/060000/060430_hr1.png';
 
                                     return (
                                         <div
-                                            key={node.id}
-                                            ref={el => { markerRefs.current[node.id] = el; }}
-                                            onMouseEnter={() => setHoveredNodeId(node.id)}
-                                            onMouseLeave={() => setHoveredNodeId(null)}
-                                            className={`
-                                                absolute flex items-center justify-center 
-                                                w-8 h-8 -ml-4 -mt-4 
-                                                cursor-pointer transition-all duration-300 ease-out
-                                                ${isAllCompleted ? 'grayscale opacity-60' : ''}
-                                                ${isHovered ? 'z-50 scale-125' : (isStacked ? 'z-10' : 'z-20')}
-                                            `}
-                                            style={{
-                                                transform: isStacked ? undefined : 'none',
-                                            }}
+                                            key={`aetheryte-${aetheryte.id}`}
+                                            className="absolute w-8 h-8 -ml-4 -mt-4 flex items-center justify-center z-10 pointer-events-none"
+                                            style={{ left: `${left}%`, top: `${top}%` }}
                                         >
-                                            {/* Wrapper for hover transform - only if stacked */}
-                                            <div 
-                                                className={`w-full h-full flex items-center justify-center transition-transform duration-300 ease-out ${isStacked ? 'group-hover/cluster:translate-x-[var(--tx)] group-hover/cluster:translate-y-[var(--ty)]' : ''}`}
-                                                style={isStacked ? { '--tx': `${item.offsetX}px`, '--ty': `${item.offsetY}px` } as any : {}}
-                                            >
-                                                {/* Background Circle */}
-                                                <div className={`absolute inset-0 bg-blue-100 rounded-full shadow-sm transform scale-125 ${isAllCompleted ? 'opacity-30' : 'opacity-60'}`}></div>
-
-                                                {/* Pulse */}
-                                                {!isAllCompleted && (
-                                                    <>
-                                                        <div className={`absolute inset-0 rounded-full opacity-60 animate-ping ${pulseColor}`}></div>
-                                                        <div className={`absolute inset-1 rounded-full opacity-40 animate-pulse ${pulseColor} blur-[2px]`}></div>
-                                                    </>
-                                                )}
-
-                                                <img 
-                                                    src={iconUrl}
-                                                    className="relative z-10 w-full h-full object-contain drop-shadow hover:scale-110"
-                                                    alt="" 
-                                                />
-                                                
-                                                {/* Tooltip */}
-                                                <div className={`
-                                                    absolute left-1/2 bottom-full mb-2 -translate-x-1/2 bg-slate-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap 
-                                                    pointer-events-none shadow-lg z-50
-                                                    opacity-0 transition-opacity
-                                                    ${isHovered ? 'opacity-100' : 'opacity-0'}
-                                                `}>
-                                                    <div className="font-bold mb-0.5">{i18n.pages.gathering_log.level_short}{node.level}</div>
-                                                    {node.items.filter(id => data.items[id]).map(itemId => (
-                                                        <div key={itemId} className="flex items-center gap-1 opacity-80">
-                                                            <span className={completedItems.has(itemId) ? 'text-green-400' : ''}>
-                                                                {getLocalizedText(data.items[itemId], lang)}
-                                                            </span>
-                                                        </div>
-                                                    ))}
-                                                    <div className="mt-1 text-[10px] text-slate-400 font-mono">X:{node.x}, Y:{node.y}</div>
-                                                    <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
-                                                </div>
-                                            </div>
+                                            <img 
+                                                src={iconUrl}
+                                                className="w-full h-full object-contain drop-shadow"
+                                                alt="" // Decorative
+                                            />
+                                            {/* Optional: Add name tooltip if needed in future */}
                                         </div>
                                     );
-                                })}
-                            </div>
-                        ))}
+                                })
+                            }
+
+                            {/* Node Clusters */}
+                            {nodeClusters.map((cluster, cIdx) => (
+                                <div 
+                                    key={cIdx} 
+                                    className="absolute w-0 h-0 group/cluster flex justify-center items-center"
+                                    style={{ left: `${cluster.left}%`, top: `${cluster.top}%` }}
+                                >
+                                    {cluster.nodes.map((item) => {
+                                        const node = item.node;
+                                        const isStacked = cluster.nodes.length > 1;
+
+                                        let iconKey: GatherType = 'mining';
+                                        if (node.type === 0) iconKey = 'mining';
+                                        else if (node.type === 1) iconKey = 'quarrying';
+                                        else if (node.type === 2) iconKey = 'harvesting';
+                                        else if (node.type === 3) iconKey = 'logging';
+
+                                        const iconUrl = GATHERING_ICONS[iconKey] || GATHERING_ICONS.mining;
+                                        const validItems = node.items.filter(id => data.items[id]);
+                                        const isAllCompleted = validItems.every(id => completedItems.has(id));
+                                        // Mobile Tap to Hover
+                                        const isHovered = hoveredNodeId === node.id;
+                                        // Use onClick for mobile to simulate hover/select?
+                                        // For now sticking to mouseEnter/Leave but on mobile tap might need better handling if hover doesn't work well.
+                                        // React's mouseEnter/Leave often works on tap for first tap.
+
+                                        // Pulse color
+                                        const pulseColor = 'bg-blue-400';
+
+                                        return (
+                                            <div
+                                                key={node.id}
+                                                ref={el => { markerRefs.current[node.id] = el; }}
+                                                onMouseEnter={() => setHoveredNodeId(node.id)}
+                                                onMouseLeave={() => setHoveredNodeId(null)}
+                                                onClick={() => setHoveredNodeId(node.id === hoveredNodeId ? null : node.id)} // Mobile toggle
+                                                className={`
+                                                    absolute flex items-center justify-center 
+                                                    w-6 h-6 -ml-3 -mt-3
+                                                    md:w-8 md:h-8 md:-ml-4 md:-mt-4 
+                                                    cursor-pointer transition-all duration-300 ease-out
+                                                    ${isAllCompleted ? 'grayscale opacity-60' : ''}
+                                                    ${isHovered ? 'z-50 scale-125' : (isStacked ? 'z-10' : 'z-20')}
+                                                `}
+                                                style={{
+                                                    transform: isStacked ? undefined : 'none',
+                                                }}
+                                            >
+                                                {/* Wrapper for hover transform - only if stacked */}
+                                                <div 
+                                                    className={`w-full h-full flex items-center justify-center transition-transform duration-300 ease-out ${isStacked ? 'group-hover/cluster:translate-x-[var(--tx)] group-hover/cluster:translate-y-[var(--ty)]' : ''}`}
+                                                    style={isStacked ? { '--tx': `${item.offsetX}px`, '--ty': `${item.offsetY}px` } as any : {}}
+                                                >
+                                                    {/* Background Circle */}
+                                                    <div className={`absolute inset-0 bg-blue-100 rounded-full shadow-sm transform scale-125 ${isAllCompleted ? 'opacity-30' : 'opacity-60'}`}></div>
+
+                                                    {/* Pulse */}
+                                                    {!isAllCompleted && (
+                                                        <>
+                                                            <div className={`absolute inset-0 rounded-full opacity-60 animate-ping ${pulseColor}`}></div>
+                                                            <div className={`absolute inset-1 rounded-full opacity-40 animate-pulse ${pulseColor} blur-[2px]`}></div>
+                                                        </>
+                                                    )}
+
+                                                    <img 
+                                                        src={iconUrl}
+                                                        className="relative z-10 w-full h-full object-contain drop-shadow hover:scale-110"
+                                                        alt="" 
+                                                    />
+                                                    
+                                                    {/* Tooltip */}
+                                                    <div className={`
+                                                        absolute left-1/2 bottom-full mb-2 -translate-x-1/2 bg-slate-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap 
+                                                        pointer-events-none shadow-lg z-50
+                                                        opacity-0 transition-opacity
+                                                        ${isHovered ? 'opacity-100' : 'opacity-0'}
+                                                    `}>
+                                                        <div className="font-bold mb-0.5">{i18n.pages.gathering_log.level_short}{node.level}</div>
+                                                        {node.items.filter(id => data.items[id]).map(itemId => (
+                                                            <div key={itemId} className="flex items-center gap-1 opacity-80">
+                                                                <span className={completedItems.has(itemId) ? 'text-green-400' : ''}>
+                                                                    {getLocalizedText(data.items[itemId], lang)}
+                                                                </span>
+                                                            </div>
+                                                        ))}
+                                                        <div className="mt-1 text-[10px] text-slate-400 font-mono">X:{node.x}, Y:{node.y}</div>
+                                                        <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
+                </>
             ) : (
-                <div className="h-full flex flex-col items-center justify-center text-slate-400">
+                <div className="h-full flex flex-col items-center justify-center text-slate-400 p-8">
                     <div className="text-4xl mb-4 opacity-30">⬅️</div>
                     <p>{i18n.pages.gathering_log.map_select_prompt}</p>
+                    <button 
+                        onClick={() => setIsMapSelectorOpen(true)}
+                        className="mt-4 lg:hidden px-4 py-2 bg-blue-100 text-blue-600 rounded-lg font-bold"
+                    >
+                        {i18n.pages.gathering_log.all_regions}
+                    </button>
                 </div>
             )}
       </div>
       
       {/* Right Sidebar: Item List for Selected Map */}
-      <div className="w-full md:w-72 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col overflow-hidden shrink-0">
+      <div className={`w-full lg:w-72 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col overflow-hidden shrink-0 ${isMapSelectorOpen ? 'hidden lg:flex' : 'flex'}`}>
           <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
              <h3 className="font-bold text-slate-700 dark:text-slate-200">
                 {selectedMapId && data.maps[selectedMapId] ? i18n.pages.gathering_log.items_list : '-'}

@@ -6,7 +6,13 @@
 
 :root {
   --header-height: 4rem;
-  --header-offset: 8.5rem; /* 精確調整：4rem (Header) + ~4.5rem (Collapsed Nav) */
+  --header-offset: 8.5rem; /* Desktop: 4.5rem (Nav) + ~4rem (Header) */
+}
+
+@media (max-width: 768px) {
+  :root {
+    --header-offset: 12rem; /* Mobile: 8rem (Nav) + ~4rem (Header with 2 rows) */
+  }
 }
 
 body {

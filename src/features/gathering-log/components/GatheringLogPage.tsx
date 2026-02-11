@@ -26,6 +26,8 @@ export const GatheringLogPage: React.FC = () => {
   const [completedItems, setCompletedItems] = useState<Set<number>>(new Set());
   const [bookmarkedItems, setBookmarkedItems] = useState<Set<number>>(new Set());
 
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
+
   // Restore LocalStorage
   useEffect(() => {
     const savedProgress = localStorage.getItem('ffxiv_gathering_log_progress');
@@ -55,7 +57,7 @@ export const GatheringLogPage: React.FC = () => {
     }).length;
 
     setProgress({ current, total });
-    setToolInfo({ version: 'V3' });
+    setToolInfo({ version: 'V3.1' });
 
     // 1. 中間：視角切換按鈕
     setCenterActions(
@@ -68,9 +70,9 @@ export const GatheringLogPage: React.FC = () => {
           <button
             key={mode.id}
             onClick={() => setViewMode(mode.id as ViewMode)}
-            className={`px-4 py-1.5 rounded-md text-md font-bold transition-all flex items-center gap-2 ${viewMode === mode.id ? 'bg-white dark:bg-slate-600 shadow-sm text-blue-600 dark:text-blue-300' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'}`}
+            className={`px-2 py-1 md:px-4 md:py-1.5 rounded-md text-xs md:text-base font-bold transition-all flex items-center gap-1 md:gap-2 ${viewMode === mode.id ? 'bg-white dark:bg-slate-600 shadow-sm text-blue-600 dark:text-blue-300' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'}`}
           >
-            <span>{mode.icon}</span>
+            <span className="text-sm md:text-xl">{mode.icon}</span>
             <span>{mode.label}</span>
           </button>
         ))}
@@ -137,8 +139,28 @@ export const GatheringLogPage: React.FC = () => {
 
   return (
     <div className="max-w-[1600px] mx-auto p-4 flex flex-col md:flex-row gap-6 items-start">
-      <Sidebar data={data} currentRegion={currentRegion} setCurrentRegion={setCurrentRegion} pages={pages} visible={viewMode === 'level'} />
+      {/* Mobile Filter Toggle */}
+      {viewMode === 'level' && (
+        <div className="md:hidden w-full">
+          <button 
+            onClick={() => setShowMobileSidebar(true)}
+            className="w-full flex items-center justify-center gap-2 p-3 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold active:scale-[0.98] transition-transform"
+          >
+            <span className="text-xl">🔍</span>
+            <span>{i18n.pages.gathering_log.regions_header} / {i18n.pages.gathering_log.filter}</span>
+          </button>
+        </div>
+      )}
 
+      <Sidebar 
+        data={data} 
+        currentRegion={currentRegion} 
+        setCurrentRegion={setCurrentRegion} 
+        pages={pages} 
+        visible={viewMode === 'level'}
+        isOpen={showMobileSidebar}
+        onClose={() => setShowMobileSidebar(false)}
+      />
       <main className="flex-grow w-full min-w-0 relative">
         {viewMode === 'level' && (
           <>

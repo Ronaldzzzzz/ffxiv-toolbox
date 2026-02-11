@@ -12,7 +12,9 @@ interface SidebarProps {
   visible?: boolean;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ data, currentRegion, setCurrentRegion, pages, visible = true }) => {
+export const Sidebar: React.FC<SidebarProps & { isOpen?: boolean; onClose?: () => void }> = ({ 
+  data, currentRegion, setCurrentRegion, pages, visible = true, isOpen = false, onClose 
+}) => {
   const { lang, t: i18n } = useLanguage();
   const [collapsedExpansions, setCollapsedExpansions] = useState<Set<string>>(new Set());
   const [dataUpdated, setDataUpdated] = useState<string | null>(null);
@@ -23,8 +25,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ data, currentRegion, setCurren
       .then(data => setDataUpdated(data.lastUpdated))
       .catch(() => {});
   }, []);
-  
-
   
   const toggleExpansion = (expKey: string) => {
     const newCollapsed = new Set(collapsedExpansions);
@@ -79,14 +79,40 @@ export const Sidebar: React.FC<SidebarProps> = ({ data, currentRegion, setCurren
 
   if (!visible) return null;
 
+  // Mobile Overlay Logic
+  const overlayClass = isOpen ? 'fixed inset-0 z-50 bg-black/50 backdrop-blur-sm md:hidden animation-fade-in' : 'hidden';
+  
+  // Combine desktop (sticky) and mobile (drawer) styles
+  // md:sticky md:translate-x-0 md:shadow-lg md:z-40 ...
+  // Mobile defaults to hidden unless isOpen is handled? 
+  // Actually, we want it to be ALWAYS visible on desktop, and toggleable on mobile.
+  
   return (
-    <aside className="w-full md:w-56 shrink-0 bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto thin-scrollbar shadow-lg z-40 overscroll-contain">
-      <h3 className="text-slate-800 dark:text-yellow-500 font-bold mb-3 uppercase text-xs tracking-wider border-b border-slate-200 dark:border-slate-700 pb-2">
-        {i18n.pages.gathering_log.regions_header}
-      </h3>
+    <>
+      {/* Mobile Backdrop */}
+      <div className={overlayClass} onClick={onClose} aria-hidden="true" />
+
+      <aside className={`
+        bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 
+        md:w-56 md:shrink-0 md:rounded-lg md:p-4 
+        md:sticky md:top-20 md:max-h-[calc(100vh-6rem)] md:translate-x-0 md:block md:z-30
+        overflow-y-auto thin-scrollbar overscroll-contain
+        
+        /* Mobile Specifics */
+        ${isOpen ? 'fixed inset-y-0 left-0 z-50 w-64 p-4 block' : 'hidden'}
+      `}>
+        <div className="flex items-center justify-between mb-3 border-b border-slate-200 dark:border-slate-700 pb-2">
+            <h3 className="text-slate-800 dark:text-yellow-500 font-bold uppercase text-xs tracking-wider">
+                {i18n.pages.gathering_log.regions_header}
+            </h3>
+            {/* Close Button Mobile Only */}
+            <button onClick={onClose} className="md:hidden text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
       
       <button 
-        onClick={() => setCurrentRegion('all')}
+        onClick={() => { setCurrentRegion('all'); onClose?.(); }}
         className={`w-full text-left px-2 py-1.5 rounded text-xs font-medium transition-colors mb-2 ${currentRegion === 'all' ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 ring-1 ring-blue-300 dark:ring-blue-800' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
       >
         {i18n.pages.gathering_log.all_regions}
@@ -122,7 +148,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ data, currentRegion, setCurren
                       {Array.from(pids).sort((a, b) => a - b).map(pid => (
                         <button
                           key={pid}
-                          onClick={() => setCurrentRegion(String(pid))}
+                          onClick={() => { setCurrentRegion(String(pid)); onClose?.(); }}
                           className={`w-full text-left px-2 py-1.5 rounded text-xs transition-all truncate mb-0.5 ${currentRegion === String(pid) ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-bold' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
                         >
                           <span className="mr-1 opacity-50">•</span>
@@ -146,5 +172,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ data, currentRegion, setCurren
         )}
       </div>
     </aside>
+    </>
   );
 };
