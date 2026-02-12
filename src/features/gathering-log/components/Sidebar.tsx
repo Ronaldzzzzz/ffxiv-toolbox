@@ -20,7 +20,7 @@ export const Sidebar: React.FC<SidebarProps & { isOpen?: boolean; onClose?: () =
   const [dataUpdated, setDataUpdated] = useState<string | null>(null);
 
   React.useEffect(() => {
-    fetch('/data/gathering-log/metadata.json')
+    fetch(`${import.meta.env.BASE_URL}data/gathering-log/metadata.json`)
       .then(res => res.json())
       .then(data => setDataUpdated(data.lastUpdated))
       .catch(() => {});
