@@ -1,0 +1,6643 @@
+{
+  "2": {
+    "en": "Fire Shard",
+    "de": "Feuerscherbe",
+    "ja": "ファイアシャード",
+    "fr": "Éclat de feu",
+    "tw": "火之碎晶",
+    "zh": "火之碎晶"
+  },
+  "3": {
+    "en": "Ice Shard",
+    "de": "Eisscherbe",
+    "ja": "アイスシャード",
+    "fr": "Éclat de glace",
+    "tw": "冰之碎晶",
+    "zh": "冰之碎晶"
+  },
+  "4": {
+    "en": "Wind Shard",
+    "de": "Windscherbe",
+    "ja": "ウィンドシャード",
+    "fr": "Éclat de vent",
+    "tw": "風之碎晶",
+    "zh": "风之碎晶"
+  },
+  "5": {
+    "en": "Earth Shard",
+    "de": "Erdscherbe",
+    "ja": "アースシャード",
+    "fr": "Éclat de terre",
+    "tw": "土之碎晶",
+    "zh": "土之碎晶"
+  },
+  "6": {
+    "en": "Lightning Shard",
+    "de": "Blitzscherbe",
+    "ja": "ライトニングシャード",
+    "fr": "Éclat de foudre",
+    "tw": "雷之碎晶",
+    "zh": "雷之碎晶"
+  },
+  "7": {
+    "en": "Water Shard",
+    "de": "Wasserscherbe",
+    "ja": "ウォーターシャード",
+    "fr": "Éclat d'eau",
+    "tw": "水之碎晶",
+    "zh": "水之碎晶"
+  },
+  "8": {
+    "en": "Fire Crystal",
+    "de": "Feuerkristall",
+    "ja": "ファイアクリスタル",
+    "fr": "Cristal de feu",
+    "tw": "火之水晶",
+    "zh": "火之水晶"
+  },
+  "9": {
+    "en": "Ice Crystal",
+    "de": "Eiskristall",
+    "ja": "アイスクリスタル",
+    "fr": "Cristal de glace",
+    "tw": "冰之水晶",
+    "zh": "冰之水晶"
+  },
+  "10": {
+    "en": "Wind Crystal",
+    "de": "Windkristall",
+    "ja": "ウィンドクリスタル",
+    "fr": "Cristal de vent",
+    "tw": "風之水晶",
+    "zh": "风之水晶"
+  },
+  "11": {
+    "en": "Earth Crystal",
+    "de": "Erdkristall",
+    "ja": "アースクリスタル",
+    "fr": "Cristal de terre",
+    "tw": "土之水晶",
+    "zh": "土之水晶"
+  },
+  "12": {
+    "en": "Lightning Crystal",
+    "de": "Blitzkristall",
+    "ja": "ライトニングクリスタル",
+    "fr": "Cristal de foudre",
+    "tw": "雷之水晶",
+    "zh": "雷之水晶"
+  },
+  "13": {
+    "en": "Water Crystal",
+    "de": "Wasserkristall",
+    "ja": "ウォータークリスタル",
+    "fr": "Cristal d'eau",
+    "tw": "水之水晶",
+    "zh": "水之水晶"
+  },
+  "14": {
+    "en": "Fire Cluster",
+    "de": "Feuerpolykristall",
+    "ja": "ファイアクラスター",
+    "fr": "Agrégat de feu",
+    "tw": "火之晶簇",
+    "zh": "火之晶簇"
+  },
+  "15": {
+    "en": "Ice Cluster",
+    "de": "Eispolykristall",
+    "ja": "アイスクラスター",
+    "fr": "Agrégat de glace",
+    "tw": "冰之晶簇",
+    "zh": "冰之晶簇"
+  },
+  "16": {
+    "en": "Wind Cluster",
+    "de": "Windpolykristall",
+    "ja": "ウィンドクラスター",
+    "fr": "Agrégat de vent",
+    "tw": "風之晶簇",
+    "zh": "风之晶簇"
+  },
+  "17": {
+    "en": "Earth Cluster",
+    "de": "Erdpolykristall",
+    "ja": "アースクラスター",
+    "fr": "Agrégat de terre",
+    "tw": "土之晶簇",
+    "zh": "土之晶簇"
+  },
+  "18": {
+    "en": "Lightning Cluster",
+    "de": "Blitzpolykristall",
+    "ja": "ライトニングクラスター",
+    "fr": "Agrégat de foudre",
+    "tw": "雷之晶簇",
+    "zh": "雷之晶簇"
+  },
+  "19": {
+    "en": "Water Cluster",
+    "de": "Wasserpolykristall",
+    "ja": "ウォータークラスター",
+    "fr": "Agrégat d'eau",
+    "tw": "水之晶簇",
+    "zh": "水之晶簇"
+  },
+  "4777": {
+    "en": "Wild Onion",
+    "de": "Wildzwiebel",
+    "ja": "ワイルドオニオン",
+    "fr": "Oignon sauvage",
+    "tw": "野洋蔥",
+    "zh": "野洋葱"
+  },
+  "4778": {
+    "en": "Coerthan Carrot",
+    "de": "Karotte",
+    "ja": "クルザスカロット",
+    "fr": "Carotte du Coerthas",
+    "tw": "庫爾札斯胡蘿蔔",
+    "zh": "库尔札斯胡萝卜"
+  },
+  "4779": {
+    "en": "Ogre Pumpkin",
+    "de": "Ogerkürbis",
+    "ja": "オーガパンプキン",
+    "fr": "Citrouille des ogres",
+    "tw": "食人魔南瓜",
+    "zh": "食人魔南瓜"
+  },
+  "4780": {
+    "en": "Ruby Tomato",
+    "de": "Rubintomate",
+    "ja": "ルビートマト",
+    "fr": "Tomate rubis",
+    "tw": "紅寶石番茄",
+    "zh": "红宝石番茄"
+  },
+  "4781": {
+    "en": "Alpine Parsnip",
+    "de": "Gebirgspastinak",
+    "ja": "パースニップ",
+    "fr": "Panais alpin",
+    "tw": "高山蘿蔔",
+    "zh": "高山萝卜"
+  },
+  "4782": {
+    "en": "La Noscean Lettuce",
+    "de": "Kopfsalat",
+    "ja": "ラノシアレタス",
+    "fr": "Laitue noscéenne",
+    "tw": "拉諾西亞萵苣",
+    "zh": "拉诺西亚莴苣"
+  },
+  "4783": {
+    "en": "Cieldalaes Spinach",
+    "de": "Cieldaläen-Spinat",
+    "ja": "スピナッチ",
+    "fr": "Épinards des Cieldalaes",
+    "tw": "謝爾達萊菠菜",
+    "zh": "谢尔达莱菠菜"
+  },
+  "4784": {
+    "en": "Highland Parsley",
+    "de": "Hochlandpetersilie",
+    "ja": "ハイランドパセリ",
+    "fr": "Persil hyurgoth",
+    "tw": "高原芹",
+    "zh": "高原芹"
+  },
+  "4785": {
+    "en": "Paprika",
+    "de": "Paprikaschote",
+    "ja": "パプリカ",
+    "fr": "Paprika",
+    "tw": "紅彩椒",
+    "zh": "红辣椒"
+  },
+  "4786": {
+    "en": "Nopales",
+    "de": "Nopal",
+    "ja": "ノパル",
+    "fr": "Raquettes de cactus",
+    "tw": "仙人掌葉",
+    "zh": "仙人掌叶"
+  },
+  "4787": {
+    "en": "Popoto",
+    "de": "Toffel",
+    "ja": "ポポト",
+    "fr": "Popoto",
+    "tw": "新薯",
+    "zh": "新薯"
+  },
+  "4788": {
+    "en": "Wizard Eggplant",
+    "de": "Aubergine",
+    "ja": "エッグプラント",
+    "fr": "Aubergine du mage",
+    "tw": "巫茄",
+    "zh": "巫茄"
+  },
+  "4789": {
+    "en": "Midland Cabbage",
+    "de": "Wiesland-Kohlkopf",
+    "ja": "ミッドランドキャベツ",
+    "fr": "Chou hyurois",
+    "tw": "中原甘藍",
+    "zh": "中原甘蓝"
+  },
+  "4790": {
+    "en": "Aloe",
+    "de": "Aloe",
+    "ja": "アロエ",
+    "fr": "Aloès",
+    "tw": "蘆薈",
+    "zh": "芦荟"
+  },
+  "4791": {
+    "en": "Salt Leek",
+    "de": "Regenmoor-Porree",
+    "ja": "リーキ",
+    "fr": "Poireau des marais",
+    "tw": "鹽韭",
+    "zh": "盐韭"
+  },
+  "4792": {
+    "en": "Ramhorn Zucchini",
+    "de": "Zucchini",
+    "ja": "ズッキーニ",
+    "fr": "Courgette corne de bélier",
+    "tw": "櫛瓜",
+    "zh": "西葫芦"
+  },
+  "4793": {
+    "en": "Maiden Artichoke",
+    "de": "Artischocke",
+    "ja": "アーティチョーク",
+    "fr": "Artichaut de la vierge",
+    "tw": "球薊",
+    "zh": "球蓟"
+  },
+  "4795": {
+    "en": "Chanterelle",
+    "de": "Pfifferling",
+    "ja": "シャンテレール",
+    "fr": "Chanterelle",
+    "tw": "雞油菇",
+    "zh": "鸡油菌"
+  },
+  "4796": {
+    "en": "Gil Bun",
+    "de": "Gilpilz",
+    "ja": "ギルバン",
+    "fr": "Cèpe",
+    "tw": "金錢蘑",
+    "zh": "金钱蘑"
+  },
+  "4797": {
+    "en": "Button Mushroom",
+    "de": "Knopf-Fungus",
+    "ja": "ボタンマッシュルーム",
+    "fr": "Champignon bouton",
+    "tw": "草菇",
+    "zh": "草菇"
+  },
+  "4798": {
+    "en": "White Truffle",
+    "de": "Weiße Trüffel",
+    "ja": "ホワイトトリュフ",
+    "fr": "Truffe blanche",
+    "tw": "白松露",
+    "zh": "白松露"
+  },
+  "4800": {
+    "en": "Black Truffle",
+    "de": "Schwarze Trüffel",
+    "ja": "ブラックトリュフ",
+    "fr": "Truffe noire",
+    "tw": "黑松露",
+    "zh": "黑松露"
+  },
+  "4803": {
+    "en": "Kukuru Bean",
+    "de": "Kukuru-Bohnen",
+    "ja": "ククルビーン",
+    "fr": "Fève kukuru",
+    "tw": "可可豆",
+    "zh": "可可豆"
+  },
+  "4804": {
+    "en": "Cinderfoot Olive",
+    "de": "Olive",
+    "ja": "オリーヴ",
+    "fr": "Olive cendrée",
+    "tw": "橄欖",
+    "zh": "橄榄"
+  },
+  "4805": {
+    "en": "Gridanian Chestnut",
+    "de": "Gridanische Kastanie",
+    "ja": "チェスナット",
+    "fr": "Châtaigne de Gridania",
+    "tw": "山栗",
+    "zh": "山栗"
+  },
+  "4806": {
+    "en": "Gridanian Walnut",
+    "de": "Gridanische Walnuss",
+    "ja": "ウォルナット",
+    "fr": "Noix de Gridania",
+    "tw": "胡桃",
+    "zh": "胡桃"
+  },
+  "4807": {
+    "en": "Iron Acorn",
+    "de": "Eichel",
+    "ja": "アイアンエーコン",
+    "fr": "Gland de fer",
+    "tw": "鐵帽橡果",
+    "zh": "铁帽橡果"
+  },
+  "4808": {
+    "en": "Lowland Grapes",
+    "de": "Tieflandtrauben",
+    "ja": "ローランドグレープ",
+    "fr": "Raisin des plaines",
+    "tw": "低地葡萄",
+    "zh": "低地葡萄"
+  },
+  "4809": {
+    "en": "La Noscean Orange",
+    "de": "La Noscea-Orange",
+    "ja": "ラノシアオレンジ",
+    "fr": "Orange noscéenne",
+    "tw": "拉諾西亞香橙",
+    "zh": "拉诺西亚香橙"
+  },
+  "4810": {
+    "en": "Faerie Apple",
+    "de": "Feenapfel",
+    "ja": "フェアリーアップル",
+    "fr": "Pomme de fée",
+    "tw": "仙女蘋果",
+    "zh": "仙女苹果"
+  },
+  "4811": {
+    "en": "Sun Lemon",
+    "de": "Sonnenzitrone",
+    "ja": "サンレモン",
+    "fr": "Citron soleil",
+    "tw": "太陽檸檬",
+    "zh": "太阳柠檬"
+  },
+  "4812": {
+    "en": "Pixie Plums",
+    "de": "Pflaume",
+    "ja": "ピクシープラム",
+    "fr": "Prunes sylphes",
+    "tw": "仙子梅",
+    "zh": "仙子梅"
+  },
+  "4813": {
+    "en": "Alligator Pear",
+    "de": "Avocado",
+    "ja": "アリゲーターペア",
+    "fr": "Poire alligator",
+    "tw": "鱷梨",
+    "zh": "鳄梨"
+  },
+  "4814": {
+    "en": "Blood Currants",
+    "de": "Blutbeere",
+    "ja": "ブラッドカーラント",
+    "fr": "Groseille sanguine",
+    "tw": "血紅奇異果",
+    "zh": "血红奇异果"
+  },
+  "4815": {
+    "en": "Rolanberry",
+    "de": "Rolanbeere",
+    "ja": "ロランベリー",
+    "fr": "Rolanbaie",
+    "tw": "羅蘭莓",
+    "zh": "罗兰莓"
+  },
+  "4816": {
+    "en": "Prickly Pineapple",
+    "de": "Ananas",
+    "ja": "パイナップル",
+    "fr": "Ananas épineux",
+    "tw": "多刺鳳梨",
+    "zh": "多刺菠萝"
+  },
+  "4818": {
+    "en": "Buffalo Beans",
+    "de": "Büffelbohnen",
+    "ja": "バッファロービーン",
+    "fr": "Haricots buffle",
+    "tw": "水牛豆",
+    "zh": "水牛豆"
+  },
+  "4819": {
+    "en": "Sticky Rice",
+    "de": "Klebereis",
+    "ja": "スティッキーライス",
+    "fr": "Riz gluant",
+    "tw": "糯米",
+    "zh": "糯米"
+  },
+  "4820": {
+    "en": "Lalafellin Lentil",
+    "de": "Lalafell-Linse",
+    "ja": "レンティル",
+    "fr": "Lentilles lalafelles",
+    "tw": "小扁豆",
+    "zh": "小扁豆"
+  },
+  "4821": {
+    "en": "Millioncorn",
+    "de": "Millionenmais",
+    "ja": "ミリオンコーン",
+    "fr": "Milli-maïs",
+    "tw": "多實玉米",
+    "zh": "多实玉米"
+  },
+  "4822": {
+    "en": "Jade Peas",
+    "de": "Jadeerbsen",
+    "ja": "ジェードピー",
+    "fr": "Pois de jade",
+    "tw": "翡翠豆",
+    "zh": "翡翠豆"
+  },
+  "4823": {
+    "en": "Rye",
+    "de": "Roggen",
+    "ja": "ライ麦",
+    "fr": "Seigle",
+    "tw": "黑麥",
+    "zh": "黑麦"
+  },
+  "4824": {
+    "en": "Sunset Wheat",
+    "de": "Sonnenweizen",
+    "ja": "小麦",
+    "fr": "Blé",
+    "tw": "小麥",
+    "zh": "小麦"
+  },
+  "4828": {
+    "en": "Cinnamon",
+    "de": "Zimt",
+    "ja": "シナモン",
+    "fr": "Cannelle",
+    "tw": "桂皮",
+    "zh": "桂皮"
+  },
+  "4829": {
+    "en": "Garlean Garlic",
+    "de": "Garleischer Knoblauch",
+    "ja": "ガーリック",
+    "fr": "Ail garlemaldais",
+    "tw": "大蒜",
+    "zh": "大蒜"
+  },
+  "4830": {
+    "en": "Black Pepper",
+    "de": "Schwarzer Pfeffer",
+    "ja": "ブラックペッパー",
+    "fr": "Poivre noir",
+    "tw": "黑胡椒",
+    "zh": "黑胡椒"
+  },
+  "4831": {
+    "en": "Cloves",
+    "de": "Gewürznelke",
+    "ja": "クローヴ",
+    "fr": "Girofle",
+    "tw": "丁香花",
+    "zh": "丁香"
+  },
+  "4832": {
+    "en": "Marjoram",
+    "de": "Majoran",
+    "ja": "マージョラム",
+    "fr": "Marjolaine",
+    "tw": "馬郁蘭",
+    "zh": "马郁兰"
+  },
+  "4833": {
+    "en": "Vanilla Beans",
+    "de": "Vanille",
+    "ja": "バニラビーンズ",
+    "fr": "Gousse de vanille",
+    "tw": "香草豆",
+    "zh": "香草豆"
+  },
+  "4834": {
+    "en": "Galago Mint",
+    "de": "Minze",
+    "ja": "ガラゴミント",
+    "fr": "Menthe galago",
+    "tw": "嬰猴薄荷",
+    "zh": "婴猴薄荷"
+  },
+  "4835": {
+    "en": "Ala Mhigan Mustard",
+    "de": "Mhigischer Senf",
+    "ja": "アラミゴマスタード",
+    "fr": "Moutarde mhigoise",
+    "tw": "阿拉米格芥子",
+    "zh": "阿拉米格芥子"
+  },
+  "4836": {
+    "en": "Pearl Ginger",
+    "de": "Perleningwer",
+    "ja": "パールジンジャー",
+    "fr": "Gingembre perlé",
+    "tw": "生薑",
+    "zh": "生姜"
+  },
+  "4837": {
+    "en": "Midland Basil",
+    "de": "Wieslandbasilikum",
+    "ja": "ミッドランドバジル",
+    "fr": "Basilic hyurois",
+    "tw": "中原羅勒草",
+    "zh": "中原罗勒草"
+  },
+  "4838": {
+    "en": "Dragon Pepper",
+    "de": "Drachenpfeffer",
+    "ja": "ドラゴンペッパー",
+    "fr": "Piment dragon",
+    "tw": "龍息椒",
+    "zh": "龙息椒"
+  },
+  "4839": {
+    "en": "Laurel",
+    "de": "Lorbeer",
+    "ja": "ローレル",
+    "fr": "Laurier",
+    "tw": "月桂",
+    "zh": "月桂"
+  },
+  "4840": {
+    "en": "Mugwort",
+    "de": "Beifuß",
+    "ja": "マグワート",
+    "fr": "Armoise",
+    "tw": "艾蒿",
+    "zh": "艾蒿"
+  },
+  "4841": {
+    "en": "Thyme",
+    "de": "Thymian",
+    "ja": "タイム",
+    "fr": "Thym",
+    "tw": "百里香",
+    "zh": "百里香"
+  },
+  "4842": {
+    "en": "Almonds",
+    "de": "Mandel",
+    "ja": "アーモンド",
+    "fr": "Amandes",
+    "tw": "扁桃",
+    "zh": "扁桃"
+  },
+  "4843": {
+    "en": "Desert Saffron",
+    "de": "Safran",
+    "ja": "デザートサフラン",
+    "fr": "Safran du désert",
+    "tw": "沙漠番紅花",
+    "zh": "沙漠番红花"
+  },
+  "4844": {
+    "en": "Nutmeg",
+    "de": "Muskatnuss",
+    "ja": "ナツメグ",
+    "fr": "Noix de muscade",
+    "tw": "肉豆蔻",
+    "zh": "肉豆蔻"
+  },
+  "4845": {
+    "en": "Sagolii Sage",
+    "de": "Sagolii-Salbei",
+    "ja": "サゴリーセージ",
+    "fr": "Sauge de Sagolii",
+    "tw": "撒溝厲鼠尾草",
+    "zh": "撒沟厉鼠尾草"
+  },
+  "4846": {
+    "en": "Thanalan Tea Leaves",
+    "de": "Thanalan-Teeblatt",
+    "ja": "ザナラーン茶葉",
+    "fr": "Feuilles de thé du Thanalan",
+    "tw": "薩納蘭茶葉",
+    "zh": "萨纳兰茶叶"
+  },
+  "5050": {
+    "en": "Allagan Snail",
+    "de": "Allagan-Schnecke",
+    "ja": "アラガンスネイル",
+    "fr": "Escargot allagois",
+    "tw": "亞拉戈蝸牛",
+    "zh": "亚拉戈蜗牛"
+  },
+  "5051": {
+    "en": "Tree Toad",
+    "de": "Baumkröte",
+    "ja": "ツリートード",
+    "fr": "Crapaud arboricole",
+    "tw": "綠樹蟾蜍",
+    "zh": "绿树蟾蜍"
+  },
+  "5054": {
+    "en": "Dart Frog",
+    "de": "Pfeilgiftfrosch",
+    "ja": "ダートフロッグ",
+    "fr": "Grenouille flèche",
+    "tw": "毒鏢蛙",
+    "zh": "毒镖蛙"
+  },
+  "5055": {
+    "en": "Lava Toad",
+    "de": "Lavakröte",
+    "ja": "ラーヴァトード",
+    "fr": "Crapaud lavique",
+    "tw": "熔岩蟾蜍",
+    "zh": "熔岩蟾蜍"
+  },
+  "5106": {
+    "en": "Copper Ore",
+    "de": "Kupfererz",
+    "ja": "銅鉱",
+    "fr": "Minerai de cuivre",
+    "tw": "銅礦",
+    "zh": "铜矿"
+  },
+  "5107": {
+    "en": "Tin Ore",
+    "de": "Zinnstein",
+    "ja": "錫鉱",
+    "fr": "Minerai d'étain",
+    "tw": "錫礦",
+    "zh": "锡矿"
+  },
+  "5108": {
+    "en": "Yellow Copper Ore",
+    "de": "Kupferkies",
+    "ja": "黄銅鉱",
+    "fr": "Minerai de cuivre jaune",
+    "tw": "黃銅礦",
+    "zh": "黄铜矿"
+  },
+  "5109": {
+    "en": "Pyrite",
+    "de": "Schwefelkies",
+    "ja": "黄鉄鉱",
+    "fr": "Minerai de pyrite",
+    "tw": "黃鐵礦",
+    "zh": "黄铁矿"
+  },
+  "5110": {
+    "en": "Zinc Ore",
+    "de": "Zinksulfiterz",
+    "ja": "亜鉛鉱",
+    "fr": "Minerai de zinc",
+    "tw": "鋅礦",
+    "zh": "锌矿"
+  },
+  "5111": {
+    "en": "Iron Ore",
+    "de": "Eisenerz",
+    "ja": "鉄鉱",
+    "fr": "Minerai de fer",
+    "tw": "鐵礦",
+    "zh": "铁矿"
+  },
+  "5112": {
+    "en": "Limonite",
+    "de": "Brauneisenstein",
+    "ja": "褐鉄鉱",
+    "fr": "Minerai de limonite",
+    "tw": "褐鐵礦",
+    "zh": "褐铁矿"
+  },
+  "5113": {
+    "en": "Silver Ore",
+    "de": "Silbererz",
+    "ja": "銀鉱",
+    "fr": "Minerai d'argent",
+    "tw": "銀礦",
+    "zh": "银矿"
+  },
+  "5114": {
+    "en": "Mythril Ore",
+    "de": "Mithrilerz",
+    "ja": "霊銀鉱",
+    "fr": "Minerai de mithril",
+    "tw": "秘銀礦",
+    "zh": "秘银矿"
+  },
+  "5115": {
+    "en": "Electrum Ore",
+    "de": "Elektrumerz",
+    "ja": "青金鉱",
+    "fr": "Minerai d'électrum",
+    "tw": "綠金礦",
+    "zh": "绿金矿"
+  },
+  "5116": {
+    "en": "Cobalt Ore",
+    "de": "Koboldeisenerz",
+    "ja": "鏡鉄鉱",
+    "fr": "Minerai de cobalt",
+    "tw": "鈷鐵礦",
+    "zh": "钴铁矿"
+  },
+  "5117": {
+    "en": "Light Kidney Ore",
+    "de": "Hämatit",
+    "ja": "赤鉄鉱",
+    "fr": "Minerai d'hématite",
+    "tw": "赤鐵礦",
+    "zh": "赤铁矿"
+  },
+  "5118": {
+    "en": "Gold Ore",
+    "de": "Golderz",
+    "ja": "金鉱",
+    "fr": "Minerai d'or",
+    "tw": "金礦",
+    "zh": "金矿"
+  },
+  "5120": {
+    "en": "Platinum Ore",
+    "de": "Platinerz",
+    "ja": "白金鉱",
+    "fr": "Minerai de platine",
+    "tw": "白金礦",
+    "zh": "白金矿"
+  },
+  "5121": {
+    "en": "Darksteel Ore",
+    "de": "Dunkelstahlerz",
+    "ja": "闇鉄鉱",
+    "fr": "Minerai de sombracier",
+    "tw": "玄鐵礦",
+    "zh": "玄铁矿"
+  },
+  "5124": {
+    "en": "Obsidian",
+    "de": "Obsidian",
+    "ja": "黒曜石",
+    "fr": "Éclat d'obsidienne",
+    "tw": "黑曜石",
+    "zh": "黑曜石"
+  },
+  "5125": {
+    "en": "Wyvern Obsidian",
+    "de": "Wyvern-Obsidian",
+    "ja": "飛竜黒曜石",
+    "fr": "Éclat d'obsidienne de wyverne",
+    "tw": "飛龍黑曜石",
+    "zh": "飞龙黑曜石"
+  },
+  "5126": {
+    "en": "Dragon Obsidian",
+    "de": "Drachen-Obsidian",
+    "ja": "大龍黒曜石",
+    "fr": "Éclat d'obsidienne de dragon",
+    "tw": "巨龍黑曜石",
+    "zh": "巨龙黑曜石"
+  },
+  "5127": {
+    "en": "Wyrm Obsidian",
+    "de": "Lindwurm-Obsidian",
+    "ja": "真龍黒曜石",
+    "fr": "Éclat d'obsidienne de wyrm",
+    "tw": "真龍黑曜石",
+    "zh": "真龙黑曜石"
+  },
+  "5128": {
+    "en": "Raw Sunstone",
+    "de": "Roh-Sonnenstein",
+    "ja": "サンストーン原石",
+    "fr": "Pierre de soleil brute",
+    "tw": "日長石原石",
+    "zh": "日长石原石"
+  },
+  "5129": {
+    "en": "Raw Danburite",
+    "de": "Roh-Danburit",
+    "ja": "ダンビュライト原石",
+    "fr": "Danburite brute",
+    "tw": "賽黃晶原石",
+    "zh": "赛黄晶原石"
+  },
+  "5130": {
+    "en": "Raw Malachite",
+    "de": "Roh-Malachit",
+    "ja": "マラカイト原石",
+    "fr": "Malachite brute",
+    "tw": "孔雀石原石",
+    "zh": "孔雀石原石"
+  },
+  "5131": {
+    "en": "Raw Sphene",
+    "de": "Roh-Titanit",
+    "ja": "スフェーン原石",
+    "fr": "Sphène brut",
+    "tw": "榍石原石",
+    "zh": "榍石原石"
+  },
+  "5132": {
+    "en": "Raw Fluorite",
+    "de": "Roh-Fluorit",
+    "ja": "フローライト原石",
+    "fr": "Fluorine brute",
+    "tw": "螢石原石",
+    "zh": "萤石原石"
+  },
+  "5133": {
+    "en": "Raw Lapis Lazuli",
+    "de": "Roh-Lapislazuli",
+    "ja": "ラピスラズリ原石",
+    "fr": "Lapis-lazuli brut",
+    "tw": "天青石原石",
+    "zh": "天青石原石"
+  },
+  "5134": {
+    "en": "Raw Garnet",
+    "de": "Roh-Granat",
+    "ja": "ガーネット原石",
+    "fr": "Grenat brut",
+    "tw": "石榴石原石",
+    "zh": "石榴石原石"
+  },
+  "5135": {
+    "en": "Raw Goshenite",
+    "de": "Roh-Goshenit",
+    "ja": "ゴシェナイト原石",
+    "fr": "Goshénite brute",
+    "tw": "透綠柱石原石",
+    "zh": "透绿柱石原石"
+  },
+  "5136": {
+    "en": "Raw Peridot",
+    "de": "Roh-Peridot",
+    "ja": "ペリドット原石",
+    "fr": "Péridot brut",
+    "tw": "橄欖石原石",
+    "zh": "橄榄石原石"
+  },
+  "5137": {
+    "en": "Raw Heliodor",
+    "de": "Roh-Goldberyll",
+    "ja": "ヘリオドール原石",
+    "fr": "Héliodore brut",
+    "tw": "金綠柱石原石",
+    "zh": "金绿柱石原石"
+  },
+  "5138": {
+    "en": "Raw Amethyst",
+    "de": "Roh-Amethyst",
+    "ja": "アメジスト原石",
+    "fr": "Améthyste brute",
+    "tw": "紫水晶原石",
+    "zh": "紫水晶原石"
+  },
+  "5139": {
+    "en": "Raw Aquamarine",
+    "de": "Roh-Aquamarin",
+    "ja": "アクアマリン原石",
+    "fr": "Aigue-marine brute",
+    "tw": "海藍石原石",
+    "zh": "海蓝石原石"
+  },
+  "5140": {
+    "en": "Raw Rubellite",
+    "de": "Roh-Rubellit",
+    "ja": "ルベライト原石",
+    "fr": "Rubellite brute",
+    "tw": "紅電氣石原石",
+    "zh": "红电气石原石"
+  },
+  "5141": {
+    "en": "Raw Zircon",
+    "de": "Roh-Zirkon",
+    "ja": "ジルコン原石",
+    "fr": "Zircon brut",
+    "tw": "鋯石原石",
+    "zh": "锆石原石"
+  },
+  "5142": {
+    "en": "Raw Tourmaline",
+    "de": "Roh-Turmalin",
+    "ja": "トルマリン原石",
+    "fr": "Tourmaline brute",
+    "tw": "電氣石原石",
+    "zh": "碧玺原石"
+  },
+  "5143": {
+    "en": "Raw Amber",
+    "de": "Roh-Bernstein",
+    "ja": "アンバー原石",
+    "fr": "Ambre brut",
+    "tw": "琥珀原石",
+    "zh": "琥珀原石"
+  },
+  "5144": {
+    "en": "Raw Spinel",
+    "de": "Roh-Spinell",
+    "ja": "スピネル原石",
+    "fr": "Spinelle brut",
+    "tw": "尖晶石原石",
+    "zh": "尖晶石原石"
+  },
+  "5145": {
+    "en": "Raw Turquoise",
+    "de": "Roh-Türkis",
+    "ja": "ターコイズ原石",
+    "fr": "Turquoise brute",
+    "tw": "綠松石原石",
+    "zh": "绿松石原石"
+  },
+  "5146": {
+    "en": "Raw Ruby",
+    "de": "Roh-Rubin",
+    "ja": "ルビー原石",
+    "fr": "Rubis brut",
+    "tw": "紅寶石原石",
+    "zh": "红宝石原石"
+  },
+  "5147": {
+    "en": "Raw Diamond",
+    "de": "Roh-Diamant",
+    "ja": "ダイヤモンド原石",
+    "fr": "Diamant brut",
+    "tw": "鑽石原石",
+    "zh": "钻石原石"
+  },
+  "5148": {
+    "en": "Raw Emerald",
+    "de": "Roh-Smaragd",
+    "ja": "エメラルド原石",
+    "fr": "Émeraude brute",
+    "tw": "綠寶石原石",
+    "zh": "祖母绿原石"
+  },
+  "5149": {
+    "en": "Raw Topaz",
+    "de": "Roh-Topas",
+    "ja": "トパーズ原石",
+    "fr": "Topaze brute",
+    "tw": "黃玉原石",
+    "zh": "黄玉原石"
+  },
+  "5150": {
+    "en": "Raw Iolite",
+    "de": "Roh-Luchssaphir",
+    "ja": "アイオライト原石",
+    "fr": "Cordiérite brute",
+    "tw": "堇青石原石",
+    "zh": "堇青石原石"
+  },
+  "5151": {
+    "en": "Raw Sapphire",
+    "de": "Roh-Saphir",
+    "ja": "サファイア原石",
+    "fr": "Saphir brut",
+    "tw": "藍寶石原石",
+    "zh": "蓝宝石原石"
+  },
+  "5152": {
+    "en": "Fire Rock",
+    "de": "Feuergestein",
+    "ja": "火性岩",
+    "fr": "Pierre de feu",
+    "tw": "火性岩",
+    "zh": "火性岩"
+  },
+  "5153": {
+    "en": "Ice Rock",
+    "de": "Eisgestein",
+    "ja": "氷性岩",
+    "fr": "Pierre de glace",
+    "tw": "冰性岩",
+    "zh": "冰性岩"
+  },
+  "5154": {
+    "en": "Wind Rock",
+    "de": "Windgestein",
+    "ja": "風性岩",
+    "fr": "Pierre de vent",
+    "tw": "風性岩",
+    "zh": "风性岩"
+  },
+  "5155": {
+    "en": "Earth Rock",
+    "de": "Erdgestein",
+    "ja": "土性岩",
+    "fr": "Pierre de terre",
+    "tw": "土性岩",
+    "zh": "土性岩"
+  },
+  "5156": {
+    "en": "Lightning Rock",
+    "de": "Blitzgestein",
+    "ja": "雷性岩",
+    "fr": "Pierre de foudre",
+    "tw": "雷性岩",
+    "zh": "雷性岩"
+  },
+  "5157": {
+    "en": "Water Rock",
+    "de": "Wassergestein",
+    "ja": "水性岩",
+    "fr": "Pierre d'eau",
+    "tw": "水性岩",
+    "zh": "水性岩"
+  },
+  "5158": {
+    "en": "Astral Rock",
+    "de": "Astralgestein",
+    "ja": "星性岩",
+    "fr": "Roche astrale",
+    "tw": "星性岩",
+    "zh": "星性岩"
+  },
+  "5159": {
+    "en": "Red Quartz",
+    "de": "Roter Quarz",
+    "ja": "レッドクォーツ",
+    "fr": "Quartz rouge",
+    "tw": "深緋石英",
+    "zh": "深绯石英"
+  },
+  "5160": {
+    "en": "Blue Quartz",
+    "de": "Blauer Quarz",
+    "ja": "ブルークォーツ",
+    "fr": "Quartz bleu",
+    "tw": "紺碧石英",
+    "zh": "绀碧石英"
+  },
+  "5161": {
+    "en": "Green Quartz",
+    "de": "Grüner Quarz",
+    "ja": "グリーンクォーツ",
+    "fr": "Quartz vert",
+    "tw": "翠綠石英",
+    "zh": "翠绿石英"
+  },
+  "5162": {
+    "en": "Yellow Quartz",
+    "de": "Gelber Quarz",
+    "ja": "イエロークォーツ",
+    "fr": "Quartz jaune",
+    "tw": "土黃石英",
+    "zh": "土黄石英"
+  },
+  "5163": {
+    "en": "Violet Quartz",
+    "de": "Violetter Quarz",
+    "ja": "バイオレットクォーツ",
+    "fr": "Quartz violet",
+    "tw": "青紫石英",
+    "zh": "青紫石英"
+  },
+  "5168": {
+    "en": "Jade",
+    "de": "Jade",
+    "ja": "ジェード",
+    "fr": "Jade",
+    "tw": "翡翠原石",
+    "zh": "翡翠原石"
+  },
+  "5214": {
+    "en": "Fire Moraine",
+    "de": "Feuerkies",
+    "ja": "ファイアグラベル",
+    "fr": "Granulat de feu",
+    "tw": "火砂礫",
+    "zh": "火砂砾"
+  },
+  "5218": {
+    "en": "Lightning Moraine",
+    "de": "Blitzkies",
+    "ja": "ライトニンググラベル",
+    "fr": "Granulat de foudre",
+    "tw": "雷砂礫",
+    "zh": "雷砂砾"
+  },
+  "5220": {
+    "en": "Radiant Fire Moraine",
+    "de": "Strahlender Feuerkies",
+    "ja": "レイディアントファイアグラベル",
+    "fr": "Granulat de feu flamboyant",
+    "tw": "火光礫",
+    "zh": "火光砾"
+  },
+  "5224": {
+    "en": "Radiant Lightning Moraine",
+    "de": "Strahlender Blitzkies",
+    "ja": "レイディアントライトニンググラベル",
+    "fr": "Granulat de foudre flamboyant",
+    "tw": "雷光礫",
+    "zh": "雷光砾"
+  },
+  "5226": {
+    "en": "Astral Moraine",
+    "de": "Lichtkies",
+    "ja": "アストラルグラベル",
+    "fr": "Granulat astral",
+    "tw": "星砂礫",
+    "zh": "星砂砾"
+  },
+  "5228": {
+    "en": "Ragstone",
+    "de": "Sandstein",
+    "ja": "砂岩",
+    "fr": "Grès",
+    "tw": "砂岩",
+    "zh": "砂岩"
+  },
+  "5229": {
+    "en": "Mudstone",
+    "de": "Tonstein",
+    "ja": "泥岩",
+    "fr": "Mudstone",
+    "tw": "泥岩",
+    "zh": "泥岩"
+  },
+  "5230": {
+    "en": "Limestone",
+    "de": "Kalkstein",
+    "ja": "石灰岩",
+    "fr": "Pierre calcaire",
+    "tw": "石灰岩",
+    "zh": "石灰岩"
+  },
+  "5231": {
+    "en": "Siltstone",
+    "de": "Schluffstein",
+    "ja": "シルト岩",
+    "fr": "Siltstone",
+    "tw": "粉砂岩",
+    "zh": "粉砂岩"
+  },
+  "5232": {
+    "en": "Stiperstone",
+    "de": "Quarzit",
+    "ja": "珪岩",
+    "fr": "Quartzite",
+    "tw": "矽岩",
+    "zh": "硅岩"
+  },
+  "5263": {
+    "en": "Basilisk Egg",
+    "de": "Basilisken-Ei",
+    "ja": "バジリスクの卵",
+    "fr": "Œuf de basilic",
+    "tw": "石蜥蜴的蛋",
+    "zh": "石蜥蜴的蛋"
+  },
+  "5267": {
+    "en": "Fine Sand",
+    "de": "Feiner Sand",
+    "ja": "細砂",
+    "fr": "Sable fin",
+    "tw": "細沙",
+    "zh": "细沙"
+  },
+  "5268": {
+    "en": "Copper Sand",
+    "de": "Kupfersand",
+    "ja": "銅砂",
+    "fr": "Sable de cuivre",
+    "tw": "銅沙",
+    "zh": "铜沙"
+  },
+  "5269": {
+    "en": "Iron Sand",
+    "de": "Eisensand",
+    "ja": "砂鉄",
+    "fr": "Sable de fer",
+    "tw": "鐵沙",
+    "zh": "铁沙"
+  },
+  "5270": {
+    "en": "Silver Sand",
+    "de": "Silbersand",
+    "ja": "銀砂",
+    "fr": "Sable d'argent",
+    "tw": "銀沙",
+    "zh": "银沙"
+  },
+  "5271": {
+    "en": "Mythril Sand",
+    "de": "Mithrilsand",
+    "ja": "霊銀砂",
+    "fr": "Sable de mithril",
+    "tw": "秘銀沙",
+    "zh": "秘银沙"
+  },
+  "5272": {
+    "en": "Electrum Sand",
+    "de": "Elektrumsand",
+    "ja": "青金砂",
+    "fr": "Sable d'électrum",
+    "tw": "綠金沙",
+    "zh": "绿金沙"
+  },
+  "5273": {
+    "en": "Gold Sand",
+    "de": "Goldsand",
+    "ja": "金砂",
+    "fr": "Sable d'or",
+    "tw": "金沙",
+    "zh": "金沙"
+  },
+  "5341": {
+    "en": "Moko Grass",
+    "de": "Moko-Gras",
+    "ja": "モコ草",
+    "fr": "Herbe de moko",
+    "tw": "莫柯草",
+    "zh": "莫柯草"
+  },
+  "5342": {
+    "en": "Straw",
+    "de": "Stroh",
+    "ja": "麦わら",
+    "fr": "Paille",
+    "tw": "麥稈",
+    "zh": "麦秆"
+  },
+  "5343": {
+    "en": "Cotton Boll",
+    "de": "Baumwoll-Samenkapsel",
+    "ja": "草綿",
+    "fr": "Fleur de coton",
+    "tw": "草棉",
+    "zh": "草棉"
+  },
+  "5346": {
+    "en": "Flax",
+    "de": "Flachs",
+    "ja": "亜麻",
+    "fr": "Fibres de lin",
+    "tw": "亞麻",
+    "zh": "亚麻"
+  },
+  "5350": {
+    "en": "Silkworm Cocoon",
+    "de": "Kokon",
+    "ja": "生マユ",
+    "fr": "Cocon de ver à soie",
+    "tw": "蠶繭",
+    "zh": "蚕茧"
+  },
+  "5351": {
+    "en": "Cock Feather",
+    "de": "Hahnenfeder",
+    "ja": "コックの羽根",
+    "fr": "Plume de coq",
+    "tw": "白雞之羽",
+    "zh": "白鸡之羽"
+  },
+  "5352": {
+    "en": "Crow Feather",
+    "de": "Krähenfeder",
+    "ja": "クロウの羽根",
+    "fr": "Plume de corbeau",
+    "tw": "烏鴉之羽",
+    "zh": "乌鸦之羽"
+  },
+  "5359": {
+    "en": "Chocobo Feather",
+    "de": "Chocobo-Feder",
+    "ja": "チョコボの羽根",
+    "fr": "Plume de chocobo",
+    "tw": "陸行鳥之羽",
+    "zh": "陆行鸟之羽"
+  },
+  "5360": {
+    "en": "Wildfowl Feather",
+    "de": "Wildgeflügelfeder",
+    "ja": "フェザントの羽根",
+    "fr": "Plume de tetrax",
+    "tw": "野雞之羽",
+    "zh": "野鸡之羽"
+  },
+  "5365": {
+    "en": "Bamboo Stick",
+    "de": "Bambus-Bauholz",
+    "ja": "バンブー材",
+    "fr": "Tige de bambou",
+    "tw": "竹材",
+    "zh": "竹材"
+  },
+  "5380": {
+    "en": "Maple Log",
+    "de": "Ahorn-Holzscheit",
+    "ja": "メープル原木",
+    "fr": "Rondin d'érable",
+    "tw": "楓木原木",
+    "zh": "枫木原木"
+  },
+  "5383": {
+    "en": "Ash Log",
+    "de": "Eschen-Holzscheit",
+    "ja": "アッシュ原木",
+    "fr": "Rondin de frêne",
+    "tw": "梣木原木",
+    "zh": "梣木原木"
+  },
+  "5384": {
+    "en": "Cedar Log",
+    "de": "Zedern-Holzscheit",
+    "ja": "シーダー原木",
+    "fr": "Rondin de cèdre",
+    "tw": "雪松原木",
+    "zh": "雪松原木"
+  },
+  "5385": {
+    "en": "Elm Log",
+    "de": "Ulmen-Holzscheit",
+    "ja": "エルム原木",
+    "fr": "Rondin d'orme",
+    "tw": "榆木原木",
+    "zh": "榆木原木"
+  },
+  "5386": {
+    "en": "Yew Log",
+    "de": "Eiben-Holzscheit",
+    "ja": "ユー原木",
+    "fr": "Rondin d'if",
+    "tw": "紫杉原木",
+    "zh": "紫杉原木"
+  },
+  "5388": {
+    "en": "Walnut Log",
+    "de": "Walnuss-Holzscheit",
+    "ja": "ウォルナット原木",
+    "fr": "Rondin de noyer",
+    "tw": "胡桃原木",
+    "zh": "胡桃原木"
+  },
+  "5389": {
+    "en": "Pine Log",
+    "de": "Kiefern-Holzscheit",
+    "ja": "パイン原木",
+    "fr": "Rondin de pin",
+    "tw": "松木原木",
+    "zh": "松木原木"
+  },
+  "5390": {
+    "en": "Oak Log",
+    "de": "Eichen-Holzscheit",
+    "ja": "オーク原木",
+    "fr": "Rondin de chêne",
+    "tw": "橡木原木",
+    "zh": "橡木原木"
+  },
+  "5391": {
+    "en": "Mahogany Log",
+    "de": "Mahagoni-Holzscheit",
+    "ja": "マホガニー原木",
+    "fr": "Rondin d'acajou",
+    "tw": "紅木原木",
+    "zh": "红木原木"
+  },
+  "5392": {
+    "en": "Teak Log",
+    "de": "Teakbaum-Holzscheit",
+    "ja": "チーク原木",
+    "fr": "Rondin de teck",
+    "tw": "柚木原木",
+    "zh": "柚木原木"
+  },
+  "5393": {
+    "en": "Rosewood Log",
+    "de": "Palisander-Holzscheit",
+    "ja": "ローズウッド原木",
+    "fr": "Rondin de palissandre",
+    "tw": "紫檀原木",
+    "zh": "紫檀原木"
+  },
+  "5394": {
+    "en": "Ebony Log",
+    "de": "Ebenholz-Holzscheit",
+    "ja": "エボニー原木",
+    "fr": "Rondin d'ébène",
+    "tw": "黑檀原木",
+    "zh": "黑檀原木"
+  },
+  "5395": {
+    "en": "Spruce Log",
+    "de": "Fichten-Holzscheit",
+    "ja": "スプルース原木",
+    "fr": "Rondin d'épicéa",
+    "tw": "雲杉原木",
+    "zh": "云杉原木"
+  },
+  "5396": {
+    "en": "Maple Branch",
+    "de": "Ahornast",
+    "ja": "メープルの枝",
+    "fr": "Branche d'érable",
+    "tw": "楓樹枝",
+    "zh": "枫树枝"
+  },
+  "5402": {
+    "en": "Ash Branch",
+    "de": "Eschenast",
+    "ja": "アッシュの枝",
+    "fr": "Branche de frêne",
+    "tw": "梣樹枝",
+    "zh": "梣树枝"
+  },
+  "5403": {
+    "en": "Cedar Branch",
+    "de": "Zedernast",
+    "ja": "シーダーの枝",
+    "fr": "Branche de cèdre",
+    "tw": "雪松枝",
+    "zh": "雪松枝"
+  },
+  "5405": {
+    "en": "Yew Branch",
+    "de": "Eibenholzast",
+    "ja": "ユーの枝",
+    "fr": "Branche d'if",
+    "tw": "紫杉枝",
+    "zh": "紫杉枝"
+  },
+  "5409": {
+    "en": "Oak Branch",
+    "de": "Eichenast",
+    "ja": "オークの枝",
+    "fr": "Branche de chêne",
+    "tw": "橡樹枝",
+    "zh": "橡树枝"
+  },
+  "5414": {
+    "en": "Rosewood Branch",
+    "de": "Palisanderast",
+    "ja": "ローズウッドの枝",
+    "fr": "Branche de palissandre",
+    "tw": "紫檀枝",
+    "zh": "紫檀枝"
+  },
+  "5432": {
+    "en": "Bone Chip",
+    "de": "Knochensplitter",
+    "ja": "骨片",
+    "fr": "Fragment d'os",
+    "tw": "骨片",
+    "zh": "骨片"
+  },
+  "5433": {
+    "en": "Soiled Femur",
+    "de": "Oberschenkelknochen",
+    "ja": "枯骨",
+    "fr": "Fémur sale",
+    "tw": "枯骨",
+    "zh": "枯骨"
+  },
+  "5439": {
+    "en": "Ogre Horn",
+    "de": "Ogerhorn",
+    "ja": "オーガの角",
+    "fr": "Corne d'ogre",
+    "tw": "食人魔角",
+    "zh": "食人魔角"
+  },
+  "5458": {
+    "en": "Adamantoise Shell",
+    "de": "Adaman-Taimai-Panzer",
+    "ja": "陸亀の甲羅",
+    "fr": "Carapace de tortue marine",
+    "tw": "陸龜殼",
+    "zh": "陆龟壳"
+  },
+  "5465": {
+    "en": "Sunrise Tellin",
+    "de": "Morgenrotmuschel",
+    "ja": "桜貝",
+    "fr": "Telline du levant",
+    "tw": "櫻貝",
+    "zh": "樱贝"
+  },
+  "5488": {
+    "en": "Muddy Water",
+    "de": "Dreckiges Wasser",
+    "ja": "濁水",
+    "fr": "Eau boueuse",
+    "tw": "渾水",
+    "zh": "浑水"
+  },
+  "5491": {
+    "en": "Effervescent Water",
+    "de": "Sprudelwasser",
+    "ja": "ソーダ水",
+    "fr": "Eau effervescente",
+    "tw": "氣泡水",
+    "zh": "发泡水"
+  },
+  "5498": {
+    "en": "Maple Sap",
+    "de": "Ahornsaft",
+    "ja": "メープル樹液",
+    "fr": "Sève d'érable",
+    "tw": "楓樹樹汁",
+    "zh": "枫树树汁"
+  },
+  "5509": {
+    "en": "Latex",
+    "de": "Latex",
+    "ja": "ラテックス",
+    "fr": "Latex",
+    "tw": "乳膠",
+    "zh": "乳胶"
+  },
+  "5513": {
+    "en": "Potter's Clay",
+    "de": "Töpferton",
+    "ja": "粘土",
+    "fr": "Argile",
+    "tw": "黏土",
+    "zh": "黏土"
+  },
+  "5514": {
+    "en": "Humus",
+    "de": "Humus",
+    "ja": "腐葉土",
+    "fr": "Terreau de feuilles",
+    "tw": "腐殖質",
+    "zh": "腐殖质"
+  },
+  "5516": {
+    "en": "Beehive Chip",
+    "de": "Bienenwabe",
+    "ja": "蜜蜂の巣",
+    "fr": "Fragment d'alvéoles",
+    "tw": "蜂巢",
+    "zh": "蜂巢"
+  },
+  "5518": {
+    "en": "Rock Salt",
+    "de": "Steinsalz",
+    "ja": "岩塩",
+    "fr": "Sel gemme",
+    "tw": "岩鹽",
+    "zh": "岩盐"
+  },
+  "5519": {
+    "en": "Cinnabar",
+    "de": "Mennige",
+    "ja": "辰砂",
+    "fr": "Minium",
+    "tw": "朱砂",
+    "zh": "朱砂"
+  },
+  "5521": {
+    "en": "Saltpeter",
+    "de": "Salpeter",
+    "ja": "硝石",
+    "fr": "Salpêtre",
+    "tw": "硝石",
+    "zh": "硝石"
+  },
+  "5523": {
+    "en": "Silex",
+    "de": "Silex",
+    "ja": "珪砂",
+    "fr": "Silice",
+    "tw": "矽砂",
+    "zh": "硅砂"
+  },
+  "5524": {
+    "en": "Alumen",
+    "de": "Alaun",
+    "ja": "アルメン",
+    "fr": "Alun",
+    "tw": "明礬",
+    "zh": "明矾"
+  },
+  "5525": {
+    "en": "Black Alumen",
+    "de": "Schwarzalaun",
+    "ja": "ブラックアルメン",
+    "fr": "Alun noir",
+    "tw": "黑明礬",
+    "zh": "黑明矾"
+  },
+  "5526": {
+    "en": "Grenade Ash",
+    "de": "Granatenasche",
+    "ja": "グレネードの灰",
+    "fr": "Cendres de grenado",
+    "tw": "榴彈怪的灰",
+    "zh": "榴弹怪的灰"
+  },
+  "5527": {
+    "en": "Brimstone",
+    "de": "Schwefel",
+    "ja": "硫黄",
+    "fr": "Soufre",
+    "tw": "硫磺",
+    "zh": "硫磺"
+  },
+  "5528": {
+    "en": "Bomb Ash",
+    "de": "Bomberasche",
+    "ja": "ボムの灰",
+    "fr": "Cendres de bombo",
+    "tw": "炸彈的灰",
+    "zh": "爆弹怪的灰"
+  },
+  "5534": {
+    "en": "Tinolqa Mistletoe",
+    "de": "Tinolqa-Mistelzweig",
+    "ja": "ティノルカミスルトゥ",
+    "fr": "Gui de Tinolqa",
+    "tw": "提諾爾卡槲寄生",
+    "zh": "提诺尔卡槲寄生"
+  },
+  "5535": {
+    "en": "Matron's Mistletoe",
+    "de": "Nophica-Mistelzweig",
+    "ja": "ノフィカミスルトゥ",
+    "fr": "Gui de Nophica",
+    "tw": "諾菲卡槲寄生",
+    "zh": "诺菲卡槲寄生"
+  },
+  "5536": {
+    "en": "Mistletoe",
+    "de": "Mistelzweig",
+    "ja": "ミスルトゥ",
+    "fr": "Gui",
+    "tw": "槲寄生",
+    "zh": "槲寄生"
+  },
+  "5537": {
+    "en": "Thavnairian Mistletoe",
+    "de": "Thavnair-Mistelzweig",
+    "ja": "サベネアミスルトゥ",
+    "fr": "Gui de Thavnair",
+    "tw": "薩維奈槲寄生",
+    "zh": "萨维奈槲寄生"
+  },
+  "5538": {
+    "en": "Yellow Ginseng",
+    "de": "Gelber Ginseng",
+    "ja": "ジンセン",
+    "fr": "Ginseng jaune",
+    "tw": "人參",
+    "zh": "人参"
+  },
+  "5539": {
+    "en": "Lavender",
+    "de": "Lavendel",
+    "ja": "ラベンダー",
+    "fr": "Lavande",
+    "tw": "薰衣草",
+    "zh": "薰衣草"
+  },
+  "5540": {
+    "en": "Carnation",
+    "de": "Nelke",
+    "ja": "カーネーション",
+    "fr": "Œillet",
+    "tw": "康乃馨",
+    "zh": "康乃馨"
+  },
+  "5541": {
+    "en": "Belladonna",
+    "de": "Tollkirsche",
+    "ja": "ベラドンナ",
+    "fr": "Belladone",
+    "tw": "顛茄",
+    "zh": "颠茄"
+  },
+  "5542": {
+    "en": "Chamomile",
+    "de": "Kamille",
+    "ja": "カモミール",
+    "fr": "Camomille",
+    "tw": "甘菊",
+    "zh": "甘菊"
+  },
+  "5543": {
+    "en": "Mandrake",
+    "de": "Alraunwurzel",
+    "ja": "マンドレイク",
+    "fr": "Mandragore",
+    "tw": "風茄",
+    "zh": "风茄"
+  },
+  "5545": {
+    "en": "Trillium",
+    "de": "Waldlilie",
+    "ja": "トリリウム",
+    "fr": "Trille",
+    "tw": "延齡花",
+    "zh": "延龄花"
+  },
+  "5546": {
+    "en": "Trillium Bulb",
+    "de": "Waldlilien-Knolle",
+    "ja": "トリリウムの球根",
+    "fr": "Bulbe de trille",
+    "tw": "延齡草的球根",
+    "zh": "延龄草的球根"
+  },
+  "5547": {
+    "en": "Vampire Plant",
+    "de": "Vampirpflanze",
+    "ja": "ヴァンパイアプラント",
+    "fr": "Baie vampire",
+    "tw": "吸血枝",
+    "zh": "吸血枝"
+  },
+  "5559": {
+    "en": "Moor Leech",
+    "de": "Mooregel",
+    "ja": "ムアリーチ",
+    "fr": "Sangsue des landes",
+    "tw": "螞蟥",
+    "zh": "蚂蟥"
+  },
+  "5560": {
+    "en": "Grass Viper",
+    "de": "Buschviper",
+    "ja": "グラスバイパー",
+    "fr": "Vipère des prés",
+    "tw": "毒蛇",
+    "zh": "蝰蛇"
+  },
+  "5562": {
+    "en": "Tarantula",
+    "de": "Tarantel",
+    "ja": "タランチュラ",
+    "fr": "Tarentule",
+    "tw": "狼蛛",
+    "zh": "狼蛛"
+  },
+  "5563": {
+    "en": "White Scorpion",
+    "de": "Weißer Skorpion",
+    "ja": "ホワイトスコーピオン",
+    "fr": "Scorpion blanc",
+    "tw": "白蠍",
+    "zh": "白蝎"
+  },
+  "5564": {
+    "en": "Black Scorpion",
+    "de": "Schwarzer Skorpion",
+    "ja": "ブラックスコーピオン",
+    "fr": "Scorpion noir",
+    "tw": "黑蠍",
+    "zh": "黑蝎"
+  },
+  "5599": {
+    "en": "Grade 1 Carbonized Matter",
+    "de": "Karbonisierte Materie G1",
+    "ja": "コールマターG1",
+    "fr": "Matière carbonique grade I",
+    "tw": "1級碳化黑暗物質",
+    "zh": "1级碳化暗物质"
+  },
+  "5814": {
+    "en": "Blue Pigment",
+    "de": "Blaue Farbpigmente",
+    "ja": "ブルーピグメント",
+    "fr": "Pigment bleu",
+    "tw": "藍色色素",
+    "zh": "蓝色色素"
+  },
+  "5815": {
+    "en": "Red Pigment",
+    "de": "Rote Farbpigmente",
+    "ja": "レッドピグメント",
+    "fr": "Pigment rouge",
+    "tw": "紅色色素",
+    "zh": "红色色素"
+  },
+  "5816": {
+    "en": "Yellow Pigment",
+    "de": "Gelbe Farbpigmente",
+    "ja": "イエローピグメント",
+    "fr": "Pigment jaune",
+    "tw": "黃色色素",
+    "zh": "黄色色素"
+  },
+  "5817": {
+    "en": "Grey Pigment",
+    "de": "Graue Farbpigmente",
+    "ja": "グレイピグメント",
+    "fr": "Pigment gris",
+    "tw": "灰色色素",
+    "zh": "灰色色素"
+  },
+  "5818": {
+    "en": "Brown Pigment",
+    "de": "Braune Farbpigmente",
+    "ja": "ブラウンピグメント",
+    "fr": "Pigment brun",
+    "tw": "棕色色素",
+    "zh": "棕色色素"
+  },
+  "5819": {
+    "en": "Green Pigment",
+    "de": "Grüne Farbpigmente",
+    "ja": "グリーンピグメント",
+    "fr": "Pigment vert",
+    "tw": "綠色色素",
+    "zh": "绿色色素"
+  },
+  "5820": {
+    "en": "Purple Pigment",
+    "de": "Violette Farbpigmente",
+    "ja": "パープルピグメント",
+    "fr": "Pigment violet",
+    "tw": "紫色色素",
+    "zh": "紫色色素"
+  },
+  "6145": {
+    "en": "Noble Grapes",
+    "de": "Edeltraube",
+    "ja": "ノーブルグレープ",
+    "fr": "Raisin noble",
+    "tw": "貴族葡萄",
+    "zh": "贵族葡萄"
+  },
+  "6146": {
+    "en": "Mirror Apple",
+    "de": "Spiegelapfel",
+    "ja": "シャインアップル",
+    "fr": "Pomme luisante",
+    "tw": "晶亮蘋果",
+    "zh": "晶亮苹果"
+  },
+  "6147": {
+    "en": "Honey Lemon",
+    "de": "Honigzitrone",
+    "ja": "ハニーレモン",
+    "fr": "Citron miel",
+    "tw": "蜜檸檬",
+    "zh": "蜜柠檬"
+  },
+  "6148": {
+    "en": "Dzemael Tomato",
+    "de": "Dzemael-Tomate",
+    "ja": "ゼーメルトマト",
+    "fr": "Tomate Dzemael",
+    "tw": "澤梅爾番茄",
+    "zh": "泽梅尔番茄"
+  },
+  "6152": {
+    "en": "Volcanic Rock Salt",
+    "de": "Vulkanisches Steinsalz",
+    "ja": "ラノシア岩塩",
+    "fr": "Sel gemme noscéen",
+    "tw": "拉諾西亞岩鹽",
+    "zh": "拉诺西亚岩盐"
+  },
+  "6199": {
+    "en": "Coblyn Larva",
+    "de": "Kobalos-Larve",
+    "ja": "コブランラーヴァ",
+    "fr": "Larve de coblyn",
+    "tw": "礦爬蟲蟲",
+    "zh": "矿爬虫虫"
+  },
+  "6209": {
+    "en": "Kidragora",
+    "de": "Kindragora",
+    "ja": "ミニマンドラゴラ",
+    "fr": "Mini-mini-mandragore",
+    "tw": "小小曼德拉草",
+    "zh": "小小蔓德拉"
+  },
+  "7008": {
+    "en": "Granite",
+    "de": "Granit",
+    "ja": "御影石",
+    "fr": "Granit",
+    "tw": "花崗岩",
+    "zh": "花岗岩"
+  },
+  "7010": {
+    "en": "Marble",
+    "de": "Marmor",
+    "ja": "大理石",
+    "fr": "Marbre",
+    "tw": "大理石",
+    "zh": "大理石"
+  },
+  "7011": {
+    "en": "Bloodgrass",
+    "de": "Blutgras",
+    "ja": "ブラッドグラス",
+    "fr": "Baron rouge",
+    "tw": "紅血草",
+    "zh": "红血草"
+  },
+  "7012": {
+    "en": "Maiden Grass",
+    "de": "Zofengras",
+    "ja": "メイデングラス",
+    "fr": "Eulalie",
+    "tw": "白妙草",
+    "zh": "白妙草"
+  },
+  "7029": {
+    "en": "Island Seedling",
+    "de": "Insel-Setzling",
+    "ja": "ラノシアの苗",
+    "fr": "Pousse noscéenne",
+    "tw": "拉諾西亞幼苗",
+    "zh": "拉诺西亚幼苗"
+  },
+  "7030": {
+    "en": "Shroud Seedling",
+    "de": "Wald-Setzling",
+    "ja": "黒衣森の苗",
+    "fr": "Pousse sombrelinçoise",
+    "tw": "黑衣森林幼苗",
+    "zh": "黑衣森林幼苗"
+  },
+  "7031": {
+    "en": "Desert Seedling",
+    "de": "Wüsten-Setzling",
+    "ja": "ザナラーンの苗",
+    "fr": "Pousse thanalanaise",
+    "tw": "薩納蘭幼苗",
+    "zh": "萨纳兰幼苗"
+  },
+  "7588": {
+    "en": "Ferberite",
+    "de": "Ferberit",
+    "ja": "鉄重石",
+    "fr": "Minerai de ferbérite",
+    "tw": "鎢鐵礦",
+    "zh": "钨铁矿"
+  },
+  "7589": {
+    "en": "Native Gold",
+    "de": "Naturgold",
+    "ja": "自然金",
+    "fr": "Pépite d'or natif",
+    "tw": "自然金",
+    "zh": "自然金"
+  },
+  "7590": {
+    "en": "Scarlet Sap",
+    "de": "Rotharz",
+    "ja": "緋樹液",
+    "fr": "Sève écarlate",
+    "tw": "緋紅樹汁",
+    "zh": "绯红树汁"
+  },
+  "7591": {
+    "en": "Shroud Tea Leaves",
+    "de": "Gridanische Teeblätter",
+    "ja": "ティノルカ茶葉",
+    "fr": "Feuilles de thé de Tinolqa",
+    "tw": "提諾爾卡茶葉",
+    "zh": "提诺尔卡茶叶"
+  },
+  "7592": {
+    "en": "Apricot",
+    "de": "Aprikose",
+    "ja": "アプリコット",
+    "fr": "Abricot",
+    "tw": "黃杏",
+    "zh": "黄杏"
+  },
+  "7593": {
+    "en": "La Noscean Leek",
+    "de": "La Noscea-Porree",
+    "ja": "ラノシアリーキ",
+    "fr": "Poireau noscéen",
+    "tw": "拉諾西亞韭蔥",
+    "zh": "拉诺西亚韭葱"
+  },
+  "7594": {
+    "en": "Young Cieldalaes Spinach",
+    "de": "Junger Cieldaläen-Spinat",
+    "ja": "ソフトスピナッチ",
+    "fr": "Jeunes épinards des Cieldalaes",
+    "tw": "謝爾達萊嫩菠菜",
+    "zh": "谢尔达莱嫩菠菜"
+  },
+  "7595": {
+    "en": "Blood Orange",
+    "de": "Blutorange",
+    "ja": "ブラッドオレンジ",
+    "fr": "Orange sanguine",
+    "tw": "鮮血橙",
+    "zh": "鲜血橙"
+  },
+  "7610": {
+    "en": "Umbral Rock",
+    "de": "Schattenfels",
+    "ja": "霊性岩",
+    "fr": "Roche ombrale",
+    "tw": "靈性岩",
+    "zh": "灵性岩"
+  },
+  "7611": {
+    "en": "Fragrant Log",
+    "de": "Duftholz",
+    "ja": "黒衣香木",
+    "fr": "Rondin odorant",
+    "tw": "黑衣香木",
+    "zh": "黑衣香木"
+  },
+  "7715": {
+    "en": "Paprika Seeds",
+    "de": "Paprikasamen",
+    "ja": "パプリカの種",
+    "fr": "Graines de paprika",
+    "tw": "紅彩椒種子",
+    "zh": "红辣椒种子"
+  },
+  "7716": {
+    "en": "Wild Onion Set",
+    "de": "Wildzwiebelsamen",
+    "ja": "ワイルドオニオンの種球根",
+    "fr": "Bulbe d'oignon sauvage",
+    "tw": "野洋蔥球根",
+    "zh": "野洋葱球根"
+  },
+  "7717": {
+    "en": "Coerthan Carrot Seeds",
+    "de": "Karottensamen",
+    "ja": "クルザスカロットの種",
+    "fr": "Graines de carotte du Coerthas",
+    "tw": "庫爾札斯胡蘿蔔種子",
+    "zh": "库尔札斯胡萝卜种子"
+  },
+  "7718": {
+    "en": "La Noscean Lettuce Seeds",
+    "de": "Kopfsalatsamen",
+    "ja": "ラノシアレタスの種",
+    "fr": "Graines de laitue noscéenne",
+    "tw": "拉諾西亞萵苣種子",
+    "zh": "拉诺西亚莴苣种子"
+  },
+  "7719": {
+    "en": "Olive Seeds",
+    "de": "Olivenkerne",
+    "ja": "オリーヴの種",
+    "fr": "Graines d'olive cendrée",
+    "tw": "橄欖種子",
+    "zh": "橄榄种子"
+  },
+  "7720": {
+    "en": "Popoto Set",
+    "de": "Toffel-Knollen",
+    "ja": "ポポトの種芋",
+    "fr": "Tubercule de popoto",
+    "tw": "新薯芽塊",
+    "zh": "新薯芽块"
+  },
+  "7721": {
+    "en": "Millioncorn Seeds",
+    "de": "Millionenmais-Samen",
+    "ja": "ミリオンコーンの種",
+    "fr": "Graines de milli-maïs",
+    "tw": "多實玉米種子",
+    "zh": "多实玉米种子"
+  },
+  "7722": {
+    "en": "Wizard Eggplant Seeds",
+    "de": "Auberginensamen",
+    "ja": "エッグプラントの種",
+    "fr": "Graines d'aubergine du mage",
+    "tw": "巫茄種子",
+    "zh": "巫茄种子"
+  },
+  "7723": {
+    "en": "Midland Cabbage Seeds",
+    "de": "Wiesland-Kohlkopfsamen",
+    "ja": "ミッドランドキャベツの種",
+    "fr": "Graines de chou hyurois",
+    "tw": "中原甘藍種子",
+    "zh": "中原甘蓝种子"
+  },
+  "7724": {
+    "en": "Dzemael Tomato Seeds",
+    "de": "Dzemael-Tomatensamen",
+    "ja": "ゼーメルトマトの種",
+    "fr": "Graines de tomate Dzemael",
+    "tw": "澤梅爾番茄種子",
+    "zh": "泽梅尔番茄种子"
+  },
+  "7725": {
+    "en": "La Noscean Orange Seeds",
+    "de": "La Noscea-Orangenkerne",
+    "ja": "ラノシアオレンジの種",
+    "fr": "Graines d'oranger noscéen",
+    "tw": "拉諾西亞香橙種子",
+    "zh": "拉诺西亚香橙种子"
+  },
+  "7726": {
+    "en": "Lowland Grape Seeds",
+    "de": "Tieflandtrauben-Kerne",
+    "ja": "ローランドグレープの種",
+    "fr": "Graines de raisin des plaines",
+    "tw": "低地葡萄種子",
+    "zh": "低地葡萄种子"
+  },
+  "7727": {
+    "en": "Faerie Apple Seeds",
+    "de": "Feenapfel-Kerne",
+    "ja": "フェアリーアップルの種",
+    "fr": "Graines de pommier de fée",
+    "tw": "仙女蘋果種子",
+    "zh": "仙女苹果种子"
+  },
+  "7728": {
+    "en": "Sun Lemon Seeds",
+    "de": "Sonnenzitronenkerne",
+    "ja": "サンレモンの種",
+    "fr": "Graines de citronnier soleil",
+    "tw": "太陽檸檬種子",
+    "zh": "太阳柠檬种子"
+  },
+  "7729": {
+    "en": "Pixie Plum Seeds",
+    "de": "Pflaumenkerne",
+    "ja": "ピクシープラムの種",
+    "fr": "Graines de prunier sylphe",
+    "tw": "仙子梅種子",
+    "zh": "仙子梅种子"
+  },
+  "7730": {
+    "en": "Blood Currant Seeds",
+    "de": "Blutbeeren-Samen",
+    "ja": "ブラッドカーラントの種",
+    "fr": "Graines de groseillier sanguin",
+    "tw": "血紅奇異果種子",
+    "zh": "血红奇异果种子"
+  },
+  "7731": {
+    "en": "Mirror Apple Seeds",
+    "de": "Spiegelapfel-Kerne",
+    "ja": "シャインアップルの種",
+    "fr": "Graines de pommier luisant",
+    "tw": "晶亮蘋果種子",
+    "zh": "晶亮苹果种子"
+  },
+  "7732": {
+    "en": "Rolanberry Seeds",
+    "de": "Rolanbeeren-Samen",
+    "ja": "ロランベリーの種",
+    "fr": "Graines de rolanbaie",
+    "tw": "羅蘭莓種子",
+    "zh": "罗兰莓种子"
+  },
+  "7733": {
+    "en": "Honey Lemon Seeds",
+    "de": "Honigzitronenkerne",
+    "ja": "ハニーレモンの種",
+    "fr": "Graines de citronnier miel",
+    "tw": "蜜檸檬種子",
+    "zh": "蜜柠檬种子"
+  },
+  "7734": {
+    "en": "Prickly Pineapple Seeds",
+    "de": "Ananassamen",
+    "ja": "パイナップルの種",
+    "fr": "Graines d'ananas épineux",
+    "tw": "多刺鳳梨種子",
+    "zh": "多刺菠萝种子"
+  },
+  "7735": {
+    "en": "Garlic Cloves",
+    "de": "Knoblauch-Zwiebeln",
+    "ja": "ガーリックの種球根",
+    "fr": "Graines d'ail garlemaldais",
+    "tw": "大蒜球根",
+    "zh": "大蒜球根"
+  },
+  "7736": {
+    "en": "Lavender Seeds",
+    "de": "Lavendelsamen",
+    "ja": "ラベンダーの種",
+    "fr": "Graines de lavande",
+    "tw": "薰衣草種子",
+    "zh": "薰衣草种子"
+  },
+  "7737": {
+    "en": "Black Pepper Seeds",
+    "de": "Schwarzer Pfeffer-Samen",
+    "ja": "ブラックペッパーの種",
+    "fr": "Grains de poivre noir",
+    "tw": "黑胡椒種子",
+    "zh": "黑胡椒种子"
+  },
+  "7738": {
+    "en": "Ala Mhigan Mustard Seeds",
+    "de": "Mhigischer Senf-Samen",
+    "ja": "アラミゴマスタードの種",
+    "fr": "Graines de moutarde mhigoise",
+    "tw": "阿拉米格芥子種子",
+    "zh": "阿拉米格芥子种子"
+  },
+  "7739": {
+    "en": "Pearl Ginger Root",
+    "de": "Perleningwer-Wurzeln",
+    "ja": "パールジンジャーの種生姜",
+    "fr": "Rhizome de gingembre perlé",
+    "tw": "生薑根",
+    "zh": "生姜根"
+  },
+  "7740": {
+    "en": "Chamomile Seeds",
+    "de": "Kamillensamen",
+    "ja": "カモミールの種",
+    "fr": "Graines de camomille",
+    "tw": "甘菊種子",
+    "zh": "甘菊种子"
+  },
+  "7741": {
+    "en": "Linseed",
+    "de": "Leinsamen",
+    "ja": "亜麻の種",
+    "fr": "Graines de lin",
+    "tw": "亞麻種子",
+    "zh": "亚麻种子"
+  },
+  "7742": {
+    "en": "Midland Basil Seeds",
+    "de": "Wieslandbasilikum-Samen",
+    "ja": "ミッドランドバジルの種",
+    "fr": "Graines de basilic hyurois",
+    "tw": "中原羅勒草種子",
+    "zh": "中原罗勒草种子"
+  },
+  "7743": {
+    "en": "Mandrake Seeds",
+    "de": "Alraunwurzel-Samen",
+    "ja": "マンドレイクの種",
+    "fr": "Graines de mandragore",
+    "tw": "風茄種子",
+    "zh": "风茄种子"
+  },
+  "7744": {
+    "en": "Almond Seeds",
+    "de": "Mandelkerne",
+    "ja": "アーモンドの種",
+    "fr": "Graines d'amandier",
+    "tw": "扁桃種子",
+    "zh": "扁桃种子"
+  },
+  "7758": {
+    "en": "Grade 1 La Noscean Topsoil",
+    "de": "La Noscea-Humus I",
+    "ja": "ラノシアンソイルG1",
+    "fr": "Terreau noscéen I",
+    "tw": "1級拉諾西亞土壤",
+    "zh": "1级拉诺西亚土壤"
+  },
+  "7759": {
+    "en": "Grade 2 La Noscean Topsoil",
+    "de": "La Noscea-Humus II",
+    "ja": "ラノシアンソイルG2",
+    "fr": "Terreau noscéen II",
+    "tw": "2級拉諾西亞土壤",
+    "zh": "2级拉诺西亚土壤"
+  },
+  "7760": {
+    "en": "Grade 3 La Noscean Topsoil",
+    "de": "La Noscea-Humus III",
+    "ja": "ラノシアンソイルG3",
+    "fr": "Terreau noscéen III",
+    "tw": "3級拉諾西亞土壤",
+    "zh": "3级拉诺西亚土壤"
+  },
+  "7761": {
+    "en": "Grade 1 Shroud Topsoil",
+    "de": "Finsterwald-Humus I",
+    "ja": "シュラウドソイルG1",
+    "fr": "Terreau sombrelinçois I",
+    "tw": "1級黑衣森林土壤",
+    "zh": "1级黑衣森林土壤"
+  },
+  "7762": {
+    "en": "Grade 2 Shroud Topsoil",
+    "de": "Finsterwald-Humus II",
+    "ja": "シュラウドソイルG2",
+    "fr": "Terreau sombrelinçois II",
+    "tw": "2級黑衣森林土壤",
+    "zh": "2级黑衣森林土壤"
+  },
+  "7763": {
+    "en": "Grade 3 Shroud Topsoil",
+    "de": "Finsterwald-Humus III",
+    "ja": "シュラウドソイルG3",
+    "fr": "Terreau sombrelinçois III",
+    "tw": "3級黑衣森林土壤",
+    "zh": "3级黑衣森林土壤"
+  },
+  "7764": {
+    "en": "Grade 1 Thanalan Topsoil",
+    "de": "Thanalan-Humus I",
+    "ja": "ザナラーンソイルG1",
+    "fr": "Terreau thanalanais I",
+    "tw": "1級薩納蘭土壤",
+    "zh": "1级萨纳兰土壤"
+  },
+  "7765": {
+    "en": "Grade 2 Thanalan Topsoil",
+    "de": "Thanalan-Humus II",
+    "ja": "ザナラーンソイルG2",
+    "fr": "Terreau thanalanais II",
+    "tw": "2級薩納蘭土壤",
+    "zh": "2级萨纳兰土壤"
+  },
+  "7766": {
+    "en": "Grade 3 Thanalan Topsoil",
+    "de": "Thanalan-Humus III",
+    "ja": "ザナラーンソイルG3",
+    "fr": "Terreau thanalanais III",
+    "tw": "3級薩納蘭土壤",
+    "zh": "3级萨纳兰土壤"
+  },
+  "8024": {
+    "en": "Waterfowl Feather",
+    "de": "Wasservogelfeder",
+    "ja": "水鳥の羽根",
+    "fr": "Plume de sauvagine",
+    "tw": "水鳥之羽",
+    "zh": "水鸟之羽"
+  },
+  "8030": {
+    "en": "Antumbral Rock",
+    "de": "Schlagschattenfels",
+    "ja": "強霊性岩",
+    "fr": "Roche antéombrale",
+    "tw": "強靈性岩",
+    "zh": "强灵性岩"
+  },
+  "8031": {
+    "en": "Redolent Log",
+    "de": "Edelduftholz",
+    "ja": "高級黒衣香木",
+    "fr": "Rondin fragrant",
+    "tw": "高級黑衣香木",
+    "zh": "高级黑衣香木"
+  },
+  "9518": {
+    "en": "Cypress Log",
+    "de": "Zypressen-Bauholz",
+    "ja": "サイプレス原木",
+    "fr": "Rondin de cyprès",
+    "tw": "絲柏原木",
+    "zh": "丝柏原木"
+  },
+  "9519": {
+    "en": "Pumice",
+    "de": "Bimsstein",
+    "ja": "パミスストーン",
+    "fr": "Pierre ponce",
+    "tw": "浮石",
+    "zh": "浮石"
+  },
+  "10092": {
+    "en": "Black Limestone",
+    "de": "Schwarzer Kalkstein",
+    "ja": "黒石灰岩",
+    "fr": "Calcaire noir",
+    "tw": "黑石灰岩",
+    "zh": "黑石灰岩"
+  },
+  "10093": {
+    "en": "Virgin Basilisk Egg",
+    "de": "Erstgelegtes Basilisken-Ei",
+    "ja": "バジリスクの初卵",
+    "fr": "Premier œuf de basilic",
+    "tw": "石蜥蜴的初蛋",
+    "zh": "石蜥蜴的初蛋"
+  },
+  "10094": {
+    "en": "Little Worm",
+    "de": "Winzwurm",
+    "ja": "リトルワーム",
+    "fr": "Petit ver",
+    "tw": "小蠕蟲",
+    "zh": "小蠕虫"
+  },
+  "10095": {
+    "en": "Gregarious Worm",
+    "de": "Herdenwurm",
+    "ja": "グレガリアスワーム",
+    "fr": "Ver grégaire",
+    "tw": "群居蠕蟲",
+    "zh": "群居蠕虫"
+  },
+  "10096": {
+    "en": "Rosemary",
+    "de": "Rosmarin",
+    "ja": "ローズマリー",
+    "fr": "Romarin",
+    "tw": "迷迭香",
+    "zh": "迷迭香"
+  },
+  "10097": {
+    "en": "Yafaemi Wildgrass",
+    "de": "Yafaem-Wildgras",
+    "ja": "ヤフェームの野草",
+    "fr": "Herbes de Yafaem",
+    "tw": "亞菲姆草",
+    "zh": "亚菲姆草"
+  },
+  "10098": {
+    "en": "Mazlaya Greens",
+    "de": "Mazlaya-Sprossen",
+    "ja": "マズラヤの野草",
+    "fr": "Herbes de Mazlaya",
+    "tw": "馬茲拉雅草",
+    "zh": "马兹拉雅草"
+  },
+  "10099": {
+    "en": "Unaspected Crystal",
+    "de": "Elementneutraler Kristall",
+    "ja": "無属性クリスタル",
+    "fr": "Cristal terni",
+    "tw": "無屬性水晶",
+    "zh": "无属性水晶"
+  },
+  "10335": {
+    "en": "Dark Matter Cluster",
+    "de": "Dunkelmaterie",
+    "ja": "ダークマタークラスター",
+    "fr": "Agrégat de matière sombre",
+    "tw": "黑暗物質晶簇",
+    "zh": "暗物质晶簇"
+  },
+  "12238": {
+    "en": "Tome of Geological Folklore - Coerthas",
+    "de": "Coerthischer Bergbau-Almanach",
+    "ja": "鉱物伝承録:クルザス",
+    "fr": "Légendes géologiques du Coerthas",
+    "tw": "礦物傳承錄·庫爾札斯篇",
+    "zh": "矿物传承录·库尔札斯篇"
+  },
+  "12239": {
+    "en": "Tome of Geological Folklore - Dravania",
+    "de": "Dravanischer Bergbau-Almanach",
+    "ja": "鉱物伝承録:ドラヴァニア",
+    "fr": "Légendes géologiques de Dravania",
+    "tw": "礦物傳承錄·德拉瓦尼亞篇",
+    "zh": "矿物传承录·龙堡篇"
+  },
+  "12240": {
+    "en": "Tome of Geological Folklore - Abalathia's Spine",
+    "de": "Abalathischer Bergbau-Almanach",
+    "ja": "鉱物伝承録:アバラシア",
+    "fr": "Légendes géologiques d'Abalathia",
+    "tw": "礦物傳承錄·阿巴拉提亞篇",
+    "zh": "矿物传承录·阿巴拉提亚篇"
+  },
+  "12531": {
+    "en": "Mythrite Sand",
+    "de": "Mythrit-Sandklumpen",
+    "ja": "精霊銀砂",
+    "fr": "Sable de mithrite",
+    "tw": "靈銀沙",
+    "zh": "灵银沙"
+  },
+  "12532": {
+    "en": "Hardsilver Sand",
+    "de": "Hartsilber-Sandklumpen",
+    "ja": "硬銀砂",
+    "fr": "Sable de durargent",
+    "tw": "硬銀沙",
+    "zh": "硬银沙"
+  },
+  "12533": {
+    "en": "Aurum Regis Sand",
+    "de": "Königsgold-Sandklumpen",
+    "ja": "皇金砂",
+    "fr": "Sable d'aurum regis",
+    "tw": "皇金沙",
+    "zh": "皇金沙"
+  },
+  "12534": {
+    "en": "Mythrite Ore",
+    "de": "Mythrit-Erz",
+    "ja": "精霊銀鉱",
+    "fr": "Minerai de mithrite",
+    "tw": "靈銀礦",
+    "zh": "灵银矿"
+  },
+  "12535": {
+    "en": "Hardsilver Ore",
+    "de": "Hartsilber-Erz",
+    "ja": "硬銀鉱",
+    "fr": "Minerai de durargent",
+    "tw": "硬銀礦",
+    "zh": "硬银矿"
+  },
+  "12536": {
+    "en": "Aurum Regis Ore",
+    "de": "Königsgold-Erz",
+    "ja": "皇金鉱",
+    "fr": "Minerai d'aurum regis",
+    "tw": "皇金礦",
+    "zh": "皇金矿"
+  },
+  "12537": {
+    "en": "Titanium Ore",
+    "de": "Titan-Erz",
+    "ja": "チタン鉱",
+    "fr": "Minerai de titane",
+    "tw": "白鈦礦",
+    "zh": "白钛矿"
+  },
+  "12538": {
+    "en": "Adamantite Ore",
+    "de": "Adamantit-Erz",
+    "ja": "アダマン鉱",
+    "fr": "Minerai d'adamant",
+    "tw": "堅鋼礦",
+    "zh": "精金矿"
+  },
+  "12539": {
+    "en": "Cloud Mica",
+    "de": "Wolkenglimmer",
+    "ja": "白雲母",
+    "fr": "Mica blanc",
+    "tw": "白雲母",
+    "zh": "白云母"
+  },
+  "12540": {
+    "en": "Sun Mica",
+    "de": "Sonnenglimmer",
+    "ja": "金雲母",
+    "fr": "Mica doré",
+    "tw": "金雲母",
+    "zh": "金云母"
+  },
+  "12551": {
+    "en": "Raw Larimar",
+    "de": "Roh-Larimar",
+    "ja": "ラリマール原石",
+    "fr": "Larimar brut",
+    "tw": "水淙石原石",
+    "zh": "水淙石原石"
+  },
+  "12552": {
+    "en": "Raw Tiger's Eye",
+    "de": "Roh-Tigerauge",
+    "ja": "タイガーズアイ原石",
+    "fr": "Œil-de-tigre brut",
+    "tw": "虎眼石原石",
+    "zh": "虎眼石原石"
+  },
+  "12553": {
+    "en": "Raw Agate",
+    "de": "Roh-Achat",
+    "ja": "アゲート原石",
+    "fr": "Agate brute",
+    "tw": "瑪瑙原石",
+    "zh": "玛瑙原石"
+  },
+  "12554": {
+    "en": "Raw Star Ruby",
+    "de": "Roh-Sternenrubin",
+    "ja": "スタールビー原石",
+    "fr": "Rubis étoilé brut",
+    "tw": "星紅石原石",
+    "zh": "星红石原石"
+  },
+  "12555": {
+    "en": "Raw Star Sapphire",
+    "de": "Roh-Sternensaphir",
+    "ja": "スターサファイア原石",
+    "fr": "Saphir étoilé brut",
+    "tw": "星藍石原石",
+    "zh": "星蓝石原石"
+  },
+  "12556": {
+    "en": "Raw Opal",
+    "de": "Roh-Opal",
+    "ja": "オパール原石",
+    "fr": "Opale brute",
+    "tw": "蛋白石原石",
+    "zh": "蛋白石原石"
+  },
+  "12557": {
+    "en": "Raw Citrine",
+    "de": "Roh-Citrin",
+    "ja": "シトリン原石",
+    "fr": "Citrine brute",
+    "tw": "黃水晶原石",
+    "zh": "黄水晶原石"
+  },
+  "12558": {
+    "en": "Raw Chrysolite",
+    "de": "Roh-Chrysolith",
+    "ja": "クリソライト原石",
+    "fr": "Chrysolite brute",
+    "tw": "貴橄欖石原石",
+    "zh": "贵橄榄石原石"
+  },
+  "12559": {
+    "en": "Raw Mormorion",
+    "de": "Roh-Morion",
+    "ja": "モルモリオン原石",
+    "fr": "Mormorion brut",
+    "tw": "煙晶原石",
+    "zh": "烟晶原石"
+  },
+  "12560": {
+    "en": "Raw Carnelian",
+    "de": "Roh-Karneol",
+    "ja": "カーネリアン原石",
+    "fr": "Cornaline brute",
+    "tw": "紅玉髓原石",
+    "zh": "红玉髓原石"
+  },
+  "12578": {
+    "en": "Dark Chestnut Log",
+    "de": "Dunkles Kastanienholz",
+    "ja": "ダークチェスナット原木",
+    "fr": "Rondin de châtaignier sombre",
+    "tw": "暗栗木原木",
+    "zh": "暗栗木原木"
+  },
+  "12579": {
+    "en": "Birch Log",
+    "de": "Birkenholz",
+    "ja": "バーチ原木",
+    "fr": "Rondin de bouleau",
+    "tw": "樺木原木",
+    "zh": "桦木原木"
+  },
+  "12585": {
+    "en": "Dark Chestnut Branch",
+    "de": "Dunkler Kastanienast",
+    "ja": "ダークチェスナットの枝",
+    "fr": "Branche de châtaignier sombre",
+    "tw": "暗栗樹枝",
+    "zh": "暗栗树枝"
+  },
+  "12586": {
+    "en": "Birch Branch",
+    "de": "Birkenast",
+    "ja": "バーチの枝",
+    "fr": "Branche de bouleau",
+    "tw": "樺樹枝",
+    "zh": "桦树枝"
+  },
+  "12587": {
+    "en": "Wattle Bark",
+    "de": "Akazienrinde",
+    "ja": "ワットル樹皮",
+    "fr": "Écorce d'acacia",
+    "tw": "金合歡樹皮",
+    "zh": "金合欢树皮"
+  },
+  "12597": {
+    "en": "Rainbow Cotton Boll",
+    "de": "Regenbogen-Baumwoll-Samenkapsel",
+    "ja": "虹綿",
+    "fr": "Fleur de coton arc-en-ciel",
+    "tw": "虹棉",
+    "zh": "虹棉"
+  },
+  "12598": {
+    "en": "Stalk of Ramie",
+    "de": "Ramie",
+    "ja": "青麻",
+    "fr": "Tige de ramie",
+    "tw": "青麻",
+    "zh": "青麻"
+  },
+  "12631": {
+    "en": "Dravanian Spring Water",
+    "de": "Dravanisches Quellwasser",
+    "ja": "ドラヴァニア天然水",
+    "fr": "Eau de source de Dravania",
+    "tw": "德拉瓦尼亞天然水",
+    "zh": "龙堡天然水"
+  },
+  "12632": {
+    "en": "Abalathian Spring Water",
+    "de": "Abalathisches Quellwasser",
+    "ja": "アバラシア天然水",
+    "fr": "Eau de source d'Abalathia",
+    "tw": "阿巴拉提亞天然水",
+    "zh": "阿巴拉提亚天然水"
+  },
+  "12634": {
+    "en": "Seventh Heaven",
+    "de": "Siebter Himmel-Blume",
+    "ja": "アストラルフラワー",
+    "fr": "Fleur astrale",
+    "tw": "星極花",
+    "zh": "星极花"
+  },
+  "12638": {
+    "en": "Coneflower",
+    "de": "Purpursonnenhut",
+    "ja": "エキナセア",
+    "fr": "Échinacée",
+    "tw": "紫錐花",
+    "zh": "紫锥花"
+  },
+  "12639": {
+    "en": "Cow Bitter",
+    "de": "Wurmkraut",
+    "ja": "タンジー",
+    "fr": "Tanaisie",
+    "tw": "菊蒿",
+    "zh": "菊蒿"
+  },
+  "12640": {
+    "en": "Dandelion",
+    "de": "Löwenzahn-Blüte",
+    "ja": "ダンデライオン",
+    "fr": "Pissenlit",
+    "tw": "蒲公英",
+    "zh": "蒲公英"
+  },
+  "12641": {
+    "en": "Gaelicatnip",
+    "de": "Geira-Katzenminze",
+    "ja": "キャットニップ",
+    "fr": "Cataire",
+    "tw": "貓薄荷",
+    "zh": "猫薄荷"
+  },
+  "12642": {
+    "en": "Rue",
+    "de": "Weinraute",
+    "ja": "ヘンルーダ",
+    "fr": "Rue des jardins",
+    "tw": "芸香",
+    "zh": "芸香"
+  },
+  "12643": {
+    "en": "Coriander",
+    "de": "Koriander",
+    "ja": "コリアンダー",
+    "fr": "Coriandre",
+    "tw": "香菜",
+    "zh": "香菜"
+  },
+  "12698": {
+    "en": "Tome of Botanical Folklore - Coerthas",
+    "de": "Coerthischer Botanik-Almanach",
+    "ja": "草木伝承録:クルザス",
+    "fr": "Légendes botaniques du Coerthas",
+    "tw": "草木傳承錄·庫爾札斯篇",
+    "zh": "草木传承录·库尔札斯篇"
+  },
+  "12699": {
+    "en": "Tome of Botanical Folklore - Dravania",
+    "de": "Dravanischer Botanik-Almanach",
+    "ja": "草木伝承録:ドラヴァニア",
+    "fr": "Légendes botaniques de Dravania",
+    "tw": "草木傳承錄·德拉瓦尼亞篇",
+    "zh": "草木传承录·龙堡篇"
+  },
+  "12700": {
+    "en": "Tome of Botanical Folklore - Abalathia's Spine",
+    "de": "Abalathischer Botanik-Almanach",
+    "ja": "草木伝承録:アバラシア",
+    "fr": "Légendes botaniques d'Abalathia",
+    "tw": "草木傳承錄·阿巴拉提亞篇",
+    "zh": "草木传承录·阿巴拉提亚篇"
+  },
+  "12877": {
+    "en": "Pearl Sprouts",
+    "de": "Kohlsprösschen",
+    "ja": "プチキャベツ",
+    "fr": "Chou-bourgeon",
+    "tw": "小包心菜",
+    "zh": "小包心菜"
+  },
+  "12878": {
+    "en": "Cyclops Onion",
+    "de": "Zyklopenzwiebel",
+    "ja": "サイクロプスオニオン",
+    "fr": "Échalion cyclope",
+    "tw": "雲海洋蔥",
+    "zh": "云海洋葱"
+  },
+  "12879": {
+    "en": "Emerald Beans",
+    "de": "Emeraldbohne",
+    "ja": "エメラルドビーン",
+    "fr": "Haricots émeraude",
+    "tw": "綠寶石豆",
+    "zh": "绿宝石豆"
+  },
+  "12880": {
+    "en": "Highland Wheat",
+    "de": "Hochlandweizen",
+    "ja": "ハイランド小麦",
+    "fr": "Blé des hautes terres",
+    "tw": "高地小麥",
+    "zh": "高地小麦"
+  },
+  "12882": {
+    "en": "Coerthan Tea Leaves",
+    "de": "Coerthische Teeblätter",
+    "ja": "クルザス茶葉",
+    "fr": "Feuilles de thé du Coerthas",
+    "tw": "庫爾札斯茶葉",
+    "zh": "库尔札斯茶叶"
+  },
+  "12883": {
+    "en": "Mist Dill",
+    "de": "Nebeldill",
+    "ja": "イノンド",
+    "fr": "Aneth",
+    "tw": "茴香",
+    "zh": "茴香"
+  },
+  "12884": {
+    "en": "Chives",
+    "de": "Schnittlauch",
+    "ja": "チャイブ",
+    "fr": "Ciboulette",
+    "tw": "庫爾札斯青蔥",
+    "zh": "库尔札斯青葱"
+  },
+  "12885": {
+    "en": "Magma Beet",
+    "de": "Magmabete",
+    "ja": "マグマビート",
+    "fr": "Betteraves de magma",
+    "tw": "熔岩甜菜",
+    "zh": "熔岩甜菜"
+  },
+  "12887": {
+    "en": "Sesame Seeds",
+    "de": "Sesam",
+    "ja": "セサミ",
+    "fr": "Sésame",
+    "tw": "美拉西迪亞芝麻",
+    "zh": "美拉西迪亚芝麻"
+  },
+  "12889": {
+    "en": "Heavens Lemon",
+    "de": "Himmelszitrone",
+    "ja": "ヘヴンズドレモン",
+    "fr": "Citron céleste",
+    "tw": "伊修加爾德檸檬",
+    "zh": "伊修加德柠檬"
+  },
+  "12891": {
+    "en": "Birch Sap",
+    "de": "Birkensaft",
+    "ja": "バーチ樹液",
+    "fr": "Sève de bouleau",
+    "tw": "樺木樹汁",
+    "zh": "桦木树汁"
+  },
+  "12893": {
+    "en": "Dark Chestnut",
+    "de": "Dunkle Kastanie",
+    "ja": "ダークマロン",
+    "fr": "Marron sombre",
+    "tw": "毛栗子",
+    "zh": "毛栗子"
+  },
+  "12896": {
+    "en": "Old World Fig",
+    "de": "Sharlayanische Feige",
+    "ja": "オールドワールドフィグ",
+    "fr": "Figue du vieux continent",
+    "tw": "舊世界無花果",
+    "zh": "旧世界无花果"
+  },
+  "12897": {
+    "en": "Cloud Banana",
+    "de": "Wolkenbanane",
+    "ja": "クラウドバナナ",
+    "fr": "Banane céleste",
+    "tw": "雲海香蕉",
+    "zh": "云海香蕉"
+  },
+  "12898": {
+    "en": "Morel",
+    "de": "Mörchel",
+    "ja": "モリーユ",
+    "fr": "Morille",
+    "tw": "傘蘑",
+    "zh": "伞蘑"
+  },
+  "12899": {
+    "en": "Porcini",
+    "de": "Porcini-Pilz",
+    "ja": "ポルチーニ",
+    "fr": "Bolet",
+    "tw": "牛肝菌",
+    "zh": "牛肝菌"
+  },
+  "12900": {
+    "en": "Chysahl Greens",
+    "de": "Kohlkraut",
+    "ja": "カベイジの野菜",
+    "fr": "Légumes cabus",
+    "tw": "卡貝基野菜",
+    "zh": "卡贝基野菜"
+  },
+  "12901": {
+    "en": "Abalathian Rock Salt",
+    "de": "Abalathisches Steinsalz",
+    "ja": "アバラシア岩塩",
+    "fr": "Sel gemme d'Abalathia",
+    "tw": "阿巴拉提亞岩鹽",
+    "zh": "阿巴拉提亚岩盐"
+  },
+  "12902": {
+    "en": "Honeydew Almonds",
+    "de": "Honigmandeln",
+    "ja": "スイートアーモンド",
+    "fr": "Amandes mielleuses",
+    "tw": "甜扁桃",
+    "zh": "甜扁桃"
+  },
+  "12903": {
+    "en": "Dravanian Paprika",
+    "de": "Dravanische Paprikaschote",
+    "ja": "ドラヴァニアパプリカ",
+    "fr": "Paprika dravanien",
+    "tw": "德拉瓦尼亞紅彩椒",
+    "zh": "龙堡红辣椒"
+  },
+  "12904": {
+    "en": "Snurbleberry",
+    "de": "Flockenbeere",
+    "ja": "スナーブルベリー",
+    "fr": "Lainuchairelle",
+    "tw": "鮮紅羅蘭莓",
+    "zh": "鲜红罗兰莓"
+  },
+  "12941": {
+    "en": "Chalcocite",
+    "de": "Chalkosin",
+    "ja": "輝銅鉱",
+    "fr": "Minerai de chalcocite",
+    "tw": "輝銅礦",
+    "zh": "辉铜矿"
+  },
+  "12942": {
+    "en": "Cuprite",
+    "de": "Cuprit",
+    "ja": "赤銅鉱",
+    "fr": "Minerai de cuprite",
+    "tw": "赤銅礦",
+    "zh": "赤铜矿"
+  },
+  "12943": {
+    "en": "Dravanian Mistletoe",
+    "de": "Dravanischer Mistelzweig",
+    "ja": "ドラヴァニアミスルトゥ",
+    "fr": "Gui de Dravania",
+    "tw": "德拉瓦尼亞槲寄生",
+    "zh": "龙堡槲寄生"
+  },
+  "12944": {
+    "en": "Abalathian Mistletoe",
+    "de": "Abalathischer Mistelzweig",
+    "ja": "アバラシアミスルトゥ",
+    "fr": "Gui d'Abalathia",
+    "tw": "阿巴拉提亞槲寄生",
+    "zh": "阿巴拉提亚槲寄生"
+  },
+  "12945": {
+    "en": "Red Alumen",
+    "de": "Rotalaun",
+    "ja": "レッドアルメン",
+    "fr": "Alun rouge",
+    "tw": "紅明礬",
+    "zh": "红明矾"
+  },
+  "12966": {
+    "en": "Bright Fire Rock",
+    "de": "Leuchtender Feuergesteinsbrocken",
+    "ja": "強火性岩",
+    "fr": "Pierre de feu intense",
+    "tw": "強火性岩",
+    "zh": "强火性岩"
+  },
+  "12967": {
+    "en": "Bright Lightning Rock",
+    "de": "Leuchtender Blitzgesteinsbrocken",
+    "ja": "強雷性岩",
+    "fr": "Pierre de foudre intense",
+    "tw": "強雷性岩",
+    "zh": "强雷性岩"
+  },
+  "12968": {
+    "en": "Granular Clay",
+    "de": "Körniger Lehm",
+    "ja": "赤玉土",
+    "fr": "Argile granuleuse",
+    "tw": "赤玉土",
+    "zh": "赤玉土"
+  },
+  "12969": {
+    "en": "Peat Moss",
+    "de": "Torfmoos",
+    "ja": "ピートモス",
+    "fr": "Tourbe",
+    "tw": "灰玉土",
+    "zh": "灰玉土"
+  },
+  "12970": {
+    "en": "Black Soil",
+    "de": "Schwarze Erde",
+    "ja": "黒土",
+    "fr": "Terreau noir",
+    "tw": "黑土",
+    "zh": "黑土"
+  },
+  "12971": {
+    "en": "Highland Oregano",
+    "de": "Hochland-Oregano",
+    "ja": "オレガノ",
+    "fr": "Origan",
+    "tw": "牛至",
+    "zh": "牛至"
+  },
+  "12972": {
+    "en": "Furymint",
+    "de": "Furienminze",
+    "ja": "スペアミント",
+    "fr": "Menthe douce",
+    "tw": "留蘭",
+    "zh": "留兰"
+  },
+  "12973": {
+    "en": "Clary Sage",
+    "de": "Muskatellersalbei",
+    "ja": "クラリーセージ",
+    "fr": "Sauge sclarée",
+    "tw": "鼠尾草",
+    "zh": "鼠尾草"
+  },
+  "13759": {
+    "en": "Tektite",
+    "de": "Tektit",
+    "ja": "テクタイト",
+    "fr": "Tectite",
+    "tw": "似曜岩",
+    "zh": "似曜岩"
+  },
+  "13760": {
+    "en": "Eventide Jade",
+    "de": "Abendrot-Jade",
+    "ja": "イブニングジェード",
+    "fr": "Jade du couchant",
+    "tw": "日暮翡翠",
+    "zh": "日暮翡翠"
+  },
+  "13761": {
+    "en": "Fossilized Dragon Bone",
+    "de": "Versteinerter Drachenknochen",
+    "ja": "古竜骨片",
+    "fr": "Os de dragon fossilisé",
+    "tw": "古龍骨片",
+    "zh": "古龙骨片"
+  },
+  "13762": {
+    "en": "Periwinkle",
+    "de": "Immergrün",
+    "ja": "ペリウィンクル",
+    "fr": "Pervenche",
+    "tw": "長春花",
+    "zh": "长春花"
+  },
+  "13763": {
+    "en": "Cloud Mushroom",
+    "de": "Wolkenpilz",
+    "ja": "クラウドマッシュルーム",
+    "fr": "Cèpe des nuages",
+    "tw": "雲菇",
+    "zh": "云菇"
+  },
+  "13764": {
+    "en": "Wind Widow",
+    "de": "Windwitwe",
+    "ja": "スカイウィドー",
+    "fr": "Veuve des vents",
+    "tw": "風寡婦",
+    "zh": "风寡妇"
+  },
+  "13765": {
+    "en": "Old World Fig Seeds",
+    "de": "Sharlayanische Feigensamen",
+    "ja": "オールドワールドフィグの種",
+    "fr": "Graines de figuier du vieux continent",
+    "tw": "舊世界無花果種子",
+    "zh": "旧世界无花果种子"
+  },
+  "13767": {
+    "en": "Pearl Sprout Seeds",
+    "de": "Kohlsprösschen-Samen",
+    "ja": "プチキャベツの種",
+    "fr": "Graines de chou-bourgeon",
+    "tw": "小包心菜種子",
+    "zh": "小包心菜种子"
+  },
+  "13768": {
+    "en": "Coerthan Tea Seeds",
+    "de": "Coerthische Teesamen",
+    "ja": "クルザス茶樹の種",
+    "fr": "Graines de théier du Coerthas",
+    "tw": "庫爾札斯茶樹種子",
+    "zh": "库尔札斯茶树种子"
+  },
+  "14148": {
+    "en": "Lumythrite Ore",
+    "de": "Lumythriterz",
+    "ja": "光霊銀鉱",
+    "fr": "Minerai de lumithrite",
+    "tw": "光銀礦",
+    "zh": "光银矿"
+  },
+  "14151": {
+    "en": "Smithsonite Ore",
+    "de": "Smithsoniterz",
+    "ja": "菱亜鉛鉱",
+    "fr": "Minerai de smithsonite",
+    "tw": "菱鋅礦",
+    "zh": "菱锌矿"
+  },
+  "14154": {
+    "en": "Frost Cotton Boll",
+    "de": "Frost-Baumwoll-Samenkapsel",
+    "ja": "雪綿",
+    "fr": "Fleur de coton des neiges",
+    "tw": "雪棉",
+    "zh": "雪棉"
+  },
+  "14159": {
+    "en": "Camphorwood Log",
+    "de": "Kampferholzscheit",
+    "ja": "カンファー原木",
+    "fr": "Rondin de camphrier",
+    "tw": "樟木原木",
+    "zh": "樟木原木"
+  },
+  "14160": {
+    "en": "Camphorwood Branch",
+    "de": "Kampferholzast",
+    "ja": "カンファーの枝",
+    "fr": "Branche de camphrier",
+    "tw": "樟木枝",
+    "zh": "樟木枝"
+  },
+  "14190": {
+    "en": "Beastkin Horn",
+    "de": "Bestienhorn",
+    "ja": "枯角",
+    "fr": "Corne de bête",
+    "tw": "枯角",
+    "zh": "枯角"
+  },
+  "14955": {
+    "en": "Lumythrite Sand",
+    "de": "Lumythritsand",
+    "ja": "光霊銀砂",
+    "fr": "Sable de lumithrite",
+    "tw": "光銀沙",
+    "zh": "光银沙"
+  },
+  "14956": {
+    "en": "Whitefrost Cotton Boll",
+    "de": "Raureif-Baumwoll-Samenkapsel",
+    "ja": "淡雪綿",
+    "fr": "Fleur de coton du givre",
+    "tw": "淡雪棉",
+    "zh": "淡雪棉"
+  },
+  "14957": {
+    "en": "Old-growth Camphorwood Log",
+    "de": "Altes Kampferholzscheit",
+    "ja": "カンファー古木",
+    "fr": "Vieux camphrier",
+    "tw": "樟木古樹",
+    "zh": "樟木古树"
+  },
+  "15646": {
+    "en": "Meteorite",
+    "de": "Meteorit",
+    "ja": "メテオライト",
+    "fr": "Météorite",
+    "tw": "隕石",
+    "zh": "陨石"
+  },
+  "15647": {
+    "en": "Crystallized Sap",
+    "de": "Harzkristall",
+    "ja": "樹液結晶",
+    "fr": "Sève cristallisée",
+    "tw": "樹汁結晶",
+    "zh": "树汁结晶"
+  },
+  "15865": {
+    "en": "Firelight Seeds",
+    "de": "Feuerlicht-Samen",
+    "ja": "火晶草の種",
+    "fr": "Graines d'herbéclat de feu",
+    "tw": "火晶草種子",
+    "zh": "火晶草种子"
+  },
+  "15866": {
+    "en": "Icelight Seeds",
+    "de": "Eislicht-Samen",
+    "ja": "氷晶草の種",
+    "fr": "Graines d'herbéclat de glace",
+    "tw": "冰晶草種子",
+    "zh": "冰晶草种子"
+  },
+  "15867": {
+    "en": "Windlight Seeds",
+    "de": "Windlicht-Samen",
+    "ja": "風晶草の種",
+    "fr": "Graines d'herbéclat de vent",
+    "tw": "風晶草種子",
+    "zh": "风晶草种子"
+  },
+  "15868": {
+    "en": "Earthlight Seeds",
+    "de": "Erdlicht-Samen",
+    "ja": "土晶草の種",
+    "fr": "Graines d'herbéclat de terre",
+    "tw": "土晶草種子",
+    "zh": "土晶草种子"
+  },
+  "15869": {
+    "en": "Levinlight Seeds",
+    "de": "Blitzlicht-Samen",
+    "ja": "雷晶草の種",
+    "fr": "Graines d'herbéclat de foudre",
+    "tw": "雷晶草種子",
+    "zh": "雷晶草种子"
+  },
+  "15870": {
+    "en": "Waterlight Seeds",
+    "de": "Wasserlicht-Samen",
+    "ja": "水晶草の種",
+    "fr": "Graines d'herbéclat d'eau",
+    "tw": "水晶草種子",
+    "zh": "水晶草种子"
+  },
+  "15948": {
+    "en": "Lover's Laurel",
+    "de": "Menphina-Lorbeerblätter",
+    "ja": "メネフィナローレル",
+    "fr": "Feuille de laurier de Menphina",
+    "tw": "梅茵菲娜月桂",
+    "zh": "梅茵菲娜月桂"
+  },
+  "15949": {
+    "en": "Radiant Astral Moraine",
+    "de": "Strahlender Astralkies",
+    "ja": "レイディアントアストラルグラベル",
+    "fr": "Granulat astral rayonnant",
+    "tw": "星光礫",
+    "zh": "星光砾"
+  },
+  "16721": {
+    "en": "Star Cotton Boll",
+    "de": "Sternenbaumwolle",
+    "ja": "星綿",
+    "fr": "Fleur de coton des étoiles",
+    "tw": "星棉",
+    "zh": "星棉"
+  },
+  "16722": {
+    "en": "Brown Mushroom",
+    "de": "Brauner Champignon",
+    "ja": "ブラウンマッシュルーム",
+    "fr": "Champignon brun",
+    "tw": "棕菇",
+    "zh": "棕菇"
+  },
+  "16723": {
+    "en": "Noble Sage",
+    "de": "Edel-Salbei",
+    "ja": "ノーブルセージ",
+    "fr": "Sauge noble",
+    "tw": "顯貴鼠尾草",
+    "zh": "显贵鼠尾草"
+  },
+  "16724": {
+    "en": "Tungstite",
+    "de": "Tungstit",
+    "ja": "重石華",
+    "fr": "Minerai de tungstite",
+    "tw": "鎢華",
+    "zh": "钨华"
+  },
+  "16725": {
+    "en": "Luminium Ore",
+    "de": "Luminium",
+    "ja": "輝金鉱",
+    "fr": "Minerai de luminium",
+    "tw": "輝金礦",
+    "zh": "辉金矿"
+  },
+  "16726": {
+    "en": "Zeolite Ore",
+    "de": "Zeolith",
+    "ja": "沸石",
+    "fr": "Minerai de zéolite",
+    "tw": "沸石",
+    "zh": "沸石"
+  },
+  "17557": {
+    "en": "Dated Radz-at-Han Coin",
+    "de": "Veraltete Radz-at-Han-Münze",
+    "ja": "ラザハン古銭",
+    "fr": "Pièce de monnaie ancienne de Radz-at-Han",
+    "tw": "拉札漢古錢",
+    "zh": "拉札罕古钱"
+  },
+  "17558": {
+    "en": "Ice Stalagmite",
+    "de": "Eisstalagmit",
+    "ja": "氷筍",
+    "fr": "Stalagmite de glace",
+    "tw": "冰筍",
+    "zh": "冰笋"
+  },
+  "17559": {
+    "en": "Duskfall Moss",
+    "de": "Dämmerungsmoos",
+    "ja": "ダスケンモス",
+    "fr": "Mousse tombe-crépuscule",
+    "tw": "黃昏苔蘚",
+    "zh": "黄昏苔藓"
+  },
+  "17560": {
+    "en": "Glass Eye",
+    "de": "Glasauge",
+    "ja": "ナチュラルマーブル",
+    "fr": "Œil-de-verre",
+    "tw": "天然玻璃彈珠",
+    "zh": "天然玻璃弹珠"
+  },
+  "17561": {
+    "en": "Rainbow Pigment",
+    "de": "Regenbogen-Farbpigment",
+    "ja": "レインボーピグメント",
+    "fr": "Pigment arc-en-ciel",
+    "tw": "彩虹色素",
+    "zh": "彩虹色素"
+  },
+  "17838": {
+    "en": "Tome of Geological Folklore - Gyr Abania",
+    "de": "Abanischer Bergbau-Almanach",
+    "ja": "鉱物伝承録:ギラバニア",
+    "fr": "Légendes géologiques de Gyr Abania",
+    "tw": "礦物傳承錄·基拉巴尼亞篇",
+    "zh": "矿物传承录·基拉巴尼亚篇"
+  },
+  "17839": {
+    "en": "Tome of Geological Folklore - Othard",
+    "de": "Othardischer Bergbau-Almanach",
+    "ja": "鉱物伝承録:オサード",
+    "fr": "Légendes géologiques d'Othard",
+    "tw": "礦物傳承錄·奧薩德篇",
+    "zh": "矿物传承录·奥萨德篇"
+  },
+  "17840": {
+    "en": "Tome of Botanical Folklore - Gyr Abania",
+    "de": "Abanischer Botanik-Almanach",
+    "ja": "草木伝承録:ギラバニア",
+    "fr": "Légendes botaniques de Gyr Abania",
+    "tw": "草木傳承錄·基拉巴尼亞篇",
+    "zh": "草木传承录·基拉巴尼亚篇"
+  },
+  "17841": {
+    "en": "Tome of Botanical Folklore - Othard",
+    "de": "Othardischer Botanik-Almanach",
+    "ja": "草木伝承録:オサード",
+    "fr": "Légendes botaniques d'Othard",
+    "tw": "草木傳承錄·奧薩德篇",
+    "zh": "草木传承录·奥萨德篇"
+  },
+  "19850": {
+    "en": "Buckwheat Kernels",
+    "de": "Buchweizenkerne",
+    "ja": "蕎麦の実",
+    "fr": "Graines de sarrasin",
+    "tw": "蕎麥果實",
+    "zh": "荞麦果实"
+  },
+  "19851": {
+    "en": "Loquat",
+    "de": "Wollmispel",
+    "ja": "ロークワット",
+    "fr": "Nèfle gyrabanienne",
+    "tw": "枇杷",
+    "zh": "枇杷"
+  },
+  "19852": {
+    "en": "Othardian Plum",
+    "de": "Othard-Pflaume",
+    "ja": "オサードプラム",
+    "fr": "Prune d'Othard",
+    "tw": "奧薩德梅",
+    "zh": "奥萨德梅"
+  },
+  "19853": {
+    "en": "Kudzu Root",
+    "de": "Kudzuwurzel",
+    "ja": "葛根",
+    "fr": "Kudzu",
+    "tw": "葛根",
+    "zh": "葛根"
+  },
+  "19854": {
+    "en": "Doman Eggplant",
+    "de": "Doma-Aubergine",
+    "ja": "ドマ茄子",
+    "fr": "Bringèle domienne",
+    "tw": "多瑪茄子",
+    "zh": "多玛茄子"
+  },
+  "19855": {
+    "en": "Daikon Radish",
+    "de": "Daikon-Rettich",
+    "ja": "大根",
+    "fr": "Grand radis oriental",
+    "tw": "白蘿蔔",
+    "zh": "白萝卜"
+  },
+  "19856": {
+    "en": "Sugar Beet",
+    "de": "Zuckerrübe",
+    "ja": "シュガービート",
+    "fr": "Betterave sucrière",
+    "tw": "甜菜",
+    "zh": "甜菜"
+  },
+  "19857": {
+    "en": "Jhammel Ginger",
+    "de": "Jhammel-Ingwer",
+    "ja": "ジャムメルジンジャー",
+    "fr": "Gingembre jhammel",
+    "tw": "長頸駱薑",
+    "zh": "长颈骆姜"
+  },
+  "19858": {
+    "en": "Gyr Abanian Carrot",
+    "de": "Abanische Karotte",
+    "ja": "ギラバニアカロット",
+    "fr": "Carotte gyrabanienne",
+    "tw": "基拉巴尼亞胡蘿蔔",
+    "zh": "基拉巴尼亚胡萝卜"
+  },
+  "19859": {
+    "en": "Green Leek",
+    "de": "Grüner Porree",
+    "ja": "グリーンリーキ",
+    "fr": "Poireau gyrabanien",
+    "tw": "綠韭蔥",
+    "zh": "绿韭葱"
+  },
+  "19860": {
+    "en": "Bamboo Shoot",
+    "de": "Bambussprosse",
+    "ja": "タケノコ",
+    "fr": "Pousse de bambou",
+    "tw": "竹筍",
+    "zh": "竹笋"
+  },
+  "19861": {
+    "en": "Mountain Popoto",
+    "de": "Bergtoffel",
+    "ja": "マウンテンポポト",
+    "fr": "Popoto des montagnes",
+    "tw": "山芋",
+    "zh": "山芋"
+  },
+  "19862": {
+    "en": "Soybeans",
+    "de": "Sojabohnen",
+    "ja": "大豆",
+    "fr": "Soja",
+    "tw": "大豆",
+    "zh": "大豆"
+  },
+  "19863": {
+    "en": "Shiitake Mushroom",
+    "de": "Shiitake-Pilz",
+    "ja": "椎茸",
+    "fr": "Shiitake",
+    "tw": "香菇",
+    "zh": "香菇"
+  },
+  "19864": {
+    "en": "Cumin Seeds",
+    "de": "Kreuzkümmelsamen",
+    "ja": "馬芹",
+    "fr": "Graines de cumin",
+    "tw": "孜然",
+    "zh": "孜然"
+  },
+  "19865": {
+    "en": "Lotus Root",
+    "de": "Lotoswurzel",
+    "ja": "蓮根",
+    "fr": "Rhizome de lotus",
+    "tw": "蓮藕",
+    "zh": "莲藕"
+  },
+  "19866": {
+    "en": "Sun Cabbage",
+    "de": "Sonnenkohlkopf",
+    "ja": "サンキャベツ",
+    "fr": "Chou-soleil",
+    "tw": "日出甘藍",
+    "zh": "日出甘蓝"
+  },
+  "19867": {
+    "en": "Fennel",
+    "de": "Fenchel",
+    "ja": "フェンネル",
+    "fr": "Fenouil",
+    "tw": "甜茴香",
+    "zh": "甜茴香"
+  },
+  "19868": {
+    "en": "Gyr Abanian Wheat",
+    "de": "Abanischer Weizen",
+    "ja": "高原小麦",
+    "fr": "Blé des plateaux",
+    "tw": "高原小麥",
+    "zh": "高原小麦"
+  },
+  "19869": {
+    "en": "Persimmon",
+    "de": "Kakifrucht",
+    "ja": "パーシモン",
+    "fr": "Kaki",
+    "tw": "柿子",
+    "zh": "柿子"
+  },
+  "19870": {
+    "en": "Persimmon Leaf",
+    "de": "Kakiblatt",
+    "ja": "パーシモンリーフ",
+    "fr": "Feuilles de plaqueminier",
+    "tw": "柿子葉",
+    "zh": "柿子叶"
+  },
+  "19871": {
+    "en": "Gyr Abanian Mineral Water",
+    "de": "Abanisches Mineralwasser",
+    "ja": "ギラバニア鉱泉水",
+    "fr": "Eau de Gyr Abania",
+    "tw": "基拉巴尼亞礦泉水",
+    "zh": "基拉巴尼亚矿泉水"
+  },
+  "19872": {
+    "en": "Crescent Spring Water",
+    "de": "Othardisches Quellwasser",
+    "ja": "岩清水",
+    "fr": "Eau de roche",
+    "tw": "石間清水",
+    "zh": "石间清水"
+  },
+  "19879": {
+    "en": "Ama Nori",
+    "de": "Purpurtang",
+    "ja": "アマノリ",
+    "fr": "Amanori",
+    "tw": "紫菜",
+    "zh": "紫菜"
+  },
+  "19880": {
+    "en": "Ruby Tide Kelp",
+    "de": "Rubinfluten-Seetang",
+    "ja": "紅玉昆布",
+    "fr": "Goémon corallin",
+    "tw": "紅玉海帶",
+    "zh": "红玉海带"
+  },
+  "19881": {
+    "en": "Gem Algae",
+    "de": "Juwelenalge",
+    "ja": "玉藻",
+    "fr": "Sargasse tamamo",
+    "tw": "紅玉藻",
+    "zh": "红玉藻"
+  },
+  "19907": {
+    "en": "Ala Mhigan Salt Crystal",
+    "de": "Mhigischer Salzkristall",
+    "ja": "アラミゴ塩",
+    "fr": "Sel d'Ala Mhigo",
+    "tw": "阿拉米格鹽",
+    "zh": "阿拉米格盐"
+  },
+  "19908": {
+    "en": "Pine Resin",
+    "de": "Kieferharz",
+    "ja": "松脂",
+    "fr": "Résine de pin",
+    "tw": "松脂",
+    "zh": "松脂"
+  },
+  "19910": {
+    "en": "Gyr Abanian Alumen",
+    "de": "Abanischer Alaun",
+    "ja": "ギラバニアアルメン",
+    "fr": "Alun gyrabanien",
+    "tw": "基拉巴尼亞明礬",
+    "zh": "基拉巴尼亚明矾"
+  },
+  "19911": {
+    "en": "Yanxian Parsley",
+    "de": "Yanxia-Petersilie",
+    "ja": "ヤンサセリ",
+    "fr": "Œnanthe de Yanxia",
+    "tw": "延夏芹",
+    "zh": "延夏芹"
+  },
+  "19912": {
+    "en": "Alyssum",
+    "de": "Steinkraut",
+    "ja": "アリッサム",
+    "fr": "Alysson",
+    "tw": "香薺",
+    "zh": "香荠"
+  },
+  "19913": {
+    "en": "Nagxian Cudweed",
+    "de": "Nagxia-Ruhrkraut",
+    "ja": "御形",
+    "fr": "Gnaphale orientale",
+    "tw": "鼠曲草",
+    "zh": "鼠曲草"
+  },
+  "19914": {
+    "en": "Chickweed",
+    "de": "Vogelmiere",
+    "ja": "チックウィード",
+    "fr": "Mouron blanc",
+    "tw": "繁縷",
+    "zh": "繁缕"
+  },
+  "19915": {
+    "en": "Nipplewort",
+    "de": "Rainkohl",
+    "ja": "ニップルワート",
+    "fr": "Lamier amplexicaule",
+    "tw": "稻槎草",
+    "zh": "稻槎草"
+  },
+  "19916": {
+    "en": "Windtea Leaves",
+    "de": "Windteeblätter",
+    "ja": "風茶葉",
+    "fr": "Mauve des vents",
+    "tw": "風茶葉",
+    "zh": "风茶叶"
+  },
+  "19917": {
+    "en": "Holy Basil",
+    "de": "Heiliges Basilikum",
+    "ja": "ホーリーバジル",
+    "fr": "Basilic sacré",
+    "tw": "神聖羅勒草",
+    "zh": "神圣罗勒草"
+  },
+  "19918": {
+    "en": "Hallowed Basil",
+    "de": "Geheiligtes Basilikum",
+    "ja": "ハロードバジル",
+    "fr": "Basilic béni",
+    "tw": "祝聖羅勒草",
+    "zh": "祝圣罗勒草"
+  },
+  "19930": {
+    "en": "Beech Log",
+    "de": "Buchen-Holzscheit",
+    "ja": "ビーチ原木",
+    "fr": "Rondin de hêtre",
+    "tw": "山毛櫸原木",
+    "zh": "山毛榉原木"
+  },
+  "19931": {
+    "en": "Larch Log",
+    "de": "Lärchen-Holzscheit",
+    "ja": "ラーチ原木",
+    "fr": "Rondin de mélèze",
+    "tw": "落葉松原木",
+    "zh": "落叶松原木"
+  },
+  "19932": {
+    "en": "Persimmon Log",
+    "de": "Kaki-Holzscheit",
+    "ja": "パーシモン原木",
+    "fr": "Rondin de plaqueminier",
+    "tw": "柿木原木",
+    "zh": "柿木原木"
+  },
+  "19933": {
+    "en": "Zelkova Log",
+    "de": "Zelkoven-Holzscheit",
+    "ja": "ゼルコバ原木",
+    "fr": "Rondin de zelkova",
+    "tw": "櫸木原木",
+    "zh": "榉木原木"
+  },
+  "19934": {
+    "en": "Torreya Log",
+    "de": "Nusseiben-Holzscheit",
+    "ja": "トレヤ原木",
+    "fr": "Rondin de kaya",
+    "tw": "榧木原木",
+    "zh": "榧木原木"
+  },
+  "19936": {
+    "en": "Beech Branch",
+    "de": "Buchenast",
+    "ja": "ビーチの枝",
+    "fr": "Branche de hêtre",
+    "tw": "山毛櫸樹枝",
+    "zh": "山毛榉树枝"
+  },
+  "19937": {
+    "en": "Torreya Branch",
+    "de": "Nusseibenast",
+    "ja": "トレヤの枝",
+    "fr": "Branche de kaya",
+    "tw": "榧樹枝",
+    "zh": "榧树枝"
+  },
+  "19950": {
+    "en": "Koppranickel Sand",
+    "de": "Kupfernickel-Sandklumpen",
+    "ja": "魔銅砂",
+    "fr": "Sable de cupronickel",
+    "tw": "魔銅沙",
+    "zh": "魔铜沙"
+  },
+  "19951": {
+    "en": "Koppranickel Ore",
+    "de": "Kupfernickel-Erz",
+    "ja": "魔銅鉱",
+    "fr": "Minerai de cupronickel",
+    "tw": "魔銅礦",
+    "zh": "魔铜矿"
+  },
+  "19952": {
+    "en": "Durium Sand",
+    "de": "Durium-Sandklumpen",
+    "ja": "翠銀砂",
+    "fr": "Sable de durium",
+    "tw": "翠銀沙",
+    "zh": "翠银沙"
+  },
+  "19953": {
+    "en": "Doman Iron Ore",
+    "de": "Domaeisen-Erz",
+    "ja": "餅鉄",
+    "fr": "Minerai de fer beitetsu",
+    "tw": "餅鐵礦",
+    "zh": "饼铁矿"
+  },
+  "19954": {
+    "en": "Durium Ore",
+    "de": "Durium-Erz",
+    "ja": "翠銀鉱",
+    "fr": "Minerai de durium",
+    "tw": "翠銀礦",
+    "zh": "翠银矿"
+  },
+  "19955": {
+    "en": "Doman Iron Sand",
+    "de": "Domaeisen-Sandklumpen",
+    "ja": "真砂砂鉄",
+    "fr": "Sable de tamahagane",
+    "tw": "真沙沙鐵",
+    "zh": "真沙沙铁"
+  },
+  "19956": {
+    "en": "Palladium Sand",
+    "de": "Palladium-Sandklumpen",
+    "ja": "清金砂",
+    "fr": "Sable de palladium",
+    "tw": "鈀金沙",
+    "zh": "钯金沙"
+  },
+  "19957": {
+    "en": "Molybdenum Ore",
+    "de": "Molybdän-Erz",
+    "ja": "輝水鉛鉱",
+    "fr": "Minerai de molybdène",
+    "tw": "輝鉬礦",
+    "zh": "辉钼矿"
+  },
+  "19958": {
+    "en": "Palladium Ore",
+    "de": "Palladium-Erz",
+    "ja": "清金鉱",
+    "fr": "Minerai de palladium",
+    "tw": "鈀金礦",
+    "zh": "钯金矿"
+  },
+  "19959": {
+    "en": "Chromite Ore",
+    "de": "Chromeisen-Erz",
+    "ja": "クロマイト",
+    "fr": "Minerai de chromite",
+    "tw": "鉻鐵礦",
+    "zh": "铬铁矿"
+  },
+  "19968": {
+    "en": "Raw Triphane",
+    "de": "Roh-Triphan",
+    "ja": "トリフェーン原石",
+    "fr": "Triphane brute",
+    "tw": "鋰輝石原石",
+    "zh": "锂辉石原石"
+  },
+  "19969": {
+    "en": "Raw Kyanite",
+    "de": "Roh-Kyanit",
+    "ja": "カイヤナイト原石",
+    "fr": "Disthène brut",
+    "tw": "藍晶石原石",
+    "zh": "蓝晶石原石"
+  },
+  "19970": {
+    "en": "Raw Star Spinel",
+    "de": "Roh-Sternspinell",
+    "ja": "スタースピネル原石",
+    "fr": "Spinelle étoilé brut",
+    "tw": "星尖石原石",
+    "zh": "星尖石原石"
+  },
+  "19971": {
+    "en": "Raw Azurite",
+    "de": "Roh-Azurit",
+    "ja": "アズライト原石",
+    "fr": "Azurite brute",
+    "tw": "石青原石",
+    "zh": "石青原石"
+  },
+  "19972": {
+    "en": "Raw Imperial Jade",
+    "de": "Roh-Kaiserjade",
+    "ja": "インペリアルジェード原石",
+    "fr": "Jade impérial brut",
+    "tw": "琅玕原石",
+    "zh": "琅玕原石"
+  },
+  "19973": {
+    "en": "Raw Rhodonite",
+    "de": "Roh-Rhodonit",
+    "ja": "ロードナイト原石",
+    "fr": "Rhodonite brute",
+    "tw": "薔薇輝石原石",
+    "zh": "蔷薇辉石原石"
+  },
+  "19976": {
+    "en": "Bloodhemp",
+    "de": "Rothanf",
+    "ja": "赤麻",
+    "fr": "Akaso",
+    "tw": "赤麻",
+    "zh": "赤麻"
+  },
+  "19979": {
+    "en": "Ruby Cotton Boll",
+    "de": "Rubinbaumwoll-Samenkapsel",
+    "ja": "紅玉綿花",
+    "fr": "Fleur de rubicoton",
+    "tw": "紅玉棉",
+    "zh": "红玉棉"
+  },
+  "19982": {
+    "en": "Kudzu Vine",
+    "de": "Kudzuranke",
+    "ja": "葛のつる",
+    "fr": "Sarment de kudzu",
+    "tw": "葛藤",
+    "zh": "葛藤"
+  },
+  "19989": {
+    "en": "Twincoon",
+    "de": "Doppelkokon",
+    "ja": "玉繭",
+    "fr": "Cocon double",
+    "tw": "玉繭",
+    "zh": "玉茧"
+  },
+  "19991": {
+    "en": "Rhea",
+    "de": "Rhea",
+    "ja": "藍麻",
+    "fr": "Orties indigo",
+    "tw": "苧麻",
+    "zh": "苎麻"
+  },
+  "20006": {
+    "en": "Diatomite",
+    "de": "Diatomit",
+    "ja": "珪藻土",
+    "fr": "Terre diatomée",
+    "tw": "矽藻土",
+    "zh": "硅藻土"
+  },
+  "20007": {
+    "en": "Slate",
+    "de": "Schiefer",
+    "ja": "粘板岩",
+    "fr": "Ardoise",
+    "tw": "板岩",
+    "zh": "板岩"
+  },
+  "20009": {
+    "en": "Schorl",
+    "de": "Schörl",
+    "ja": "ショール",
+    "fr": "Schörl",
+    "tw": "黑電氣石",
+    "zh": "黑碧玺"
+  },
+  "20010": {
+    "en": "Perlite",
+    "de": "Perlit",
+    "ja": "パーライト",
+    "fr": "Perlite",
+    "tw": "珍珠岩",
+    "zh": "珍珠岩"
+  },
+  "20011": {
+    "en": "Almandine",
+    "de": "Almandin",
+    "ja": "アルマンディン",
+    "fr": "Almandin",
+    "tw": "貴榴石",
+    "zh": "贵榴石"
+  },
+  "20012": {
+    "en": "Doman Yellow",
+    "de": "Domagelb",
+    "ja": "黄土",
+    "fr": "Lœss",
+    "tw": "黃土",
+    "zh": "黄土"
+  },
+  "20780": {
+    "en": "Starcrack Sand",
+    "de": "Sternengold",
+    "ja": "砕星砂",
+    "fr": "Sablétoile",
+    "tw": "碎星沙",
+    "zh": "碎星沙"
+  },
+  "20781": {
+    "en": "Shishu Koban",
+    "de": "Koban-Goldmünze aus Shishu",
+    "ja": "紫洲小判",
+    "fr": "Koban de Shishû",
+    "tw": "紫州小判",
+    "zh": "紫州小判金币"
+  },
+  "20782": {
+    "en": "Cotter Dynasty Relic",
+    "de": "Ziergegenstand aus der Cotter-Zeit",
+    "ja": "コッター朝の宝飾",
+    "fr": "Bijou de la dynastie des Cotter",
+    "tw": "柯特王朝的寶石飾品",
+    "zh": "柯特王朝的宝石饰品"
+  },
+  "20783": {
+    "en": "Peaks Pigment",
+    "de": "Abanische Farbpigmente",
+    "ja": "ギラバニアピグメント",
+    "fr": "Pigments gyrabaniens",
+    "tw": "基拉巴尼亞色素",
+    "zh": "基拉巴尼亚色素"
+  },
+  "20784": {
+    "en": "Yellow Kudzu Root",
+    "de": "Gelbe Kudzu-Wurzel",
+    "ja": "黄葛根",
+    "fr": "Racine de kudzu doré",
+    "tw": "黃葛根",
+    "zh": "黄葛根"
+  },
+  "21085": {
+    "en": "Gyr Abanian Spring Water",
+    "de": "Gyr-Abania-Quellwasser",
+    "ja": "ギラバニア清水",
+    "fr": "Eau de source de Gyr Abania",
+    "tw": "基拉巴尼亞清水",
+    "zh": "基拉巴尼亚清水"
+  },
+  "21086": {
+    "en": "Azim Cotton Boll",
+    "de": "Azim-Baumwoll-Samenkapsel",
+    "ja": "アジム綿花",
+    "fr": "Fleur de coton d'Azim",
+    "tw": "太陽棉",
+    "zh": "太阳棉"
+  },
+  "22417": {
+    "en": "Nightsteel Ore",
+    "de": "Nachtstahlerz",
+    "ja": "夜鉄鉱",
+    "fr": "Minerai de noctacier",
+    "tw": "夜鐵礦",
+    "zh": "夜铁矿"
+  },
+  "22418": {
+    "en": "Silvergrace Ore",
+    "de": "Silbergunsterz",
+    "ja": "清銀鉱",
+    "fr": "Minerai de graçargent",
+    "tw": "清銀礦",
+    "zh": "清银矿"
+  },
+  "22419": {
+    "en": "Black Willow Log",
+    "de": "Schwarzweiden-Holzscheit",
+    "ja": "ブラックウィロー原木",
+    "fr": "Rondin de saule noir",
+    "tw": "黑柳原木",
+    "zh": "黑柳原木"
+  },
+  "22420": {
+    "en": "Hingan Flax",
+    "de": "Hingashi-Flachs",
+    "ja": "真麻",
+    "fr": "Fibres de lin hingashien",
+    "tw": "真麻",
+    "zh": "真麻"
+  },
+  "23148": {
+    "en": "Pinch of Active Ingredients",
+    "de": "Gemahlener Wundstein",
+    "ja": "石薬素材",
+    "fr": "Poudre minérale thérapeutique",
+    "tw": "石藥材料",
+    "zh": "石药材料"
+  },
+  "23149": {
+    "en": "Harpoon Head",
+    "de": "Korallenschaft",
+    "ja": "銛素材",
+    "fr": "Pièce de harpon",
+    "tw": "魚叉材料",
+    "zh": "渔叉材料"
+  },
+  "23150": {
+    "en": "Phial of Thermal Fluid",
+    "de": "Phiole Isolier-Tinktur",
+    "ja": "保温性素材",
+    "fr": "Liquide isolant",
+    "tw": "保溫材料",
+    "zh": "保温材料"
+  },
+  "23151": {
+    "en": "Shisui Jewel",
+    "de": "Korallenamethyst",
+    "ja": "紫水結晶",
+    "fr": "Joyau en rubis",
+    "tw": "紫水結晶",
+    "zh": "紫水结晶"
+  },
+  "23152": {
+    "en": "Cloudkin Feather",
+    "de": "Wolkenmeerfeder",
+    "ja": "雲海の羽根",
+    "fr": "Penne de la Mer de nuages",
+    "tw": "雲海之羽",
+    "zh": "云海之羽"
+  },
+  "23179": {
+    "en": "Hawk's Eye",
+    "de": "Falkenauge",
+    "ja": "鷹目石",
+    "fr": "Œil-de-faucon",
+    "tw": "鷹眼石",
+    "zh": "鹰眼石"
+  },
+  "23180": {
+    "en": "Hardened Veteran Tree Sap",
+    "de": "Gehärteter alter Baumsaft",
+    "ja": "老木樹液塊",
+    "fr": "Sève durcie de vieil arbre",
+    "tw": "古木樹液塊",
+    "zh": "古木树液块"
+  },
+  "23220": {
+    "en": "Yanxian Soil",
+    "de": "Yanxia-Erde",
+    "ja": "ヤンサ沃土",
+    "fr": "Terreau de Yanxia",
+    "tw": "延夏沃土",
+    "zh": "延夏沃土"
+  },
+  "23221": {
+    "en": "Yanxian Verbena",
+    "de": "Yanxia-Eisenkraut",
+    "ja": "ヤンサバーベナ",
+    "fr": "Verveine de Yanxia",
+    "tw": "延夏馬鞭草",
+    "zh": "延夏马鞭草"
+  },
+  "24240": {
+    "en": "Gyr Abanian Ore",
+    "de": "Abanisches Erz",
+    "ja": "岩鉄",
+    "fr": "Minerai gyrabanien",
+    "tw": "岩鐵",
+    "zh": "岩铁"
+  },
+  "24241": {
+    "en": "Evergleam Ore",
+    "de": "Immerschimmer-Erz",
+    "ja": "常輝鉱",
+    "fr": "Minerai de pérennéclat",
+    "tw": "常輝礦",
+    "zh": "常辉矿"
+  },
+  "24242": {
+    "en": "Urunday Log",
+    "de": "Urunday-Holzscheit",
+    "ja": "ウルンダイ原木",
+    "fr": "Rondin d'urunday",
+    "tw": "烏侖代硬木原木",
+    "zh": "乌仑代硬木原木"
+  },
+  "24243": {
+    "en": "Yanxian Cotton Boll",
+    "de": "Yanxia-Baumwoll-Samenkapsel",
+    "ja": "延夏綿",
+    "fr": "Fleur de coton de Yanxia",
+    "tw": "延夏棉",
+    "zh": "延夏棉"
+  },
+  "24255": {
+    "en": "Azim Spring Water",
+    "de": "Azim-Quellwasser",
+    "ja": "アジム湧水",
+    "fr": "Eau de source de la Steppe d'Azim",
+    "tw": "太陽神泉水",
+    "zh": "太阳神泉水"
+  },
+  "24567": {
+    "en": "Sparkstone",
+    "de": "Glutklumpen",
+    "ja": "熾火玉",
+    "fr": "Braises",
+    "tw": "熾火玉",
+    "zh": "炽火玉"
+  },
+  "24568": {
+    "en": "Malleable Still Material",
+    "de": "Destillierapparat-Material",
+    "ja": "蒸留器素材",
+    "fr": "Matière première pour alambic",
+    "tw": "蒸餾器素材",
+    "zh": "蒸馏器素材"
+  },
+  "24569": {
+    "en": "Strong Steppe Spice",
+    "de": "Azim-Gewürz",
+    "ja": "アジムスパイス",
+    "fr": "Épices de la Steppe d'Azim",
+    "tw": "大草原香辛料",
+    "zh": "大草原香辛料"
+  },
+  "24570": {
+    "en": "Hard Place Furnishing Materials",
+    "de": "Material für einen Klippenhänger-Einrichtungsgegenstand",
+    "ja": "崖っぷち備品素材",
+    "fr": "Matière première pour pièce décorative du Bord du gouffre",
+    "tw": "崖畔亭備用品的素材",
+    "zh": "崖畔亭备用品的素材"
+  },
+  "24571": {
+    "en": "Sturdy Vat Material",
+    "de": "Material für ein Arkhi-Destillierutensil",
+    "ja": "醸造道具素材",
+    "fr": "Élément nécessaire à une fermentation",
+    "tw": "釀造道具素材",
+    "zh": "酿造道具素材"
+  },
+  "26752": {
+    "en": "Animal Trace",
+    "de": "Wildtierspur",
+    "ja": "野生生物の痕跡",
+    "fr": "Trace d'animal sauvage",
+    "tw": "野生生物的痕跡",
+    "zh": "野生生物的痕迹"
+  },
+  "26753": {
+    "en": "Animal Droppings",
+    "de": "Wildtier-Exkremente",
+    "ja": "野生生物の落とし物",
+    "fr": "Déjection d'animal sauvage",
+    "tw": "野生生物的遺留物",
+    "zh": "野生生物的遗留物"
+  },
+  "26754": {
+    "en": "Megafauna Leftovers",
+    "de": "Essensreste einer gigantischen Kreatur",
+    "ja": "巨大生物の食痕",
+    "fr": "Résidu alimentaire d'animal géant",
+    "tw": "巨大生物的進食痕跡",
+    "zh": "巨大生物的进食痕迹"
+  },
+  "26755": {
+    "en": "Megafauna Trace",
+    "de": "Spur eines monströsen Wesens",
+    "ja": "巨大生物の痕跡",
+    "fr": "Trace d'animal géant",
+    "tw": "巨大生物的痕跡",
+    "zh": "巨大生物的痕迹"
+  },
+  "26808": {
+    "en": "Tome of Geological Folklore - Norvrandt",
+    "de": "Vrandtischer Bergbau-Almanach",
+    "ja": "鉱物伝承録:ノルヴラント",
+    "fr": "Légendes géologiques de Norvrandt",
+    "tw": "礦物傳承錄·諾弗蘭特篇",
+    "zh": "矿物传承录·诺弗兰特篇"
+  },
+  "26809": {
+    "en": "Tome of Botanical Folklore - Norvrandt",
+    "de": "Vrandtischer Botanik-Almanach",
+    "ja": "草木伝承録:ノルヴラント",
+    "fr": "Légendes botaniques de Norvrandt",
+    "tw": "草木傳承錄·諾弗蘭特篇",
+    "zh": "草木传承录·诺弗兰特篇"
+  },
+  "27683": {
+    "en": "White Oak Log",
+    "de": "Weißeichenholzscheit",
+    "ja": "ホワイトオーク原木",
+    "fr": "Rondin de chêne blanc",
+    "tw": "白橡木原木",
+    "zh": "白橡木原木"
+  },
+  "27684": {
+    "en": "Miracle Apple Log",
+    "de": "Wunderapfelholzscheit",
+    "ja": "ミラクルアップル原木",
+    "fr": "Rondin de pommier miracle",
+    "tw": "仙果木原木",
+    "zh": "仙果木原木"
+  },
+  "27685": {
+    "en": "White Ash Log",
+    "de": "Weißeschenholzscheit",
+    "ja": "ホワイトアッシュ原木",
+    "fr": "Rondin de frêne blanc",
+    "tw": "白梣木原木",
+    "zh": "白梣木原木"
+  },
+  "27686": {
+    "en": "Sandteak Log",
+    "de": "Sandteakholzscheit",
+    "ja": "サンドチーク原木",
+    "fr": "Rondin de teck des sables",
+    "tw": "沙柚木原木",
+    "zh": "沙柚木原木"
+  },
+  "27687": {
+    "en": "Lignum Vitae Log",
+    "de": "Guajakholzscheit",
+    "ja": "リグナムバイタ原木",
+    "fr": "Rondin de gaïac",
+    "tw": "癒瘡木原木",
+    "zh": "愈疮木原木"
+  },
+  "27688": {
+    "en": "Sandalwood Log",
+    "de": "Sandelholzscheit",
+    "ja": "サンダルウッド原木",
+    "fr": "Rondin de santal blanc",
+    "tw": "檀香木原木",
+    "zh": "檀香木原木"
+  },
+  "27696": {
+    "en": "Truegold Sand",
+    "de": "Steingold-Sandklumpen",
+    "ja": "硬金砂",
+    "fr": "Sable d'or franc",
+    "tw": "硬金沙",
+    "zh": "硬金沙"
+  },
+  "27697": {
+    "en": "Truegold Ore",
+    "de": "Steingold-Erzklumpen",
+    "ja": "硬金鉱",
+    "fr": "Minerai d'or franc",
+    "tw": "硬金礦",
+    "zh": "硬金矿"
+  },
+  "27698": {
+    "en": "Bluespirit Ore",
+    "de": "Seelenazurit",
+    "ja": "霊青岩",
+    "fr": "Pierre d'azuresprit",
+    "tw": "靈青岩",
+    "zh": "灵青岩"
+  },
+  "27699": {
+    "en": "Manasilver Sand",
+    "de": "Manasilber-Sandklumpen",
+    "ja": "魔銀砂",
+    "fr": "Sable de mana-argent",
+    "tw": "魔銀沙",
+    "zh": "魔银沙"
+  },
+  "27700": {
+    "en": "Titancopper Sand",
+    "de": "Titanbronze-Sandklumpen",
+    "ja": "賢銅砂",
+    "fr": "Sable de bronze titané",
+    "tw": "鈦銅沙",
+    "zh": "钛铜沙"
+  },
+  "27701": {
+    "en": "Titancopper Ore",
+    "de": "Titanbronze-Erzklumpen",
+    "ja": "賢銅鉱",
+    "fr": "Minerai de bronze titané",
+    "tw": "鈦銅礦",
+    "zh": "钛铜矿"
+  },
+  "27702": {
+    "en": "Dimythrite Sand",
+    "de": "Edelmithril-Sandklumpen",
+    "ja": "闇霊銀砂",
+    "fr": "Sable de mithril noble",
+    "tw": "暗銀沙",
+    "zh": "暗银沙"
+  },
+  "27703": {
+    "en": "Dimythrite Ore",
+    "de": "Edelmithril-Erzklumpen",
+    "ja": "闇霊銀鉱",
+    "fr": "Minerai de mithril noble",
+    "tw": "暗銀礦",
+    "zh": "暗银矿"
+  },
+  "27704": {
+    "en": "Tungsten Ore",
+    "de": "Wolframerzklumpen",
+    "ja": "タングステン鉱",
+    "fr": "Minerai de tungstène",
+    "tw": "重鎢礦",
+    "zh": "重钨矿"
+  },
+  "27705": {
+    "en": "Prismstone",
+    "de": "Spektralkristall",
+    "ja": "虹結晶",
+    "fr": "Cristal iridescent",
+    "tw": "彩虹晶",
+    "zh": "彩虹晶"
+  },
+  "27726": {
+    "en": "Raw Hematite",
+    "de": "Roh-Rauchquarz",
+    "ja": "ヘマタイト原石",
+    "fr": "Hématite brute",
+    "tw": "烏鋼石原石",
+    "zh": "乌钢石原石"
+  },
+  "27727": {
+    "en": "Raw Diaspore",
+    "de": "Roh-Diaspor",
+    "ja": "ダイアスポア原石",
+    "fr": "Diaspore brute",
+    "tw": "硬水鋁石原石",
+    "zh": "硬水铝石原石"
+  },
+  "27728": {
+    "en": "Raw Lazurite",
+    "de": "Roh-Lasurit",
+    "ja": "ラズライト原石",
+    "fr": "Lazurite brute",
+    "tw": "青金石原石",
+    "zh": "青金石原石"
+  },
+  "27729": {
+    "en": "Raw Triplite",
+    "de": "Roh-Triphylin",
+    "ja": "トリプライト原石",
+    "fr": "Triphylite brute",
+    "tw": "三重石原石",
+    "zh": "三重石原石"
+  },
+  "27730": {
+    "en": "Raw Petalite",
+    "de": "Roh-Petalit",
+    "ja": "ペタライト原石",
+    "fr": "Pétalite brute",
+    "tw": "透鋰長石原石",
+    "zh": "透锂长石原石"
+  },
+  "27731": {
+    "en": "Raw Onyx",
+    "de": "Roh-Onyx",
+    "ja": "オニキス原石",
+    "fr": "Onyx brut",
+    "tw": "黑瑪瑙原石",
+    "zh": "黑玛瑙原石"
+  },
+  "27747": {
+    "en": "Bright Flax",
+    "de": "Kreideflachs",
+    "ja": "白亜麻",
+    "fr": "Fibres de lin blanc",
+    "tw": "白麻",
+    "zh": "白麻"
+  },
+  "27750": {
+    "en": "Iridescent Cocoon",
+    "de": "Spektralkokon",
+    "ja": "虹マユ",
+    "fr": "Cocon iridescent",
+    "tw": "虹繭",
+    "zh": "虹茧"
+  },
+  "27753": {
+    "en": "Pixie Floss Boll",
+    "de": "Pixiebaumwolle",
+    "ja": "妖綿花",
+    "fr": "Fleur de coton pixie",
+    "tw": "仙子棉",
+    "zh": "仙子棉"
+  },
+  "27759": {
+    "en": "Dwarven Cotton Boll",
+    "de": "Zwergenwolle",
+    "ja": "ドワーフ綿花",
+    "fr": "Fleur de coton nain",
+    "tw": "矮人棉",
+    "zh": "矮人棉"
+  },
+  "27761": {
+    "en": "Ethereal Cocoon",
+    "de": "Schaumkokon",
+    "ja": "泡マユ",
+    "fr": "Cocon mousseux",
+    "tw": "泡繭",
+    "zh": "泡茧"
+  },
+  "27776": {
+    "en": "Extra Effervescent Water",
+    "de": "Starksprudelwasser",
+    "ja": "強ソーダ水",
+    "fr": "Eau très effervescente",
+    "tw": "強氣泡水",
+    "zh": "强发泡水"
+  },
+  "27779": {
+    "en": "Sweet Alyssum",
+    "de": "Süßsteinkraut",
+    "ja": "スイートアリッサム",
+    "fr": "Alysson doux",
+    "tw": "甜香薺",
+    "zh": "甜香荠"
+  },
+  "27780": {
+    "en": "Fernleaf Lavender",
+    "de": "Flieder-Lavendel",
+    "ja": "ピナータラベンダー",
+    "fr": "Lavande pinnata",
+    "tw": "邪衣薰衣草",
+    "zh": "邪衣薰衣草"
+  },
+  "27782": {
+    "en": "Underground Spring Water",
+    "de": "Tiefenquellwasser",
+    "ja": "地下天然水",
+    "fr": "Eau souterraine",
+    "tw": "地下天然水",
+    "zh": "地下天然水"
+  },
+  "27783": {
+    "en": "Lime Basil",
+    "de": "Sauerbasilikum",
+    "ja": "ライムバジル",
+    "fr": "Basilic citron",
+    "tw": "青檸羅勒草",
+    "zh": "青柠罗勒草"
+  },
+  "27784": {
+    "en": "Tiger Lily",
+    "de": "Tigerlilie",
+    "ja": "タイガーリリー",
+    "fr": "Lys tigrés",
+    "tw": "虎百合",
+    "zh": "虎百合"
+  },
+  "27785": {
+    "en": "Light Gerbera",
+    "de": "Knochengerbera",
+    "ja": "ライトガーベラ",
+    "fr": "Gerberas lumineuses",
+    "tw": "光芒大丁草",
+    "zh": "光芒大丁草"
+  },
+  "27801": {
+    "en": "Hard Mudstone",
+    "de": "Mergelstein",
+    "ja": "硬泥岩",
+    "fr": "Mudstone solide",
+    "tw": "硬泥岩",
+    "zh": "硬泥岩"
+  },
+  "27803": {
+    "en": "Volcanic Tuff",
+    "de": "Tuffstein",
+    "ja": "凝灰岩",
+    "fr": "Tuf volcanique",
+    "tw": "凝灰岩",
+    "zh": "凝灰岩"
+  },
+  "27805": {
+    "en": "Gale Rock",
+    "de": "Orkangestein",
+    "ja": "嵐性岩",
+    "fr": "Pierre de rafale",
+    "tw": "暴風岩",
+    "zh": "暴风性岩"
+  },
+  "27806": {
+    "en": "Solarite",
+    "de": "Glimmergestein",
+    "ja": "光曜石",
+    "fr": "Pierre irradiante",
+    "tw": "光耀石",
+    "zh": "光耀石"
+  },
+  "27807": {
+    "en": "Shade Quartz",
+    "de": "Schattenquarz",
+    "ja": "シャドウクォーツ",
+    "fr": "Quartz de l'ombre",
+    "tw": "暗影石英",
+    "zh": "暗影石英"
+  },
+  "27808": {
+    "en": "White Clay",
+    "de": "Weißer Lehm",
+    "ja": "白玉土",
+    "fr": "Terre perlée",
+    "tw": "白玉土",
+    "zh": "白玉土"
+  },
+  "27809": {
+    "en": "Sweet Marjoram",
+    "de": "Süßer Majoran",
+    "ja": "スイートマジョラム",
+    "fr": "Marjolaine douceâtre",
+    "tw": "甜墨角蘭",
+    "zh": "甜墨角兰"
+  },
+  "27810": {
+    "en": "Bog Sage",
+    "de": "Sumpfsalbei",
+    "ja": "ボッグセージ",
+    "fr": "Sauge officinale",
+    "tw": "沼澤鼠尾草",
+    "zh": "沼泽鼠尾草"
+  },
+  "27816": {
+    "en": "White Oak Branch",
+    "de": "Weißeichen-Ast",
+    "ja": "ホワイトオークの枝",
+    "fr": "Branche de chêne blanc",
+    "tw": "白橡木枝",
+    "zh": "白橡木枝"
+  },
+  "27817": {
+    "en": "Yellow Alumen",
+    "de": "Gelbalaun",
+    "ja": "イエローアルメン",
+    "fr": "Alun jaune",
+    "tw": "黃明礬",
+    "zh": "黄明矾"
+  },
+  "27818": {
+    "en": "Purple Carrot",
+    "de": "Purpurmöhre",
+    "ja": "パープルカロット",
+    "fr": "Carotte violette",
+    "tw": "紫色胡蘿蔔",
+    "zh": "紫色胡萝卜"
+  },
+  "27819": {
+    "en": "Harcot",
+    "de": "Harcot-Aprikose",
+    "ja": "ハーコット",
+    "fr": "Rouge de Norvrandt",
+    "tw": "香杏",
+    "zh": "香杏"
+  },
+  "27820": {
+    "en": "Frantoio",
+    "de": "Frantoio",
+    "ja": "フラントーヨ",
+    "fr": "Frantoio",
+    "tw": "油橄欖",
+    "zh": "油橄榄"
+  },
+  "27821": {
+    "en": "Amber Cloves",
+    "de": "Bernsteinnelke",
+    "ja": "アンバークローヴ",
+    "fr": "Antofle ambré",
+    "tw": "琥珀丁香",
+    "zh": "琥珀丁香"
+  },
+  "27822": {
+    "en": "Russet Popoto",
+    "de": "Ockertoffel",
+    "ja": "ラセットポポト",
+    "fr": "Popoto brune",
+    "tw": "黃新薯",
+    "zh": "黄新薯"
+  },
+  "27823": {
+    "en": "Curly Parsley",
+    "de": "Krauspetersilie",
+    "ja": "カーリーパセリ",
+    "fr": "Persil frisé",
+    "tw": "卷葉芹",
+    "zh": "卷叶芹"
+  },
+  "27824": {
+    "en": "Garden Beet",
+    "de": "Gartenrübe",
+    "ja": "ガーデンビート",
+    "fr": "Betterave potagère",
+    "tw": "野園甜菜",
+    "zh": "野园甜菜"
+  },
+  "27825": {
+    "en": "Blood Tomato",
+    "de": "Bluttomate",
+    "ja": "ブラッドトマト",
+    "fr": "Tomate sanguine",
+    "tw": "血番茄",
+    "zh": "血番茄"
+  },
+  "27826": {
+    "en": "Royal Grapes",
+    "de": "Königstraube",
+    "ja": "ロイヤルグレープ",
+    "fr": "Raisin royal",
+    "tw": "皇家葡萄",
+    "zh": "皇家葡萄"
+  },
+  "27827": {
+    "en": "Night Pepper",
+    "de": "Dunkelpfeffer",
+    "ja": "ダークペッパー",
+    "fr": "Poivre sombre",
+    "tw": "黑夜胡椒",
+    "zh": "黑夜胡椒"
+  },
+  "27828": {
+    "en": "Mist Spinach",
+    "de": "Dunstspinat",
+    "ja": "ミストスピナッチ",
+    "fr": "Jeunes épinards brume",
+    "tw": "迷霧菠菜",
+    "zh": "迷雾菠菜"
+  },
+  "27829": {
+    "en": "Creamtop Mushroom",
+    "de": "Rahm-Champignon",
+    "ja": "クリームマッシュルーム",
+    "fr": "Champignon laiteux",
+    "tw": "奶油菇",
+    "zh": "奶油菇"
+  },
+  "27830": {
+    "en": "Bomba Rice",
+    "de": "Knallreis",
+    "ja": "ボンバライス",
+    "fr": "Riz bomba",
+    "tw": "邦巴米",
+    "zh": "邦巴米"
+  },
+  "27831": {
+    "en": "Pixie Apple",
+    "de": "Pixie-Apfel",
+    "ja": "ピクシーアップル",
+    "fr": "Pomme pixie",
+    "tw": "仙子蘋果",
+    "zh": "仙子苹果"
+  },
+  "27832": {
+    "en": "Upland Wheat",
+    "de": "Hochplateau-Weizen",
+    "ja": "アップランド小麦",
+    "fr": "Blé des hauts plateaux",
+    "tw": "山地小麥",
+    "zh": "山地小麦"
+  },
+  "27833": {
+    "en": "Broad Beans",
+    "de": "Favabohne",
+    "ja": "ブロードビーン",
+    "fr": "Féverole",
+    "tw": "蠶豆",
+    "zh": "蚕豆"
+  },
+  "27834": {
+    "en": "Gianthive Chip",
+    "de": "Riesenhonigbienennest",
+    "ja": "オオミツバチの巣",
+    "fr": "Nid d'abeilles géantes",
+    "tw": "大蜜蜂的巢",
+    "zh": "大蜜蜂的巢"
+  },
+  "27835": {
+    "en": "Lemonette",
+    "de": "Zwergzitrone",
+    "ja": "リトルレモン",
+    "fr": "Petit citron",
+    "tw": "小檸檬",
+    "zh": "小柠檬"
+  },
+  "27836": {
+    "en": "Peppermint",
+    "de": "Pfefferminze",
+    "ja": "ペパーミント",
+    "fr": "Menthe poivrée",
+    "tw": "歐薄荷",
+    "zh": "欧薄荷"
+  },
+  "27837": {
+    "en": "Coffee Beans",
+    "de": "Kaffeebohnen",
+    "ja": "コーヒービーン",
+    "fr": "Grains de café",
+    "tw": "咖啡豆",
+    "zh": "咖啡豆"
+  },
+  "27954": {
+    "en": "Coarse Saltpeter",
+    "de": "Rohsalpeter-Klumpen",
+    "ja": "粗硝石",
+    "fr": "Salpêtre grossier",
+    "tw": "粗硝石",
+    "zh": "粗硝石"
+  },
+  "27968": {
+    "en": "Highland Spring Water",
+    "de": "Hochlandwasser",
+    "ja": "高地天然水",
+    "fr": "Eau de source des hauts plateaux",
+    "tw": "高地天然水",
+    "zh": "高地天然水"
+  },
+  "28199": {
+    "en": "Raven Coal",
+    "de": "Stückkohle",
+    "ja": "塊炭",
+    "fr": "Boule de charbon",
+    "tw": "炭塊",
+    "zh": "炭块"
+  },
+  "28200": {
+    "en": "Amh Araeng Seasonings",
+    "de": "Duftende Gewürze",
+    "ja": "香り高いスパイス",
+    "fr": "Épices parfumées",
+    "tw": "芳香的香料",
+    "zh": "芳香的香料"
+  },
+  "28201": {
+    "en": "Clinquant Stones",
+    "de": "Schillernder Pyroxen",
+    "ja": "美しい輝石",
+    "fr": "Minerai brillant",
+    "tw": "美麗的輝石",
+    "zh": "美丽的辉石"
+  },
+  "28202": {
+    "en": "Airship Fitting Components",
+    "de": "Luftschiffinnenraum-Bauteil",
+    "ja": "飛空艇内装材",
+    "fr": "Élément pour intérieur d'aéronef",
+    "tw": "飛空艇內部元件",
+    "zh": "飞空艇内部元件"
+  },
+  "28203": {
+    "en": "Kholusian Miscellany",
+    "de": "Kholusische Spezialität",
+    "ja": "コルシア島特産品",
+    "fr": "Spécialités de Kholusia",
+    "tw": "珂露西亞島特產",
+    "zh": "珂露西亚岛特产"
+  },
+  "28716": {
+    "en": "Sandalwood Sap",
+    "de": "Sandelharz",
+    "ja": "サンダルウッド樹液",
+    "fr": "Sève de bois de santal",
+    "tw": "檀香木樹液",
+    "zh": "檀香木树液"
+  },
+  "28717": {
+    "en": "Beryllium Ore",
+    "de": "Beryllium-Klumpen",
+    "ja": "ベリリウム鉱",
+    "fr": "Minerai de béryllium",
+    "tw": "輕鈹礦",
+    "zh": "轻铍矿"
+  },
+  "29968": {
+    "en": "Fireheart Cobalt",
+    "de": "Kobaltsulfiderz",
+    "ja": "輝コバルト鉱",
+    "fr": "Minerai de cobaltite",
+    "tw": "輝鈷鐵礦",
+    "zh": "辉钴铁矿"
+  },
+  "29970": {
+    "en": "Purpure Shell Chip",
+    "de": "Purpur-Muschelsplitter",
+    "ja": "プルプラシェルチップ",
+    "fr": "Éclat de perle purpurine",
+    "tw": "尊紫碎塊",
+    "zh": "尊紫碎块"
+  },
+  "29972": {
+    "en": "Merbau Log",
+    "de": "Merbauholzscheit",
+    "ja": "メルバウ原木",
+    "fr": "Rondin d'intsia bijuga",
+    "tw": "印茄原木",
+    "zh": "印茄原木"
+  },
+  "29974": {
+    "en": "Duskblooms",
+    "de": "Steinsamenwurzel",
+    "ja": "紫根",
+    "fr": "Grémil",
+    "tw": "紫草",
+    "zh": "紫草"
+  },
+  "29976": {
+    "en": "Ashen Alumen",
+    "de": "Asch-Alaun",
+    "ja": "アッシュアルメン",
+    "fr": "Alun cendré",
+    "tw": "灰明礬",
+    "zh": "灰明矾"
+  },
+  "29978": {
+    "en": "Imperial Fern",
+    "de": "Kaiserfarn",
+    "ja": "レガリスゼンマイ",
+    "fr": "Osmonde royale",
+    "tw": "帝王蕨菜",
+    "zh": "帝王蕨菜"
+  },
+  "30485": {
+    "en": "Tender Dill",
+    "de": "Milder Nebeldill",
+    "ja": "テンダーイノンド",
+    "fr": "Aneth souple",
+    "tw": "柔嫩茴香",
+    "zh": "柔嫩茴香"
+  },
+  "30486": {
+    "en": "Brashgold Ore",
+    "de": "Goldzinn",
+    "ja": "金錫鉱",
+    "fr": "Minerai d'étain argenté",
+    "tw": "金錫礦",
+    "zh": "金锡矿"
+  },
+  "30498": {
+    "en": "Gathering Tool Paraphernalia",
+    "de": "Material für ein Sammlerwerkzeug",
+    "ja": "採集道具素材",
+    "fr": "Matériaux d'outils de récolte pour dragon",
+    "tw": "採集工具的素材",
+    "zh": "采集工具的素材"
+  },
+  "30499": {
+    "en": "Weaving Paraphernalia",
+    "de": "Material für ein Weberwerkzeug",
+    "ja": "裁縫用具素材",
+    "fr": "Matériaux d'ustensiles de couture pour dragon",
+    "tw": "縫紉工具的素材",
+    "zh": "缝纫工具的素材"
+  },
+  "30500": {
+    "en": "Crafting Tool Paraphernalia",
+    "de": "Material für ein Handwerkerwerkzeug",
+    "ja": "職人道具素材",
+    "fr": "Matériaux d'outils d'artisanat pour dragon",
+    "tw": "工匠工具組件的素材",
+    "zh": "工匠工具部件的素材"
+  },
+  "30501": {
+    "en": "Handpicked Ingredients",
+    "de": "Handverlesene Zutaten",
+    "ja": "おもてなし料理素材",
+    "fr": "Ingrédients de sandwichs pour dragon",
+    "tw": "招待菜餚的素材",
+    "zh": "招待菜肴的素材"
+  },
+  "30502": {
+    "en": "Printing Paraphernalia",
+    "de": "Druckmaterialien",
+    "ja": "印刷必需品素材",
+    "fr": "Matériaux d'imprimerie",
+    "tw": "印刷必需品的素材",
+    "zh": "印刷必需品的素材"
+  },
+  "30591": {
+    "en": "Thunder Rock",
+    "de": "Donnergestein",
+    "ja": "轟雷性岩",
+    "fr": "Pierre de foudre grondante",
+    "tw": "轟雷性岩",
+    "zh": "轰雷性岩"
+  },
+  "30592": {
+    "en": "Levin Mint",
+    "de": "Blitzminze",
+    "ja": "ライトニングミント",
+    "fr": "Menthe éclair",
+    "tw": "雷霆薄荷",
+    "zh": "雷霆薄荷"
+  },
+  "32950": {
+    "en": "Silver Beech Log",
+    "de": "Silberbuchen-Holzscheit",
+    "ja": "シルバービーチ原木",
+    "fr": "Rondin de hêtre argenté",
+    "tw": "銀山毛櫸原木",
+    "zh": "银山毛榉原木"
+  },
+  "32951": {
+    "en": "Dolomite",
+    "de": "Dolomitklumpen",
+    "ja": "苦灰石",
+    "fr": "Minerai de dolomite",
+    "tw": "苦灰石",
+    "zh": "苦灰石"
+  },
+  "32952": {
+    "en": "Solstice Stone",
+    "de": "Nachtsonnenkristall",
+    "ja": "白夜結晶",
+    "fr": "Cristal solsticial",
+    "tw": "白夜結晶",
+    "zh": "白夜结晶"
+  },
+  "32953": {
+    "en": "Raindrop Cotton Boll",
+    "de": "Blaubaumwollkapsel",
+    "ja": "蒼綿花",
+    "fr": "Fleur de coton de l'Azur",
+    "tw": "蒼棉花",
+    "zh": "苍棉花"
+  },
+  "32954": {
+    "en": "Wattle Petribark",
+    "de": "Hartakazienrinde",
+    "ja": "ハードワットル樹皮",
+    "fr": "Écorce d'acacia durcie",
+    "tw": "硬質金合歡樹皮",
+    "zh": "硬质金合欢树皮"
+  },
+  "32955": {
+    "en": "Hard Water",
+    "de": "Extrahartes Wasser",
+    "ja": "超硬水",
+    "fr": "Eau dure",
+    "tw": "超硬水",
+    "zh": "超硬水"
+  },
+  "33147": {
+    "en": "Humic Soil",
+    "de": "Humus-Erde",
+    "ja": "腐植土",
+    "fr": "Humus",
+    "tw": "腐殖土",
+    "zh": "腐殖土"
+  },
+  "33148": {
+    "en": "Pot Marjoram",
+    "de": "Östlicher Oregano",
+    "ja": "ポットマジョラム",
+    "fr": "Marjolaine potagère",
+    "tw": "盆栽墨角蘭",
+    "zh": "盆栽墨角兰"
+  },
+  "33149": {
+    "en": "Water Mint",
+    "de": "Wasserminze",
+    "ja": "ウォーターミント",
+    "fr": "Menthe aquatique",
+    "tw": "水薄荷",
+    "zh": "水薄荷"
+  },
+  "33150": {
+    "en": "Wild Sage",
+    "de": "Wilder Salbei",
+    "ja": "ワイルドセージ",
+    "fr": "Sauge verveine",
+    "tw": "野生鼠尾草",
+    "zh": "野生鼠尾草"
+  },
+  "33151": {
+    "en": "Countess Tea Leaves",
+    "de": "Prinzessinnenteeblätter",
+    "ja": "姫茶葉",
+    "fr": "Princesse-du-thé",
+    "tw": "公主茶葉",
+    "zh": "公主茶叶"
+  },
+  "33152": {
+    "en": "Dacite",
+    "de": "Dazit",
+    "ja": "デイサイト",
+    "fr": "Dacite",
+    "tw": "英安岩",
+    "zh": "英安岩"
+  },
+  "33153": {
+    "en": "Rhodolite",
+    "de": "Rhodolith",
+    "ja": "ロードライト",
+    "fr": "Rhodolite",
+    "tw": "玫瑰榴石",
+    "zh": "玫瑰榴石"
+  },
+  "33229": {
+    "en": "Patient Necessity Materials",
+    "de": "Materialien für alltägliche Bedarfsgüter",
+    "ja": "日用品の素材",
+    "fr": "Composants d'articles du quotidien",
+    "tw": "日用品的素材",
+    "zh": "日用品的素材"
+  },
+  "33230": {
+    "en": "Medical Supply Materials",
+    "de": "Materialien für medizinische Versorgungsgüter",
+    "ja": "医療品の素材",
+    "fr": "Composants de matériel médical",
+    "tw": "醫療用品的素材",
+    "zh": "医疗用品的素材"
+  },
+  "33231": {
+    "en": "Rehabilitation Aid Materials",
+    "de": "Materialien für Rehabilitations-Hilfsmittel",
+    "ja": "機能回復訓練用品の素材",
+    "fr": "Composants de matériel de rééducation",
+    "tw": "康復訓練用品的素材",
+    "zh": "康复训练用品的素材"
+  },
+  "33232": {
+    "en": "High Tea Ingredients",
+    "de": "Materialien für Teestunden-Utensilien",
+    "ja": "茶会用品の素材",
+    "fr": "Composants d'articles de goûter dînatoire",
+    "tw": "茶會用品的素材",
+    "zh": "茶会用品的素材"
+  },
+  "33233": {
+    "en": "Art Supply Materials",
+    "de": "Materialien für Künstlerbedarf",
+    "ja": "絵画道具の素材",
+    "fr": "Composants de matériel créatif",
+    "tw": "繪畫道具的素材",
+    "zh": "绘画道具的素材"
+  },
+  "35600": {
+    "en": "Hannish Staple",
+    "de": "Erzeugnis aus Radz-at-Han",
+    "ja": "ラザハン文化の必需品",
+    "fr": "Élément nécessaire à la reproduction de la culture de Radz-at-Han",
+    "tw": "拉札漢文化研究的必需品",
+    "zh": "拉札罕文化研究的必需品"
+  },
+  "35601": {
+    "en": "Garlean Staple",
+    "de": "Erzeugnis aus Garlemald",
+    "ja": "ガレマール文化の必需品",
+    "fr": "Élément nécessaire à la reproduction de la culture de Garlemald",
+    "tw": "加雷馬文化研究的必需品",
+    "zh": "加雷马文化研究的必需品"
+  },
+  "35602": {
+    "en": "Lunar Staple",
+    "de": "Erzeugnis vom Mond",
+    "ja": "極限文化の必需品",
+    "fr": "Élément nécessaire à la reproduction d'une culture hors du commun",
+    "tw": "極端環境文化研究的必需品",
+    "zh": "极端环境文化研究的必需品"
+  },
+  "35603": {
+    "en": "Elpis Staple",
+    "de": "Erzeugnis aus Elpis",
+    "ja": "古代文化の必需品",
+    "fr": "Élément nécessaire à la reproduction d'une culture ancienne",
+    "tw": "古代文化研究的必需品",
+    "zh": "古代文化研究的必需品"
+  },
+  "36083": {
+    "en": "Dark Rye",
+    "de": "Schwarzkorn",
+    "ja": "黒麦",
+    "fr": "Seigle noir",
+    "tw": "裸麥",
+    "zh": "裸麦"
+  },
+  "36084": {
+    "en": "Sharlayan Rock Salt",
+    "de": "Nordsteinsalz",
+    "ja": "北洋岩塩",
+    "fr": "Sel gemme des mers du Nord",
+    "tw": "北洋岩鹽",
+    "zh": "北洋岩盐"
+  },
+  "36085": {
+    "en": "Thavnairian Perilla Leaf",
+    "de": "Thavnair-Perilla",
+    "ja": "サベネアンペリラ",
+    "fr": "Périlla thavnairoise",
+    "tw": "薩維奈紫蘇",
+    "zh": "萨维奈紫苏"
+  },
+  "36086": {
+    "en": "Palm Syrup",
+    "de": "Palmsirup",
+    "ja": "パームシロップ",
+    "fr": "Sirop de palme",
+    "tw": "棕櫚糖漿",
+    "zh": "棕榈糖浆"
+  },
+  "36087": {
+    "en": "Coconut",
+    "de": "Kokosnuss",
+    "ja": "ココナッツ",
+    "fr": "Noix de coco",
+    "tw": "椰子",
+    "zh": "椰子"
+  },
+  "36088": {
+    "en": "Iceberg Lettuce",
+    "de": "Eisbergsalat",
+    "ja": "アイスバーグレタス",
+    "fr": "Laitue iceberg",
+    "tw": "冰山萵苣",
+    "zh": "冰山莴苣"
+  },
+  "36089": {
+    "en": "Giant Popoto",
+    "de": "Riesentoffel",
+    "ja": "ジャイアントポポト",
+    "fr": "Popoto géante",
+    "tw": "巨人新薯",
+    "zh": "巨人新薯"
+  },
+  "36090": {
+    "en": "Carrot of Happiness",
+    "de": "Glückskarotte",
+    "ja": "ハピネスキャロット",
+    "fr": "Carotte du bonheur",
+    "tw": "開心胡蘿蔔",
+    "zh": "开心胡萝卜"
+  },
+  "36091": {
+    "en": "Cucumber",
+    "de": "Gurke",
+    "ja": "キューカンバー",
+    "fr": "Concombre",
+    "tw": "黃瓜",
+    "zh": "黄瓜"
+  },
+  "36092": {
+    "en": "Eblan Lentils",
+    "de": "Eblan-Linse",
+    "ja": "エブラーナレンティル",
+    "fr": "Lentilles d'Éblana",
+    "tw": "艾布拉納小扁豆",
+    "zh": "艾布拉纳小扁豆"
+  },
+  "36093": {
+    "en": "Beet",
+    "de": "Rote Bete",
+    "ja": "ビーツ",
+    "fr": "Betterave",
+    "tw": "紅菜",
+    "zh": "红菜"
+  },
+  "36094": {
+    "en": "Sideritis Leaves",
+    "de": "Sideritis-Teeblätter",
+    "ja": "シデリティス茶葉",
+    "fr": "Feuilles de sidéritis",
+    "tw": "高山茶葉",
+    "zh": "高山茶叶"
+  },
+  "36095": {
+    "en": "Elder Nutmeg Seeds",
+    "de": "Großmuskatnuss",
+    "ja": "エルダーナツメグ",
+    "fr": "Muscade de l'ancien temps",
+    "tw": "古代肉豆蔻",
+    "zh": "古代肉豆蔻"
+  },
+  "36096": {
+    "en": "Sykon",
+    "de": "Lykon-Frucht",
+    "ja": "シューコン",
+    "fr": "Sycon",
+    "tw": "無花果",
+    "zh": "无花果"
+  },
+  "36097": {
+    "en": "Alien Onion",
+    "de": "Alienzwiebel",
+    "ja": "エイリアンオニオン",
+    "fr": "Oignon extraterrestre",
+    "tw": "星外洋蔥",
+    "zh": "星外洋葱"
+  },
+  "36098": {
+    "en": "Thavnairian Paprika",
+    "de": "Thavnair-Paprikaschote",
+    "ja": "サベネアンパプリカ",
+    "fr": "Poivron de Thavnair",
+    "tw": "薩維奈彩椒",
+    "zh": "萨维奈彩椒"
+  },
+  "36162": {
+    "en": "High Durium Sand",
+    "de": "Edelduriumsand",
+    "ja": "輝翠銀砂",
+    "fr": "Sable de durium noble",
+    "tw": "輝翠銀沙",
+    "zh": "辉翠银沙"
+  },
+  "36163": {
+    "en": "High Durium Ore",
+    "de": "Edelduriumerz",
+    "ja": "輝翠銀鉱",
+    "fr": "Minerai de durium noble",
+    "tw": "輝翠銀礦",
+    "zh": "辉翠银矿"
+  },
+  "36164": {
+    "en": "Bismuth Ore",
+    "de": "Bismuterz",
+    "ja": "蒼鉛鉱",
+    "fr": "Minerai de bismuth",
+    "tw": "鉍礦",
+    "zh": "铋矿"
+  },
+  "36165": {
+    "en": "Manganese Ore",
+    "de": "Manganerz",
+    "ja": "満俺鉱",
+    "fr": "Minerai de manganèse",
+    "tw": "錳礦",
+    "zh": "锰矿"
+  },
+  "36166": {
+    "en": "Chondrite",
+    "de": "Chondrit",
+    "ja": "コンドライト",
+    "fr": "Chondrite",
+    "tw": "球粒隕石",
+    "zh": "球粒陨石"
+  },
+  "36167": {
+    "en": "Lunar Adamantite Ore",
+    "de": "Lunares Adamantit-Erz",
+    "ja": "ルナアダマン鉱",
+    "fr": "Minerai d'adamantium sélénien",
+    "tw": "月堅鋼礦",
+    "zh": "月精金矿"
+  },
+  "36174": {
+    "en": "Raw Ametrine",
+    "de": "Roh-Ametrin",
+    "ja": "アメトリン原石",
+    "fr": "Amétrine brute",
+    "tw": "紫黃晶原石",
+    "zh": "紫黄晶原石"
+  },
+  "36175": {
+    "en": "Pewter Ore",
+    "de": "Hartzinnklumpen",
+    "ja": "白目鉱",
+    "fr": "Minerai de plomb-étain",
+    "tw": "白鑞礦",
+    "zh": "白镴矿"
+  },
+  "36176": {
+    "en": "Phrygian Gold Ore",
+    "de": "Phrygien-Goldklumpen",
+    "ja": "フリギアンゴールド鉱",
+    "fr": "Minerai d'or phrygien",
+    "tw": "弗里金礦",
+    "zh": "弗里金矿"
+  },
+  "36177": {
+    "en": "Raw Blue Zircon",
+    "de": "Roh-Blauzirkon",
+    "ja": "ブルージルコン原石",
+    "fr": "Zircon bleu brut",
+    "tw": "藍鋯石原石",
+    "zh": "蓝锆石原石"
+  },
+  "36178": {
+    "en": "Raw Star Quartz",
+    "de": "Roh-Sternenquarz",
+    "ja": "スタークォーツ原石",
+    "fr": "Quartz étoilé brut",
+    "tw": "星點石英原石",
+    "zh": "星点石英原石"
+  },
+  "36179": {
+    "en": "Rhodium Sand",
+    "de": "Rhodiumsand",
+    "ja": "ロジウム砂",
+    "fr": "Sable de rhodium",
+    "tw": "銠金沙",
+    "zh": "铑金沙"
+  },
+  "36180": {
+    "en": "Chloroschist",
+    "de": "Grünschieferklumpen",
+    "ja": "緑色片岩",
+    "fr": "Schiste vert",
+    "tw": "綠片岩",
+    "zh": "绿片岩"
+  },
+  "36181": {
+    "en": "Annite",
+    "de": "Glimmereisen",
+    "ja": "鉄雲母",
+    "fr": "Annite",
+    "tw": "鐵雲母",
+    "zh": "铁云母"
+  },
+  "36190": {
+    "en": "Horse Chestnut Log",
+    "de": "Rosskastanien-Holzscheit",
+    "ja": "ホースチェスナット原木",
+    "fr": "Rondin de châtaignier des chevaux",
+    "tw": "馬栗木原木",
+    "zh": "马栗木原木"
+  },
+  "36191": {
+    "en": "Palm Log",
+    "de": "Palmenholzscheit",
+    "ja": "パーム原木",
+    "fr": "Rondin de palmier",
+    "tw": "棕櫚原木",
+    "zh": "棕榈原木"
+  },
+  "36192": {
+    "en": "Red Pine Log",
+    "de": "Rotkiefer-Holzscheit",
+    "ja": "レッドパイン原木",
+    "fr": "Rondin de pin sylvestre",
+    "tw": "紅松原木",
+    "zh": "红松原木"
+  },
+  "36193": {
+    "en": "Ironwood Log",
+    "de": "Eisenholzscheit",
+    "ja": "アイアンウッド原木",
+    "fr": "Rondin de bois de fer",
+    "tw": "鐵木原木",
+    "zh": "铁木原木"
+  },
+  "36194": {
+    "en": "Integral Log",
+    "de": "Integrales Holzscheit",
+    "ja": "インテグラル原木",
+    "fr": "Rondin d'arbre intégral",
+    "tw": "完滿木原木",
+    "zh": "完满木原木"
+  },
+  "36195": {
+    "en": "Mempisang Log",
+    "de": "Mempisang-Holzscheit",
+    "ja": "メンピサン原木",
+    "fr": "Rondin de mempisang",
+    "tw": "藤春木原木",
+    "zh": "藤春木原木"
+  },
+  "36202": {
+    "en": "Dark Hemp",
+    "de": "Dunkelhanf",
+    "ja": "黒麻",
+    "fr": "Mûrier à papier",
+    "tw": "黑麻",
+    "zh": "黑麻"
+  },
+  "36204": {
+    "en": "Snow Flax",
+    "de": "Schneeflachs",
+    "ja": "雪亜麻",
+    "fr": "Lin boréal",
+    "tw": "雪亞麻",
+    "zh": "雪亚麻"
+  },
+  "36205": {
+    "en": "Scarlet Moko Grass",
+    "de": "Scharlachmokogras",
+    "ja": "紅モコ草",
+    "fr": "Touffe d'herbe de moko vermillon",
+    "tw": "絳紅莫柯草",
+    "zh": "绛红莫柯草"
+  },
+  "36206": {
+    "en": "AR-Caean Cotton Boll",
+    "de": "Caean-Samenkapsel",
+    "ja": "カエアン綿",
+    "fr": "Fleur de coton de Caean",
+    "tw": "迷彩棉",
+    "zh": "迷彩棉"
+  },
+  "36207": {
+    "en": "Golden Cocoon",
+    "de": "Goldkokon",
+    "ja": "金マユ",
+    "fr": "Cocon doré",
+    "tw": "金繭",
+    "zh": "金茧"
+  },
+  "36214": {
+    "en": "Potent Spice",
+    "de": "Natürliche Gewürze",
+    "ja": "天然香辛料",
+    "fr": "Épices naturelles",
+    "tw": "天然香料",
+    "zh": "天然香料"
+  },
+  "36215": {
+    "en": "Stonehard Water",
+    "de": "Superhartes Quellwasser",
+    "ja": "極硬水",
+    "fr": "Eau extrêmement dure",
+    "tw": "極硬水",
+    "zh": "极硬水"
+  },
+  "36216": {
+    "en": "Rime Dolomite",
+    "de": "Nordilsabarder Dolomitklumpen",
+    "ja": "北州苦灰石",
+    "fr": "Minerai de dolomite boréale",
+    "tw": "北洲苦灰石",
+    "zh": "北洲苦灰石"
+  },
+  "36217": {
+    "en": "Double-edged Herb",
+    "de": "Verlaufdichnicht",
+    "ja": "迷い草",
+    "fr": "Feuille d'égarante",
+    "tw": "迷途草",
+    "zh": "迷途草"
+  },
+  "36241": {
+    "en": "Eblan Alumen",
+    "de": "Eblan-Alaun",
+    "ja": "エブラーナアルメン",
+    "fr": "Alun d'Éblana",
+    "tw": "艾布拉納明礬",
+    "zh": "艾布拉纳明矾"
+  },
+  "36263": {
+    "en": "Ambrosial Water",
+    "de": "Regenwasser",
+    "ja": "天水",
+    "fr": "Eau céleste",
+    "tw": "天水",
+    "zh": "天水"
+  },
+  "36285": {
+    "en": "Lunar Quartz",
+    "de": "Mondquarz",
+    "ja": "ルナクォーツ",
+    "fr": "Quartz lunaire",
+    "tw": "月石英",
+    "zh": "月石英"
+  },
+  "36286": {
+    "en": "Ghostly Umbral Rock",
+    "de": " Schwarzschattenfels",
+    "ja": "闇性岩",
+    "fr": "Pierre de Ténèbres",
+    "tw": "暗性岩",
+    "zh": "暗性岩"
+  },
+  "36287": {
+    "en": "Ewer Clay",
+    "de": "Krugeslehm",
+    "ja": "水瓶土",
+    "fr": "Argile de l'Érudit",
+    "tw": "水瓶土",
+    "zh": "水瓶土"
+  },
+  "36288": {
+    "en": "Palm Chippings",
+    "de": "Palmenrinde",
+    "ja": "パームチップ",
+    "fr": "Écorce de palmier",
+    "tw": "棕櫚碎皮",
+    "zh": "棕榈碎皮"
+  },
+  "36598": {
+    "en": "Tome of Geological Folklore - Ilsabard and the Northern Empty",
+    "de": "Nordmeerbergbau-Almanach",
+    "ja": "鉱物伝承録:北洋地域・イルサバード",
+    "fr": "Légendes géologiques des mers du Nord et d'Ilsabard",
+    "tw": "礦物傳承錄·北洋地域&伊爾薩巴德篇",
+    "zh": "矿物传承录·北洋地域&伊尔萨巴德篇"
+  },
+  "36600": {
+    "en": "Tome of Geological Folklore - The Sea of Stars",
+    "de": "Kosmischer Bergbau-Almanach",
+    "ja": "鉱物伝承録:星外宙域",
+    "fr": "Légendes géologiques de l'espace intersidéral",
+    "tw": "礦物傳承錄·星外天域篇",
+    "zh": "矿物传承录·星外天域篇"
+  },
+  "36601": {
+    "en": "Tome of Geological Folklore - The World Unsundered",
+    "de": "Unzersplitterter Bergbau-Almanach",
+    "ja": "鉱物伝承録:古代世界",
+    "fr": "Légendes géologiques de l'ancien monde",
+    "tw": "礦物傳承錄·古代世界篇",
+    "zh": "矿物传承录·古代世界篇"
+  },
+  "36602": {
+    "en": "Tome of Botanical Folklore - Ilsabard and the Northern Empty",
+    "de": "Nordmeerbotanik-Almanach",
+    "ja": "草木伝承録:北洋地域・イルサバード",
+    "fr": "Légendes botaniques des mers du Nord et d'Ilsabard",
+    "tw": "草木傳承錄·北洋地域&伊爾薩巴德篇",
+    "zh": "草木传承录·北洋地域&伊尔萨巴德篇"
+  },
+  "36604": {
+    "en": "Tome of Botanical Folklore - The Sea of Stars",
+    "de": "Kosmischer Botanik-Almanach",
+    "ja": "草木伝承録:星外宙域",
+    "fr": "Légendes botaniques de l'espace intersidéral",
+    "tw": "草木傳承錄·星外天域篇",
+    "zh": "草木传承录·星外天域篇"
+  },
+  "36605": {
+    "en": "Tome of Botanical Folklore - The World Unsundered",
+    "de": "Unzersplitterter Botanik-Almanach",
+    "ja": "草木伝承録:古代世界",
+    "fr": "Légendes botaniques de l'ancien monde",
+    "tw": "草木傳承錄·古代世界篇",
+    "zh": "草木传承录·古代世界篇"
+  },
+  "36669": {
+    "en": "Aetheroconductive Feather",
+    "de": "Feder für ein akademisches Schreibset",
+    "ja": "留学生用筆記具の素材",
+    "fr": "Composants de matériel d'écriture scolaire",
+    "tw": "留學生用文具的素材",
+    "zh": "留学生用文具的素材"
+  },
+  "36670": {
+    "en": "Aetheroconductive Focus Materials",
+    "de": "Katalysator für akademisches Magie-Rüstzeug",
+    "ja": "留学生用魔器の素材",
+    "fr": "Composants de fournitures scolaires magiques",
+    "tw": "留學生用魔器的素材",
+    "zh": "留学生用魔器的素材"
+  },
+  "36671": {
+    "en": "Luncheon Coffer Materials",
+    "de": "Rohstoff für eine Ätherothermosdose",
+    "ja": "ランチボックスの素材",
+    "fr": "Composants pour boîte à déjeuner magique",
+    "tw": "餐盒的素材",
+    "zh": "餐盒的素材"
+  },
+  "36672": {
+    "en": "Aetheroconductive Mammet Materials",
+    "de": "Öl für eine Ätherionette",
+    "ja": "特訓用魔法人形の素材",
+    "fr": "Composants pour poupée d'entraînement magique",
+    "tw": "特訓用魔法人偶的素材",
+    "zh": "特训用魔法人偶的素材"
+  },
+  "36673": {
+    "en": "School Supply Materials",
+    "de": "Rohstoffe für akademische Ausstattung",
+    "ja": "学習支援用支給品の素材",
+    "fr": "Composants d'affaires de soutien scolaire",
+    "tw": "輔助學習用品的素材",
+    "zh": "辅助学习用品的素材"
+  },
+  "37278": {
+    "en": "Thavnairian Corn",
+    "de": "Thavnair-Maiskolben",
+    "ja": "サベネアンコーン",
+    "fr": "Épi de maïs thavnairois",
+    "tw": "薩維奈玉米",
+    "zh": "萨维奈玉米"
+  },
+  "37279": {
+    "en": "Raw Eblan Danburite",
+    "de": "Roh-Eblan-Danburit",
+    "ja": "エブラーナダンビュライト原石",
+    "fr": "Danburite brute d'Éblana",
+    "tw": "艾布拉納賽黃晶原石",
+    "zh": "艾布拉纳赛黄晶原石"
+  },
+  "37691": {
+    "en": "Prime Crystalbloom",
+    "de": "Flüchtige Kristallblume",
+    "ja": "不定性結晶花",
+    "fr": "Cristofleur volatile",
+    "tw": "不定性結晶花",
+    "zh": "不定性结晶花"
+  },
+  "37692": {
+    "en": "Sublime Crystalbloom",
+    "de": "Erhabene Kristallblume",
+    "ja": "昇華結晶花",
+    "fr": "Cristofleur sublimée",
+    "tw": "昇華結晶花",
+    "zh": "升华结晶花"
+  },
+  "37694": {
+    "en": "Prime Siderite",
+    "de": "Flüchtiger Eisenmeteorbrocken",
+    "ja": "不定性鉄隕石",
+    "fr": "Sidérite volatile",
+    "tw": "不定性鐵隕石",
+    "zh": "不定性铁陨石"
+  },
+  "37695": {
+    "en": "Sublime Siderite",
+    "de": "Erhabener Eisenmeteorbrocken",
+    "ja": "昇華鉄隕石",
+    "fr": "Sidérite sublimée",
+    "tw": "昇華鐵隕石",
+    "zh": "升华铁陨石"
+  },
+  "37817": {
+    "en": "Raw Rutilated Quartz",
+    "de": "Roh-Rutilquarz",
+    "ja": "ルチルクォーツ原石",
+    "fr": "Quartz rutile brut",
+    "tw": "發晶原石",
+    "zh": "发晶原石"
+  },
+  "37818": {
+    "en": "Paldao Log",
+    "de": "Paldao-Holzscheit",
+    "ja": "パルダオ原木",
+    "fr": "Rondin de paldao",
+    "tw": "仁面木原木",
+    "zh": "仁面木原木"
+  },
+  "37819": {
+    "en": "Haritaki",
+    "de": "Haritaki",
+    "ja": "ミロバラン",
+    "fr": "Haritaki",
+    "tw": "訶子",
+    "zh": "诃子"
+  },
+  "37820": {
+    "en": "Ilmenite",
+    "de": "Ilmenit",
+    "ja": "イルメナイト",
+    "fr": "Ilménite",
+    "tw": "鈦鐵礦",
+    "zh": "钛铁矿"
+  },
+  "37821": {
+    "en": "Bayberry",
+    "de": "Myrica-Zweig",
+    "ja": "渋木",
+    "fr": "Myrica",
+    "tw": "楊梅",
+    "zh": "杨梅"
+  },
+  "37822": {
+    "en": "Ash Diatomite",
+    "de": "Asch-Diatomit",
+    "ja": "灰緑珪藻土",
+    "fr": "Poudre de diatomite",
+    "tw": "灰綠矽藻土",
+    "zh": "灰绿硅藻土"
+  },
+  "38820": {
+    "en": "Raw Sheep Fodder",
+    "de": "Schaffutter",
+    "ja": "羊向け飼料の素材",
+    "fr": "Pâture pour mouton",
+    "tw": "羊飼料的素材",
+    "zh": "羊饲料的素材"
+  },
+  "38821": {
+    "en": "Combustible Fuel",
+    "de": "Holzkohle",
+    "ja": "山岳部の防寒用の燃料",
+    "fr": "Charbon",
+    "tw": "山岳防寒燃料",
+    "zh": "山岳防寒燃料"
+  },
+  "38822": {
+    "en": "Natural Ingredients",
+    "de": "Frisches Quellwasser",
+    "ja": "フッブート風の郷土料理の素材",
+    "fr": "Ingrédient de plat de Voeburt",
+    "tw": "孚布特風土美食的素材",
+    "zh": "孚布特风土美食的素材"
+  },
+  "38823": {
+    "en": "Crafters' Supplies",
+    "de": "Rohstoff für voeburtisches Kunsthandwerk",
+    "ja": "フッブート風の工芸品の素材",
+    "fr": "Matériau de mouton fait-main",
+    "tw": "孚布特樣式工藝品的素材",
+    "zh": "孚布特样式工艺品的素材"
+  },
+  "38824": {
+    "en": "Lovely Knickknacks",
+    "de": "Goldenes Schächtelchen",
+    "ja": "かわいらしい返礼品の素材",
+    "fr": "Matériau de boîte de jolis cadeaux",
+    "tw": "可愛的禮物的素材",
+    "zh": "可爱的礼物的素材"
+  },
+  "38933": {
+    "en": "Mornveil Tree Bark",
+    "de": "Morgennebel-Rinde",
+    "ja": "朝霧の樹皮",
+    "fr": "Écorce de brume matinale",
+    "tw": "晨霧樹皮",
+    "zh": "晨雾树皮"
+  },
+  "38934": {
+    "en": "Raw Zoisite",
+    "de": "Roh-Zoisit",
+    "ja": "ゾイサイト原石",
+    "fr": "Zoïsite brute",
+    "tw": "黝簾石原石",
+    "zh": "黝帘石原石"
+  },
+  "38937": {
+    "en": "Earthen Quartz",
+    "de": "Erdquarz",
+    "ja": "アースクォーツ",
+    "fr": "Quartz terrestre",
+    "tw": "土之石英",
+    "zh": "土之石英"
+  },
+  "38938": {
+    "en": "Sophora Roots",
+    "de": "Sophora-Wurzel",
+    "ja": "苦参",
+    "fr": "Sophora",
+    "tw": "苦參",
+    "zh": "苦参"
+  },
+  "39234": {
+    "en": "Prime Sphongos",
+    "de": "Flüchtiger Sphongos",
+    "ja": "不定性スポンゴス茸",
+    "fr": "Morille conique volatile",
+    "tw": "不定性海綿菇",
+    "zh": "不定性海绵菇"
+  },
+  "39235": {
+    "en": "Sublime Sphongos",
+    "de": "Erhabener Sphongos",
+    "ja": "昇華スポンゴス茸",
+    "fr": "Morille conique sublimée",
+    "tw": "昇華海綿菇",
+    "zh": "升华海绵菇"
+  },
+  "39237": {
+    "en": "Prime Achondrite",
+    "de": "Flüchtiger Achondrit",
+    "ja": "不定性エイコンドライト",
+    "fr": "Achondrite volatile",
+    "tw": "不定性無粒隕石",
+    "zh": "不定性无粒陨石"
+  },
+  "39238": {
+    "en": "Sublime Achondrite",
+    "de": "Erhabener Achondrit",
+    "ja": "昇華エイコンドライト",
+    "fr": "Achondrite sublimée",
+    "tw": "昇華無粒隕石",
+    "zh": "升华无粒陨石"
+  },
+  "39705": {
+    "en": "Dark Cherry Log",
+    "de": "Traubenkirsch-Holzscheit",
+    "ja": "ブラックチェリー原木",
+    "fr": "Rondin de cerisier noir",
+    "tw": "暗櫻原木",
+    "zh": "暗樱原木"
+  },
+  "39706": {
+    "en": "Softsilver Ore",
+    "de": "Weichsilber-Erzklumpen",
+    "ja": "軟銀鉱",
+    "fr": "Minerai d'argent ductile",
+    "tw": "軟銀礦",
+    "zh": "软银矿"
+  },
+  "39707": {
+    "en": "Raw Spodumene",
+    "de": "Roh-Spodumen",
+    "ja": "スポジュメン原石",
+    "fr": "Spodumène brut",
+    "tw": "紫鋰輝石原石",
+    "zh": "紫锂辉石原石"
+  },
+  "39708": {
+    "en": "Maghemite",
+    "de": "Maghemit-Erzklumpen",
+    "ja": "マグヘマイト",
+    "fr": "Maghémite",
+    "tw": "磁赤鐵礦",
+    "zh": "磁赤铁矿"
+  },
+  "39709": {
+    "en": "Field Mustard",
+    "de": "Ölrübsen",
+    "ja": "アブラナ",
+    "fr": "Navette",
+    "tw": "油菜花",
+    "zh": "油菜花"
+  },
+  "39710": {
+    "en": "Lovingbloom",
+    "de": "Loving-Blume",
+    "ja": "ラヴィングフラワー",
+    "fr": "Bourgeon d'amour",
+    "tw": "愛情花",
+    "zh": "爱情花"
+  },
+  "39906": {
+    "en": "Prime Haritaki",
+    "de": "Flüchtige Haritaki-Blätter",
+    "ja": "不定性ミロバランリーフ",
+    "fr": "Feuille de myrobolan volatile",
+    "tw": "不定性訶子葉",
+    "zh": "不定性诃子叶"
+  },
+  "39907": {
+    "en": "Sublime Haritaki",
+    "de": "Erhabene Haritaki-Blätter",
+    "ja": "昇華ミロバランリーフ",
+    "fr": "Feuille de myrobolan sublimée",
+    "tw": "昇華訶子葉",
+    "zh": "升华诃子叶"
+  },
+  "39909": {
+    "en": "Prime Chloroschist",
+    "de": "Flüchtiger Grünschieferklumpen",
+    "ja": "不定性緑色片岩",
+    "fr": "Schiste vert volatil",
+    "tw": "不定性綠片岩",
+    "zh": "不定性绿片岩"
+  },
+  "39910": {
+    "en": "Sublime Chloroschist",
+    "de": "Erhabener Grünschieferklumpen",
+    "ja": "昇華緑色片岩",
+    "fr": "Schiste vert sublimé",
+    "tw": "昇華綠片岩",
+    "zh": "升华绿片岩"
+  },
+  "41068": {
+    "en": "Cushion Care Package Materials",
+    "de": "Material für ein Rückenfreude-Kissenset",
+    "ja": "腰痛改善必需品素材",
+    "fr": "Matériau pour amélioration de confort d'assise",
+    "tw": "緩解腰痛必需品的素材",
+    "zh": "缓解腰痛必需品的素材"
+  },
+  "41069": {
+    "en": "Feline Fascinators",
+    "de": "Katzenfreude-Dufthölzer",
+    "ja": "猫さんメロメロ大好物",
+    "fr": "Friandise pour bien-être félin",
+    "tw": "魅惑貓咪必需品的素材",
+    "zh": "魅惑猫咪必需品的素材"
+  },
+  "41070": {
+    "en": "Mesmerizing Miniature Materials",
+    "de": "Material für ein faszinierendes Figürchen",
+    "ja": "立体造形物素材",
+    "fr": "Élément pour réplique de monstre saisissante",
+    "tw": "立體模型的素材",
+    "zh": "立体模型的素材"
+  },
+  "41071": {
+    "en": "Energizing Eye-lixir Materials",
+    "de": "Material für ein Augenfreude-Elixir",
+    "ja": "疲れ目対策必需品素材",
+    "fr": "Élément pour remède oculaire miracle",
+    "tw": "應對眼疲勞必需品的素材",
+    "zh": "应对眼疲劳必需品的素材"
+  },
+  "41072": {
+    "en": "Researcher's Relaxation Kit Materials",
+    "de": "Material für ein Forscherpausen-Set",
+    "ja": "休憩必需品素材",
+    "fr": "Matériau pour kit de détente et de relaxation",
+    "tw": "休息必需品的素材",
+    "zh": "休息必需品的素材"
+  },
+  "41413": {
+    "en": "Prime Kukuru Beans",
+    "de": "Flüchtige Kukuru-Bohnen",
+    "ja": "不定性ククルビーン",
+    "fr": "Fève kukuru volatile",
+    "tw": "不定性可可豆",
+    "zh": "不定性可可豆"
+  },
+  "41414": {
+    "en": "Sublime Kukuru Beans",
+    "de": "Erhabene Kukuru-Bohnen",
+    "ja": "昇華ククルビーン",
+    "fr": "Fève kukuru sublimée",
+    "tw": "昇華可可豆",
+    "zh": "升华可可豆"
+  },
+  "41416": {
+    "en": "Prime Fossilized Dragon's Scale",
+    "de": "Flüchtige antike Drachenschuppe",
+    "ja": "不定性古竜の鱗",
+    "fr": "Écaille de dragon ancien volatile",
+    "tw": "不定性古龍鱗",
+    "zh": "不定性古龙鳞"
+  },
+  "41417": {
+    "en": "Sublime Fossilized Dragon's Scale",
+    "de": "Erhabene antike Drachenschuppe",
+    "ja": "昇華古竜の鱗",
+    "fr": "Écaille de dragon ancien sublimée",
+    "tw": "昇華古龍鱗",
+    "zh": "升华古龙鳞"
+  },
+  "43878": {
+    "en": "Tome of Geological Folklore - Yok Tural",
+    "de": "Yok-turalischer Bergbau-Almanach",
+    "ja": "鉱物伝承録:ヨカ・トラル",
+    "fr": "Légendes géologiques du Yok Tural",
+    "tw": "礦物傳承錄·尤卡圖拉爾篇",
+    "zh": "矿物传承录·尤卡图拉尔篇"
+  },
+  "43879": {
+    "en": "Tome of Geological Folklore - Xak Tural",
+    "de": "Xak-turalischer Bergbau-Almanach",
+    "ja": "鉱物伝承録:サカ・トラル",
+    "fr": "Légendes géologiques du Xak Tural",
+    "tw": "礦物傳承錄·薩卡圖拉爾篇",
+    "zh": "矿物传承录·萨卡图拉尔篇"
+  },
+  "43880": {
+    "en": "Tome of Geological Folklore - Alexandria",
+    "de": "Alexandrischer Bergbau-Almanach",
+    "ja": "鉱物伝承録:アレクサンドリア",
+    "fr": "Légendes géologiques d'Alexandrie",
+    "tw": "礦物傳承錄·亞歷山德里亞篇",
+    "zh": "矿物传承录·亚历山德里亚篇"
+  },
+  "43881": {
+    "en": "Tome of Botanical Folklore - Yok Tural",
+    "de": "Yok-turalischer Botanik-Almanach",
+    "ja": "草木伝承録:ヨカ・トラル",
+    "fr": "Légendes botaniques du Yok Tural",
+    "tw": "草木傳承錄·尤卡圖拉爾篇",
+    "zh": "草木传承录·尤卡图拉尔篇"
+  },
+  "43882": {
+    "en": "Tome of Botanical Folklore - Xak Tural",
+    "de": "Xak-turalischer Botanik-Almanach",
+    "ja": "草木伝承録:サカ・トラル",
+    "fr": "Légendes botaniques du Xak Tural",
+    "tw": "草木傳承錄·薩卡圖拉爾篇",
+    "zh": "草木传承录·萨卡图拉尔篇"
+  },
+  "43883": {
+    "en": "Tome of Botanical Folklore - Alexandria",
+    "de": "Alexandrischer Botanik-Almanach",
+    "ja": "草木伝承録:アレクサンドリア",
+    "fr": "Légendes botaniques d'Alexandrie",
+    "tw": "草木傳承錄·亞歷山德里亞篇",
+    "zh": "草木传承录·亚历山德里亚篇"
+  },
+  "43931": {
+    "en": "Electrocoal",
+    "de": "Astralquarz",
+    "ja": "黒雷岩",
+    "fr": "Roche à électrope noire",
+    "tw": "黑雷岩",
+    "zh": "黑雷岩"
+  },
+  "43932": {
+    "en": "Brightwind Ore",
+    "de": "Kopalquarz",
+    "ja": "陽風岩",
+    "fr": "Roche des vents ensoleillés",
+    "tw": "陽風岩",
+    "zh": "阳风岩"
+  },
+  "43933": {
+    "en": "Goldbranch",
+    "de": "Goldbusch",
+    "ja": "ゴールデンブッシュ",
+    "fr": "Branche d'arbuste doré",
+    "tw": "金色樹枝",
+    "zh": "金色树枝"
+  },
+  "43934": {
+    "en": "Volcanic Grass",
+    "de": "Vulkangras",
+    "ja": "ヴォルカニックグラス",
+    "fr": "Herbe volcanique",
+    "tw": "火山草",
+    "zh": "火山草"
+  },
+  "43978": {
+    "en": "Ut'ohmu Tomato",
+    "de": "Ut'ohmu-Tomate",
+    "ja": "ウトォームトマト",
+    "fr": "Tomate d'Ut'ohmu",
+    "tw": "烏托姆番茄",
+    "zh": "乌托姆番茄"
+  },
+  "43979": {
+    "en": "Royal Maple Sap",
+    "de": "Königsahornsaft",
+    "ja": "ロイヤルメープル樹液",
+    "fr": "Sève d'érable royal",
+    "tw": "高級楓樹樹液",
+    "zh": "高级枫树树汁"
+  },
+  "43980": {
+    "en": "Shaaloani Oilseeds",
+    "de": "Shaaloani-Ölsaaten",
+    "ja": "シャーローニ・オイルシード",
+    "fr": "Graines huileuses de Shaaloani",
+    "tw": "夏勞尼油菜籽",
+    "zh": "夏劳尼油菜籽"
+  },
+  "43981": {
+    "en": "Turali Corn",
+    "de": "Tural-Mais",
+    "ja": "トラルコーン",
+    "fr": "Maïs turalien",
+    "tw": "圖拉爾玉米",
+    "zh": "图拉尔玉米"
+  },
+  "43982": {
+    "en": "Mountain Rock Salt",
+    "de": "Gebirgssteinsalz",
+    "ja": "高山岩塩",
+    "fr": "Sel gemme des montagnes",
+    "tw": "高山岩鹽",
+    "zh": "高山岩盐"
+  },
+  "43983": {
+    "en": "Broccoli",
+    "de": "Brokkoli",
+    "ja": "ブロッコリー",
+    "fr": "Brocoli",
+    "tw": "花椰菜",
+    "zh": "西兰花"
+  },
+  "43984": {
+    "en": "Bell Pepper",
+    "de": "Paprika",
+    "ja": "ピーマン",
+    "fr": "Poivron turalien",
+    "tw": "柿子椒",
+    "zh": "柿子椒"
+  },
+  "43985": {
+    "en": "Yyasulani Garlic",
+    "de": "Yyasulani-Knoblauch",
+    "ja": "ヤースラニガーリック",
+    "fr": "Ail de Yyasulani",
+    "tw": "亞斯拉尼蒜頭",
+    "zh": "亚斯拉尼蒜头"
+  },
+  "43986": {
+    "en": "White Pepper",
+    "de": "Weißer Pfeffer",
+    "ja": "ホワイトペッパー",
+    "fr": "Poivre blanc",
+    "tw": "白胡椒",
+    "zh": "白胡椒"
+  },
+  "43987": {
+    "en": "Mesquite Beans",
+    "de": "Mesquite-Bohnen",
+    "ja": "メスキート豆",
+    "fr": "Haricot mesquite",
+    "tw": "牧豆樹豆子",
+    "zh": "牧豆树豆子"
+  },
+  "43988": {
+    "en": "Turali Pineapple",
+    "de": "Tural-Ananas",
+    "ja": "トラルパイナップル",
+    "fr": "Ananas turalien",
+    "tw": "圖拉爾鳳梨",
+    "zh": "图拉尔菠萝"
+  },
+  "43989": {
+    "en": "Turali Aloe",
+    "de": "Tural-Aloe",
+    "ja": "トラルアロエ",
+    "fr": "Aloès turalien",
+    "tw": "圖拉爾蘆薈",
+    "zh": "图拉尔芦荟"
+  },
+  "43990": {
+    "en": "Wild Ja Tiika Bananas",
+    "de": "Wilde Ja Tiika-Bananen",
+    "ja": "ワイルドジャティーカバナナ",
+    "fr": "Banane de Ja Tiika sauvage",
+    "tw": "野生加提卡香蕉",
+    "zh": "野生加提卡香蕉"
+  },
+  "43991": {
+    "en": "Sweet Kukuru Bean",
+    "de": "Süße Kukuru-Bohnen",
+    "ja": "スイートククルビーン",
+    "fr": "Fève kukuru sucrée",
+    "tw": "甜可可豆",
+    "zh": "甜可可豆"
+  },
+  "43992": {
+    "en": "Mountain Chromite Ore",
+    "de": "Bergchromeisen-Erz",
+    "ja": "オルコクロマイト",
+    "fr": "Minerai de chromite d'Urqopacha",
+    "tw": "奧闊鉻鐵礦",
+    "zh": "奥阔铬铁矿"
+  },
+  "43993": {
+    "en": "Ruthenium Ore",
+    "de": "Ruthenium-Erz",
+    "ja": "ルテニウム鉱",
+    "fr": "Minerai de ruthénium",
+    "tw": "釕金礦",
+    "zh": "钌金矿"
+  },
+  "43994": {
+    "en": "Cobalt Tungsten Ore",
+    "de": "Wolfram-Koboldeisenerz",
+    "ja": "コバルトタングステン鉱",
+    "fr": "Minerai d'alliage de cobalt-tungstène",
+    "tw": "鈷鎢礦",
+    "zh": "钴钨矿"
+  },
+  "43995": {
+    "en": "Titanium Gold Ore",
+    "de": "Titangolderz",
+    "ja": "ゴールドチタン鉱",
+    "fr": "Minerai de titane aurifère",
+    "tw": "鈦金礦",
+    "zh": "钛金矿"
+  },
+  "43996": {
+    "en": "Ra'Kaznar Ore",
+    "de": "Ra'Kaznar-Erz",
+    "ja": "黒鉄鉱",
+    "fr": "Minerai de fer noir",
+    "tw": "黑鐵礦",
+    "zh": "黑铁矿"
+  },
+  "44002": {
+    "en": "Lar Ore",
+    "de": "Lar-Erz",
+    "ja": "ラァー鉱",
+    "fr": "Minerai de lar",
+    "tw": "混金礦",
+    "zh": "混金矿"
+  },
+  "44003": {
+    "en": "Raw Ihuykanite",
+    "de": "Roh-Ihuykanit",
+    "ja": "イフイカナイト原石",
+    "fr": "Ihuykanite brute",
+    "tw": "河岸石原石",
+    "zh": "河岸石原石"
+  },
+  "44004": {
+    "en": "Raw Pink Beryl",
+    "de": "Roh-Rosenberyll",
+    "ja": "ピンクベリル原石",
+    "fr": "Béryl rose brut",
+    "tw": "粉綠柱石原石",
+    "zh": "粉绿柱石原石"
+  },
+  "44005": {
+    "en": "White Gold Ore",
+    "de": "Weißgold-Erzklumpen",
+    "ja": "ホワイトゴールド鉱",
+    "fr": "Minerai d'or blanc",
+    "tw": "白黃金礦",
+    "zh": "白黄金矿"
+  },
+  "44006": {
+    "en": "Raw Black Star",
+    "de": "Roh-Schwarzstern",
+    "ja": "ブラックスター原石",
+    "fr": "Étoile sombre brute",
+    "tw": "黑星石原石",
+    "zh": "黑星石原石"
+  },
+  "44007": {
+    "en": "Magnesia Powder",
+    "de": "Magnesiumpulver",
+    "ja": "マグネシア粉",
+    "fr": "Poussière de magnésium",
+    "tw": "氧化鎂粉",
+    "zh": "氧化镁粉"
+  },
+  "44014": {
+    "en": "Ginseng Log",
+    "de": "Ginseng-Holzscheit",
+    "ja": "ウコギ原木",
+    "fr": "Rondin de ginseng",
+    "tw": "五加木原木",
+    "zh": "五加木原木"
+  },
+  "44015": {
+    "en": "Ceiba Log",
+    "de": "Ceiba-Holzscheit",
+    "ja": "セイバ原木",
+    "fr": "Rondin de ceiba",
+    "tw": "木棉原木",
+    "zh": "木棉原木"
+  },
+  "44016": {
+    "en": "Dark Mahogany Log",
+    "de": "Dunkelmahagoni-Holzscheit",
+    "ja": "ダークマホガニー原木",
+    "fr": "Rondin d'acajou sombre",
+    "tw": "深紅木原木",
+    "zh": "深红木原木"
+  },
+  "44017": {
+    "en": "Acacia Log",
+    "de": "Akazien-Holzscheit",
+    "ja": "アカシア原木",
+    "fr": "Rondin d'acacia turalien",
+    "tw": "相思木原木",
+    "zh": "相思木原木"
+  },
+  "44018": {
+    "en": "Claro Walnut Log",
+    "de": "Clarowalnuss-Holzscheit",
+    "ja": "クラロウォルナット原木",
+    "fr": "Rondin de noyer noir",
+    "tw": "克拉洛胡桃木原木",
+    "zh": "克拉洛胡桃木原木"
+  },
+  "44024": {
+    "en": "Snow Cotton",
+    "de": "Schneebaumwolle",
+    "ja": "雪木綿",
+    "fr": "Fibres de cotonneige",
+    "tw": "雪木棉",
+    "zh": "雪木棉"
+  },
+  "44025": {
+    "en": "Mountain Flax",
+    "de": "Bergflachs",
+    "ja": "高山亜麻",
+    "fr": "Fibres de lin des montagnes",
+    "tw": "高山亞麻",
+    "zh": "高山亚麻"
+  },
+  "44026": {
+    "en": "Sarcenet",
+    "de": "Sarsenett",
+    "ja": "薄絹繭",
+    "fr": "Cocon de soie fine",
+    "tw": "薄絹繭",
+    "zh": "薄绢茧"
+  },
+  "44028": {
+    "en": "Levinsilk",
+    "de": "Blitzseide",
+    "ja": "帯雷繭",
+    "fr": "Cocon électrique",
+    "tw": "帶雷繭",
+    "zh": "带雷茧"
+  },
+  "44034": {
+    "en": "Yak T'el Spring Water",
+    "de": "Yak T'el-Quellwasser",
+    "ja": "ヤクテル天然水",
+    "fr": "Eau de source de Yak T'el",
+    "tw": "亞克特爾天然水",
+    "zh": "亚克特尔天然水"
+  },
+  "44039": {
+    "en": "Wind Parsley",
+    "de": "Windpetersilie",
+    "ja": "ウィンドパセリ",
+    "fr": "Persil des vents",
+    "tw": "風芹",
+    "zh": "风芹"
+  },
+  "44040": {
+    "en": "Kozama'uka Chamomile",
+    "de": "Kozama'uka-Kamille",
+    "ja": "コザマル・カモミール",
+    "fr": "Camomille de Kozama'uka",
+    "tw": "克扎瑪烏甘菊",
+    "zh": "克扎玛乌甘菊"
+  },
+  "44041": {
+    "en": "Windsbalm Bay Leaf",
+    "de": "Windlorbeer",
+    "ja": "ウィンドローレル",
+    "fr": "Laurier des vents",
+    "tw": "香風月桂葉",
+    "zh": "香风月桂叶"
+  },
+  "44042": {
+    "en": "Eucalyptus",
+    "de": "Eukalyptus",
+    "ja": "ユーカリ",
+    "fr": "Eucalyptus",
+    "tw": "桉樹",
+    "zh": "桉叶"
+  },
+  "44043": {
+    "en": "Pearl Grass",
+    "de": "Perlengras",
+    "ja": "パールグラス",
+    "fr": "Herbe perlée",
+    "tw": "珍珠草",
+    "zh": "珍珠草"
+  },
+  "44052": {
+    "en": "Acacia Bark",
+    "de": "Acacia-Rinde",
+    "ja": "アカシア樹皮",
+    "fr": "Écorce d'acacia turalien",
+    "tw": "相思木樹皮",
+    "zh": "相思木树皮"
+  },
+  "44135": {
+    "en": "Harmonite Ore",
+    "de": "Harmoniterzklumpen",
+    "ja": "混鉄鉱",
+    "fr": "Minerai de fer composite",
+    "tw": "混鐵礦",
+    "zh": "混铁矿"
+  },
+  "44136": {
+    "en": "Fine Silver Ore",
+    "de": "Feinsilbererzklumpen",
+    "ja": "真銀鉱",
+    "fr": "Minerai de fer argenté",
+    "tw": "真銀礦",
+    "zh": "真银矿"
+  },
+  "44137": {
+    "en": "Ipe Log",
+    "de": "Ipe-Holzscheit",
+    "ja": "イペー原木",
+    "fr": "Rondin d'ipe",
+    "tw": "重蟻木原木",
+    "zh": "重蚁木原木"
+  },
+  "44138": {
+    "en": "Blackseed Cotton Boll",
+    "de": "Schwarzbaumwoll-Samenkapsel",
+    "ja": "海島綿",
+    "fr": "Fleur de coton des îles",
+    "tw": "海島棉",
+    "zh": "海岛棉"
+  },
+  "44139": {
+    "en": "Turali Alumen",
+    "de": "Turalalaun-Klumpen",
+    "ja": "トラルアルメン",
+    "fr": "Alun turalien",
+    "tw": "圖拉爾明礬",
+    "zh": "图拉尔明矾"
+  },
+  "44140": {
+    "en": "Nopaliflower",
+    "de": "Nopalblüte",
+    "ja": "ノパルフラワー",
+    "fr": "Fleur de pampa",
+    "tw": "圓扇刺的花",
+    "zh": "圆扇刺的花"
+  },
+  "44844": {
+    "en": "Optical Fibergrass",
+    "de": "Optisches Gras",
+    "ja": "オプティカルグラス",
+    "fr": "Herbe optique",
+    "zh": "光学纤维草"
+  },
+  "44845": {
+    "en": "Alexandrian Ore",
+    "de": "Alexandrisches Erz",
+    "ja": "アレクサンドリアン鉱",
+    "fr": "Minerai alexandrin",
+    "zh": "亚历山德里亚金属矿"
+  },
+  "44850": {
+    "en": "Locomotive Lubricant",
+    "de": "Lokschmieröl",
+    "ja": "新車両用潤滑油",
+    "fr": "Huile lubrifiante pour locomotive",
+    "zh": "新列车用润滑油"
+  },
+  "44851": {
+    "en": "Carriage Furnishing Supplies",
+    "de": "Waggon-Innenausstattungsteile",
+    "ja": "客車用内装素材",
+    "fr": "Éléments d'intérieur confortables",
+    "zh": "客车用内装素材"
+  },
+  "44852": {
+    "en": "Mapmaking Pigment",
+    "de": "Kartenpigment",
+    "ja": "案内地図素材",
+    "fr": "Pigments d'impression",
+    "zh": "导览地图素材"
+  },
+  "44853": {
+    "en": "Industrial Sanitizing Fluid",
+    "de": "Professionelles Putzmittel",
+    "ja": "業務用洗剤素材",
+    "fr": "Ingrédients pour savon professionnel",
+    "zh": "业务用清洁剂素材"
+  },
+  "44854": {
+    "en": "Trackbed Repair Materials",
+    "de": "Restaurierungsmaterial",
+    "ja": "線路復旧用素材",
+    "fr": "Métaux pour la rénovation",
+    "zh": "修复铁轨用的素材"
+  },
+  "45968": {
+    "en": "Cordia Log",
+    "de": "Cordia-Holzscheit",
+    "ja": "コーディア原木",
+    "fr": "Rondin de cordia",
+    "zh": "破布木原木"
+  },
+  "45969": {
+    "en": "Octahedrite",
+    "de": "Oktaedrit-Erzklumpen",
+    "ja": "オクタヘドライト鉱石",
+    "fr": "Minerai d'octaédrite",
+    "zh": "八面体陨铁矿石"
+  },
+  "45970": {
+    "en": "Raw Rhodochrosite",
+    "de": "Roh-Rhodochrosit",
+    "ja": "ロードクロサイト原石",
+    "fr": "Rhodochrosite brute",
+    "zh": "玫瑰红纹石原石"
+  },
+  "45971": {
+    "en": "Shaaloani Coffee",
+    "de": "Shaaloani-Kaffeebohnen",
+    "ja": "シャーローニ・コーヒー",
+    "fr": "Grains de café de Shaaloani",
+    "zh": "夏劳尼咖啡豆"
+  },
+  "45972": {
+    "en": "Cochineal Pigment",
+    "de": "Karmin",
+    "ja": "コチニール染料",
+    "fr": "Pigment nopal",
+    "zh": "洋红虫染料"
+  },
+  "45973": {
+    "en": "Fulgurite",
+    "de": "Fulgurit",
+    "ja": "フルグライト",
+    "fr": "Fulgurite",
+    "zh": "雷击石"
+  },
+  "46243": {
+    "en": "Cordia Sap",
+    "de": "Cordia-Harz",
+    "ja": "コーディア樹液塊",
+    "fr": "Sève durcie de cordia",
+    "zh": "破布木树液块"
+  },
+  "46244": {
+    "en": "Desert Lapis Ore",
+    "de": "Roh-Wüstenlapis",
+    "ja": "デザートラピス原石",
+    "fr": "Lapis du désert brut",
+    "zh": "蓝线石原石"
+  },
+  "46247": {
+    "en": "Levin Quartz",
+    "de": "Blitzquarz",
+    "ja": "ライトニングクォーツ",
+    "fr": "Quartz de foudre",
+    "zh": "雷石英"
+  },
+  "46248": {
+    "en": "Calamus Root",
+    "de": "Kalmuswurzel",
+    "ja": "菖蒲根",
+    "fr": "Racine de jonc odorant",
+    "zh": "菖蒲根"
+  },
+  "49207": {
+    "en": "Fulgurpine Log",
+    "de": "Elektrokiefern-Holzscheit",
+    "ja": "エレクトロパイン原木",
+    "fr": "Rondin de pin électrique",
+    "zh": "雷松木原木"
+  },
+  "49208": {
+    "en": "Dense Aluminum Ore",
+    "de": "Hochkonzentrierter Aluminium-Erzklumpen",
+    "ja": "高密度軽銀鉱",
+    "fr": "Minerai d'aluminium lourd",
+    "zh": "高密度轻铝矿"
+  },
+  "49209": {
+    "en": "Rose Garnet Ore",
+    "de": "Roh-Rosengranat",
+    "ja": "ローズガーネット原石",
+    "fr": "Grenat rose brut",
+    "zh": "玫瑰石榴石原石"
+  },
+  "49210": {
+    "en": "Carnauba Leaf",
+    "de": "Copernicia-Blatt",
+    "ja": "ロウヤシの葉",
+    "fr": "Feuille de palmier à cire",
+    "zh": "蜡棕叶"
+  },
+  "49211": {
+    "en": "Urqopacha Flax",
+    "de": "Urqopacha-Flachs",
+    "ja": "オルコ亜麻",
+    "fr": "Lin d'Urqopacha",
+    "zh": "奥阔亚麻"
+  },
+  "49212": {
+    "en": "Windspath Water",
+    "de": "Windpfad-Wasser",
+    "ja": "ガーデン・ソフトウォーター",
+    "fr": "Eau douce des jardins",
+    "zh": "园圃软水"
+  }
+}
