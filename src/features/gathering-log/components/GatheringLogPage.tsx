@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useFavicon } from '../../../hooks/useFavicon';
 import { useGatheringData } from '../hooks/useGatheringData';
 import { Sidebar } from './Sidebar';
 import { ItemList } from './ItemList';
@@ -15,6 +16,7 @@ export const GatheringLogPage: React.FC = () => {
   const { data, loading, error } = useGatheringData();
   const { setProgress, setToolInfo, setHeaderActions, setCenterActions, setEtTime } = useTool();
   const { t: i18n } = useLanguage();
+  useFavicon('/favicon_gatheringlog.svg');
 
   const [currentType, setCurrentType] = useState<GatherType>('mining');
   const [timedType, setTimedType] = useState<GatherType | 'all'>('all'); // Independent state for Timed View

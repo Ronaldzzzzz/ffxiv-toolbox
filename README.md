@@ -1,23 +1,21 @@
 # FFXIV Toolbox
 
-這是為 Final Fantasy XIV (FF14) 玩家製作的 Web 輔助工具箱。
-本專案目前正在進行現代化重構，將部分工具移植至 React 架構，同時保留既有的實用工具。
+這是為 Final Fantasy XIV (FF14) 光之戰士們製作的 Web 輔助工具箱。資料與數據版本主要以繁體中文版為主。
 
-Here are some web-based tools created to assist FFXIV Warriors of Light.
-The project is currently undergoing a modernization refactor, migrating some tools to React while preserving existing legacy tools.
+Here are some web-based tools created to assist FFXIV Warriors of Light. The data and version information are mainly based on the Traditional Chinese version.
 
 ## 🛠️ 工具列表 / Tools List
 
 ### 1. [採集手冊 (Gathering Log)](./src/features/gathering-log)
 
-- **狀態 (Status)**: ✨ 重構中 (Refactoring in React)
-- **功能**: 採礦工 (Miner) 與園藝工 (Botanist) 的採集圖鑑檢核表。
+- **狀態 (Status)**: ✅ 重構完成，使用中
+- **功能**: 提供多種視角，協助採礦工 (Miner) 與園藝工 (Botanist) 的採集圖鑑檢核表。
 - **特點**:
-  - 全新 React + TypeScript 架構
+  - React + TypeScript 架構
   - 支援多語言 (繁/英/日)
   - 現代化 UI (Tailwind CSS)
   - 進度自動儲存
-- **Description**: A checklist for tracking Gathering Log progress, currently being rewritten with modern web technologies.
+- **Description**: A checklist for tracking Gathering Log progress.
 
 ### 2. [最短路徑影像辨識系統 (Aether Current Path Finder)](./public/AetherCurrent/index.html)
 
@@ -32,7 +30,7 @@ The project is currently undergoing a modernization refactor, migrating some too
 - **功能**: 冒險者分隊 (Adventurer Squadron) 任務成功率計算。
 - **Description**: Calculates mission success rates for Adventurer Squadrons and helps optimize team composition.
 
----
+### 4. and more...
 
 ## 💻 開發指南 / Development Guide
 
@@ -57,6 +55,13 @@ npm install
 npm run dev
 ```
 
+### 部署至 GitHub Pages (Deployment)
+
+```bash
+# 部署 / Deploy
+npm run deploy
+```
+
 ### 專案結構 (Project Structure)
 
 - `src/`: 現代化 React 原始碼 (Modern React source code)
@@ -78,7 +83,5 @@ MIT
 ## ⚠️ 免責聲明 / Disclaimer
 
 本專案為玩家自製的非官方工具，與 SQUARE ENIX CO., LTD. 無關。
-FINAL FANTASY XIV © 2010 - 2025 SQUARE ENIX CO., LTD. All Rights Reserved.
-
 This is an unofficial fan-made tool and is not affiliated with SQUARE ENIX CO., LTD.
 FINAL FANTASY XIV © 2010 - 2025 SQUARE ENIX CO., LTD. All Rights Reserved.
