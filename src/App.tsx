@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { GatheringLogPage } from './features/gathering-log/components/GatheringLogPage';
+import { GatheringLogPage } from './features/gathering-log';
 import { useLanguage } from './i18n/LanguageContext';
 import { useFavicon } from './hooks/useFavicon';
 

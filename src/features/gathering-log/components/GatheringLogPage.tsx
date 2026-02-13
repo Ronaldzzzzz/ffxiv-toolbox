@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useFavicon } from '../../../hooks/useFavicon';
 import { useGatheringData } from '../hooks/useGatheringData';
 import { Sidebar } from './Sidebar';
-import { ItemList } from './ItemList';
+import { LevelView } from './LevelView';
 import { LevelNav } from './LevelNav';
 import { MapModal } from './MapModal';
 import { TimedView } from './TimedView';
@@ -175,7 +175,7 @@ export const GatheringLogPage: React.FC = () => {
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
             />
-            <ItemList
+            <LevelView
               data={data}
               currentType={currentType}
               currentRegion={currentRegion}
