@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 //import { useTool } from '../../../context/ToolContext';
 import { GatheringData, GatherType, NodeData } from '../types';
 import { useLanguage } from '../../../i18n/LanguageContext';
-import { getLocalizedText, GATHERING_ICONS, TIMED_GATHERING_MAP_ICONS, GATHERING_MAP_ICONS, getMapPercentage, EXPANSION_MAP, calculateNodeStatus, formatSeconds } from '../utils';
+import { getLocalizedText, TIMED_GATHERING_MAP_ICONS, GATHERING_MAP_ICONS, getMapPercentage, EXPANSION_MAP, calculateNodeStatus, formatSeconds } from '../utils';
 import { ChevronLeft } from 'lucide-react';
 
 interface MapViewProps {
