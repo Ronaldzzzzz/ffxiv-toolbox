@@ -92,7 +92,7 @@ export const MapView: React.FC<MapViewProps> = ({
   // Group nodes by Map ID
   const nodesByMap = useMemo(() => {
     const grouped: Record<number, NodeData[]> = {};
-    // Include all gathering types: Mining(0), Quarrying(1), Harvesting(2), Logging(3)
+    // Include all gathering types: Mining(0), Quarrying(1), Logging(2), Harvesting(3)
     const allTypeIds = [0, 1, 2, 3];
 
     Object.values(data.nodes).forEach(node => {
@@ -445,8 +445,8 @@ export const MapView: React.FC<MapViewProps> = ({
                                         let iconKey: GatherType = 'mining';
                                         if (node.type === 0) iconKey = 'mining';
                                         else if (node.type === 1) iconKey = 'quarrying';
-                                        else if (node.type === 2) iconKey = 'harvesting';
-                                        else if (node.type === 3) iconKey = 'logging';
+                                        else if (node.type === 2) iconKey = 'logging';
+                                        else if (node.type === 3) iconKey = 'harvesting';
 
                                         const iconUrl = GATHERING_ICONS[iconKey] || GATHERING_ICONS.mining;
                                         const validItems = node.items.filter(id => data.items[id]);
@@ -572,8 +572,8 @@ export const MapView: React.FC<MapViewProps> = ({
                       let iconKey: GatherType = 'mining';
                       if (node.type === 0) iconKey = 'mining';
                       else if (node.type === 1) iconKey = 'quarrying';
-                      else if (node.type === 2) iconKey = 'harvesting';
-                      else if (node.type === 3) iconKey = 'logging';
+                      else if (node.type === 2) iconKey = 'logging';
+                      else if (node.type === 3) iconKey = 'harvesting';
                       
                       const jobName = i18n.pages.gathering_log[iconKey]; // Should be safe with ts-ignore or type assertion if needed
                       

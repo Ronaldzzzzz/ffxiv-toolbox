@@ -29,7 +29,7 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
     }, []);
 
     // Filter nodes for current type with spawns
-    const targetTypeMap: Record<string, number> = { mining: 0, quarrying: 1, harvesting: 2, logging: 3 };
+    const targetTypeMap: Record<string, number> = { mining: 0, quarrying: 1, logging: 2, harvesting: 3 };
     const targetIds = currentType === 'all' ? [0, 1, 2, 3] : [targetTypeMap[currentType]];
 
     const typeNodes = Object.values(data.nodes).filter(node =>
@@ -58,7 +58,7 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
         if (showBookmarks && !isBookmarked) return null;
 
         // Determine Job Info
-        const jobKey = (['mining', 'quarrying', 'harvesting', 'logging'][node.type] || 'mining') as GatherType;
+        const jobKey = (['mining', 'quarrying', 'logging', 'harvesting'][node.type] || 'mining') as GatherType;
         const jobIcon = GATHERING_ICONS[jobKey];
         // @ts-ignore
         const jobName = i18n.pages.gathering_log[jobKey];

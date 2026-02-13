@@ -45,7 +45,7 @@ export const LevelView: React.FC<LevelViewProps> = ({
   }, [highlightItem, setHighlightItem]);
 
   const typeToIndex: Record<GatherType, number> = {
-    mining: 0, quarrying: 1, harvesting: 2, logging: 3
+    mining: 0, quarrying: 1, logging: 2, harvesting: 3
   };
 
   const pageIndex = typeToIndex[currentType];

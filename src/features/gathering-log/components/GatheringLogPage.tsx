@@ -50,7 +50,7 @@ export const GatheringLogPage: React.FC = () => {
   useEffect(() => {
     if (!data) return;
 
-    const typeToIndex: Record<GatherType, number> = { mining: 0, quarrying: 1, harvesting: 2, logging: 3 };
+    const typeToIndex: Record<GatherType, number> = { mining: 0, quarrying: 1, logging: 2, harvesting: 3 };
     const pages = data.pages[typeToIndex[currentType]] || [];
     let total = 0;
     pages.forEach(p => total += p.items.length);
@@ -59,7 +59,7 @@ export const GatheringLogPage: React.FC = () => {
     }).length;
 
     setProgress({ current, total });
-    setToolInfo({ version: 'V3.1.1' });
+    setToolInfo({ version: 'V3.2' });
 
     // 1. 中間：視角切換按鈕
     setCenterActions(
@@ -136,7 +136,7 @@ export const GatheringLogPage: React.FC = () => {
   if (error) return <div className="p-8 text-center text-red-500">{i18n.common.error_loading}: {error.message}</div>;
   if (!data) return null;
 
-  const typeToIndex: Record<GatherType, number> = { mining: 0, quarrying: 1, harvesting: 2, logging: 3 };
+  const typeToIndex: Record<GatherType, number> = { mining: 0, quarrying: 1, logging: 2, harvesting: 3 };
   const pages = data.pages[typeToIndex[currentType]] || [];
 
   return (
