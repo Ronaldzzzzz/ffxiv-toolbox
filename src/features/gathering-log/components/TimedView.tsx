@@ -77,7 +77,7 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
         const progressColor = isActive ? 'bg-green-500' : (isSoon ? 'bg-amber-500' : 'bg-slate-300 dark:bg-slate-600');
         const borderColor = isActive ? 'border-green-500/50 shadow-green-500/20' : (isSoon ? 'border-amber-500/50 shadow-amber-500/20' : 'border-slate-200 dark:border-slate-700');
         const badgeColor = isActive ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : (isSoon ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400');
-        
+
         // Timer Logic - use anchored timestamps for perfectly even 1-second countdown
         const remainingMs = node.statusInfo.endRealTimestamp - now;
         const seconds = Math.max(0, Math.ceil(remainingMs / 1000));
@@ -104,19 +104,19 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${badgeColor}`}>
                             {node.statusInfo.spawnTime}
                         </span>
-                        
+
                         <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
-                             {isActive ? (
+                            {isActive ? (
                                 <>
                                     <span className="relative flex h-2 w-2">
-                                      {isAnimating && (
-                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" style={{ animationDuration: `${pulseDuration}s` }}></span>
-                                      )}
-                                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                        {isAnimating && (
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" style={{ animationDuration: `${pulseDuration}s` }}></span>
+                                        )}
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                                     </span>
                                     {i18n.pages.gathering_log.active}
                                 </>
-                             ) : (isSoon ? i18n.pages.gathering_log.timed_soon : i18n.pages.gathering_log.wait)}
+                            ) : (isSoon ? i18n.pages.gathering_log.timed_soon : i18n.pages.gathering_log.wait)}
                         </div>
                     </div>
 
@@ -159,14 +159,14 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
                                     <img src={jobIcon} className="w-3.5 h-3.5" alt="" />
                                     <span>{jobName}</span>
                                 </div>
-                                <div className="flex items-center gap-1 truncate" title={locationName}>
-                                    <span>📍 {locationName}</span>
-                                </div>
                                 {node.x && node.y && (
                                     <button
                                         onClick={() => setMapModal({ isOpen: true, mapId: node.map, x: node.x, y: node.y, itemName: getLocalizedText(item, lang), type: node.type })}
                                         className="text-blue-500 hover:underline cursor-pointer text-left truncate"
                                     >
+                                        <div className="flex items-center gap-1 truncate" title={locationName}>
+                                            <span>📍 {locationName}</span>
+                                        </div>
                                         (X:{node.x}, Y:{node.y})
                                     </button>
                                 )}
@@ -179,14 +179,14 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
                             </div>
                         </div>
                     </div>
-                    
+
                     <div className="mt-auto"></div>
 
                     {/* Timer Display at Bottom */}
                     <div className={`text-center font-mono font-bold text-2xl tracking-tight mb-3 ${isActive ? 'text-green-600 dark:text-green-400' : (isSoon ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400')}`} style={isAnimating ? { animation: `pulse ${pulseDuration}s cubic-bezier(0.4, 0, 0.6, 1) infinite` } : {}}>
                         {timeLabel}
                         <span className="text-[10px] ml-1 opacity-70 font-sans font-normal align-middle">
-                             {isActive ? i18n.pages.gathering_log.mins_left : ""}
+                            {isActive ? i18n.pages.gathering_log.mins_left : ""}
                         </span>
                     </div>
 
@@ -236,7 +236,7 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
             {laterNodes.length > 0 && (
                 <section>
                     <div className="flex items-center gap-2 mb-3 px-2 mt-6 border-t border-slate-200 dark:border-slate-700 pt-4 opacity-75">
-                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 dark:text-slate-400 shadow-sm rounded-full bg-slate-100 dark:bg-slate-800 p-0.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 dark:text-slate-400 shadow-sm rounded-full bg-slate-100 dark:bg-slate-800 p-0.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                         <h3 className="font-bold text-slate-700 dark:text-slate-400 text-lg">{i18n.pages.gathering_log.timed_later}</h3>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-2 opacity-90">
@@ -252,20 +252,20 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
                 if (showBookmarks && !bookmarkedItems.has(itemId)) return false;
                 return true;
             }).length === 0 &&
-            soonNodes.filter(n => {
-                 const itemId = n.items[0];
-                 if (hideCompleted && completedItems.has(itemId)) return false;
-                 if (showBookmarks && !bookmarkedItems.has(itemId)) return false;
-                 return true;
-            }).length === 0 &&
-            laterNodes.filter(n => {
-                 const itemId = n.items[0];
-                 if (hideCompleted && completedItems.has(itemId)) return false;
-                 if (showBookmarks && !bookmarkedItems.has(itemId)) return false;
-                 return true;
-            }).length === 0 && (
-                <div className="text-center p-10 text-slate-500">{i18n.pages.gathering_log.no_timed_nodes}</div>
-            )}
+                soonNodes.filter(n => {
+                    const itemId = n.items[0];
+                    if (hideCompleted && completedItems.has(itemId)) return false;
+                    if (showBookmarks && !bookmarkedItems.has(itemId)) return false;
+                    return true;
+                }).length === 0 &&
+                laterNodes.filter(n => {
+                    const itemId = n.items[0];
+                    if (hideCompleted && completedItems.has(itemId)) return false;
+                    if (showBookmarks && !bookmarkedItems.has(itemId)) return false;
+                    return true;
+                }).length === 0 && (
+                    <div className="text-center p-10 text-slate-500">{i18n.pages.gathering_log.no_timed_nodes}</div>
+                )}
         </div>
     );
 };
