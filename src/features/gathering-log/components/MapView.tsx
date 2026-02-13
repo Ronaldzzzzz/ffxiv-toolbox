@@ -8,15 +8,21 @@ import { ChevronLeft } from 'lucide-react';
 interface MapViewProps {
   data: GatheringData;
   completedItems: Set<number>;
+  bookmarkedItems: Set<number>;
+  toggleBookmark: (id: number) => void;
   toggleComplete: (id: number) => void;
   hideCompleted: boolean;
+  showBookmarks: boolean;
 }
 
 export const MapView: React.FC<MapViewProps> = ({
   data,
   completedItems,
+  bookmarkedItems,
+  toggleBookmark,
   toggleComplete,
-  hideCompleted
+  hideCompleted,
+  showBookmarks
 }) => {
   const { lang, t: i18n } = useLanguage();
   // const { setMapModal } = useTool(); // Disabled as per user request
@@ -102,6 +108,12 @@ export const MapView: React.FC<MapViewProps> = ({
         const allCompleted = validItems.every(itemId => completedItems.has(itemId));
         if (allCompleted) return;
       }
+      
+      // Filter out if no items are bookmarked and showBookmarks is true
+      if (showBookmarks) {
+          const hasBookmark = validItems.some(itemId => bookmarkedItems.has(itemId));
+          if (!hasBookmark) return;
+      }
 
       const mapId = node.map;
       if (!grouped[mapId]) grouped[mapId] = [];
@@ -109,7 +121,7 @@ export const MapView: React.FC<MapViewProps> = ({
     });
 
     return grouped;
-  }, [data.nodes, hideCompleted, completedItems]);
+  }, [data.nodes, hideCompleted, completedItems, showBookmarks, bookmarkedItems]);
 
   // Get list of available maps with their region names
   const availableMaps = useMemo(() => {
@@ -550,7 +562,10 @@ export const MapView: React.FC<MapViewProps> = ({
               {selectedMapId && nodesByMap[selectedMapId] ? (
                   nodesByMap[selectedMapId].map((node, nodeIdx) => {
                       // Filter valid items first
-                      const validNodeItems = node.items.filter(id => data.items[id]);
+                      let validNodeItems = node.items.filter(id => data.items[id]);
+                      if (showBookmarks) {
+                          validNodeItems = validNodeItems.filter(id => bookmarkedItems.has(id));
+                      }
                       if (validNodeItems.length === 0) return null;
 
                       // Determine Icon type for the node header
@@ -589,6 +604,10 @@ export const MapView: React.FC<MapViewProps> = ({
                                   {node.items.map(itemId => {
                                       const item = data.items[itemId];
                                       if (!item) return null;
+                                      
+                                      const isBookmarked = bookmarkedItems.has(itemId);
+                                      if (showBookmarks && !isBookmarked) return null;
+
                                       const isCompleted = completedItems.has(itemId);
                                       
                                       // Timer Logic (ONLY for items in a timed node)
@@ -652,13 +671,31 @@ export const MapView: React.FC<MapViewProps> = ({
                                                       onChange={() => toggleComplete(itemId)}
                                                       className="custom-checkbox w-3.5 h-3.5 rounded-sm text-blue-500 border-slate-300 focus:ring-offset-0 focus:ring-0 cursor-pointer"
                                                   />
+
                                                   <img 
                                                     src={data.icons[itemId] ? `https://xivapi.com${data.icons[itemId]}` : 'https://xivapi.com/i/066000/066313_hr1.png'} 
                                                     className="w-5 h-5 rounded-sm bg-slate-200 dark:bg-slate-600"
                                                     alt=""
                                                   />
-                                                  <span className={`text-xs truncate transition-colors ${isCompleted ? 'text-slate-400 line-through decoration-slate-400/50' : 'text-slate-700 dark:text-slate-200 group-hover/item:text-blue-500'}`} title={getLocalizedText(item, lang)}>
+                                                  <span className={`text-xs truncate transition-colors flex items-center gap-1 ${isCompleted ? 'text-slate-400 line-through decoration-slate-400/50' : 'text-slate-700 dark:text-slate-200 group-hover/item:text-blue-500'}`} title={getLocalizedText(item, lang)}>
                                                       {getLocalizedText(item, lang)}
+                                                      <button
+                                                          onClick={(e) => {
+                                                              e.stopPropagation();
+                                                              navigator.clipboard.writeText(getLocalizedText(item, lang));
+                                                          }}
+                                                          className="text-slate-300 hover:text-slate-500 dark:text-slate-600 dark:hover:text-slate-400 transition-colors ml-1"
+                                                          title="Copy Name"
+                                                      >
+                                                          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                                      </button>
+                                                      <button
+                                                          onClick={(e) => { e.stopPropagation(); toggleBookmark(itemId); }}
+                                                          className={`transition-colors flex items-center justify-center w-4 h-4 rounded hover:bg-slate-200 dark:hover:bg-slate-600 ${bookmarkedItems.has(itemId) ? 'text-yellow-500' : 'text-slate-300 dark:text-slate-600 hover:text-yellow-500'}`}
+                                                          title="Bookmark"
+                                                      >
+                                                          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill={bookmarkedItems.has(itemId) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                                                      </button>
                                                   </span>
                                               </div>
                                               {timerElement}

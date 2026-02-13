@@ -59,7 +59,7 @@ export const GatheringLogPage: React.FC = () => {
     }).length;
 
     setProgress({ current, total });
-    setToolInfo({ version: 'V3.1' });
+    setToolInfo({ version: 'V3.1.1' });
 
     // 1. 中間：視角切換按鈕
     setCenterActions(
@@ -219,8 +219,11 @@ export const GatheringLogPage: React.FC = () => {
               data={data}
               currentType={timedType}
               completedItems={completedItems}
+              bookmarkedItems={bookmarkedItems}
+              toggleBookmark={toggleBookmark}
               toggleComplete={toggleComplete}
               hideCompleted={hideCompleted}
+              showBookmarks={showBookmarks}
             />
           </div>
         )}
@@ -233,8 +236,11 @@ export const GatheringLogPage: React.FC = () => {
             <MapView
               data={data}
               completedItems={completedItems}
+              bookmarkedItems={bookmarkedItems}
+              toggleBookmark={toggleBookmark}
               toggleComplete={toggleComplete}
               hideCompleted={hideCompleted}
+              showBookmarks={showBookmarks}
             />
           </div>
         )}
