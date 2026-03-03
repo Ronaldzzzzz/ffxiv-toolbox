@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useFavicon } from '../../../hooks/useFavicon';
 import { useGatheringData } from '../hooks/useGatheringData';
 import { Sidebar } from './Sidebar';
-import { ItemList } from './ItemList';
+import { LevelView } from './LevelView';
 import { LevelNav } from './LevelNav';
 import { MapModal } from './MapModal';
 import { TimedView } from './TimedView';
@@ -15,6 +16,7 @@ export const GatheringLogPage: React.FC = () => {
   const { data, loading, error } = useGatheringData();
   const { setProgress, setToolInfo, setHeaderActions, setCenterActions, setEtTime } = useTool();
   const { t: i18n } = useLanguage();
+  useFavicon('/favicon_gatheringlog.svg');
 
   const [currentType, setCurrentType] = useState<GatherType>('mining');
   const [timedType, setTimedType] = useState<GatherType | 'all'>('all'); // Independent state for Timed View
@@ -48,7 +50,7 @@ export const GatheringLogPage: React.FC = () => {
   useEffect(() => {
     if (!data) return;
 
-    const typeToIndex: Record<GatherType, number> = { mining: 0, quarrying: 1, harvesting: 2, logging: 3 };
+    const typeToIndex: Record<GatherType, number> = { mining: 0, quarrying: 1, logging: 2, harvesting: 3 };
     const pages = data.pages[typeToIndex[currentType]] || [];
     let total = 0;
     pages.forEach(p => total += p.items.length);
@@ -57,7 +59,7 @@ export const GatheringLogPage: React.FC = () => {
     }).length;
 
     setProgress({ current, total });
-    setToolInfo({ version: 'V3.1' });
+    setToolInfo({ version: 'V3.2' });
 
     // 1. 中間：視角切換按鈕
     setCenterActions(
@@ -134,7 +136,7 @@ export const GatheringLogPage: React.FC = () => {
   if (error) return <div className="p-8 text-center text-red-500">{i18n.common.error_loading}: {error.message}</div>;
   if (!data) return null;
 
-  const typeToIndex: Record<GatherType, number> = { mining: 0, quarrying: 1, harvesting: 2, logging: 3 };
+  const typeToIndex: Record<GatherType, number> = { mining: 0, quarrying: 1, logging: 2, harvesting: 3 };
   const pages = data.pages[typeToIndex[currentType]] || [];
 
   return (
@@ -173,7 +175,7 @@ export const GatheringLogPage: React.FC = () => {
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
             />
-            <ItemList
+            <LevelView
               data={data}
               currentType={currentType}
               currentRegion={currentRegion}
@@ -217,8 +219,11 @@ export const GatheringLogPage: React.FC = () => {
               data={data}
               currentType={timedType}
               completedItems={completedItems}
+              bookmarkedItems={bookmarkedItems}
+              toggleBookmark={toggleBookmark}
               toggleComplete={toggleComplete}
               hideCompleted={hideCompleted}
+              showBookmarks={showBookmarks}
             />
           </div>
         )}
@@ -231,8 +236,11 @@ export const GatheringLogPage: React.FC = () => {
             <MapView
               data={data}
               completedItems={completedItems}
+              bookmarkedItems={bookmarkedItems}
+              toggleBookmark={toggleBookmark}
               toggleComplete={toggleComplete}
               hideCompleted={hideCompleted}
+              showBookmarks={showBookmarks}
             />
           </div>
         )}

@@ -112,7 +112,7 @@ export const translations: Record<LangCode, Translation> = {
         title: 'FFXIV 採集手冊',
         mining: '採掘',
         quarrying: '碎石',
-        logging: '伐木',
+        logging: '採伐',
         harvesting: '割草',
         progress: '目前進度',
         hide_completed: '隱藏已完成',

@@ -43,7 +43,7 @@ export const Header: React.FC<HeaderProps> = ({ title: defaultTitle, version: de
                 {progress && (
                   <div className="flex items-center gap-2 shrink-0">
                     <div className="text-[10px] md:text-[12px] font-mono text-blue-600 dark:text-blue-300 font-bold">
-                      {progress.current}/{progress.total}
+                      {progress.current}/{progress.total} {Math.round((progress.current / progress.total) * 100)}%
                     </div>
                     <div className="w-8 md:w-10 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden hidden sm:block">
                       <div className="h-full bg-blue-500" style={{ width: `${Math.round((progress.current / progress.total) * 100)}%` }} />

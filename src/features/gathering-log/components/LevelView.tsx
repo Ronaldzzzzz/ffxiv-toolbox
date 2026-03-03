@@ -5,7 +5,7 @@ import { getLocalizedText } from '../utils';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
 
-interface ItemListProps {
+interface LevelViewProps {
   data: GatheringData;
   currentType: GatherType;
   currentRegion: string;
@@ -18,7 +18,7 @@ interface ItemListProps {
   toggleBatch: (ids: number[], action: 'add' | 'remove') => void;
 }
 
-export const ItemList: React.FC<ItemListProps> = ({
+export const LevelView: React.FC<LevelViewProps> = ({
   data, currentType, currentRegion, hideCompleted, showBookmarks,
   completedItems, bookmarkedItems, toggleComplete, toggleBookmark, toggleBatch
 }) => {
@@ -45,7 +45,7 @@ export const ItemList: React.FC<ItemListProps> = ({
   }, [highlightItem, setHighlightItem]);
 
   const typeToIndex: Record<GatherType, number> = {
-    mining: 0, quarrying: 1, harvesting: 2, logging: 3
+    mining: 0, quarrying: 1, logging: 2, harvesting: 3
   };
 
   const pageIndex = typeToIndex[currentType];

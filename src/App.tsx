@@ -1,11 +1,13 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { GatheringLogPage } from './features/gathering-log/components/GatheringLogPage';
+import { GatheringLogPage } from './features/gathering-log';
 import { useLanguage } from './i18n/LanguageContext';
+import { useFavicon } from './hooks/useFavicon';
 
 function Home() {
   const { t } = useLanguage();
+  useFavicon('/favicon.svg');
   return (
     <div className="max-w-[1200px] mx-auto p-8 flex-grow">
       <div className="text-center mb-16">
@@ -23,7 +25,7 @@ function Home() {
           className="group relative p-8 bg-white dark:bg-slate-800 rounded-2xl shadow-xl hover:shadow-2xl transition-all border border-slate-200 dark:border-slate-700 overflow-hidden"
         >
           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-            <span className="text-6xl">⛏️</span>
+            <img src={`${import.meta.env.BASE_URL}favicon_gatheringlog.svg`} alt="Gathering Log" className="w-16 h-16" />
           </div>
           <h2 className="text-2xl font-bold mb-3 text-slate-800 dark:text-slate-100">{t.pages.gathering_log.title}</h2>
           <p className="text-slate-500 dark:text-slate-400 leading-relaxed">
@@ -55,7 +57,7 @@ function Home() {
           className="group relative p-8 bg-white dark:bg-slate-800 rounded-2xl shadow-xl hover:shadow-2xl transition-all border border-slate-200 dark:border-slate-700 overflow-hidden"
         >
           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-            <span className="text-6xl">🎖️</span>
+            <img src={`${import.meta.env.BASE_URL}favicon_squadron.svg`} alt="Squadron" className="w-16 h-16" />
           </div>
           <h2 className="text-2xl font-bold mb-3 text-slate-800 dark:text-slate-100">{t.pages.squadron.title}</h2>
           <p className="text-slate-500 dark:text-slate-400 leading-relaxed">

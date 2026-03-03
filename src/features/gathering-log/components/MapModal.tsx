@@ -67,8 +67,8 @@ export const MapModal: React.FC<MapModalProps> = ({ data }) => {
                            let iconKey: GatherType = 'mining';
                            if (mapModal.type === 0) iconKey = 'mining';
                            else if (mapModal.type === 1) iconKey = 'quarrying';
-                           else if (mapModal.type === 2) iconKey = 'harvesting';
-                           else if (mapModal.type === 3) iconKey = 'logging';
+                           else if (mapModal.type === 2) iconKey = 'logging';
+                           else if (mapModal.type === 3) iconKey = 'harvesting';
                            
                            const iconUrl = GATHERING_ICONS[iconKey];
                            // Color: Unified Light Blue

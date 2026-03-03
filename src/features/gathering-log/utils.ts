@@ -44,6 +44,20 @@ export const GATHERING_ICONS = {
   harvesting: 'https://xivapi.com/i/062000/062204_hr1.png'
 };
 
+export const TIMED_GATHERING_MAP_ICONS = {
+  mining: 'https://xivapi.com/i/060000/060464_hr1.png',
+  quarrying: 'https://xivapi.com/i/060000/060463_hr1.png',
+  logging: 'https://xivapi.com/i/060000/060462_hr1.png',
+  harvesting: 'https://xivapi.com/i/060000/060461_hr1.png'
+};
+
+export const GATHERING_MAP_ICONS = {
+  mining: 'https://xivapi.com/i/060000/060438_hr1.png',
+  quarrying: 'https://xivapi.com/i/060000/060437_hr1.png',
+  logging: 'https://xivapi.com/i/060000/060433_hr1.png',
+  harvesting: 'https://xivapi.com/i/060000/060432_hr1.png'
+}
+
 export function getEorzeaTime(): string {
   const EORZEA_RATIO = 1440 / 70;
   const now = new Date();
@@ -82,7 +96,7 @@ export interface NodeStatus {
 export function calculateNodeStatus(spawns: number[], durationMin: number = 60, _unusedCurrentEt?: number): NodeStatus {
   const EORZEA_RATIO = 1440 / 70; // 20.571428...
   const ONE_DAY_MS = 24 * 60 * 60 * 1000; // 86,400,000 ms
-  
+
   const nowMs = Date.now();
   const etMs = nowMs * EORZEA_RATIO;
   const currentEtOfDay = etMs % ONE_DAY_MS;
@@ -130,7 +144,7 @@ export function calculateNodeStatus(spawns: number[], durationMin: number = 60, 
     const spawnStartMs = spawnHour * 60 * 60 * 1000;
     let diffMs = spawnStartMs - currentEtOfDay;
     if (diffMs < 0) diffMs += ONE_DAY_MS; // Next day
-    
+
     if (diffMs < minDiffMs) {
       minDiffMs = diffMs;
       nextSpawnHour = spawnHour;
@@ -139,7 +153,7 @@ export function calculateNodeStatus(spawns: number[], durationMin: number = 60, 
 
   const waitRealMs = minDiffMs / EORZEA_RATIO;
   const secondsUntil = Math.ceil(waitRealMs / 1000);
-  
+
   // "Soon" if < 5 real minutes (300s)
   const status = secondsUntil <= 300 ? 'soon' : 'later';
 
