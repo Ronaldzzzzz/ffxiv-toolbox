@@ -1,6 +1,6 @@
 export type JobType = 'miner' | 'botanist';
 export type GatherType = 'mining' | 'quarrying' | 'logging' | 'harvesting';
-export type ViewMode = 'level' | 'timed' | 'map';
+export type ViewMode = 'level' | 'timed' | 'map' | 'bookmark';
 
 export interface LocalizedText {
   en: string;
@@ -60,6 +60,20 @@ export interface Aetheryte {
   nameid: number;
 }
 
+export interface RecipeIngredient {
+  id: number;
+  amount: number;
+  quality?: number;
+}
+
+export interface Recipe {
+  id: number;
+  job: number;
+  level: number;
+  yields: number;
+  ingredients: RecipeIngredient[];
+}
+
 export interface GatheringData {
   pages: GatheringLogPageData[][];
   items: Record<string, LocalizedText>;
@@ -68,5 +82,6 @@ export interface GatheringData {
   nodes: Record<string, NodeData>;
   maps: Record<string, MapData>;
   aetherytes: Aetheryte[];
+  recipes: Record<string, Recipe[]>;
   uiLocales: Record<string, Record<string, string>>;
 }

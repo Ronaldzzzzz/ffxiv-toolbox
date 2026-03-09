@@ -100,6 +100,7 @@ async function step1_downloadData() {
         // App specific
         { url: `${BASE_URL}/gathering-log-pages.json`, dest: path.join(RAW_DATA_DIR, 'gathering-log-pages.json') },
         { url: `${BASE_URL}/item-icons.json`, dest: path.join(RAW_DATA_DIR, 'item-icons.json') },
+        { url: `${BASE_URL}/recipes-per-item.json`, dest: path.join(RAW_DATA_DIR, 'recipes-per-item.json') },
     ];
 
     // Add Locale Files
@@ -193,7 +194,7 @@ async function step2_mergeData() {
     // 2. Loop locales and merge INTO APP_DATA_DIR files.
 
     console.log('\nInitializing base files...');
-    const filesToCopy = ['items.json', 'places.json', 'nodes.json', 'gathering-items.json', 'gathering-log-pages.json', 'item-icons.json', 'maps.json', 'aetherytes.json'];
+    const filesToCopy = ['items.json', 'places.json', 'nodes.json', 'gathering-items.json', 'gathering-log-pages.json', 'item-icons.json', 'maps.json', 'aetherytes.json', 'recipes-per-item.json'];
     
     // We copy items.json and places.json FIRST to ensure they exist for merging
     ['items.json', 'places.json'].forEach(file => {
@@ -237,7 +238,7 @@ async function step2_mergeData() {
 }
 
 async function step3_filterData() {
-    console.log('\n--- Step 3: Filtering & Optimizing Data ---');
+    console.log('\n--- Step 3: Filtering & Optimizing Data (Modded to Keep All Items) ---');
     
     const ITEMS_PATH = path.join(APP_DATA_DIR, 'items.json');
     const LOG_PAGES_PATH = path.join(APP_DATA_DIR, 'gathering-log-pages.json');
@@ -247,78 +248,25 @@ async function step3_filterData() {
 
     console.log('Checking files at:', APP_DATA_DIR);
     if (!fs.existsSync(ITEMS_PATH)) console.error('Missing items.json');
-    if (!fs.existsSync(LOG_PAGES_PATH)) console.error('Missing gathering-log-pages.json');
     if (!fs.existsSync(ICONS_SOURCE_PATH)) console.error('Missing item-icons.json');
 
-    if (!fs.existsSync(ITEMS_PATH) || !fs.existsSync(LOG_PAGES_PATH) || !fs.existsSync(ICONS_SOURCE_PATH)) {
-        console.error('Missing necessary files for filtering.');
+    if (!fs.existsSync(ITEMS_PATH) || !fs.existsSync(ICONS_SOURCE_PATH)) {
+        console.error('Missing necessary files for processing.');
         return;
     }
 
-    const items = loadJson(ITEMS_PATH);
-    const logPages = loadJson(LOG_PAGES_PATH);
-    const rawIcons = loadJson(ICONS_SOURCE_PATH);
-
-    // Find all Item IDs used in the Gathering Log (and Folklore)
-    const allowedItemIds = new Set();
-    
-    // 1. From Log Pages
-    function extractItemIds(obj) {
-        if (Array.isArray(obj)) {
-            obj.forEach(item => extractItemIds(item));
-        } else if (typeof obj === 'object' && obj !== null) {
-            if (obj.itemId) {
-                allowedItemIds.add(String(obj.itemId));
-            }
-            Object.values(obj).forEach(val => extractItemIds(val));
-        }
-    }
-    extractItemIds(logPages);
-
-    // 2. From Nodes (Folklore Books)
-    const NODES_PATH = path.join(APP_DATA_DIR, 'nodes.json');
-    if (fs.existsSync(NODES_PATH)) {
-        const nodes = loadJson(NODES_PATH);
-        for (const nodeId in nodes) {
-            const node = nodes[nodeId];
-            if (node.folklore) {
-                allowedItemIds.add(String(node.folklore));
-            }
-        }
-    }
-
-    console.log(`Found ${allowedItemIds.size} unique items in Log & Folklore.`);
-
-    // Filter Items
-    const filteredItems = {};
-    let keptCount = 0;
-    for (const itemId in items) {
-        if (allowedItemIds.has(itemId)) {
-            filteredItems[itemId] = items[itemId];
-            keptCount++;
-        }
-    }
-    saveJson(ITEMS_PATH, filteredItems); 
-
-    // Filter Icons
-    const filteredIcons = {};
-    let iconCount = 0;
-    for (const itemId in rawIcons) {
-        if (allowedItemIds.has(itemId)) {
-            filteredIcons[itemId] = rawIcons[itemId];
-            iconCount++;
-        }
-    }
-    saveJson(ICONS_OUTPUT_PATH, filteredIcons);
+    // Since we need ALL items for Allied Society tools, we bypass the aggressive filtering 
+    // that was meant only for gathering log. We just rename the icons file to match the expected output.
+    fs.copyFileSync(ICONS_SOURCE_PATH, ICONS_OUTPUT_PATH);
     
     // Cleanup large source icon file
     if (fs.existsSync(ICONS_SOURCE_PATH)) {
         fs.unlinkSync(ICONS_SOURCE_PATH);
-        console.log(`Cleaned up temporary file: item-icons.json`);
+        console.log(`Cleaned up temporary file: item-icons.json (Moved to icons.json)`);
     }
 
-    console.log(`\nFiltered Items kept: ${keptCount}`);
-    console.log(`Filtered Icons kept: ${iconCount}`);
+    console.log(`\nFiltered Items kept: ALL (Filter bypass applied)`);
+    console.log(`Filtered Icons kept: ALL (Filter bypass applied)`);
 
     // Generate Metadata
     const metadata = {
@@ -327,7 +275,6 @@ async function step3_filterData() {
     saveJson(METADATA_PATH, metadata);
     console.log(`Generated metadata.json with timestamp: ${metadata.lastUpdated}`);
 }
-
 async function cleanup() {
     console.log('\n--- Cleanup ---');
     if (fs.existsSync(RAW_DATA_DIR)) {

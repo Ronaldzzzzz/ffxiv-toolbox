@@ -11,6 +11,8 @@ interface ItemRowProps {
   isBookmarked: boolean;
   toggleComplete: (id: number) => void;
   toggleBookmark: (id: number) => void;
+  className?: string;
+  disableHover?: boolean;
 }
 
 const CopyButton: React.FC<{ text: string }> = ({ text }) => {
@@ -141,7 +143,7 @@ const NodeTimer: React.FC<{ spawns: number[]; duration: number; i18n: any }> = (
 };
 
 export const ItemRow: React.FC<ItemRowProps> = ({
-  item, data, isCompleted, isBookmarked, toggleComplete, toggleBookmark
+  item, data, isCompleted, isBookmarked, toggleComplete, toggleBookmark, className, disableHover
 }) => {
   const { lang, t: i18n } = useLanguage();
   const { setMapModal } = useTool();
@@ -156,7 +158,7 @@ export const ItemRow: React.FC<ItemRowProps> = ({
   const isCrystal = item.itemId >= 2 && item.itemId <= 19;
 
   return (
-    <div className={`group flex items-start p-3 md:p-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all ${isCompleted ? 'checked-item bg-slate-50/50 dark:bg-slate-800/30' : ''}`}>
+    <div className={`group flex items-start p-3 md:p-3 transition-all ${disableHover ? '' : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'} ${isCompleted ? 'checked-item bg-slate-50/50 dark:bg-slate-800/30' : ''} ${className || ''}`}>
       <div className="mr-3 shrink-0 flex items-center justify-center self-center min-h-[40px] min-w-[40px] md:min-h-0 md:min-w-0 -ml-2 md:ml-0">
         <input
           type="checkbox"

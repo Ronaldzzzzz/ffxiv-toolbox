@@ -13,10 +13,11 @@ interface LevelNavProps {
   completedItems: Set<number>;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  onOpenRecipe?: (itemId: number) => void;
 }
 
 export const LevelNav: React.FC<LevelNavProps> = ({
-  data, currentType, setCurrentType, pages, completedItems, searchQuery, setSearchQuery
+  data, currentType, setCurrentType, pages, completedItems, searchQuery, setSearchQuery, onOpenRecipe
 }) => {
   const { lang, t: i18n } = useLanguage();
   const { setHighlightItem } = useTool();
@@ -42,7 +43,7 @@ export const LevelNav: React.FC<LevelNavProps> = ({
   // Search State
   // searchQuery moved to props
 
-  const [searchResults, setSearchResults] = useState<{ id: number; name: string; level: number; icon: string }[]>([]);
+  const [searchResults, setSearchResults] = useState<{ id: number; name: string; level: number; icon: string; type: GatherType; isRecipe: boolean }[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [inputRect, setInputRect] = useState<DOMRect | null>(null);
 
@@ -65,28 +66,68 @@ export const LevelNav: React.FC<LevelNavProps> = ({
       return;
     }
 
-    const results: { id: number; name: string; level: number; icon: string }[] = [];
+    const results: { id: number; name: string; level: number; icon: string; type: GatherType; isRecipe: boolean }[] = [];
     const lowerQuery = searchQuery.toLowerCase();
 
-    pages.forEach(page => {
-      page.items.forEach(item => {
-        const itemInfo = data.items[item.itemId];
-        const name = getLocalizedText(itemInfo, lang);
-        if (name.toLowerCase().includes(lowerQuery)) {
-          const iconPath = data.icons[item.itemId];
-          const iconUrl = iconPath ? `https://xivapi.com${iconPath}` : 'https://xivapi.com/i/066000/066313_hr1.png';
-          results.push({ id: item.itemId, name, level: item.lvl, icon: iconUrl });
-        }
+    // 擴大搜尋範圍到所有職業的 pages
+    const types: GatherType[] = ['mining', 'quarrying', 'logging', 'harvesting'];
+    
+    // 用來記錄已經加入搜尋結果的項目，避免同物品重複
+    const addedItems = new Set<number>();
+
+    types.forEach((type, typeIndex) => {
+      const typePages = data.pages[typeIndex] || [];
+      typePages.forEach(page => {
+        page.items.forEach(item => {
+          if (addedItems.has(item.itemId)) return;
+          
+          const itemInfo = data.items[item.itemId];
+          if (!itemInfo) return;
+          
+          const name = getLocalizedText(itemInfo, lang);
+          if (name.toLowerCase().includes(lowerQuery)) {
+            const iconPath = data.icons[item.itemId];
+            const iconUrl = iconPath ? `https://xivapi.com${iconPath}` : 'https://xivapi.com/i/066000/066313_hr1.png';
+            results.push({ id: item.itemId, name, level: item.lvl, icon: iconUrl, type, isRecipe: false });
+            addedItems.add(item.itemId);
+          }
+        });
       });
     });
 
-    setSearchResults(results.slice(0, 20));
+    // 搜尋配方資料 (如果不是直接採集品，但有配方)
+    Object.entries(data.items).forEach(([itemIdStr, itemInfo]) => {
+      const itemId = Number(itemIdStr);
+      if (addedItems.has(itemId)) return; // 已經加過了就不重複處理
+      
+      const name = getLocalizedText(itemInfo, lang);
+      if (name.toLowerCase().includes(lowerQuery)) {
+          // 檢查這東西能不能做
+          const recipes = data.recipes && data.recipes[itemId];
+          if (recipes && recipes.length > 0) {
+              const iconPath = data.icons[itemId];
+              const iconUrl = iconPath ? `https://xivapi.com${iconPath}` : 'https://xivapi.com/i/066000/066313_hr1.png';
+              // 把它當作配方放進去
+              results.push({ id: itemId, name, level: 0, icon: iconUrl, type: 'mining', isRecipe: true });
+              addedItems.add(itemId);
+          }
+      }
+    });
+
+    setSearchResults(results.slice(0, 30));
     setShowResults(true);
     updateInputRect();
   }, [searchQuery, data, lang, pages]);
 
-  const handleSearchResultClick = (itemId: number) => {
-    setHighlightItem(itemId);
+  const handleSearchResultClick = (result: { id: number; type: GatherType; isRecipe: boolean }) => {
+    if (result.isRecipe && onOpenRecipe) {
+       onOpenRecipe(result.id);
+    } else {
+       if (currentType !== result.type) {
+         setCurrentType(result.type);
+       }
+       setHighlightItem(result.id);
+    }
     setShowResults(false);
     setSearchQuery('');
   };
@@ -377,14 +418,27 @@ export const LevelNav: React.FC<LevelNavProps> = ({
                 searchResults.map(result => (
                   <div
                     key={result.id}
-                    onClick={() => handleSearchResultClick(result.id)}
-                    className="px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer flex items-center gap-3 text-sm text-slate-700 dark:text-slate-200 border-b border-slate-100 dark:border-slate-700/50 last:border-0"
+                    onClick={() => handleSearchResultClick(result)}
+                    className="px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer flex items-center justify-between text-sm text-slate-700 dark:text-slate-200 border-b border-slate-100 dark:border-slate-700/50 last:border-0"
                   >
-                    <img src={result.icon} className="w-8 h-8 rounded border border-slate-200 dark:border-slate-600 bg-slate-100 dark:bg-slate-900 shrink-0" alt="" />
-                    <div className="flex-grow min-w-0">
-                      <div className="font-bold truncate">{result.name}</div>
-                      <div className="text-[10px] text-slate-400">Lv.{result.level}</div>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <img src={result.icon} className="w-8 h-8 rounded border border-slate-200 dark:border-slate-600 bg-slate-100 dark:bg-slate-900 shrink-0" alt="" />
+                      <div className="flex-grow min-w-0">
+                        <div className="font-bold truncate">{result.name}</div>
+                        {!result.isRecipe && (
+                            <div className="text-[10px] text-slate-400 flex flex-items gap-1 items-center">
+                                <img src={typeIcons[result.type]} className="w-3 h-3 opacity-60" alt="" />
+                                <span>Lv.{result.level}</span>
+                            </div>
+                        )}
+                      </div>
                     </div>
+                    {result.isRecipe && (
+                      <span className="shrink-0 flex items-center gap-1 text-[10px] font-bold text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 11 18-5v12L3 14v-3z"></path><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path></svg>
+                        解析配方
+                      </span>
+                    )}
                   </div>
                 ))
               ) : (

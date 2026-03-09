@@ -9,7 +9,7 @@ export function useGatheringData() {
   useEffect(() => {
     async function loadData() {
       try {
-        const [pages, items, icons, places, nodes, maps, uiLocales, aetherytes] = await Promise.all([
+        const [pages, items, icons, places, nodes, maps, uiLocales, aetherytes, recipes] = await Promise.all([
           fetch(`${import.meta.env.BASE_URL}data/gathering-log/gathering-log-pages.json`).then(res => res.json()),
           fetch(`${import.meta.env.BASE_URL}data/gathering-log/items.json`).then(res => res.json()),
           fetch(`${import.meta.env.BASE_URL}data/gathering-log/icons.json`).then(res => res.json()),
@@ -18,6 +18,7 @@ export function useGatheringData() {
           fetch(`${import.meta.env.BASE_URL}data/gathering-log/maps.json`).then(res => res.json()),
           fetch(`${import.meta.env.BASE_URL}data/gathering-log/ui_locales.json`).then(res => res.json()),
           fetch(`${import.meta.env.BASE_URL}data/gathering-log/aetherytes.json`).then(res => res.json()),
+          fetch(`${import.meta.env.BASE_URL}data/gathering-log/recipes-per-item.json`).then(res => res.json()),
         ]);
 
         // Preprocess nodes to include hiddenItems in the main items list and inject ID
@@ -45,6 +46,7 @@ export function useGatheringData() {
           maps,
           uiLocales,
           aetherytes,
+          recipes,
         });
       } catch (err) {
         setError(err as Error);

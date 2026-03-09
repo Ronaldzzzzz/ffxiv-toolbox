@@ -7,10 +7,12 @@ import { LevelNav } from './LevelNav';
 import { MapModal } from './MapModal';
 import { TimedView } from './TimedView';
 import { MapView } from './MapView';
+import { BookmarkView } from './BookmarkView';
 import { useTool } from '../../../context/ToolContext';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { getEorzeaTime, GATHERING_ICONS } from '../utils';
 import { GatherType, ViewMode } from '../types';
+import { RecipeModal } from './RecipeModal';
 
 export const GatheringLogPage: React.FC = () => {
   const { data, loading, error } = useGatheringData();
@@ -27,6 +29,7 @@ export const GatheringLogPage: React.FC = () => {
   const [showBookmarks, setShowBookmarks] = useState<boolean>(false);
   const [completedItems, setCompletedItems] = useState<Set<number>>(new Set());
   const [bookmarkedItems, setBookmarkedItems] = useState<Set<number>>(new Set());
+  const [recipeModalItemId, setRecipeModalItemId] = useState<number | null>(null);
 
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
 
@@ -59,7 +62,7 @@ export const GatheringLogPage: React.FC = () => {
     }).length;
 
     setProgress({ current, total });
-    setToolInfo({ version: 'V3.2' });
+    setToolInfo({ version: 'V3.3' });
 
     // 1. 中間：視角切換按鈕
     setCenterActions(
@@ -67,7 +70,8 @@ export const GatheringLogPage: React.FC = () => {
         {[
           { id: 'level', label: i18n.pages.gathering_log.view_level, icon: '📊' },
           { id: 'timed', label: i18n.pages.gathering_log.view_timed, icon: '⏱️' },
-          { id: 'map', label: i18n.pages.gathering_log.view_map, icon: '🗺️' }
+          { id: 'map', label: i18n.pages.gathering_log.view_map, icon: '🗺️' },
+          { id: 'bookmark', label: '書籤', icon: '⭐' }
         ].map(mode => (
           <button
             key={mode.id}
@@ -132,6 +136,15 @@ export const GatheringLogPage: React.FC = () => {
     localStorage.setItem('ffxiv_gathering_log_progress', JSON.stringify(Array.from(newSet)));
   };
 
+  const handleBookmarkAll = (ids: number[]) => {
+    const newSet = new Set(bookmarkedItems);
+    ids.forEach(id => {
+      if (!newSet.has(id)) newSet.add(id);
+    });
+    setBookmarkedItems(newSet);
+    localStorage.setItem('ffxiv_gathering_log_bookmarks', JSON.stringify(Array.from(newSet)));
+  };
+
   if (loading) return <div className="p-8 text-center text-slate-500">{i18n.common.loading}</div>;
   if (error) return <div className="p-8 text-center text-red-500">{i18n.common.error_loading}: {error.message}</div>;
   if (!data) return null;
@@ -174,6 +187,7 @@ export const GatheringLogPage: React.FC = () => {
               completedItems={completedItems}
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
+              onOpenRecipe={setRecipeModalItemId}
             />
             <LevelView
               data={data}
@@ -245,6 +259,17 @@ export const GatheringLogPage: React.FC = () => {
           </div>
         )}
 
+        {viewMode === 'bookmark' && (
+           <BookmarkView
+              data={data}
+              completedItems={completedItems}
+              bookmarkedItems={bookmarkedItems}
+              toggleComplete={toggleComplete}
+              toggleBookmark={toggleBookmark}
+              hideCompleted={hideCompleted}
+           />
+        )}
+
         {/* Go to Top Button */}
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -258,6 +283,16 @@ export const GatheringLogPage: React.FC = () => {
       </main>
 
       <MapModal data={data} />
+      
+      {recipeModalItemId !== null && (
+        <RecipeModal
+          data={data}
+          itemId={recipeModalItemId}
+          bookmarkedItems={bookmarkedItems}
+          onClose={() => setRecipeModalItemId(null)}
+          onBookmarkAll={handleBookmarkAll}
+        />
+      )}
     </div >
   );
 };
