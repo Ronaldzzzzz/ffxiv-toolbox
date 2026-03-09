@@ -62,7 +62,7 @@ export const GatheringLogPage: React.FC = () => {
     }).length;
 
     setProgress({ current, total });
-    setToolInfo({ version: 'V3.3' });
+    setToolInfo({ version: 'V3.3.1' });
 
     // 1. 中間：視角切換按鈕
     setCenterActions(

@@ -73,7 +73,7 @@ export const Header: React.FC<HeaderProps> = ({ title: defaultTitle, version: de
           </div>
 
           {/* Center: Desktop View Switcher (Absolute Centered) */}
-          <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center">
+          <div className="hidden xl:flex absolute left-1/2 -translate-x-1/2 items-center">
             {centerActions}
           </div>
 
@@ -174,7 +174,7 @@ export const Header: React.FC<HeaderProps> = ({ title: defaultTitle, version: de
 
         {/* Mobile View Switcher (New Row) */}
         {centerActions && (
-          <div className="lg:hidden flex justify-center pb-2 pt-1 border-t border-slate-100 dark:border-slate-700/50 mt-1">
+          <div className="xl:hidden flex justify-center pb-2 pt-1 border-t border-slate-100 dark:border-slate-700/50 mt-1">
             {centerActions}
           </div>
         )}
