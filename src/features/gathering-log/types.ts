@@ -83,5 +83,4 @@ export interface GatheringData {
   maps: Record<string, MapData>;
   aetherytes: Aetheryte[];
   recipes: Record<string, Recipe[]>;
-  uiLocales: Record<string, Record<string, string>>;
 }

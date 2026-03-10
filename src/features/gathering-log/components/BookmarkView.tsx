@@ -16,7 +16,7 @@ interface BookmarkViewProps {
 export const BookmarkView: React.FC<BookmarkViewProps> = ({
   data, completedItems, bookmarkedItems, toggleComplete, toggleBookmark, hideCompleted
 }) => {
-  const { lang } = useLanguage();
+  const { lang, t: i18n } = useLanguage();
 
   const bookmarkedItemsList = useMemo(() => {
     return Array.from(bookmarkedItems)
@@ -71,7 +71,7 @@ export const BookmarkView: React.FC<BookmarkViewProps> = ({
       return (
           <div className="flex flex-col items-center justify-center p-12 text-slate-400 dark:text-slate-500">
               <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-4 opacity-50"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-              <p className="text-lg font-bold">目前沒有釘選的書籤</p>
+              <p className="text-lg font-bold">{i18n.pages.gathering_log.no_bookmarks}</p>
           </div>
       );
   }
@@ -95,7 +95,7 @@ export const BookmarkView: React.FC<BookmarkViewProps> = ({
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
              <div className="px-6 py-4 bg-yellow-50 dark:bg-yellow-900/10 border-b border-yellow-100 dark:border-yellow-900/30 flex items-center gap-2">
                  <span className="text-xl">⏱️</span>
-                 <h2 className="text-lg font-bold text-yellow-800 dark:text-yellow-500">限時/傳說 書籤</h2>
+                 <h2 className="text-lg font-bold text-yellow-800 dark:text-yellow-500">{i18n.pages.gathering_log.timed_legend_bookmarks}</h2>
              </div>
              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
                {timedItems.map(item => (
@@ -125,7 +125,7 @@ export const BookmarkView: React.FC<BookmarkViewProps> = ({
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
              <div className="px-6 py-4 bg-blue-50 dark:bg-blue-900/10 border-b border-blue-100 dark:border-blue-900/30 flex items-center gap-2">
                  <span className="text-xl">📋</span>
-                 <h2 className="text-lg font-bold text-blue-800 dark:text-blue-400">常規採集 書籤</h2>
+                 <h2 className="text-lg font-bold text-blue-800 dark:text-blue-400">{i18n.pages.gathering_log.regular_bookmarks}</h2>
              </div>
              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
                {regularItems.map(item => (

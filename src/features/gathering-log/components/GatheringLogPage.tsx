@@ -71,7 +71,7 @@ export const GatheringLogPage: React.FC = () => {
           { id: 'level', label: i18n.pages.gathering_log.view_level, icon: '📊' },
           { id: 'timed', label: i18n.pages.gathering_log.view_timed, icon: '⏱️' },
           { id: 'map', label: i18n.pages.gathering_log.view_map, icon: '🗺️' },
-          { id: 'bookmark', label: '書籤', icon: '⭐' }
+          { id: 'bookmark', label: i18n.pages.gathering_log.view_bookmark, icon: '⭐' }
         ].map(mode => (
           <button
             key={mode.id}

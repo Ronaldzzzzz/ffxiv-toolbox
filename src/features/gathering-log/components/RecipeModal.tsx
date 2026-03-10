@@ -22,10 +22,10 @@ interface RecipeNode {
 }
 
 export const RecipeModal: React.FC<RecipeModalProps> = ({ itemId, data, onClose, onBookmarkAll, bookmarkedItems }) => {
-  const { lang } = useLanguage();
+  const { lang, t: i18n } = useLanguage();
 
   const itemInfo = data.items[itemId];
-  const name = itemInfo ? getLocalizedText(itemInfo, lang) : 'Unknown Item';
+  const name = itemInfo ? getLocalizedText(itemInfo, lang) : i18n.pages.gathering_log.unknown_item;
 
   // 1. 建立樹狀結構
   const recipeTree = useMemo(() => {
@@ -124,7 +124,7 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({ itemId, data, onClose,
   // 遞迴渲染樹狀節點
   const renderNode = (node: RecipeNode, depth: number = 0) => {
        const matData = data.items[node.id];
-       const matName = matData ? getLocalizedText(matData, lang) : `Unknown (${node.id})`;
+       const matName = matData ? getLocalizedText(matData, lang) : `${i18n.pages.gathering_log.unknown_item} (${node.id})`;
        const iconPath = data.icons[node.id];
        const iconUrl = iconPath ? `https://xivapi.com${iconPath}` : 'https://xivapi.com/i/066000/066313_hr1.png';
        const isBookmarked = bookmarkedItems.has(node.id);
@@ -165,23 +165,23 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({ itemId, data, onClose,
                            <div className="font-bold text-sm text-slate-800 dark:text-slate-200 flex items-center gap-1">
                                {matName}
                                {node.isGatherable && (
-                                   <span className="text-[10px] bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-1.5 py-0.5 rounded ml-1">可採集</span>
+                                   <span className="text-[10px] bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-1.5 py-0.5 rounded ml-1">{i18n.pages.gathering_log.gatherable_tag}</span>
                                )}
                                {node.children.length > 0 && depth > 0 && (
-                                   <span className="text-[10px] bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-500 px-1.5 py-0.5 rounded ml-1">配方產物</span>
+                                   <span className="text-[10px] bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-500 px-1.5 py-0.5 rounded ml-1">{i18n.pages.gathering_log.recipe_product_tag}</span>
                                )}
                            </div>
-                           <div className="text-xs text-slate-500 flex items-center gap-1">
-                               <span>需要數量: {node.amount}</span>
-                           </div>
+                            <div className="text-xs text-slate-500 flex items-center gap-1">
+                                <span>{i18n.pages.gathering_log.amount_needed}{node.amount}</span>
+                            </div>
                        </div>
                    </div>
-                   {isBookmarked && node.isGatherable && (
-                       <span className="text-yellow-500 flex items-center gap-1 text-xs">
-                           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                           已釘選
-                       </span>
-                   )}
+                    {isBookmarked && node.isGatherable && (
+                        <span className="text-yellow-500 flex items-center gap-1 text-xs">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            {i18n.pages.gathering_log.bookmarked_status}
+                        </span>
+                    )}
                </div>
                
                {node.children.length > 0 && (
@@ -202,7 +202,7 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({ itemId, data, onClose,
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
           <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            配方解析：{name}
+            {i18n.pages.gathering_log.recipe_parsing_title}{name}
           </h2>
           <button 
             onClick={onClose}
@@ -215,11 +215,11 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({ itemId, data, onClose,
         {/* Content */}
         <div className="p-4 overflow-y-auto flex-grow thin-scrollbar">
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
-            製作一份此物品所需的最底層材料清單。其中標示綠色勾勾的為可採集項目。
+            {i18n.pages.gathering_log.recipe_description}
           </p>
           
           <div className="space-y-4">
-            {recipeTree ? renderNode(recipeTree) : <div className="text-center text-red-500">解析配方失敗</div>}
+            {recipeTree ? renderNode(recipeTree) : <div className="text-center text-red-500">{i18n.pages.gathering_log.recipe_parsing_failed}</div>}
           </div>
         </div>
 
@@ -231,7 +231,7 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({ itemId, data, onClose,
                 className="w-full flex justify-center items-center gap-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg shadow-sm transition-colors"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                加入書籤 ({selectedItems.size})
+                {i18n.pages.gathering_log.add_bookmark} ({selectedItems.size})
             </button>
         </div>
       </div>

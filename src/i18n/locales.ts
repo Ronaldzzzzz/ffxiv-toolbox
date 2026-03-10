@@ -58,7 +58,30 @@ export interface Translation {
       view_level: string;
       view_timed: string;
       view_map: string;
+      view_bookmark: string;
       filter: string;
+      search_no_results: string;
+      copied: string;
+      copy_name: string;
+      add_bookmark: string;
+      remove_bookmark: string;
+      timed_nodes: string;
+      select_map: string;
+      calculate_path: string;
+      optimal_path: string;
+      gathering_nodes: string;
+      unknown_location: string;
+      no_bookmarks: string;
+      timed_legend_bookmarks: string;
+      regular_bookmarks: string;
+      unknown_item: string;
+      gatherable_tag: string;
+      recipe_product_tag: string;
+      amount_needed: string;
+      bookmarked_status: string;
+      recipe_parsing_title: string;
+      recipe_description: string;
+      recipe_parsing_failed: string;
     };
     aether_current: {
       title: string;
@@ -146,7 +169,30 @@ export const translations: Record<LangCode, Translation> = {
         view_level: '等級視角',
         view_timed: '限時視角',
         view_map: '地圖視角',
-        filter: '篩選'
+        view_bookmark: '書籤',
+        filter: '篩選',
+        search_no_results: '找不到符合的物品',
+        copied: '已複製',
+        copy_name: '複製名稱',
+        add_bookmark: '加入書籤',
+        remove_bookmark: '移除書籤',
+        timed_nodes: '限時點',
+        select_map: '選擇地圖',
+        calculate_path: '計算路徑',
+        optimal_path: '最佳路徑',
+        gathering_nodes: '採集點',
+        unknown_location: '未知區域',
+        no_bookmarks: '目前沒有釘選的書籤',
+        timed_legend_bookmarks: '限時/傳說 書籤',
+        regular_bookmarks: '常規採集 書籤',
+        unknown_item: '未知物品',
+        gatherable_tag: '可採集',
+        recipe_product_tag: '配方產物',
+        amount_needed: '需要數量: ',
+        bookmarked_status: '已釘選',
+        recipe_parsing_title: '配方解析：',
+        recipe_description: '製作此物品所需的最底層材料清單。綠色標示的為可採集項目。',
+        recipe_parsing_failed: '解析配方失敗'
       },
       aether_current: {
         title: '風脈泉路徑',
@@ -223,7 +269,30 @@ export const translations: Record<LangCode, Translation> = {
         view_level: 'Level View',
         view_timed: 'Timed View',
         view_map: 'Map View',
-        filter: 'Filter'
+        view_bookmark: 'Bookmarks',
+        filter: 'Filter',
+        search_no_results: 'No items found',
+        copied: 'Copied',
+        copy_name: 'Copy name',
+        add_bookmark: 'Add Bookmark',
+        remove_bookmark: 'Remove Bookmark',
+        timed_nodes: 'Timed Nodes',
+        select_map: 'Select Map',
+        calculate_path: 'Calculate Path',
+        optimal_path: 'Optimal Path',
+        gathering_nodes: 'Gathering Nodes',
+        unknown_location: 'Unknown Location',
+        no_bookmarks: 'No pinned bookmarks',
+        timed_legend_bookmarks: 'Timed/Legendary Bookmarks',
+        regular_bookmarks: 'Regular Gathering Bookmarks',
+        unknown_item: 'Unknown Item',
+        gatherable_tag: 'Gatherable',
+        recipe_product_tag: 'Crafted',
+        amount_needed: 'Amount needed: ',
+        bookmarked_status: 'Pinned',
+        recipe_parsing_title: 'Recipe Analysis: ',
+        recipe_description: 'Base materials needed to craft this item. Gatherable items are marked in green.',
+        recipe_parsing_failed: 'Failed to parse recipe'
       },
       aether_current: {
         title: 'Aether Current',
@@ -300,7 +369,30 @@ export const translations: Record<LangCode, Translation> = {
         view_level: 'レベル別',
         view_timed: '時間別',
         view_map: 'マップ',
-        filter: 'フィルタ'
+        view_bookmark: 'ブックマーク',
+        filter: 'フィルタ',
+        search_no_results: 'アイテムが見つかりません',
+        copied: 'コピーしました',
+        copy_name: '名前をコピー',
+        add_bookmark: 'ブックマーク追加',
+        remove_bookmark: 'ブックマーク解除',
+        timed_nodes: '限時ノード',
+        select_map: 'マップを選択',
+        calculate_path: 'ルート計算',
+        optimal_path: '最適ルート',
+        gathering_nodes: '採集ポイント',
+        unknown_location: '未知の場所',
+        no_bookmarks: 'ブックマークされていません',
+        timed_legend_bookmarks: '未知/伝説 ブックマーク',
+        regular_bookmarks: '通常採集 ブックマーク',
+        unknown_item: '不明なアイテム',
+        gatherable_tag: '採集可能',
+        recipe_product_tag: '製作物',
+        amount_needed: '必要数: ',
+        bookmarked_status: 'ブックマーク済み',
+        recipe_parsing_title: 'レシピ解析: ',
+        recipe_description: 'このアイテムを製作するための基本素材のリストです。緑色でマークされたアイテムは採集可能です。',
+        recipe_parsing_failed: 'レシピの解析に失敗しました'
       },
       aether_current: {
         title: '風脈泉パス',
@@ -377,7 +469,30 @@ export const translations: Record<LangCode, Translation> = {
         view_level: '等级视角',
         view_timed: '限时视角',
         view_map: '地图视角',
-        filter: '过滤'
+        view_bookmark: '书签',
+        filter: '过滤',
+        search_no_results: '找不到符合的物品',
+        copied: '已复制',
+        copy_name: '复制名称',
+        add_bookmark: '加入书签',
+        remove_bookmark: '移除书签',
+        timed_nodes: '限时点',
+        select_map: '选择地图',
+        calculate_path: '计算路径',
+        optimal_path: '最佳路径',
+        gathering_nodes: '采集点',
+        unknown_location: '未知区域',
+        no_bookmarks: '目前没有钉选的书签',
+        timed_legend_bookmarks: '限时/传说 书签',
+        regular_bookmarks: '常规采集 书签',
+        unknown_item: '未知物品',
+        gatherable_tag: '可采集',
+        recipe_product_tag: '配方产物',
+        amount_needed: '需要数量: ',
+        bookmarked_status: '已钉选',
+        recipe_parsing_title: '配方解析：',
+        recipe_description: '制作此物品所需的最底层材料清单。绿色标示的为可采集项目。',
+        recipe_parsing_failed: '解析配方失败'
       },
       aether_current: {
         title: '风脉泉路径',

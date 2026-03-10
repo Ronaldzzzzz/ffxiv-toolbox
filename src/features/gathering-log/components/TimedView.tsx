@@ -184,10 +184,10 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
 
                     {/* Timer Display at Bottom */}
                     <div className={`text-center font-mono font-bold text-2xl tracking-tight mb-3 ${isActive ? 'text-green-600 dark:text-green-400' : (isSoon ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400')}`} style={isAnimating ? { animation: `pulse ${pulseDuration}s cubic-bezier(0.4, 0, 0.6, 1) infinite` } : {}}>
-                        {timeLabel}
-                        <span className="text-[10px] ml-1 opacity-70 font-sans font-normal align-middle">
+                        <span className="text-[10px] mr-1 opacity-70 font-sans font-normal align-middle">
                             {isActive ? i18n.pages.gathering_log.mins_left : ""}
                         </span>
+                        {timeLabel}
                     </div>
 
                     {/* Rounded Progress Bar Bottom */}

@@ -9,14 +9,13 @@ export function useGatheringData() {
   useEffect(() => {
     async function loadData() {
       try {
-        const [pages, items, icons, places, nodes, maps, uiLocales, aetherytes, recipes] = await Promise.all([
+        const [pages, items, icons, places, nodes, maps, aetherytes, recipes] = await Promise.all([
           fetch(`${import.meta.env.BASE_URL}data/gathering-log/gathering-log-pages.json`).then(res => res.json()),
           fetch(`${import.meta.env.BASE_URL}data/gathering-log/items.json`).then(res => res.json()),
           fetch(`${import.meta.env.BASE_URL}data/gathering-log/icons.json`).then(res => res.json()),
           fetch(`${import.meta.env.BASE_URL}data/gathering-log/places.json`).then(res => res.json()),
           fetch(`${import.meta.env.BASE_URL}data/gathering-log/nodes.json`).then(res => res.json()),
           fetch(`${import.meta.env.BASE_URL}data/gathering-log/maps.json`).then(res => res.json()),
-          fetch(`${import.meta.env.BASE_URL}data/gathering-log/ui_locales.json`).then(res => res.json()),
           fetch(`${import.meta.env.BASE_URL}data/gathering-log/aetherytes.json`).then(res => res.json()),
           fetch(`${import.meta.env.BASE_URL}data/gathering-log/recipes-per-item.json`).then(res => res.json()),
         ]);
@@ -44,7 +43,6 @@ export function useGatheringData() {
           places,
           nodes: processedNodes,
           maps,
-          uiLocales,
           aetherytes,
           recipes,
         });
