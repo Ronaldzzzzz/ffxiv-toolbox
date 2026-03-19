@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { GatheringData } from '../types';
 import { getLocalizedText } from '../utils';
 import { useLanguage } from '../../../i18n/LanguageContext';
+import { AlarmButton } from './AlarmButton';
 
 interface RecipeModalProps {
   itemId: number;
@@ -130,6 +131,9 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({ itemId, data, onClose,
        const isBookmarked = bookmarkedItems.has(node.id);
        const isSelected = selectedItems.has(node.id);
 
+       const itemNodes = Object.values(data.nodes).filter(n => n.items.includes(node.id) && n.map !== 0);
+       const isTimed = itemNodes.some(n => n.spawns && n.spawns.length > 0);
+
        return (
            <div 
                key={`${node.id}-${depth}`} 
@@ -176,12 +180,15 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({ itemId, data, onClose,
                             </div>
                        </div>
                    </div>
-                    {isBookmarked && node.isGatherable && (
-                        <span className="text-yellow-500 flex items-center gap-1 text-xs">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                            {i18n.pages.gathering_log.bookmarked_status}
-                        </span>
-                    )}
+                    <div className="flex items-center gap-2">
+                        {isTimed && <AlarmButton itemId={node.id} />}
+                        {isBookmarked && node.isGatherable && (
+                            <span className="text-yellow-500 flex items-center gap-1 text-xs">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                                {i18n.pages.gathering_log.bookmarked_status}
+                            </span>
+                        )}
+                    </div>
                </div>
                
                {node.children.length > 0 && (

@@ -13,6 +13,8 @@ import { useLanguage } from '../../../i18n/LanguageContext';
 import { getEorzeaTime, GATHERING_ICONS } from '../utils';
 import { GatherType, ViewMode } from '../types';
 import { RecipeModal } from './RecipeModal';
+import { AlarmSettingsModal } from './AlarmSettingsModal';
+import { useAlarmTrigger } from '../hooks/useAlarmTrigger';
 
 export const GatheringLogPage: React.FC = () => {
   const { data, loading, error } = useGatheringData();
@@ -30,8 +32,12 @@ export const GatheringLogPage: React.FC = () => {
   const [completedItems, setCompletedItems] = useState<Set<number>>(new Set());
   const [bookmarkedItems, setBookmarkedItems] = useState<Set<number>>(new Set());
   const [recipeModalItemId, setRecipeModalItemId] = useState<number | null>(null);
+  const [isAlarmModalOpen, setIsAlarmModalOpen] = useState<boolean>(false);
 
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
+
+  // Initialize background alarm trigger
+  useAlarmTrigger(data);
 
   // Restore LocalStorage
   useEffect(() => {
@@ -61,8 +67,9 @@ export const GatheringLogPage: React.FC = () => {
       return pages.some(p => p.items.some(i => i.itemId === id));
     }).length;
 
+    // 0. 設定資訊
     setProgress({ current, total });
-    setToolInfo({ version: 'V3.3.1' });
+    setToolInfo({ version: 'V3.4' });
 
     // 1. 中間：視角切換按鈕
     setCenterActions(
@@ -87,18 +94,45 @@ export const GatheringLogPage: React.FC = () => {
 
     // 2. 左側：功能開關
     setHeaderActions(
-      <div className="flex items-center gap-5">
-        <label className="inline-flex items-center cursor-pointer gap-2 group">
-          <input type="checkbox" checked={hideCompleted} onChange={() => setHideCompleted(p => !p)} className="sr-only peer" />
-          <div className="relative w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
-          <span className="text-[13px] font-bold text-slate-500 dark:text-slate-400 group-hover:text-blue-500 transition-colors uppercase whitespace-nowrap">{i18n.pages.gathering_log.hide_completed}</span>
-        </label>
+      <div className="flex items-center gap-1">
+        <button
+          onClick={() => setHideCompleted(p => !p)}
+          className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-bold transition-colors whitespace-nowrap ${
+            hideCompleted
+              ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300'
+              : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
+          }`}
+          title={i18n.pages.gathering_log.hide_completed}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            {hideCompleted
+              ? <><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></>
+              : <><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></>}
+          </svg>
+          <span className="hidden sm:inline">{i18n.pages.gathering_log.hide_completed}</span>
+        </button>
 
-        <label className="inline-flex items-center cursor-pointer gap-2 group">
-          <input type="checkbox" checked={showBookmarks} onChange={() => setShowBookmarks(p => !p)} className="sr-only peer" />
-          <div className="relative w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:bg-yellow-500 after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
-          <span className="text-[13px] font-bold text-slate-500 dark:text-slate-400 group-hover:text-yellow-500 transition-colors uppercase whitespace-nowrap">⭐ {i18n.pages.gathering_log.show_bookmarks}</span>
-        </label>
+        <button
+          onClick={() => setShowBookmarks(p => !p)}
+          className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-bold transition-colors whitespace-nowrap ${
+            showBookmarks
+              ? 'bg-yellow-100 dark:bg-yellow-900/40 text-yellow-500 dark:text-yellow-300'
+              : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
+          }`}
+          title={i18n.pages.gathering_log.show_bookmarks}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill={showBookmarks ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span className="hidden sm:inline">{i18n.pages.gathering_log.show_bookmarks}</span>
+        </button>
+
+        <button 
+          onClick={() => setIsAlarmModalOpen(true)}
+          className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors whitespace-nowrap"
+          title={i18n.pages.gathering_log.alarm_settings}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          <span className="hidden sm:inline">{i18n.pages.gathering_log.alarm_settings}</span>
+        </button>
       </div>
     );
 
@@ -108,7 +142,7 @@ export const GatheringLogPage: React.FC = () => {
       setHeaderActions(null);
       setCenterActions(null);
     };
-  }, [data, currentType, completedItems, hideCompleted, showBookmarks, viewMode, i18n, setProgress, setToolInfo, setHeaderActions, setCenterActions]);
+  }, [data, currentType, completedItems, hideCompleted, showBookmarks, viewMode, i18n, setProgress, setToolInfo, setHeaderActions, setCenterActions, isAlarmModalOpen]);
 
   const toggleComplete = (itemId: number) => {
     const newSet = new Set(completedItems);
@@ -145,12 +179,13 @@ export const GatheringLogPage: React.FC = () => {
     localStorage.setItem('ffxiv_gathering_log_bookmarks', JSON.stringify(Array.from(newSet)));
   };
 
+  const typeToIndex: Record<GatherType, number> = { mining: 0, quarrying: 1, logging: 2, harvesting: 3 };
+  const pages = data ? data.pages[typeToIndex[currentType]] || [] : [];
+
+  // Show loading, error, or null states
   if (loading) return <div className="p-8 text-center text-slate-500">{i18n.common.loading}</div>;
   if (error) return <div className="p-8 text-center text-red-500">{i18n.common.error_loading}: {error.message}</div>;
   if (!data) return null;
-
-  const typeToIndex: Record<GatherType, number> = { mining: 0, quarrying: 1, logging: 2, harvesting: 3 };
-  const pages = data.pages[typeToIndex[currentType]] || [];
 
   return (
     <div className="max-w-[1600px] mx-auto p-4 flex flex-col md:flex-row gap-6 items-start">
@@ -206,7 +241,7 @@ export const GatheringLogPage: React.FC = () => {
 
         {viewMode === 'timed' && (
           <div className="px-4 py-6">
-            <div className="flex gap-4 mb-6 sticky top-0 bg-slate-100 dark:bg-slate-900 z-20 py-2 px-1 overflow-x-auto">
+            <div className="flex gap-4 mb-6 sticky top-[calc(var(--app-header-height)+0.5rem)] bg-slate-100 dark:bg-slate-900 z-20 py-2 px-1 overflow-x-auto">
               {/* Type Toggles for Timed View */}
               {(['all', 'mining', 'quarrying', 'logging', 'harvesting'] as const).map(type => {
                 const isAll = type === 'all';
@@ -293,6 +328,12 @@ export const GatheringLogPage: React.FC = () => {
           onBookmarkAll={handleBookmarkAll}
         />
       )}
+
+      <AlarmSettingsModal 
+          isOpen={isAlarmModalOpen} 
+          onClose={() => setIsAlarmModalOpen(false)} 
+          data={data} 
+      />
     </div >
   );
 };

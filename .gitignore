@@ -28,3 +28,11 @@ dist-ssr/
 
 # FFXIV Toolbox specific
 GatheringLog_backup/
+
+# Copilot customization (local)
+.github/copilot-instructions.md
+.github/instructions/
+.github/prompts/
+.github/agents/
+.github/hooks/
+.github/skills/

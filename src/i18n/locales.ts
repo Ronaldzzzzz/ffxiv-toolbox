@@ -82,6 +82,35 @@ export interface Translation {
       recipe_parsing_title: string;
       recipe_description: string;
       recipe_parsing_failed: string;
+
+      alarm_settings: string;
+      alarm_enable: string;
+      alarm_sound: string;
+      alarm_lead_time: string;
+      alarm_sound_type: string;
+      alarm_sound_type_1: string;
+      alarm_sound_type_2: string;
+      alarm_sound_type_3: string;
+      alarm_test_notification: string;
+      alarm_test_sound: string;
+      alarm_macro_time_mode: string;
+      alarm_macro_time_mode_et: string;
+      alarm_macro_time_mode_lt: string;
+      alarm_macro_repeat: string;
+      alarm_macro_gen: string;
+      alarm_copy_macro: string;
+      alarm_no_tracked: string;
+      alarm_tracked_nodes: string;
+      alarm_browser_permission: string;
+      alarm_browser_permission_denied: string;
+      alarm_sound_blocked_warning: string;
+      alarm_sound_unavailable_warning: string;
+      alarm_notification_title: string;
+      alarm_notification_body: string;
+      alarm_notification_body_lead: string;
+      alarm_test_notification_body: string;
+      alarm_sound_builtin_group: string;
+      alarm_sound_mp3_group: string;
     };
     aether_current: {
       title: string;
@@ -192,7 +221,36 @@ export const translations: Record<LangCode, Translation> = {
         bookmarked_status: '已釘選',
         recipe_parsing_title: '配方解析：',
         recipe_description: '製作此物品所需的最底層材料清單。綠色標示的為可採集項目。',
-        recipe_parsing_failed: '解析配方失敗'
+        recipe_parsing_failed: '解析配方失敗',
+
+        alarm_settings: '鬧鐘與巨集',
+        alarm_enable: '啟用瀏覽器鬧鐘通知',
+        alarm_sound: '啟用音效提示',
+        alarm_lead_time: '提前通知 (現實分鐘)',
+        alarm_sound_type: '提示音效',
+        alarm_sound_type_1: '和弦聲 (Chime)',
+        alarm_sound_type_2: '三連音 (Triple Beep)',
+        alarm_sound_type_3: '警報聲 (Alarm)',
+        alarm_test_notification: '測試通知',
+        alarm_test_sound: '測試音效',
+        alarm_macro_time_mode: '巨集時間格式',
+        alarm_macro_time_mode_et: '艾歐澤亞時間 (ET)',
+        alarm_macro_time_mode_lt: '本地時間 (LT)',
+        alarm_macro_repeat: '巨集重複提醒 (循環)',
+        alarm_macro_gen: '遊戲內 /alarm 巨集生成',
+        alarm_copy_macro: '複製巨集',
+        alarm_no_tracked: '目前沒有追蹤任何限時節點。請點擊清單中的 🔔 按鈕加入追蹤。',
+        alarm_tracked_nodes: '已追蹤節點數: ',
+        alarm_browser_permission: '需要允許瀏覽器通知才能使用此功能',
+        alarm_browser_permission_denied: '瀏覽器通知已被封鎖，請在瀏覽器設定中解除封鎖',
+        alarm_sound_blocked_warning: '音效播放被瀏覽器阻擋。請先與頁面互動，並確認網站音訊權限已開啟。',
+        alarm_sound_unavailable_warning: '找不到音效檔或音訊裝置不可用，請確認 public/audio/alarms 下已有 se.1.mp3 ~ se.16.mp3。',
+        alarm_notification_title: '採集鬧鐘',
+        alarm_notification_body: '{item} 正在出現！ET {time}',
+        alarm_notification_body_lead: '{item} 將在 {minutes} 分鐘後出現 (ET {time})',
+        alarm_test_notification_body: '這是一則測試通知。',
+        alarm_sound_builtin_group: '內建音效',
+        alarm_sound_mp3_group: 'MP3 音效檔'
       },
       aether_current: {
         title: '風脈泉路徑',
@@ -292,7 +350,36 @@ export const translations: Record<LangCode, Translation> = {
         bookmarked_status: 'Pinned',
         recipe_parsing_title: 'Recipe Analysis: ',
         recipe_description: 'Base materials needed to craft this item. Gatherable items are marked in green.',
-        recipe_parsing_failed: 'Failed to parse recipe'
+        recipe_parsing_failed: 'Failed to parse recipe',
+
+        alarm_settings: 'Alarm & Macro',
+        alarm_enable: 'Enable Browser Notifications',
+        alarm_sound: 'Enable Sound Alerts',
+        alarm_lead_time: 'Lead Time (Real Minutes)',
+        alarm_sound_type: 'Alert Sound',
+        alarm_sound_type_1: 'Chime',
+        alarm_sound_type_2: 'Triple Beep',
+        alarm_sound_type_3: 'Alarm Bell',
+        alarm_test_notification: 'Test Notification',
+        alarm_test_sound: 'Test Sound',
+        alarm_macro_time_mode: 'Macro Time Format',
+        alarm_macro_time_mode_et: 'Eorzea Time (ET)',
+        alarm_macro_time_mode_lt: 'Local Time (LT)',
+        alarm_macro_repeat: 'Macro Repeat (Hourly)',
+        alarm_macro_gen: 'In-Game /alarm Macro Generator',
+        alarm_copy_macro: 'Copy Macro',
+        alarm_no_tracked: 'No timed nodes tracked. Click the 🔔 button on items to track them.',
+        alarm_tracked_nodes: 'Tracked Nodes: ',
+        alarm_browser_permission: 'Browser notification permission required',
+        alarm_browser_permission_denied: 'Notifications blocked. Please enable in browser settings.',
+        alarm_sound_blocked_warning: 'Sound playback is blocked by the browser. Interact with the page and make sure site audio permission is enabled.',
+        alarm_sound_unavailable_warning: 'Sound file or audio output is unavailable. Please make sure se.1.mp3 ~ se.16.mp3 exist under public/audio/alarms.',
+        alarm_notification_title: 'FFXIV Gathering Alarm',
+        alarm_notification_body: '{item} is now spawning! ET {time}',
+        alarm_notification_body_lead: '{item} spawning in {minutes} min (ET {time})',
+        alarm_test_notification_body: 'This is a test notification.',
+        alarm_sound_builtin_group: 'Built-in Sounds',
+        alarm_sound_mp3_group: 'MP3 Sound Files'
       },
       aether_current: {
         title: 'Aether Current',
@@ -392,7 +479,36 @@ export const translations: Record<LangCode, Translation> = {
         bookmarked_status: 'ブックマーク済み',
         recipe_parsing_title: 'レシピ解析: ',
         recipe_description: 'このアイテムを製作するための基本素材のリストです。緑色でマークされたアイテムは採集可能です。',
-        recipe_parsing_failed: 'レシピの解析に失敗しました'
+        recipe_parsing_failed: 'レシピの解析に失敗しました',
+
+        alarm_settings: 'アラーム＆マクロ',
+        alarm_enable: 'ブラウザ通知を有効にする',
+        alarm_sound: '効果音を有効にする',
+        alarm_lead_time: '事前通知（リアル分数）',
+        alarm_sound_type: '効果音の種類',
+        alarm_sound_type_1: 'チャイム (Chime)',
+        alarm_sound_type_2: 'トリプルビープ (Triple Beep)',
+        alarm_sound_type_3: 'アラーム (Alarm)',
+        alarm_test_notification: '通知テスト',
+        alarm_test_sound: '効果音テスト',
+        alarm_macro_time_mode: 'マクロの時間形式',
+        alarm_macro_time_mode_et: 'エオルゼア時間 (ET)',
+        alarm_macro_time_mode_lt: 'ローカル時間 (LT)',
+        alarm_macro_repeat: 'マクロ 繰り返し (毎分/毎時)',
+        alarm_macro_gen: 'ゲーム内 /alarm マクロ生成',
+        alarm_copy_macro: 'マクロをコピー',
+        alarm_no_tracked: '追跡中の未知・伝説はありません。アイテムの 🔔 ボタンを押して追加してください。',
+        alarm_tracked_nodes: '追跡中ノード: ',
+        alarm_browser_permission: '通知機能を利用するには許可が必要です',
+        alarm_browser_permission_denied: '通知がブロックされています。ブラウザの設定を変更してください。',
+        alarm_sound_blocked_warning: 'ブラウザにより効果音の再生がブロックされました。ページ操作後に、サイトの音声権限を確認してください。',
+        alarm_sound_unavailable_warning: '効果音ファイルまたは音声出力が利用できません。public/audio/alarms に se.1.mp3 ~ se.16.mp3 があるか確認してください。',
+        alarm_notification_title: 'FFXIV 採集アラーム',
+        alarm_notification_body: '{item} が出現しました！ET {time}',
+        alarm_notification_body_lead: '{item} が {minutes} 分後に出現します (ET {time})',
+        alarm_test_notification_body: 'これはテスト通知です。',
+        alarm_sound_builtin_group: '内蔵サウンド',
+        alarm_sound_mp3_group: 'MP3 サウンドファイル'
       },
       aether_current: {
         title: '風脈泉パス',
@@ -492,7 +608,36 @@ export const translations: Record<LangCode, Translation> = {
         bookmarked_status: '已钉选',
         recipe_parsing_title: '配方解析：',
         recipe_description: '制作此物品所需的最底层材料清单。绿色标示的为可采集项目。',
-        recipe_parsing_failed: '解析配方失败'
+        recipe_parsing_failed: '解析配方失败',
+
+        alarm_settings: '闹钟与宏',
+        alarm_enable: '启用浏览器闹钟通知',
+        alarm_sound: '启用音效提示',
+        alarm_lead_time: '提前通知 (现实分钟)',
+        alarm_sound_type: '提示音效',
+        alarm_sound_type_1: '和弦声 (Chime)',
+        alarm_sound_type_2: '三连音 (Triple Beep)',
+        alarm_sound_type_3: '警报声 (Alarm)',
+        alarm_test_notification: '测试通知',
+        alarm_test_sound: '测试音效',
+        alarm_macro_time_mode: '宏时间格式',
+        alarm_macro_time_mode_et: '艾欧泽亚时间 (ET)',
+        alarm_macro_time_mode_lt: '本地时间 (LT)',
+        alarm_macro_repeat: '宏重复提醒 (循环)',
+        alarm_macro_gen: '游戏内 /alarm 宏生成',
+        alarm_copy_macro: '复制宏',
+        alarm_no_tracked: '目前没有追踪任何限时节点。请点击列表中的 🔔 按钮加入追踪。',
+        alarm_tracked_nodes: '已追踪节点数: ',
+        alarm_browser_permission: '需要允许浏览器通知才能使用此功能',
+        alarm_browser_permission_denied: '浏览器通知已被拦截，请在浏览器设置中解除拦截',
+        alarm_sound_blocked_warning: '音效播放被浏览器拦截。请先与页面交互，并确认网站音频权限已开启。',
+        alarm_sound_unavailable_warning: '找不到音效文件或音频设备不可用，请确认 public/audio/alarms 下已有 se.1.mp3 ~ se.16.mp3。',
+        alarm_notification_title: '采集闹钟',
+        alarm_notification_body: '{item} 正在出现！ET {time}',
+        alarm_notification_body_lead: '{item} 将在 {minutes} 分钟后出现 (ET {time})',
+        alarm_test_notification_body: '这是一则测试通知。',
+        alarm_sound_builtin_group: '内置音效',
+        alarm_sound_mp3_group: 'MP3 音效文件'
       },
       aether_current: {
         title: '风脉泉路径',

@@ -200,7 +200,7 @@ export const LevelNav: React.FC<LevelNavProps> = ({
 
   return (
     <div
-      className={`sticky z-40 mb-6 bg-slate-50/95 dark:bg-slate-900/95 rounded-xl border border-slate-200 dark:border-slate-800 shadow-md transition-all duration-300 top-[8rem] md:top-[4.5rem] ${isSticky ? 'rounded-t-none border-t-0 shadow-lg py-2 px-4' : 'p-4'} relative group/nav`}
+      className={`sticky z-40 mb-6 bg-slate-50/95 dark:bg-slate-900/95 rounded-xl border border-slate-200 dark:border-slate-800 shadow-md transition-all duration-300 top-[calc(var(--app-header-height)+0.5rem)] ${isSticky ? 'rounded-t-none border-t-0 shadow-lg py-2 px-4' : 'p-4'} relative group/nav`}
     >
 
 

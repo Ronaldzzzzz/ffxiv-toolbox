@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Sun, Moon, Home as HomeIcon } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
@@ -19,9 +19,29 @@ export const Header: React.FC<HeaderProps> = ({ title: defaultTitle, version: de
 
   const displayTitle = toolInfo?.title || (location.pathname === '/gathering-log' ? t.pages.gathering_log.title : defaultTitle);
   const displayVersion = toolInfo?.version || defaultVersion;
+  const navRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const navElement = navRef.current;
+    if (!navElement) return;
+
+    const updateHeaderHeight = () => {
+      document.documentElement.style.setProperty('--app-header-height', `${navElement.offsetHeight}px`);
+    };
+
+    updateHeaderHeight();
+    const resizeObserver = new ResizeObserver(updateHeaderHeight);
+    resizeObserver.observe(navElement);
+    window.addEventListener('resize', updateHeaderHeight);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', updateHeaderHeight);
+    };
+  }, []);
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/95 dark:bg-slate-800/95 shadow-md border-b border-slate-200 dark:border-slate-700 transition-all">
+    <nav ref={navRef} className="sticky top-0 z-50 bg-white/95 dark:bg-slate-800/95 shadow-md border-b border-slate-200 dark:border-slate-700 transition-all">
       <div className="max-w-[1600px] mx-auto px-4 py-2">
         <div className="flex items-center justify-between relative min-h-[3rem]">
           
@@ -39,34 +59,35 @@ export const Header: React.FC<HeaderProps> = ({ title: defaultTitle, version: de
             </div>
 
             {(progress || etTime || headerActions) && (
-              <div className="flex items-center gap-2 mt-1 text-slate-400 dark:text-slate-500 overflow-x-auto no-scrollbar mask-gradient-right">
-                {progress && (
-                  <div className="flex items-center gap-2 shrink-0">
-                    <div className="text-[10px] md:text-[12px] font-mono text-blue-600 dark:text-blue-300 font-bold">
-                      {progress.current}/{progress.total} {Math.round((progress.current / progress.total) * 100)}%
-                    </div>
-                    <div className="w-8 md:w-10 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden hidden sm:block">
-                      <div className="h-full bg-blue-500" style={{ width: `${Math.round((progress.current / progress.total) * 100)}%` }} />
-                    </div>
+              <div className="mt-1 text-slate-400 dark:text-slate-500">
+                {(progress || etTime) && (
+                  <div className="flex items-center gap-2 overflow-x-auto no-scrollbar mask-gradient-right">
+                    {progress && (
+                      <div className="flex items-center gap-2 shrink-0">
+                        <div className="text-[10px] md:text-[12px] font-mono text-blue-600 dark:text-blue-300 font-bold">
+                          {progress.current}/{progress.total} {Math.round((progress.current / progress.total) * 100)}%
+                        </div>
+                        <div className="w-8 md:w-10 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden hidden sm:block">
+                          <div className="h-full bg-blue-500" style={{ width: `${Math.round((progress.current / progress.total) * 100)}%` }} />
+                        </div>
+                      </div>
+                    )}
+
+                    {etTime && (
+                      <>
+                        <span className="text-xs opacity-50 shrink-0">|</span>
+                        <div className="text-[10px] md:text-[12px] font-mono font-bold text-slate-700 dark:text-slate-300 shrink-0">
+                          ET {etTime}
+                        </div>
+                      </>
+                    )}
                   </div>
                 )}
 
-                {etTime && (
-                  <>
-                    <span className="text-xs opacity-50 shrink-0">|</span>
-                    <div className="text-[10px] md:text-[12px] font-mono font-bold text-slate-700 dark:text-slate-300 shrink-0">
-                      ET {etTime}
-                    </div>
-                  </>
-                )}
-
                 {headerActions && (
-                  <>
-                    <span className="text-xs opacity-50 shrink-0">|</span>
-                    <div className="flex items-center shrink-0">
-                      {headerActions}
-                    </div>
-                  </>
+                  <div className={`flex items-center overflow-x-auto no-scrollbar mask-gradient-right ${progress || etTime ? 'mt-1' : ''}`}>
+                    {headerActions}
+                  </div>
                 )}
               </div>
             )}

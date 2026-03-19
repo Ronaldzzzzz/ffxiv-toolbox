@@ -3,6 +3,7 @@ import { GatheringItemEntry, GatheringData, NodeData } from '../types';
 import { getLocalizedText, calculateNodeStatus, formatSeconds } from '../utils';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
+import { AlarmButton } from './AlarmButton';
 
 interface ItemRowProps {
   item: GatheringItemEntry;
@@ -13,6 +14,7 @@ interface ItemRowProps {
   toggleBookmark: (id: number) => void;
   className?: string;
   disableHover?: boolean;
+  disableGrayscale?: boolean;
 }
 
 const CopyButton: React.FC<{ text: string }> = ({ text }) => {
@@ -143,7 +145,7 @@ const NodeTimer: React.FC<{ spawns: number[]; duration: number; i18n: any }> = (
 };
 
 export const ItemRow: React.FC<ItemRowProps> = ({
-  item, data, isCompleted, isBookmarked, toggleComplete, toggleBookmark, className, disableHover
+  item, data, isCompleted, isBookmarked, toggleComplete, toggleBookmark, className, disableHover, disableGrayscale
 }) => {
   const { lang, t: i18n } = useLanguage();
   const { setMapModal } = useTool();
@@ -156,9 +158,10 @@ export const ItemRow: React.FC<ItemRowProps> = ({
   );
 
   const isCrystal = item.itemId >= 2 && item.itemId <= 19;
+  const isTimed = itemNodes.some(n => n.spawns && n.spawns.length > 0);
 
   return (
-    <div className={`group flex items-start p-3 md:p-3 transition-all ${disableHover ? '' : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'} ${isCompleted ? 'checked-item bg-slate-50/50 dark:bg-slate-800/30' : ''} ${className || ''}`}>
+    <div className={`group flex items-start p-3 md:p-3 transition-all ${disableHover ? '' : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'} ${isCompleted && !disableGrayscale ? 'checked-item bg-slate-50/50 dark:bg-slate-800/30' : ''} ${className || ''}`}>
       <div className="mr-3 shrink-0 flex items-center justify-center self-center min-h-[40px] min-w-[40px] md:min-h-0 md:min-w-0 -ml-2 md:ml-0">
         <input
           type="checkbox"
@@ -190,6 +193,7 @@ export const ItemRow: React.FC<ItemRowProps> = ({
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill={isBookmarked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
               </button>
+              {isTimed && <AlarmButton itemId={item.itemId} />}
             </div>
             {item.stars > 0 && (
               <span className="text-yellow-500 text-xs border border-yellow-500/30 px-1 rounded">★{item.stars}</span>

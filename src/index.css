@@ -6,13 +6,7 @@
 
 :root {
   --header-height: 4rem;
-  --header-offset: 8.5rem; /* Desktop: 4.5rem (Nav) + ~4rem (Header) */
-}
-
-@media (max-width: 768px) {
-  :root {
-    --header-offset: 12rem; /* Mobile: 8rem (Nav) + ~4rem (Header with 2 rows) */
-  }
+  --app-header-height: 4rem;
 }
 
 body {
@@ -88,7 +82,7 @@ body {
 /* Sticky Header Offset */
 .section-header-sticky {
   position: sticky;
-  top: var(--header-offset);
+  top: calc(var(--app-header-height) + 0.5rem);
   z-index: 20;
   @apply bg-white dark:bg-slate-800 shadow-sm transition-all;
 }

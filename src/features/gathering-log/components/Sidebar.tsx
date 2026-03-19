@@ -95,7 +95,7 @@ export const Sidebar: React.FC<SidebarProps & { isOpen?: boolean; onClose?: () =
       <aside className={`
         bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 
         md:w-56 md:shrink-0 md:rounded-lg md:p-4 
-        md:sticky md:top-20 md:max-h-[calc(100vh-6rem)] md:translate-x-0 md:block md:z-30
+        md:sticky md:top-[calc(var(--app-header-height)+0.5rem)] md:max-h-[calc(100vh-var(--app-header-height)-1rem)] md:translate-x-0 md:block md:z-30
         overflow-y-auto thin-scrollbar overscroll-contain
         
         /* Mobile Specifics */

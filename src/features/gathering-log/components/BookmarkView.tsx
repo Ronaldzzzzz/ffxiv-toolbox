@@ -108,6 +108,7 @@ export const BookmarkView: React.FC<BookmarkViewProps> = ({
                           toggleComplete={toggleComplete}
                           toggleBookmark={toggleBookmark}
                           disableHover={true}
+                          disableGrayscale={true}
                        />
                        {item.type && (
                          <div className="absolute top-2 right-2 opacity-50 group-hover:opacity-100 transition-opacity">
@@ -138,6 +139,7 @@ export const BookmarkView: React.FC<BookmarkViewProps> = ({
                           toggleComplete={toggleComplete}
                           toggleBookmark={toggleBookmark}
                           disableHover={true}
+                          disableGrayscale={true}
                        />
                        {item.type && (
                          <div className="absolute top-2 right-2 opacity-50 group-hover:opacity-100 transition-opacity">
