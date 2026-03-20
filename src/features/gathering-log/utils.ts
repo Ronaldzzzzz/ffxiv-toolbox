@@ -1,9 +1,14 @@
-import { LocalizedText } from './types';
+import { LocalizedText, NodeData } from './types';
 
 export function getLocalizedText(textObj: LocalizedText | undefined, lang: string): string {
   if (!textObj) return 'Unknown';
   const key = lang as keyof LocalizedText;
   return textObj[key] || textObj.en || 'Unknown';
+}
+
+export function getNodeItemIds(node: Pick<NodeData, 'items' | 'hiddenItems'>): number[] {
+  const mergedItems = [...node.items, ...(node.hiddenItems || [])];
+  return Array.from(new Set(mergedItems));
 }
 
 // 使用 Region ID (大區域) 判定版本更為準確且完整

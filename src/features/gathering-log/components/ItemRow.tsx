@@ -1,6 +1,6 @@
 import React from 'react';
 import { GatheringItemEntry, GatheringData, NodeData } from '../types';
-import { getLocalizedText, calculateNodeStatus, formatSeconds } from '../utils';
+import { getLocalizedText, calculateNodeStatus, formatSeconds, getNodeItemIds } from '../utils';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
 import { AlarmButton } from './AlarmButton';
@@ -154,7 +154,7 @@ export const ItemRow: React.FC<ItemRowProps> = ({
   const iconUrl = iconPath ? `https://xivapi.com${iconPath}` : 'https://xivapi.com/i/066000/066313_hr1.png';
 
   const itemNodes: NodeData[] = Object.values(data.nodes).filter(node =>
-    node.items.includes(item.itemId) && node.map !== 0
+    getNodeItemIds(node).includes(item.itemId) && node.map !== 0
   );
 
   const isCrystal = item.itemId >= 2 && item.itemId <= 19;

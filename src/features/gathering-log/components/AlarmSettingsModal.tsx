@@ -3,7 +3,7 @@ import { useLanguage } from '../../../i18n/LanguageContext';
 import { useAlarm } from '../hooks/useAlarm';
 import { ALARM_SOUND_ERROR_EVENT, playNotificationSound } from '../hooks/useAlarmTrigger';
 import { GatheringData } from '../types';
-import { getLocalizedText } from '../utils';
+import { getLocalizedText, getNodeItemIds } from '../utils';
 
 interface AlarmSettingsModalProps {
     isOpen: boolean;
@@ -52,7 +52,7 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({ isOpen, 
             
             // Find nodes containing this item that have spawn times and valid map
             const nodes = Object.values(data.nodes).filter(node => 
-                node.items.includes(itemId) && node.spawns && node.spawns.length > 0 && node.map !== 0
+                getNodeItemIds(node).includes(itemId) && node.spawns && node.spawns.length > 0 && node.map !== 0
             );
             
             if (nodes.length > 0) {

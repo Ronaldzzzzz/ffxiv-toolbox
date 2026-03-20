@@ -33,6 +33,7 @@ export interface NodeData {
   level: number;
   type: number;
   items: number[];
+  hiddenItems?: number[];
   spawns?: number[];
   duration?: number;
   limited?: number;

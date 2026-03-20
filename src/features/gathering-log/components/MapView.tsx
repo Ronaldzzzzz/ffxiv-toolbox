@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 //import { useTool } from '../../../context/ToolContext';
 import { GatheringData, GatherType, NodeData } from '../types';
 import { useLanguage } from '../../../i18n/LanguageContext';
-import { getLocalizedText, TIMED_GATHERING_MAP_ICONS, GATHERING_MAP_ICONS, getMapPercentage, EXPANSION_MAP, calculateNodeStatus, formatSeconds } from '../utils';
+import { getLocalizedText, TIMED_GATHERING_MAP_ICONS, GATHERING_MAP_ICONS, getMapPercentage, EXPANSION_MAP, calculateNodeStatus, formatSeconds, getNodeItemIds } from '../utils';
 import { ChevronLeft } from 'lucide-react';
 import { AlarmButton } from './AlarmButton';
 
@@ -30,11 +30,60 @@ export const MapView: React.FC<MapViewProps> = ({
     const [selectedMapId, setSelectedMapId] = useState<number | null>(null);
     const [now, setNow] = useState(Date.now());
     const [hoveredNodeId, setHoveredNodeId] = useState<number | string | null>(null);
+    const [lockedNodeId, setLockedNodeId] = useState<number | string | null>(null);
     const [lineCoords, setLineCoords] = useState<{ x1: number, y1: number, x2: number, y2: number } | null>(null);
+    const activeNodeId = lockedNodeId ?? hoveredNodeId;
 
     const containerRef = useRef<HTMLDivElement>(null);
     const markerRefs = useRef<Record<string | number, HTMLDivElement | null>>({});
     const sidebarRefs = useRef<Record<string | number, HTMLDivElement | null>>({});
+
+    const mapItemWhitelist = useMemo(() => {
+        const whitelist = new Set<number>();
+
+        data.pages.forEach(typePages => {
+            typePages.forEach(page => {
+                page.items.forEach(item => {
+                    whitelist.add(item.itemId);
+                });
+            });
+        });
+
+        return whitelist;
+    }, [data.pages]);
+
+    const mapNodeItems = useMemo(() => {
+        const itemsByNodeId: Record<string, number[]> = {};
+
+        Object.values(data.nodes).forEach(node => {
+            itemsByNodeId[String(node.id)] = getNodeItemIds(node).filter(itemId => (
+                mapItemWhitelist.has(itemId) && Boolean(data.items[itemId])
+            ));
+        });
+
+        return itemsByNodeId;
+    }, [data.nodes, data.items, mapItemWhitelist]);
+
+    const handleNodeHoverStart = (nodeId: number | string) => {
+        if (lockedNodeId !== null) return;
+        setHoveredNodeId(nodeId);
+    };
+
+    const handleNodeHoverEnd = () => {
+        if (lockedNodeId !== null) return;
+        setHoveredNodeId(null);
+    };
+
+    const handleNodeLockToggle = (nodeId: number | string) => {
+        setHoveredNodeId(nodeId);
+        setLockedNodeId(prev => prev === nodeId ? null : nodeId);
+    };
+
+    const clearNodeLock = () => {
+        setLockedNodeId(null);
+        setHoveredNodeId(null);
+        setLineCoords(null);
+    };
 
     // Update current time every second for timers
     useEffect(() => {
@@ -44,14 +93,14 @@ export const MapView: React.FC<MapViewProps> = ({
 
     // Update Line Coordinates and Scroll logic
     useEffect(() => {
-        if (hoveredNodeId === null) {
+        if (activeNodeId === null) {
             setLineCoords(null);
             return;
         }
 
-        const sidebarItem = sidebarRefs.current[hoveredNodeId];
+        const sidebarItem = sidebarRefs.current[activeNodeId];
         if (sidebarItem && window.innerWidth >= 1024) {
-            // Scroll into view when hovered (Desktop only)
+            // Scroll the active node into view (Desktop only)
             sidebarItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
         }
 
@@ -59,8 +108,8 @@ export const MapView: React.FC<MapViewProps> = ({
         let animationFrameId: number;
 
         const updatePosition = () => {
-            const marker = markerRefs.current[hoveredNodeId];
-            const sidebarRef = sidebarRefs.current[hoveredNodeId];
+            const marker = markerRefs.current[activeNodeId];
+            const sidebarRef = sidebarRefs.current[activeNodeId];
             const container = containerRef.current;
 
             if (marker && sidebarRef && container) {
@@ -88,7 +137,7 @@ export const MapView: React.FC<MapViewProps> = ({
         updatePosition();
 
         return () => cancelAnimationFrame(animationFrameId);
-    }, [hoveredNodeId]);
+    }, [activeNodeId]);
 
     // Group nodes by Map ID
     const nodesByMap = useMemo(() => {
@@ -100,8 +149,7 @@ export const MapView: React.FC<MapViewProps> = ({
             // Filter out invalid types just in case, but allow all standard types
             if (!allTypeIds.includes(node.type)) return;
 
-            // Filter out nodes that have no valid items
-            const validItems = node.items.filter(id => data.items[id]);
+            const validItems = mapNodeItems[String(node.id)] || [];
             if (validItems.length === 0) return;
 
             // Filter out if all items are completed and hideCompleted is true
@@ -122,7 +170,7 @@ export const MapView: React.FC<MapViewProps> = ({
         });
 
         return grouped;
-    }, [data.nodes, hideCompleted, completedItems, showBookmarks, bookmarkedItems]);
+    }, [data.nodes, hideCompleted, completedItems, showBookmarks, bookmarkedItems, mapNodeItems]);
 
     // Get list of available maps with their region names
     const availableMaps = useMemo(() => {
@@ -140,7 +188,7 @@ export const MapView: React.FC<MapViewProps> = ({
                 name: placeName ? getLocalizedText(placeName, lang) : `Map ${id}`,
                 region: regionName ? getLocalizedText(regionName, lang) : i18n.pages.gathering_log.unknown_region,
                 nodeCount: (nodesByMap[id] || []).filter(n => {
-                    const valid = n.items.filter(i => data.items[i]);
+                    const valid = mapNodeItems[String(n.id)] || [];
                     return !valid.every(i => completedItems.has(i));
                 }).length,
                 expansion,
@@ -157,7 +205,7 @@ export const MapView: React.FC<MapViewProps> = ({
         });
 
         return maps;
-    }, [nodesByMap, data.maps, data.places, lang]);
+    }, [nodesByMap, data.maps, data.places, lang, mapNodeItems, completedItems, i18n.pages.gathering_log.unknown_region]);
 
     // Calculate clusters for rendering
     const nodeClusters = useMemo(() => {
@@ -178,7 +226,7 @@ export const MapView: React.FC<MapViewProps> = ({
         const processed = new Set<string | number>();
 
         nodes.forEach(node => {
-            const validItems = node.items.filter(id => data.items[id]);
+            const validItems = mapNodeItems[String(node.id)] || [];
             if (validItems.length === 0) return;
 
             if (processed.has(node.id)) return;
@@ -188,7 +236,7 @@ export const MapView: React.FC<MapViewProps> = ({
 
             nodes.forEach(otherNode => {
                 if (node.id === otherNode.id || processed.has(otherNode.id)) return;
-                const otherValid = otherNode.items.filter(id => data.items[id]);
+                const otherValid = mapNodeItems[String(otherNode.id)] || [];
                 if (otherValid.length === 0) return;
 
                 const dist = Math.sqrt(Math.pow(node.x - otherNode.x, 2) + Math.pow(node.y - otherNode.y, 2));
@@ -235,10 +283,16 @@ export const MapView: React.FC<MapViewProps> = ({
         });
 
         return clusters;
-    }, [selectedMapId, nodesByMap, data.maps, data.items]);
+    }, [selectedMapId, nodesByMap, data.maps, mapNodeItems]);
 
     // Mobile: Auto-collapse map selector when map is selected
     const [isMapSelectorOpen, setIsMapSelectorOpen] = useState(true);
+
+    useEffect(() => {
+        setHoveredNodeId(null);
+        setLockedNodeId(null);
+        setLineCoords(null);
+    }, [selectedMapId, isMapSelectorOpen]);
 
     // Ref to scroll map selector to top when opened
     const mapSelectorRef = useRef<HTMLDivElement>(null);
@@ -253,7 +307,7 @@ export const MapView: React.FC<MapViewProps> = ({
     */
 
     return (
-        <div ref={containerRef} className="flex flex-col lg:flex-row gap-3 min-h-[500px] lg:h-[calc(100vh-140px)] relative">
+        <div ref={containerRef} onClick={clearNodeLock} className="flex flex-col lg:flex-row gap-3 min-h-[500px] lg:h-[calc(100vh-140px)] relative">
             {/* Connection Line Overlay */}
             <svg className="absolute inset-0 w-full h-full pointer-events-none z-50 overflow-visible">
                 {lineCoords && (
@@ -450,10 +504,11 @@ export const MapView: React.FC<MapViewProps> = ({
                                             const isTimed = node.spawns && node.spawns.length > 0;
                                             const iconSet = isTimed ? TIMED_GATHERING_MAP_ICONS : GATHERING_MAP_ICONS;
                                             const iconUrl = iconSet[iconKey] || iconSet.mining;
-                                            const validItems = node.items.filter(id => data.items[id]);
+                                            const validItems = mapNodeItems[String(node.id)] || [];
                                             const isAllCompleted = validItems.every(id => completedItems.has(id));
                                             // Mobile Tap to Hover
-                                            const isHovered = hoveredNodeId === node.id;
+                                            const isActive = activeNodeId === node.id;
+                                            const isLocked = lockedNodeId === node.id;
                                             // Use onClick for mobile to simulate hover/select?
                                             // For now sticking to mouseEnter/Leave but on mobile tap might need better handling if hover doesn't work well.
                                             // React's mouseEnter/Leave often works on tap for first tap.
@@ -465,16 +520,19 @@ export const MapView: React.FC<MapViewProps> = ({
                                                 <div
                                                     key={node.id}
                                                     ref={el => { markerRefs.current[node.id] = el; }}
-                                                    onMouseEnter={() => setHoveredNodeId(node.id)}
-                                                    onMouseLeave={() => setHoveredNodeId(null)}
-                                                    onClick={() => setHoveredNodeId(node.id === hoveredNodeId ? null : node.id)} // Mobile toggle
+                                                    onMouseEnter={() => handleNodeHoverStart(node.id)}
+                                                    onMouseLeave={handleNodeHoverEnd}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleNodeLockToggle(node.id);
+                                                    }}
                                                     className={`
                                                     absolute flex items-center justify-center 
                                                     w-6 h-6 -ml-3 -mt-3
                                                     md:w-8 md:h-8 md:-ml-4 md:-mt-4 
                                                     cursor-pointer transition-all duration-300 ease-out
                                                     ${isAllCompleted ? 'grayscale opacity-60' : ''}
-                                                    ${isHovered ? 'z-50 scale-125' : (isStacked ? 'z-10' : 'z-20')}
+                                                    ${isActive ? 'z-50 scale-125' : (isStacked ? 'z-10' : 'z-20')}
                                                 `}
                                                     style={{
                                                         transform: isStacked ? undefined : 'none',
@@ -486,7 +544,7 @@ export const MapView: React.FC<MapViewProps> = ({
                                                         style={isStacked ? { '--tx': `${item.offsetX}px`, '--ty': `${item.offsetY}px` } as any : {}}
                                                     >
                                                         {/* Background Circle */}
-                                                        <div className={`absolute inset-0 bg-blue-100 rounded-full shadow-sm transform scale-125 ${isAllCompleted ? 'opacity-30' : 'opacity-60'}`}></div>
+                                                        <div className={`absolute inset-0 rounded-full shadow-sm transform scale-125 ${isLocked ? 'bg-blue-200 ring-2 ring-blue-400 dark:bg-blue-900/60 dark:ring-blue-300' : 'bg-blue-100'} ${isAllCompleted ? 'opacity-30' : 'opacity-60'}`}></div>
 
                                                         {/* Pulse */}
                                                         {!isAllCompleted && (
@@ -507,10 +565,10 @@ export const MapView: React.FC<MapViewProps> = ({
                                                         absolute left-1/2 bottom-full mb-2 -translate-x-1/2 bg-slate-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap 
                                                         pointer-events-none shadow-lg z-50
                                                         opacity-0 transition-opacity
-                                                        ${isHovered ? 'opacity-100' : 'opacity-0'}
+                                                        ${isActive ? 'opacity-100' : 'opacity-0'}
                                                     `}>
                                                             <div className="font-bold mb-0.5">{i18n.pages.gathering_log.level_short}{node.level}</div>
-                                                            {node.items.filter(id => data.items[id]).map(itemId => (
+                                                            {validItems.map(itemId => (
                                                                 <div key={itemId} className="flex items-center gap-1 opacity-80">
                                                                     <span className={completedItems.has(itemId) ? 'text-green-400' : ''}>
                                                                         {getLocalizedText(data.items[itemId], lang)}
@@ -552,7 +610,7 @@ export const MapView: React.FC<MapViewProps> = ({
                     {selectedMapId && nodesByMap[selectedMapId] && (
                         <div className="text-xs text-slate-500 mt-1">
                             {i18n.pages.gathering_log.nodes_incomplete.replace('{count}', String(nodesByMap[selectedMapId].filter(n => {
-                                const valid = n.items.filter(i => data.items[i]);
+                                const valid = mapNodeItems[String(n.id)] || [];
                                 return !valid.every(i => completedItems.has(i));
                             }).length))}
                         </div>
@@ -563,7 +621,7 @@ export const MapView: React.FC<MapViewProps> = ({
                     {selectedMapId && nodesByMap[selectedMapId] ? (
                         nodesByMap[selectedMapId].map((node, nodeIdx) => {
                             // Filter valid items first
-                            let validNodeItems = node.items.filter(id => data.items[id]);
+                            let validNodeItems = mapNodeItems[String(node.id)] || [];
                             if (showBookmarks) {
                                 validNodeItems = validNodeItems.filter(id => bookmarkedItems.has(id));
                             }
@@ -580,7 +638,8 @@ export const MapView: React.FC<MapViewProps> = ({
 
                             const isAllCompleted = validNodeItems.every(id => completedItems.has(id));
 
-                            const isHovered = hoveredNodeId === node.id;
+                            const isActive = activeNodeId === node.id;
+                            const isLocked = lockedNodeId === node.id;
                             const isTimed = node.spawns && node.spawns.length > 0;
                             const iconSet = isTimed ? TIMED_GATHERING_MAP_ICONS : GATHERING_MAP_ICONS;
 
@@ -588,12 +647,16 @@ export const MapView: React.FC<MapViewProps> = ({
                                 <div
                                     key={nodeIdx}
                                     ref={el => { sidebarRefs.current[node.id] = el; }}
-                                    onMouseEnter={() => setHoveredNodeId(node.id)}
-                                    onMouseLeave={() => setHoveredNodeId(null)}
-                                    className={`rounded-lg p-2 border transition-all duration-200 ${isHovered
-                                        ? 'bg-blue-50 border-blue-300 shadow-md ring-1 ring-blue-200 dark:bg-blue-900/30 dark:border-blue-500 dark:ring-blue-500'
+                                    onMouseEnter={() => handleNodeHoverStart(node.id)}
+                                    onMouseLeave={handleNodeHoverEnd}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleNodeLockToggle(node.id);
+                                    }}
+                                    className={`rounded-lg p-2 border transition-all duration-200 cursor-pointer ${isActive
+                                        ? 'bg-blue-50 border-blue-300 shadow-md ring-1 dark:bg-blue-900/30 dark:border-blue-500 dark:ring-blue-500'
                                         : 'bg-slate-50 border-slate-100 dark:bg-slate-700/30 dark:border-slate-700/50'
-                                        } ${isAllCompleted ? 'grayscale opacity-60' : ''}`}
+                                        } ${isLocked ? 'ring-blue-400 dark:ring-blue-300' : (isActive ? 'ring-blue-200' : '')} ${isAllCompleted ? 'grayscale opacity-60' : ''}`}
                                 >
                                     <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-200 dark:border-slate-600">
                                         <img src={iconSet[iconKey]} className="w-4 h-4 object-contain" alt="" />
@@ -603,7 +666,7 @@ export const MapView: React.FC<MapViewProps> = ({
                                         </span>
                                     </div>
                                     <div className="space-y-1">
-                                        {node.items.map(itemId => {
+                                        {validNodeItems.map(itemId => {
                                             const item = data.items[itemId];
                                             if (!item) return null;
 

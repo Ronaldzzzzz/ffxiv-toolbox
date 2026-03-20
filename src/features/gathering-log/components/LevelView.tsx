@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { GatheringData, GatherType } from '../types';
 import { ItemRow } from './ItemRow';
-import { getLocalizedText } from '../utils';
+import { getLocalizedText, getNodeItemIds } from '../utils';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
 
@@ -63,7 +63,7 @@ export const LevelView: React.FC<LevelViewProps> = ({
           // 3. Region Filter
           if (currentRegion === 'all') return true;
           const nodes = Object.values(data.nodes).filter(node =>
-            node.items.includes(item.itemId) && node.map !== 0
+            getNodeItemIds(node).includes(item.itemId) && node.map !== 0
           );
           return nodes.some(node => {
             const map = data.maps[node.map];
@@ -84,7 +84,7 @@ export const LevelView: React.FC<LevelViewProps> = ({
         let headerTitle = `Lv. ${page.startLevel} - ${page.startLevel + 4}`;
         const firstItem = page.items[0];
         if (firstItem) {
-          const nodes = Object.values(data.nodes).filter(n => n.items.includes(firstItem.itemId));
+          const nodes = Object.values(data.nodes).filter(n => getNodeItemIds(n).includes(firstItem.itemId));
           const folkloreNode = nodes.find(n => n.folklore);
           if (folkloreNode && folkloreNode.folklore) {
             headerTitle = getLocalizedText(data.items[folkloreNode.folklore], lang);
