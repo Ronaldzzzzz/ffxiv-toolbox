@@ -82,6 +82,10 @@ export interface Translation {
       recipe_parsing_title: string;
       recipe_description: string;
       recipe_parsing_failed: string;
+      
+      collectible_tag: string;
+      custom_delivery_tag: string;
+      collection_only_tag: string;
 
       alarm_settings: string;
       alarm_enable: string;
@@ -223,6 +227,10 @@ export const translations: Record<LangCode, Translation> = {
         recipe_description: '製作此物品所需的最底層材料清單。綠色標示的為可採集項目。',
         recipe_parsing_failed: '解析配方失敗',
 
+        collectible_tag: '收藏物',
+        custom_delivery_tag: '老主顧',
+        collection_only_tag: '收藏用',
+
         alarm_settings: '鬧鐘與巨集',
         alarm_enable: '啟用瀏覽器鬧鐘通知',
         alarm_sound: '啟用音效提示',
@@ -351,7 +359,9 @@ export const translations: Record<LangCode, Translation> = {
         recipe_parsing_title: 'Recipe Analysis: ',
         recipe_description: 'Base materials needed to craft this item. Gatherable items are marked in green.',
         recipe_parsing_failed: 'Failed to parse recipe',
-
+        collectible_tag: 'Collectible',
+        custom_delivery_tag: 'Custom Delivery',
+        collection_only_tag: 'Collectible Only',
         alarm_settings: 'Alarm & Macro',
         alarm_enable: 'Enable Browser Notifications',
         alarm_sound: 'Enable Sound Alerts',
@@ -480,7 +490,9 @@ export const translations: Record<LangCode, Translation> = {
         recipe_parsing_title: 'レシピ解析: ',
         recipe_description: 'このアイテムを製作するための基本素材のリストです。緑色でマークされたアイテムは採集可能です。',
         recipe_parsing_failed: 'レシピの解析に失敗しました',
-
+        collectible_tag: 'コレクティブル',
+        custom_delivery_tag: 'カスタムデリバリー',
+        collection_only_tag: 'コレクション用',
         alarm_settings: 'アラーム＆マクロ',
         alarm_enable: 'ブラウザ通知を有効にする',
         alarm_sound: '効果音を有効にする',
@@ -609,6 +621,10 @@ export const translations: Record<LangCode, Translation> = {
         recipe_parsing_title: '配方解析：',
         recipe_description: '制作此物品所需的最底层材料清单。绿色标示的为可采集项目。',
         recipe_parsing_failed: '解析配方失败',
+
+        collectible_tag: '收藏物',
+        custom_delivery_tag: '老主顾',
+        collection_only_tag: '收藏用',
 
         alarm_settings: '闹钟与宏',
         alarm_enable: '启用浏览器闹钟通知',

@@ -2,7 +2,7 @@ import { LocalizedText, NodeData } from './types';
 
 export function getLocalizedText(textObj: LocalizedText | undefined, lang: string): string {
   if (!textObj) return 'Unknown';
-  const key = lang as keyof LocalizedText;
+  const key = lang as keyof Pick<LocalizedText, 'en' | 'ja' | 'tw' | 'zh' | 'de' | 'fr'>;
   return textObj[key] || textObj.en || 'Unknown';
 }
 
@@ -61,7 +61,13 @@ export const GATHERING_MAP_ICONS = {
   quarrying: 'https://xivapi.com/i/060000/060437_hr1.png',
   logging: 'https://xivapi.com/i/060000/060433_hr1.png',
   harvesting: 'https://xivapi.com/i/060000/060432_hr1.png'
-}
+};
+
+export const COLLECTIBLE_ICONS = {
+  default: 'https://xivapi.com/i/064000/066472_hr1.png', // Custom Delivery icon
+  customDelivery: 'https://xivapi.com/i/064000/066472_hr1.png',
+  collectionOnly: 'https://xivapi.com/i/066000/066313_hr1.png'
+};
 
 export function getEorzeaTime(): string {
   const EORZEA_RATIO = 1440 / 70;

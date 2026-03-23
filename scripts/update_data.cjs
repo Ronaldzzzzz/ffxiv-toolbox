@@ -101,6 +101,7 @@ async function step1_downloadData() {
         { url: `${BASE_URL}/gathering-log-pages.json`, dest: path.join(RAW_DATA_DIR, 'gathering-log-pages.json') },
         { url: `${BASE_URL}/item-icons.json`, dest: path.join(RAW_DATA_DIR, 'item-icons.json') },
         { url: `${BASE_URL}/recipes-per-item.json`, dest: path.join(RAW_DATA_DIR, 'recipes-per-item.json') },
+        { url: `${BASE_URL}/satisfaction-thresholds.json`, dest: path.join(RAW_DATA_DIR, 'satisfaction-thresholds.json') },
     ];
 
     // Add Locale Files
@@ -194,7 +195,7 @@ async function step2_mergeData() {
     // 2. Loop locales and merge INTO APP_DATA_DIR files.
 
     console.log('\nInitializing base files...');
-    const filesToCopy = ['items.json', 'places.json', 'nodes.json', 'gathering-items.json', 'gathering-log-pages.json', 'item-icons.json', 'maps.json', 'aetherytes.json', 'recipes-per-item.json'];
+    const filesToCopy = ['items.json', 'places.json', 'nodes.json', 'gathering-items.json', 'gathering-log-pages.json', 'item-icons.json', 'maps.json', 'aetherytes.json', 'recipes-per-item.json', 'satisfaction-thresholds.json'];
     
     // We copy items.json and places.json FIRST to ensure they exist for merging
     ['items.json', 'places.json'].forEach(file => {
@@ -275,6 +276,64 @@ async function step3_filterData() {
     saveJson(METADATA_PATH, metadata);
     console.log(`Generated metadata.json with timestamp: ${metadata.lastUpdated}`);
 }
+
+function getItemDisplayName(itemData = {}) {
+    return itemData.tw || itemData.zh || itemData.en || itemData.ja || '(unknown)';
+}
+
+async function step4_listGatherableCustomDeliveryItems() {
+    console.log('\n--- Step 4: Listing Gatherable Custom Delivery Collectibles ---');
+
+    const ITEMS_PATH = path.join(APP_DATA_DIR, 'items.json');
+    const NODES_PATH = path.join(APP_DATA_DIR, 'nodes.json');
+    const LOG_PAGES_PATH = path.join(APP_DATA_DIR, 'gathering-log-pages.json');
+    const SATISFACTION_PATH = path.join(APP_DATA_DIR, 'satisfaction-thresholds.json');
+
+    if (!fs.existsSync(ITEMS_PATH) || !fs.existsSync(NODES_PATH) || !fs.existsSync(SATISFACTION_PATH)) {
+        console.warn('Skip listing: missing one of items.json / nodes.json / satisfaction-thresholds.json');
+        return;
+    }
+
+    const items = loadJson(ITEMS_PATH);
+    const nodes = loadJson(NODES_PATH);
+    const satisfactionThresholds = loadJson(SATISFACTION_PATH);
+    const logPages = fs.existsSync(LOG_PAGES_PATH) ? loadJson(LOG_PAGES_PATH) : [];
+
+    const nodeItemIds = new Set();
+    for (const node of Object.values(nodes)) {
+        const candidateIds = [...(node.items || []), ...(node.hiddenItems || [])];
+        candidateIds.forEach(id => nodeItemIds.add(String(id)));
+    }
+
+    const handbookItemIds = new Set();
+    for (const jobPages of logPages) {
+        for (const page of jobPages) {
+            for (const entry of (page.items || [])) {
+                handbookItemIds.add(String(entry.itemId));
+            }
+        }
+    }
+
+    const gatherableCustomDeliveryIds = Object.keys(satisfactionThresholds)
+        .filter(id => nodeItemIds.has(String(id)))
+        .sort((a, b) => Number(a) - Number(b));
+
+    const rows = gatherableCustomDeliveryIds.map(id => {
+        const itemData = items[id] || {};
+        return {
+            id,
+            name: getItemDisplayName(itemData),
+            isInHandbook: handbookItemIds.has(id)
+        };
+    }).sort((a, b) => a.name.localeCompare(b.name, 'zh-Hant'));
+
+    console.log(`Found ${rows.length} gatherable custom delivery collectible items.`);
+    console.log('Format: [itemId] 名稱 (handbook: Y/N)');
+    rows.forEach(row => {
+        console.log(`[${row.id}] ${row.name} (handbook: ${row.isInHandbook ? 'Y' : 'N'})`);
+    });
+}
+
 async function cleanup() {
     console.log('\n--- Cleanup ---');
     if (fs.existsSync(RAW_DATA_DIR)) {
@@ -288,6 +347,7 @@ async function main() {
         await step1_downloadData();
         await step2_mergeData();
         await step3_filterData();
+        await step4_listGatherableCustomDeliveryItems();
         await cleanup();
         console.log('\n=== Update Complete ===');
     } catch (err) {

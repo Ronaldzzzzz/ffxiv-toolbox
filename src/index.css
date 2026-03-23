@@ -86,3 +86,25 @@ body {
   z-index: 20;
   @apply bg-white dark:bg-slate-800 shadow-sm transition-all;
 }
+
+.map-item-name-marquee-clip {
+  overflow: hidden;
+}
+
+.map-item-name-marquee {
+  width: max-content;
+  will-change: transform;
+}
+
+.map-item-name-marquee--active {
+  animation: map-item-name-marquee 5.5s ease-in-out infinite alternate;
+}
+
+@keyframes map-item-name-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-1 * var(--marquee-shift, 0px)));
+  }
+}

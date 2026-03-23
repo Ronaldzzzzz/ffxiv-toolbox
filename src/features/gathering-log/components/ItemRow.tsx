@@ -3,7 +3,7 @@ import { GatheringItemEntry, GatheringData, NodeData } from '../types';
 import { getLocalizedText, calculateNodeStatus, formatSeconds, getNodeItemIds } from '../utils';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
-import { AlarmButton } from './AlarmButton';
+import { AlarmButton, ITEM_ACTION_BUTTON_BASE_CLASS, ITEM_ACTION_ICON_CLASS } from './AlarmButton';
 
 interface ItemRowProps {
   item: GatheringItemEntry;
@@ -17,7 +17,7 @@ interface ItemRowProps {
   disableGrayscale?: boolean;
 }
 
-const CopyButton: React.FC<{ text: string }> = ({ text }) => {
+const ItemCopyButton: React.FC<{ text: string; title?: string }> = ({ text, title = 'Copy Name' }) => {
   const [copied, setCopied] = React.useState(false);
 
   const handleCopy = async (e: React.MouseEvent) => {
@@ -34,13 +34,13 @@ const CopyButton: React.FC<{ text: string }> = ({ text }) => {
   return (
     <button
       onClick={handleCopy}
-      className={`transition-colors flex items-center justify-center w-6 h-6 rounded hover:bg-slate-100 dark:hover:bg-slate-700 ${copied ? 'text-green-500' : 'text-slate-300 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-300'}`}
-      title={copied ? "Copied!" : "Copy Name"}
+      className={`${ITEM_ACTION_BUTTON_BASE_CLASS} ${copied ? 'text-green-500' : 'text-slate-300 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-300'}`}
+      title={copied ? 'Copied!' : title}
     >
       {copied ? (
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <svg className={ITEM_ACTION_ICON_CLASS} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
       ) : (
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <svg className={ITEM_ACTION_ICON_CLASS} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
       )}
     </button>
   );
@@ -150,6 +150,8 @@ export const ItemRow: React.FC<ItemRowProps> = ({
   const { lang, t: i18n } = useLanguage();
   const { setMapModal } = useTool();
   const itemInfo = data.items[item.itemId];
+  const isCollectible = Boolean(itemInfo?.isCollectible);
+  const isCustomDelivery = itemInfo?.isCustomDelivery === true;
   const iconPath = data.icons[item.itemId];
   const iconUrl = iconPath ? `https://xivapi.com${iconPath}` : 'https://xivapi.com/i/066000/066313_hr1.png';
 
@@ -184,14 +186,17 @@ export const ItemRow: React.FC<ItemRowProps> = ({
             <span className="text-slate-800 dark:text-slate-100 item-name text-base leading-tight">
               {getLocalizedText(itemInfo, lang)}
             </span>
+            {isCollectible && (
+              <span className="text-amber-500 text-sm" title="Collectible">▣</span>
+            )}
             <div className="flex items-center gap-1">
-              <CopyButton text={getLocalizedText(itemInfo, lang)} />
+              <ItemCopyButton text={getLocalizedText(itemInfo, lang)} />
               <button
                 onClick={(e) => { e.stopPropagation(); toggleBookmark(item.itemId); }}
-                className={`transition-colors flex items-center justify-center w-6 h-6 rounded hover:bg-slate-100 dark:hover:bg-slate-700 ${isBookmarked ? 'text-yellow-500' : 'text-slate-300 dark:text-slate-600 hover:text-yellow-500'}`}
+                className={`${ITEM_ACTION_BUTTON_BASE_CLASS} ${isBookmarked ? 'text-yellow-500' : 'text-slate-300 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-300'}`}
                 title="Bookmark"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill={isBookmarked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <svg className={ITEM_ACTION_ICON_CLASS} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill={isBookmarked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
               </button>
               {isTimed && <AlarmButton itemId={item.itemId} />}
             </div>
@@ -202,6 +207,15 @@ export const ItemRow: React.FC<ItemRowProps> = ({
               <span className="text-red-400 text-xs border border-red-400/30 px-1 rounded">Hidden</span>
             )}
           </div>
+
+          {isCustomDelivery && (
+            <div className="mt-1">
+              <span className="inline-flex items-center gap-1 text-[10px] px-1 rounded border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20 w-fit">
+                <img src="https://xivapi.com/i/061000/061827_hr1.png" className="w-3 h-3" alt="Custom Delivery" title="Custom Delivery" />
+                {i18n.pages.gathering_log.custom_delivery_tag}
+              </span>
+            </div>
+          )}
 
           <div className="mt-1 space-y-0.5">
             {isCrystal ? (

@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 import { GatheringData } from '../types';
 
+function isCollectionOnlyItemName(item: any): boolean {
+  const tw = typeof item?.tw === 'string' ? item.tw : '';
+  const zh = typeof item?.zh === 'string' ? item.zh : '';
+  const en = typeof item?.en === 'string' ? item.en : '';
+  return tw.startsWith('收藏用') || zh.startsWith('收藏用') || en.startsWith('Rarefied');
+}
+
 export function useGatheringData() {
   const [data, setData] = useState<GatheringData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -9,7 +16,7 @@ export function useGatheringData() {
   useEffect(() => {
     async function loadData() {
       try {
-        const [pages, items, icons, places, nodes, maps, aetherytes, recipes] = await Promise.all([
+        const [pages, items, icons, places, nodes, maps, aetherytes, recipes, satisfactionThresholds] = await Promise.all([
           fetch(`${import.meta.env.BASE_URL}data/gathering-log/gathering-log-pages.json`).then(res => res.json()),
           fetch(`${import.meta.env.BASE_URL}data/gathering-log/items.json`).then(res => res.json()),
           fetch(`${import.meta.env.BASE_URL}data/gathering-log/icons.json`).then(res => res.json()),
@@ -18,6 +25,7 @@ export function useGatheringData() {
           fetch(`${import.meta.env.BASE_URL}data/gathering-log/maps.json`).then(res => res.json()),
           fetch(`${import.meta.env.BASE_URL}data/gathering-log/aetherytes.json`).then(res => res.json()),
           fetch(`${import.meta.env.BASE_URL}data/gathering-log/recipes-per-item.json`).then(res => res.json()),
+          fetch(`${import.meta.env.BASE_URL}data/gathering-log/satisfaction-thresholds.json`).then(res => res.json()),
         ]);
 
         const processedNodes = Object.fromEntries(
@@ -30,9 +38,65 @@ export function useGatheringData() {
           ])
         );
 
+        const handbookItemIds = new Set<string>();
+        for (const jobPages of pages as any[]) {
+          for (const page of jobPages || []) {
+            for (const entry of page.items || []) {
+              handbookItemIds.add(String(entry.itemId));
+            }
+          }
+        }
+
+        const gatherableItemIds = new Set<string>();
+        for (const node of Object.values(processedNodes) as any[]) {
+          const candidateIds = [...(node.items || []), ...(node.hiddenItems || [])];
+          candidateIds.forEach((id: number | string) => gatherableItemIds.add(String(id)));
+        }
+
+        const customDeliveryIds = new Set<string>(
+          Object.keys(satisfactionThresholds || {}).filter(
+            id => handbookItemIds.has(id) && gatherableItemIds.has(id)
+          )
+        );
+
+        const collectionOnlyIds = new Set<string>(
+          Array.from(gatherableItemIds).filter(id => {
+            const item = items[id];
+            if (!item || customDeliveryIds.has(id)) return false;
+            return isCollectionOnlyItemName(item);
+          })
+        );
+
+        const processedItems = Object.fromEntries(
+          Object.entries(items).map(([id, item]: [string, any]) => {
+            if (customDeliveryIds.has(id) && item && typeof item === 'object') {
+              return [
+                id,
+                {
+                  ...item,
+                  isCustomDelivery: true,
+                  isCollectible: true,
+                  collectibleType: 'general' as const,
+                },
+              ];
+            }
+            if (collectionOnlyIds.has(id) && item && typeof item === 'object') {
+              return [
+                id,
+                {
+                  ...item,
+                  isCollectible: true,
+                  collectibleType: 'collection-only' as const,
+                },
+              ];
+            }
+            return [id, item];
+          })
+        );
+
         setData({
           pages,
-          items,
+          items: processedItems,
           icons,
           places,
           nodes: processedNodes,

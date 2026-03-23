@@ -9,6 +9,9 @@ export interface LocalizedText {
   zh?: string;
   de?: string;
   fr?: string;
+  isCollectible?: boolean;
+  collectibleType?: 'general' | 'collection-only';
+  isCustomDelivery?: boolean;
 }
 
 export interface GatheringItemEntry {

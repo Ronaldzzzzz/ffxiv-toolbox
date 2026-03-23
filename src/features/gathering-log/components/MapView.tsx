@@ -1,10 +1,10 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useLayoutEffect } from 'react';
 //import { useTool } from '../../../context/ToolContext';
 import { GatheringData, GatherType, NodeData } from '../types';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { getLocalizedText, TIMED_GATHERING_MAP_ICONS, GATHERING_MAP_ICONS, getMapPercentage, EXPANSION_MAP, calculateNodeStatus, formatSeconds, getNodeItemIds } from '../utils';
 import { ChevronLeft } from 'lucide-react';
-import { AlarmButton } from './AlarmButton';
+import { AlarmButton, ITEM_ACTION_BUTTON_BASE_CLASS, ITEM_ACTION_ICON_CLASS } from './AlarmButton';
 
 interface MapViewProps {
     data: GatheringData;
@@ -15,6 +15,85 @@ interface MapViewProps {
     hideCompleted: boolean;
     showBookmarks: boolean;
 }
+
+const MapItemCopyButton: React.FC<{ text: string; title?: string }> = ({ text, title = 'Copy Name' }) => {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        try {
+            await navigator.clipboard.writeText(text);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1500);
+        } catch (err) {
+            console.error('Failed to copy:', err);
+        }
+    };
+
+    return (
+        <button
+            onClick={handleCopy}
+            className={`${ITEM_ACTION_BUTTON_BASE_CLASS} ${copied ? 'text-green-500' : 'text-slate-300 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-300'}`}
+            title={copied ? 'Copied!' : title}
+        >
+            {copied ? (
+                <svg className={ITEM_ACTION_ICON_CLASS} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            ) : (
+                <svg className={ITEM_ACTION_ICON_CLASS} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            )}
+        </button>
+    );
+};
+
+const MapItemNameMarquee: React.FC<{ text: string }> = ({ text }) => {
+    const clipRef = useRef<HTMLDivElement | null>(null);
+    const textRef = useRef<HTMLSpanElement | null>(null);
+    const [shiftPx, setShiftPx] = useState(0);
+
+    useLayoutEffect(() => {
+        const updateOverflow = () => {
+            const clip = clipRef.current;
+            const label = textRef.current;
+            if (!clip || !label) {
+                setShiftPx(0);
+                return;
+            }
+
+            const overflow = Math.max(0, label.scrollWidth - clip.clientWidth);
+            setShiftPx(overflow);
+        };
+
+        updateOverflow();
+
+        let observer: ResizeObserver | null = null;
+        if (typeof ResizeObserver !== 'undefined') {
+            observer = new ResizeObserver(updateOverflow);
+            if (clipRef.current) observer.observe(clipRef.current);
+            if (textRef.current) observer.observe(textRef.current);
+        }
+
+        window.addEventListener('resize', updateOverflow);
+
+        return () => {
+            if (observer) observer.disconnect();
+            window.removeEventListener('resize', updateOverflow);
+        };
+    }, [text]);
+
+    const shouldMarquee = shiftPx > 2;
+
+    return (
+        <div ref={clipRef} className="map-item-name-marquee-clip flex-1 min-w-0" title={text}>
+            <span
+                ref={textRef}
+                className={`block whitespace-nowrap ${shouldMarquee ? 'map-item-name-marquee map-item-name-marquee--active' : ''}`}
+                style={shouldMarquee ? ({ ['--marquee-shift' as string]: `${shiftPx + 12}px` } as React.CSSProperties) : undefined}
+            >
+                {text}
+            </span>
+        </div>
+    );
+};
 
 export const MapView: React.FC<MapViewProps> = ({
     data,
@@ -49,8 +128,14 @@ export const MapView: React.FC<MapViewProps> = ({
             });
         });
 
+        Object.entries(data.items).forEach(([id, item]) => {
+            if (item?.collectibleType === 'collection-only') {
+                whitelist.add(Number(id));
+            }
+        });
+
         return whitelist;
-    }, [data.pages]);
+    }, [data.pages, data.items]);
 
     const mapNodeItems = useMemo(() => {
         const itemsByNodeId: Record<string, number[]> = {};
@@ -340,7 +425,7 @@ export const MapView: React.FC<MapViewProps> = ({
                     <div className="text-xs text-slate-500 mt-1">{i18n.pages.gathering_log.maps_available.replace('{count}', String(availableMaps.length))}</div>
                 </div>
 
-                <div className="overflow-y-auto flex-grow thin-scrollbar p-2">
+                <div className="overflow-y-auto flex-grow thin-scrollbar p-2 overscroll-contain">
                     {/* Group Maps by Expansion and Region for Rendering */}
                     {(() => {
                         const groupedMaps: Record<string, Record<number, typeof availableMaps>> = {};
@@ -434,7 +519,7 @@ export const MapView: React.FC<MapViewProps> = ({
                         </div>
 
                         <div className="relative w-full h-full p-4 overflow-auto flex items-center justify-center">
-                            <div className="relative shadow-lg rounded-lg overflow-hidden bg-slate-800" style={{ width: 'min(100%, 580px)', aspectRatio: '1/1' }}>
+                            <div className="relative shadow-lg rounded-lg overflow-hidden bg-slate-800 overscroll-contain" style={{ width: 'min(100%, 580px)', aspectRatio: '1/1' }}>
                                 {/* Map Image */}
                                 {(() => {
                                     const map = data.maps[selectedMapId];
@@ -573,6 +658,7 @@ export const MapView: React.FC<MapViewProps> = ({
                                                                     <span className={completedItems.has(itemId) ? 'text-green-400' : ''}>
                                                                         {getLocalizedText(data.items[itemId], lang)}
                                                                     </span>
+                                                                    {data.items[itemId]?.isCollectible && <span className="text-amber-400">▣</span>}
                                                                 </div>
                                                             ))}
                                                             <div className="mt-1 text-[10px] text-slate-400 font-mono">X:{node.x}, Y:{node.y}</div>
@@ -617,7 +703,7 @@ export const MapView: React.FC<MapViewProps> = ({
                     )}
                 </div>
 
-                <div className="overflow-y-auto flex-grow thin-scrollbar p-3 space-y-3">
+                <div className="overflow-y-auto flex-grow thin-scrollbar p-3 space-y-3 overscroll-contain">
                     {selectedMapId && nodesByMap[selectedMapId] ? (
                         nodesByMap[selectedMapId].map((node, nodeIdx) => {
                             // Filter valid items first
@@ -669,11 +755,16 @@ export const MapView: React.FC<MapViewProps> = ({
                                         {validNodeItems.map(itemId => {
                                             const item = data.items[itemId];
                                             if (!item) return null;
+                                            const itemName = getLocalizedText(item, lang);
 
                                             const isBookmarked = bookmarkedItems.has(itemId);
                                             if (showBookmarks && !isBookmarked) return null;
 
                                             const isCompleted = completedItems.has(itemId);
+                                            const collectibleType = item.collectibleType;
+                                            const isCollectible = Boolean(item.isCollectible);
+                                            const isCustomDelivery = item.isCustomDelivery === true;
+                                            const isCollectionOnly = collectibleType === 'collection-only';
 
                                             // Timer Logic (ONLY for items in a timed node)
                                             let timerElement = null;
@@ -742,27 +833,34 @@ export const MapView: React.FC<MapViewProps> = ({
                                                             className="w-5 h-5 rounded-sm bg-slate-200 dark:bg-slate-600"
                                                             alt=""
                                                         />
-                                                        <span className={`text-xs truncate transition-colors flex items-center gap-1 ${isCompleted ? 'text-slate-400 line-through decoration-slate-400/50' : 'text-slate-700 dark:text-slate-200 group-hover/item:text-blue-500'}`} title={getLocalizedText(item, lang)}>
-                                                            {getLocalizedText(item, lang)}
-                                                            <button
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    navigator.clipboard.writeText(getLocalizedText(item, lang));
-                                                                }}
-                                                                className="text-slate-300 hover:text-slate-500 dark:text-slate-600 dark:hover:text-slate-400 transition-colors ml-1"
-                                                                title="Copy Name"
-                                                            >
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                                                            </button>
-                                                            <button
-                                                                onClick={(e) => { e.stopPropagation(); toggleBookmark(itemId); }}
-                                                                className={`transition-colors flex items-center justify-center w-4 h-4 rounded hover:bg-slate-200 dark:hover:bg-slate-600 ${bookmarkedItems.has(itemId) ? 'text-yellow-500' : 'text-slate-300 dark:text-slate-600 hover:text-yellow-500'}`}
-                                                                title="Bookmark"
-                                                            >
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill={bookmarkedItems.has(itemId) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                                                            </button>
-                                                            {isTimed && <AlarmButton itemId={itemId} />}
-                                                        </span>
+                                                        <div className={`text-xs transition-colors flex flex-col gap-0.5 flex-1 min-w-0 ${isCompleted ? 'text-slate-400' : isCollectionOnly ? 'text-slate-500 dark:text-slate-400 italic' : 'text-slate-700 dark:text-slate-200 group-hover/item:text-blue-500'}`}>
+                                                            <div className={`flex items-center gap-1 min-w-0 ${isCompleted ? 'line-through decoration-slate-400/50' : ''}`}>
+                                                                <MapItemNameMarquee text={itemName} />
+                                                                {isCollectible && <img src="https://xivapi.com/i/066000/066472_hr1.png" className="w-4 h-4 flex-shrink-0" alt="Collectible" title="Collectible" />}
+                                                                <div className="flex items-center gap-1 shrink-0 ml-auto">
+                                                                    <MapItemCopyButton text={itemName} />
+                                                                    <button
+                                                                        onClick={(e) => { e.stopPropagation(); toggleBookmark(itemId); }}
+                                                                        className={`${ITEM_ACTION_BUTTON_BASE_CLASS} ${bookmarkedItems.has(itemId) ? 'text-yellow-500' : 'text-slate-300 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-300'}`}
+                                                                        title="Bookmark"
+                                                                    >
+                                                                        <svg className={ITEM_ACTION_ICON_CLASS} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill={bookmarkedItems.has(itemId) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                                                                    </button>
+                                                                    {isTimed && <AlarmButton itemId={itemId} />}
+                                                                </div>
+                                                            </div>
+                                                            {isCustomDelivery && (
+                                                                <span className="inline-flex items-center gap-1 text-[10px] px-1 rounded border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20 w-fit">
+                                                                    <img src="https://xivapi.com/i/061000/061827_hr1.png" className="w-3 h-3" alt="Custom Delivery" title="Custom Delivery" />
+                                                                    {i18n.pages.gathering_log.custom_delivery_tag}
+                                                                </span>
+                                                            )}
+                                                            {isCollectionOnly && (
+                                                                <span className="text-[10px] px-1 rounded border border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 w-fit">
+                                                                    {i18n.pages.gathering_log.collection_only_tag}
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                     {timerElement}
                                                 </div>
