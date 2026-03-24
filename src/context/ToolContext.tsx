@@ -3,6 +3,18 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 interface ToolProgress {
   current: number;
   total: number;
+  currentPrimary?: number;
+  currentSecondary?: number;
+  totalPrimary?: number;
+  totalSecondary?: number;
+  currentMining?: number;
+  currentQuarrying?: number;
+  totalMining?: number;
+  totalQuarrying?: number;
+  currentLogging?: number;
+  currentHarvesting?: number;
+  totalLogging?: number;
+  totalHarvesting?: number;
 }
 
 interface ToolInfo {

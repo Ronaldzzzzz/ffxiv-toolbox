@@ -60,16 +60,53 @@ export const GatheringLogPage: React.FC = () => {
     if (!data) return;
 
     const typeToIndex: Record<GatherType, number> = { mining: 0, quarrying: 1, logging: 2, harvesting: 3 };
-    const pages = data.pages[typeToIndex[currentType]] || [];
-    let total = 0;
-    pages.forEach(p => total += p.items.length);
-    const current = Array.from(completedItems).filter(id => {
-      return pages.some(p => p.items.some(i => i.itemId === id));
-    }).length;
+    const countTypeProgress = (type: GatherType) => {
+      const pages = data.pages[typeToIndex[type]] || [];
+      const itemIds = new Set<number>();
+
+      pages.forEach(page => {
+        page.items.forEach(item => itemIds.add(item.itemId));
+      });
+
+      let current = 0;
+      itemIds.forEach(itemId => {
+        if (completedItems.has(itemId)) current += 1;
+      });
+
+      return { current, total: itemIds.size };
+    };
+
+    const miningProgress = countTypeProgress('mining');
+    const quarryingProgress = countTypeProgress('quarrying');
+    const loggingProgress = countTypeProgress('logging');
+    const harvestingProgress = countTypeProgress('harvesting');
+
+    const miningGroupCurrent = miningProgress.current + quarryingProgress.current;
+    const miningGroupTotal = miningProgress.total + quarryingProgress.total;
+    const botanyGroupCurrent = loggingProgress.current + harvestingProgress.current;
+    const botanyGroupTotal = loggingProgress.total + harvestingProgress.total;
+
+    const current = miningGroupCurrent + botanyGroupCurrent;
+    const total = miningGroupTotal + botanyGroupTotal;
 
     // 0. 設定資訊
-    setProgress({ current, total });
-    setToolInfo({ version: 'V3.4.2' });
+    setProgress({
+      current,
+      total,
+      currentPrimary: miningGroupCurrent,
+      currentSecondary: botanyGroupCurrent,
+      totalPrimary: miningGroupTotal,
+      totalSecondary: botanyGroupTotal,
+      currentMining: miningProgress.current,
+      currentQuarrying: quarryingProgress.current,
+      totalMining: miningProgress.total,
+      totalQuarrying: quarryingProgress.total,
+      currentLogging: loggingProgress.current,
+      currentHarvesting: harvestingProgress.current,
+      totalLogging: loggingProgress.total,
+      totalHarvesting: harvestingProgress.total,
+    });
+    setToolInfo({ version: 'V3.4.3' });
 
     // 1. 中間：視角切換按鈕
     setCenterActions(
@@ -142,7 +179,7 @@ export const GatheringLogPage: React.FC = () => {
       setHeaderActions(null);
       setCenterActions(null);
     };
-  }, [data, currentType, completedItems, hideCompleted, showBookmarks, viewMode, i18n, setProgress, setToolInfo, setHeaderActions, setCenterActions, isAlarmModalOpen]);
+  }, [data, completedItems, hideCompleted, showBookmarks, viewMode, i18n, setProgress, setToolInfo, setHeaderActions, setCenterActions, isAlarmModalOpen]);
 
   const toggleComplete = (itemId: number) => {
     const newSet = new Set(completedItems);

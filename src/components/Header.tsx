@@ -12,6 +12,8 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ title: defaultTitle, version: defaultVersion }) => {
+  const MINER_ICON_URL = 'https://xivapi.com/cj/companion/miner.png';
+  const BOTANIST_ICON_URL = 'https://xivapi.com/cj/companion/botanist.png';
   const location = useLocation();
   const { isDark, toggleTheme } = useTheme();
   const { progress, toolInfo, headerActions, centerActions, etTime } = useTool();
@@ -20,6 +22,26 @@ export const Header: React.FC<HeaderProps> = ({ title: defaultTitle, version: de
   const displayTitle = toolInfo?.title || (location.pathname === '/gathering-log' ? t.pages.gathering_log.title : defaultTitle);
   const displayVersion = toolInfo?.version || defaultVersion;
   const navRef = useRef<HTMLElement | null>(null);
+  const progressPercent = progress && progress.total > 0
+    ? Math.round((progress.current / progress.total) * 100)
+    : 0;
+  const hasDetailedGroupProgress = Boolean(
+    progress
+    && progress.currentMining !== undefined
+    && progress.currentQuarrying !== undefined
+    && progress.totalMining !== undefined
+    && progress.totalQuarrying !== undefined
+    && progress.currentLogging !== undefined
+    && progress.currentHarvesting !== undefined
+    && progress.totalLogging !== undefined
+    && progress.totalHarvesting !== undefined
+  );
+  const miningGroupPercent = progress && progress.totalPrimary && progress.totalPrimary > 0
+    ? Math.round(((progress.currentPrimary || 0) / progress.totalPrimary) * 100)
+    : 0;
+  const botanyGroupPercent = progress && progress.totalSecondary && progress.totalSecondary > 0
+    ? Math.round(((progress.currentSecondary || 0) / progress.totalSecondary) * 100)
+    : 0;
 
   useEffect(() => {
     const navElement = navRef.current;
@@ -63,14 +85,34 @@ export const Header: React.FC<HeaderProps> = ({ title: defaultTitle, version: de
                 {(progress || etTime) && (
                   <div className="flex items-center gap-2 overflow-x-auto no-scrollbar mask-gradient-right">
                     {progress && (
-                      <div className="flex items-center gap-2 shrink-0">
-                        <div className="text-[10px] md:text-[12px] font-mono text-blue-600 dark:text-blue-300 font-bold">
-                          {progress.current}/{progress.total} {Math.round((progress.current / progress.total) * 100)}%
+                      hasDetailedGroupProgress ? (
+                        <div className="flex items-center gap-2 shrink-0 text-[10px] md:text-[12px] font-mono text-blue-600 dark:text-blue-300 font-bold">
+                          <img src={MINER_ICON_URL} alt="" className="w-4 h-4 shrink-0" />
+                          <span>
+                            {progress.currentMining}+{progress.currentQuarrying}/{progress.totalMining}+{progress.totalQuarrying} {miningGroupPercent}%
+                          </span>
+                          <div className="w-8 md:w-10 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden hidden sm:block">
+                            <div className="h-full bg-blue-500" style={{ width: `${miningGroupPercent}%` }} />
+                          </div>
+                          <span className="text-xs opacity-50">|</span>
+                          <img src={BOTANIST_ICON_URL} alt="" className="w-4 h-4 shrink-0" />
+                          <span>
+                            {progress.currentLogging}+{progress.currentHarvesting}/{progress.totalLogging}+{progress.totalHarvesting} {botanyGroupPercent}%
+                          </span>
+                          <div className="w-8 md:w-10 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden hidden sm:block">
+                            <div className="h-full bg-blue-500" style={{ width: `${botanyGroupPercent}%` }} />
+                          </div>
                         </div>
-                        <div className="w-8 md:w-10 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden hidden sm:block">
-                          <div className="h-full bg-blue-500" style={{ width: `${Math.round((progress.current / progress.total) * 100)}%` }} />
+                      ) : (
+                        <div className="flex items-center gap-2 shrink-0">
+                          <div className="text-[10px] md:text-[12px] font-mono text-blue-600 dark:text-blue-300 font-bold">
+                            {progress.current}/{progress.total} {progressPercent}%
+                          </div>
+                          <div className="w-8 md:w-10 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden hidden sm:block">
+                            <div className="h-full bg-blue-500" style={{ width: `${progressPercent}%` }} />
+                          </div>
                         </div>
-                      </div>
+                      )
                     )}
 
                     {etTime && (

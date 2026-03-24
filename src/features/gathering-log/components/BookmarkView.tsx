@@ -19,6 +19,15 @@ export const BookmarkView: React.FC<BookmarkViewProps> = ({
   const { lang, t: i18n } = useLanguage();
 
   const bookmarkedItemsList = useMemo(() => {
+    const hiddenItemIds = new Set<number>();
+    data.pages.forEach(typePages => {
+      typePages.forEach(page => {
+        page.items.forEach(entry => {
+          if (entry.hidden === 1) hiddenItemIds.add(entry.itemId);
+        });
+      });
+    });
+
     return Array.from(bookmarkedItems)
       .map(id => {
         const itemInfo = data.items[id];
@@ -56,10 +65,11 @@ export const BookmarkView: React.FC<BookmarkViewProps> = ({
           name: getLocalizedText(itemInfo, lang),
           type,
           isTimed,
-          nodeInfo: nodeRef
+          nodeInfo: nodeRef,
+          hidden: hiddenItemIds.has(id)
         };
       })
-      .filter(item => item !== null) as { id: number; name: string; type: GatherType | null; isTimed: boolean; nodeInfo: any }[];
+      .filter(item => item !== null) as { id: number; name: string; type: GatherType | null; isTimed: boolean; nodeInfo: any; hidden: boolean }[];
   }, [bookmarkedItems, data, lang]);
 
   // 過濾掉隱藏已完成的
@@ -102,7 +112,7 @@ export const BookmarkView: React.FC<BookmarkViewProps> = ({
                {timedItems.map(item => (
                    <div key={item.id} className="relative group bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-yellow-400 dark:hover:border-yellow-500 hover:bg-yellow-50/50 dark:hover:bg-yellow-900/20 hover:shadow-sm transition-all overflow-hidden">
                        <ItemRow 
-                          item={{ itemId: item.id, lvl: item.nodeInfo?.level || 0, ilvl: 0, stars: 0, hidden: 0 }}
+                          item={{ itemId: item.id, lvl: item.nodeInfo?.level || 0, ilvl: 0, stars: 0, hidden: item.hidden ? 1 : 0 }}
                           data={data}
                           isCompleted={completedItems.has(item.id)}
                           isBookmarked={true}
@@ -133,7 +143,7 @@ export const BookmarkView: React.FC<BookmarkViewProps> = ({
                {regularItems.map(item => (
                     <div key={item.id} className="relative group bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 hover:shadow-sm transition-all overflow-hidden">
                        <ItemRow 
-                          item={{ itemId: item.id, lvl: 0, ilvl: 0, stars: 0, hidden: 0 }}
+                          item={{ itemId: item.id, lvl: 0, ilvl: 0, stars: 0, hidden: item.hidden ? 1 : 0 }}
                           data={data}
                           isCompleted={completedItems.has(item.id)}
                           isBookmarked={true}

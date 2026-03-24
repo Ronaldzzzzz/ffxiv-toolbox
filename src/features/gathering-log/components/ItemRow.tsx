@@ -1,6 +1,6 @@
 import React from 'react';
 import { GatheringItemEntry, GatheringData, NodeData } from '../types';
-import { getLocalizedText, calculateNodeStatus, formatSeconds, getNodeItemIds } from '../utils';
+import { getLocalizedText, calculateNodeStatus, formatSeconds, getNodeItemIds, UI_ICON_URLS } from '../utils';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
 import { AlarmButton, ITEM_ACTION_BUTTON_BASE_CLASS, ITEM_ACTION_ICON_CLASS } from './AlarmButton';
@@ -153,7 +153,7 @@ export const ItemRow: React.FC<ItemRowProps> = ({
   const isCollectible = Boolean(itemInfo?.isCollectible);
   const isCustomDelivery = itemInfo?.isCustomDelivery === true;
   const iconPath = data.icons[item.itemId];
-  const iconUrl = iconPath ? `https://xivapi.com${iconPath}` : 'https://xivapi.com/i/066000/066313_hr1.png';
+  const iconUrl = iconPath ? `https://xivapi.com${iconPath}` : UI_ICON_URLS.defaultItem;
 
   const itemNodes: NodeData[] = Object.values(data.nodes).filter(node =>
     getNodeItemIds(node).includes(item.itemId) && node.map !== 0
@@ -182,14 +182,37 @@ export const ItemRow: React.FC<ItemRowProps> = ({
         />
 
         <div className="flex-grow min-w-0 flex flex-col justify-center">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-slate-800 dark:text-slate-100 item-name text-base leading-tight">
-              {getLocalizedText(itemInfo, lang)}
-            </span>
-            {isCollectible && (
-              <span className="text-amber-500 text-sm" title="Collectible">▣</span>
+          <div className="flex items-center gap-2 min-w-0 flex-wrap">
+            <div className="flex items-center gap-1 min-w-0 flex-1">
+              <span className="text-slate-800 dark:text-slate-100 item-name text-base leading-tight truncate">
+                {getLocalizedText(itemInfo, lang)}
+              </span>
+              {isCollectible && (
+                <img
+                  src={UI_ICON_URLS.collectible}
+                  className="w-4 h-4 shrink-0"
+                  alt="Collectible"
+                  title={i18n.pages.gathering_log.collectible_tag}
+                />
+              )}
+            </div>
+            {isCustomDelivery && (
+              <span className="inline-flex items-center gap-1 text-[10px] px-1 rounded border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20 w-fit shrink-0">
+                <img
+                  src={UI_ICON_URLS.customDelivery}
+                  className="w-3 h-3"
+                  alt="Custom Delivery"
+                  title={i18n.pages.gathering_log.custom_delivery_tag}
+                />
+                {i18n.pages.gathering_log.custom_delivery_tag}
+              </span>
             )}
-            <div className="flex items-center gap-1">
+            {item.hidden === 1 && (
+              <span className="text-red-500 dark:text-red-300 text-[10px] px-1 rounded border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20 w-fit shrink-0">
+                {i18n.pages.gathering_log.hidden_tag}
+              </span>
+            )}
+            <div className="flex items-center gap-1 shrink-0 ml-auto pl-1">
               <ItemCopyButton text={getLocalizedText(itemInfo, lang)} />
               <button
                 onClick={(e) => { e.stopPropagation(); toggleBookmark(item.itemId); }}
@@ -203,19 +226,7 @@ export const ItemRow: React.FC<ItemRowProps> = ({
             {item.stars > 0 && (
               <span className="text-yellow-500 text-xs border border-yellow-500/30 px-1 rounded">★{item.stars}</span>
             )}
-            {item.hidden === 1 && (
-              <span className="text-red-400 text-xs border border-red-400/30 px-1 rounded">Hidden</span>
-            )}
           </div>
-
-          {isCustomDelivery && (
-            <div className="mt-1">
-              <span className="inline-flex items-center gap-1 text-[10px] px-1 rounded border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20 w-fit">
-                <img src="https://xivapi.com/i/061000/061827_hr1.png" className="w-3 h-3" alt="Custom Delivery" title="Custom Delivery" />
-                {i18n.pages.gathering_log.custom_delivery_tag}
-              </span>
-            </div>
-          )}
 
           <div className="mt-1 space-y-0.5">
             {isCrystal ? (

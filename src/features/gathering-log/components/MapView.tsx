@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef, useLayoutEffect } from 're
 //import { useTool } from '../../../context/ToolContext';
 import { GatheringData, GatherType, NodeData } from '../types';
 import { useLanguage } from '../../../i18n/LanguageContext';
-import { getLocalizedText, TIMED_GATHERING_MAP_ICONS, GATHERING_MAP_ICONS, getMapPercentage, EXPANSION_MAP, calculateNodeStatus, formatSeconds, getNodeItemIds } from '../utils';
+import { getLocalizedText, TIMED_GATHERING_MAP_ICONS, GATHERING_MAP_ICONS, getMapPercentage, EXPANSION_MAP, calculateNodeStatus, formatSeconds, getNodeItemIds, UI_ICON_URLS } from '../utils';
 import { ChevronLeft } from 'lucide-react';
 import { AlarmButton, ITEM_ACTION_BUTTON_BASE_CLASS, ITEM_ACTION_ICON_CLASS } from './AlarmButton';
 
@@ -45,7 +45,7 @@ const MapItemCopyButton: React.FC<{ text: string; title?: string }> = ({ text, t
     );
 };
 
-const MapItemNameMarquee: React.FC<{ text: string }> = ({ text }) => {
+const MapItemNameMarquee: React.FC<{ text: string; children?: React.ReactNode }> = ({ text, children }) => {
     const clipRef = useRef<HTMLDivElement | null>(null);
     const textRef = useRef<HTMLSpanElement | null>(null);
     const [shiftPx, setShiftPx] = useState(0);
@@ -86,10 +86,11 @@ const MapItemNameMarquee: React.FC<{ text: string }> = ({ text }) => {
         <div ref={clipRef} className="map-item-name-marquee-clip flex-1 min-w-0" title={text}>
             <span
                 ref={textRef}
-                className={`block whitespace-nowrap ${shouldMarquee ? 'map-item-name-marquee map-item-name-marquee--active' : ''}`}
+                className={`inline-flex items-center gap-1 whitespace-nowrap ${shouldMarquee ? 'map-item-name-marquee map-item-name-marquee--active' : ''}`}
                 style={shouldMarquee ? ({ ['--marquee-shift' as string]: `${shiftPx + 12}px` } as React.CSSProperties) : undefined}
             >
-                {text}
+                <span>{text}</span>
+                {children}
             </span>
         </div>
     );
@@ -549,8 +550,8 @@ export const MapView: React.FC<MapViewProps> = ({
                                         // type 0: i/060000/060453_hr1.png (Large/Main)
                                         // type 1: i/060000/060430_hr1.png (Small/Sub)
                                         const iconUrl = aetheryte.type === 0
-                                            ? 'https://xivapi.com/i/060000/060453_hr1.png'
-                                            : 'https://xivapi.com/i/060000/060430_hr1.png';
+                                            ? UI_ICON_URLS.aetheryteMain
+                                            : UI_ICON_URLS.aetheryteSub;
 
                                         return (
                                             <div
@@ -765,6 +766,7 @@ export const MapView: React.FC<MapViewProps> = ({
                                             const isCollectible = Boolean(item.isCollectible);
                                             const isCustomDelivery = item.isCustomDelivery === true;
                                             const isCollectionOnly = collectibleType === 'collection-only';
+                                            const isHidden = (node.hiddenItems || []).includes(itemId);
 
                                             // Timer Logic (ONLY for items in a timed node)
                                             let timerElement = null;
@@ -824,20 +826,48 @@ export const MapView: React.FC<MapViewProps> = ({
                                                         <input
                                                             type="checkbox"
                                                             checked={isCompleted}
+                                                            onClick={(e) => e.stopPropagation()}
                                                             onChange={() => toggleComplete(itemId)}
                                                             className="custom-checkbox w-3.5 h-3.5 rounded-sm text-blue-500 border-slate-300 focus:ring-offset-0 focus:ring-0 cursor-pointer"
                                                         />
 
                                                         <img
-                                                            src={data.icons[itemId] ? `https://xivapi.com${data.icons[itemId]}` : 'https://xivapi.com/i/066000/066313_hr1.png'}
+                                                            src={data.icons[itemId] ? `https://xivapi.com${data.icons[itemId]}` : UI_ICON_URLS.defaultItem}
                                                             className="w-5 h-5 rounded-sm bg-slate-200 dark:bg-slate-600"
                                                             alt=""
                                                         />
-                                                        <div className={`text-xs transition-colors flex flex-col gap-0.5 flex-1 min-w-0 ${isCompleted ? 'text-slate-400' : isCollectionOnly ? 'text-slate-500 dark:text-slate-400 italic' : 'text-slate-700 dark:text-slate-200 group-hover/item:text-blue-500'}`}>
-                                                            <div className={`flex items-center gap-1 min-w-0 ${isCompleted ? 'line-through decoration-slate-400/50' : ''}`}>
-                                                                <MapItemNameMarquee text={itemName} />
-                                                                {isCollectible && <img src="https://xivapi.com/i/066000/066472_hr1.png" className="w-4 h-4 flex-shrink-0" alt="Collectible" title="Collectible" />}
-                                                                <div className="flex items-center gap-1 shrink-0 ml-auto">
+                                                        <div className={`text-xs transition-colors flex-1 min-w-0 ${isCompleted ? 'text-slate-400' : isCollectionOnly ? 'text-slate-500 dark:text-slate-400 italic' : 'text-slate-700 dark:text-slate-200 group-hover/item:text-blue-500'}`}>
+                                                            <div className="flex items-stretch gap-2 min-w-0">
+                                                                <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+                                                                    <div className={`${isCompleted ? 'line-through decoration-slate-400/50' : ''}`}>
+                                                                        <MapItemNameMarquee text={itemName}>
+                                                                            {isCollectible && <img src={UI_ICON_URLS.collectible} className="w-4 h-4 flex-shrink-0" alt="Collectible" title={i18n.pages.gathering_log.collectible_tag} />}
+                                                                        </MapItemNameMarquee>
+                                                                    </div>
+
+                                                                    {(isCustomDelivery || isCollectionOnly || isHidden) && (
+                                                                        <div className="flex flex-wrap items-center gap-1">
+                                                                            {isCustomDelivery && (
+                                                                                <span className="inline-flex items-center gap-1 text-[10px] px-1 rounded border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20 w-fit not-italic">
+                                                                                    <img src={UI_ICON_URLS.customDelivery} className="w-3 h-3" alt="Custom Delivery" title={i18n.pages.gathering_log.custom_delivery_tag} />
+                                                                                    {i18n.pages.gathering_log.custom_delivery_tag}
+                                                                                </span>
+                                                                            )}
+                                                                            {isCollectionOnly && (
+                                                                                <span className="text-[10px] px-1 rounded border border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 w-fit not-italic">
+                                                                                    {i18n.pages.gathering_log.collection_only_tag}
+                                                                                </span>
+                                                                            )}
+                                                                            {isHidden && (
+                                                                                <span className="text-[10px] px-1 rounded border border-red-300 dark:border-red-700 text-red-500 dark:text-red-300 bg-red-50 dark:bg-red-900/20 w-fit not-italic">
+                                                                                    {i18n.pages.gathering_log.hidden_tag}
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+
+                                                                <div className="flex items-center gap-1 shrink-0 self-center">
                                                                     <MapItemCopyButton text={itemName} />
                                                                     <button
                                                                         onClick={(e) => { e.stopPropagation(); toggleBookmark(itemId); }}
@@ -849,17 +879,6 @@ export const MapView: React.FC<MapViewProps> = ({
                                                                     {isTimed && <AlarmButton itemId={itemId} />}
                                                                 </div>
                                                             </div>
-                                                            {isCustomDelivery && (
-                                                                <span className="inline-flex items-center gap-1 text-[10px] px-1 rounded border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20 w-fit">
-                                                                    <img src="https://xivapi.com/i/061000/061827_hr1.png" className="w-3 h-3" alt="Custom Delivery" title="Custom Delivery" />
-                                                                    {i18n.pages.gathering_log.custom_delivery_tag}
-                                                                </span>
-                                                            )}
-                                                            {isCollectionOnly && (
-                                                                <span className="text-[10px] px-1 rounded border border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 w-fit">
-                                                                    {i18n.pages.gathering_log.collection_only_tag}
-                                                                </span>
-                                                            )}
                                                         </div>
                                                     </div>
                                                     {timerElement}

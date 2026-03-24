@@ -63,6 +63,14 @@ export const GATHERING_MAP_ICONS = {
   harvesting: 'https://xivapi.com/i/060000/060432_hr1.png'
 };
 
+export const UI_ICON_URLS = {
+  defaultItem: 'https://xivapi.com/i/066000/066313_hr1.png',
+  collectible: 'https://xivapi.com/i/066000/066472_hr1.png',
+  customDelivery: 'https://xivapi.com/i/061000/061827_hr1.png',
+  aetheryteMain: 'https://xivapi.com/i/060000/060453_hr1.png',
+  aetheryteSub: 'https://xivapi.com/i/060000/060430_hr1.png'
+};
+
 export const COLLECTIBLE_ICONS = {
   default: 'https://xivapi.com/i/064000/066472_hr1.png', // Custom Delivery icon
   customDelivery: 'https://xivapi.com/i/064000/066472_hr1.png',
