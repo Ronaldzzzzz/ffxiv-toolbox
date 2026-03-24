@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { GatheringData } from '../types';
-import { getLocalizedText } from '../utils';
+import { getLocalizedText, getItemIconUrl } from '../utils';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { AlarmButton } from './AlarmButton';
 
@@ -126,8 +126,7 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({ itemId, data, onClose,
   const renderNode = (node: RecipeNode, depth: number = 0) => {
        const matData = data.items[node.id];
        const matName = matData ? getLocalizedText(matData, lang) : `${i18n.pages.gathering_log.unknown_item} (${node.id})`;
-       const iconPath = data.icons[node.id];
-       const iconUrl = iconPath ? `https://xivapi.com${iconPath}` : 'https://xivapi.com/i/066000/066313_hr1.png';
+       const iconUrl = getItemIconUrl(node.id, data.icons);
        const isBookmarked = bookmarkedItems.has(node.id);
        const isSelected = selectedItems.has(node.id);
 

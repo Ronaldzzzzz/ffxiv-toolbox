@@ -5,6 +5,7 @@ import { useTheme } from '../hooks/useTheme';
 import { useTool } from '../context/ToolContext';
 import { useLanguage } from '../i18n/LanguageContext';
 import { SUPPORTED_LANGUAGES } from '../i18n/locales';
+import { UI_ICON_URLS } from '../features/gathering-log/iconRegistry';
 
 interface HeaderProps {
   title: string;
@@ -12,8 +13,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ title: defaultTitle, version: defaultVersion }) => {
-  const MINER_ICON_URL = 'https://xivapi.com/cj/companion/miner.png';
-  const BOTANIST_ICON_URL = 'https://xivapi.com/cj/companion/botanist.png';
+  const { jobMiner: MINER_ICON_URL, jobBotanist: BOTANIST_ICON_URL } = UI_ICON_URLS;
   const location = useLocation();
   const { isDark, toggleTheme } = useTheme();
   const { progress, toolInfo, headerActions, centerActions, etTime } = useTool();

@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useAlarm } from './useAlarm';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { GatheringData } from '../types';
-import { getLocalizedText } from '../utils';
+import { getLocalizedText, getItemIconUrl } from '../utils';
 
 // Helper to calculate when the next spawn occurs for a given node spawn time
 // Eorzea time is based on Unix epoch. 1 Eorzea day = 70 minutes real time.
@@ -214,7 +214,7 @@ export function useAlarmTrigger(data: GatheringData | null) {
                                                     .replace('{time}', spawnTimeStr);
                                             new Notification(gl.alarm_notification_title, {
                                                 body: notifBody,
-                                                ...(data.icons[itemId] ? { icon: `https://xivapi.com${data.icons[itemId]}` } : {})
+                                                icon: getItemIconUrl(itemId, data.icons)
                                             });
                                         } catch (err) {
                                             console.error('Failed to show gathering notification', err);

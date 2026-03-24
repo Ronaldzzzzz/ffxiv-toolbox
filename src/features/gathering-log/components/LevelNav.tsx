@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, MouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { GatheringData, GatheringLogPageData, GatherType } from '../types';
-import { getLocalizedText, GATHERING_ICONS } from '../utils';
+import { getLocalizedText, GATHERING_ICONS, getItemIconUrl } from '../utils';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
 
@@ -86,8 +86,7 @@ export const LevelNav: React.FC<LevelNavProps> = ({
           
           const name = getLocalizedText(itemInfo, lang);
           if (name.toLowerCase().includes(lowerQuery)) {
-            const iconPath = data.icons[item.itemId];
-            const iconUrl = iconPath ? `https://xivapi.com${iconPath}` : 'https://xivapi.com/i/066000/066313_hr1.png';
+            const iconUrl = getItemIconUrl(item.itemId, data.icons);
             results.push({ id: item.itemId, name, level: item.lvl, icon: iconUrl, type, isRecipe: false });
             addedItems.add(item.itemId);
           }
@@ -105,8 +104,7 @@ export const LevelNav: React.FC<LevelNavProps> = ({
           // 檢查這東西能不能做
           const recipes = data.recipes && data.recipes[itemId];
           if (recipes && recipes.length > 0) {
-              const iconPath = data.icons[itemId];
-              const iconUrl = iconPath ? `https://xivapi.com${iconPath}` : 'https://xivapi.com/i/066000/066313_hr1.png';
+              const iconUrl = getItemIconUrl(itemId, data.icons);
               // 把它當作配方放進去
               results.push({ id: itemId, name, level: 0, icon: iconUrl, type: 'mining', isRecipe: true });
               addedItems.add(itemId);

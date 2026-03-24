@@ -1,4 +1,5 @@
 import { LocalizedText, NodeData } from './types';
+export { GATHERING_ICONS, TIMED_GATHERING_MAP_ICONS, GATHERING_MAP_ICONS, UI_ICON_URLS, getItemIconUrl, getMapImageUrl } from './iconRegistry';
 
 export function getLocalizedText(textObj: LocalizedText | undefined, lang: string): string {
   if (!textObj) return 'Unknown';
@@ -39,42 +40,6 @@ export const EXPANSION_NAMES: Record<string, string> = {
   'exp_5': 'Shadowbringers',
   'exp_6': 'Endwalker',
   'exp_7': 'Dawntrail',
-};
-
-export const GATHERING_ICONS = {
-  folklore: 'https://xivapi.com/i/026000/026168_hr1.png',
-  mining: 'https://xivapi.com/i/062000/062201_hr1.png',
-  quarrying: 'https://xivapi.com/i/062000/062202_hr1.png',
-  logging: 'https://xivapi.com/i/062000/062203_hr1.png',
-  harvesting: 'https://xivapi.com/i/062000/062204_hr1.png'
-};
-
-export const TIMED_GATHERING_MAP_ICONS = {
-  mining: 'https://xivapi.com/i/060000/060464_hr1.png',
-  quarrying: 'https://xivapi.com/i/060000/060463_hr1.png',
-  logging: 'https://xivapi.com/i/060000/060462_hr1.png',
-  harvesting: 'https://xivapi.com/i/060000/060461_hr1.png'
-};
-
-export const GATHERING_MAP_ICONS = {
-  mining: 'https://xivapi.com/i/060000/060438_hr1.png',
-  quarrying: 'https://xivapi.com/i/060000/060437_hr1.png',
-  logging: 'https://xivapi.com/i/060000/060433_hr1.png',
-  harvesting: 'https://xivapi.com/i/060000/060432_hr1.png'
-};
-
-export const UI_ICON_URLS = {
-  defaultItem: 'https://xivapi.com/i/066000/066313_hr1.png',
-  collectible: 'https://xivapi.com/i/066000/066472_hr1.png',
-  customDelivery: 'https://xivapi.com/i/061000/061827_hr1.png',
-  aetheryteMain: 'https://xivapi.com/i/060000/060453_hr1.png',
-  aetheryteSub: 'https://xivapi.com/i/060000/060430_hr1.png'
-};
-
-export const COLLECTIBLE_ICONS = {
-  default: 'https://xivapi.com/i/064000/066472_hr1.png', // Custom Delivery icon
-  customDelivery: 'https://xivapi.com/i/064000/066472_hr1.png',
-  collectionOnly: 'https://xivapi.com/i/066000/066313_hr1.png'
 };
 
 export function getEorzeaTime(): string {
