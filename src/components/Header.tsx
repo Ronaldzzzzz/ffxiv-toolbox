@@ -88,16 +88,16 @@ export const Header: React.FC<HeaderProps> = ({ title: defaultTitle, version: de
                       hasDetailedGroupProgress ? (
                         <div className="flex items-center gap-2 shrink-0 text-[10px] md:text-[12px] font-mono text-blue-600 dark:text-blue-300 font-bold">
                           <img src={MINER_ICON_URL} alt="" className="w-4 h-4 shrink-0" />
-                          <span>
-                            {progress.currentMining}+{progress.currentQuarrying}/{progress.totalMining}+{progress.totalQuarrying} {miningGroupPercent}%
+                          <span title={`${progress.currentMining}+${progress.currentQuarrying}/${progress.totalMining}+${progress.totalQuarrying}`}>
+                            {progress.currentPrimary}/{progress.totalPrimary} {miningGroupPercent}%
                           </span>
                           <div className="w-8 md:w-10 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden hidden sm:block">
                             <div className="h-full bg-blue-500" style={{ width: `${miningGroupPercent}%` }} />
                           </div>
                           <span className="text-xs opacity-50">|</span>
                           <img src={BOTANIST_ICON_URL} alt="" className="w-4 h-4 shrink-0" />
-                          <span>
-                            {progress.currentLogging}+{progress.currentHarvesting}/{progress.totalLogging}+{progress.totalHarvesting} {botanyGroupPercent}%
+                          <span title={`${progress.currentLogging}+${progress.currentHarvesting}/${progress.totalLogging}+${progress.totalHarvesting}`}>
+                            {progress.currentSecondary}/{progress.totalSecondary} {botanyGroupPercent}%
                           </span>
                           <div className="w-8 md:w-10 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden hidden sm:block">
                             <div className="h-full bg-blue-500" style={{ width: `${botanyGroupPercent}%` }} />

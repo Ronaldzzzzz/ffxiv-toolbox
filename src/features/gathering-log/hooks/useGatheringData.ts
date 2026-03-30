@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { GatheringData } from '../types';
+import { getAchievementExclusionReason } from '../utils';
 
 function isCollectionOnlyItemName(item: any): boolean {
   const tw = typeof item?.tw === 'string' ? item.tw : '';
@@ -69,6 +70,16 @@ export function useGatheringData() {
 
         const processedItems = Object.fromEntries(
           Object.entries(items).map(([id, item]: [string, any]) => {
+            const numericId = Number(id);
+            const isCustomDelivery = customDeliveryIds.has(id);
+            const achievementExclusionReason = getAchievementExclusionReason(numericId, isCustomDelivery);
+            const achievementMetadata = achievementExclusionReason
+              ? {
+                  isAchievementExcluded: true,
+                  achievementExclusionReason,
+                }
+              : {};
+
             if (customDeliveryIds.has(id) && item && typeof item === 'object') {
               return [
                 id,
@@ -77,6 +88,7 @@ export function useGatheringData() {
                   isCustomDelivery: true,
                   isCollectible: true,
                   collectibleType: 'general' as const,
+                  ...achievementMetadata,
                 },
               ];
             }
@@ -87,6 +99,16 @@ export function useGatheringData() {
                   ...item,
                   isCollectible: true,
                   collectibleType: 'collection-only' as const,
+                  ...achievementMetadata,
+                },
+              ];
+            }
+            if (item && typeof item === 'object') {
+              return [
+                id,
+                {
+                  ...item,
+                  ...achievementMetadata,
                 },
               ];
             }

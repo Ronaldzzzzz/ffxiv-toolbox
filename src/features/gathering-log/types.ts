@@ -12,6 +12,8 @@ export interface LocalizedText {
   isCollectible?: boolean;
   collectibleType?: 'general' | 'collection-only';
   isCustomDelivery?: boolean;
+  isAchievementExcluded?: boolean;
+  achievementExclusionReason?: 'crystal-related' | 'pigment' | 'grade-1-carbonized-matter' | 'custom-delivery' | 'manual-special-case';
 }
 
 export interface GatheringItemEntry {

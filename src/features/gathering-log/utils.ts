@@ -1,6 +1,42 @@
 import { LocalizedText, NodeData } from './types';
 export { GATHERING_ICONS, TIMED_GATHERING_MAP_ICONS, GATHERING_MAP_ICONS, UI_ICON_URLS, getItemIconUrl, getMapImageUrl } from './iconRegistry';
 
+export const CRYSTAL_RELATED_ACHIEVEMENT_EXCLUDED_IDS = new Set<number>([
+  2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+  10099, 10335,
+]);
+
+export const PIGMENT_ACHIEVEMENT_EXCLUDED_IDS = new Set<number>([
+  5814, 5815, 5816, 5817, 5818, 5819, 5820, 17561, 20783,
+]);
+
+export const CARBONIZED_ACHIEVEMENT_EXCLUDED_IDS = new Set<number>([5599]);
+
+export const MANUAL_COLLECTABLE_RESEARCH_EXCLUDED_IDS = new Set<number>([
+  26752, 26753, 26754, 26755, 35600, 35601, 35602, 35603,
+]);
+
+export const MANUAL_NON_HANDBOOK_QUEST_ITEM_EXCLUDED_IDS = new Set<number>([
+  26756, 26757, 35847, 35848, 43899, 43900, 43901, 43902, 43913, 43914,
+]);
+
+export const MANUAL_SPECIAL_CASE_ACHIEVEMENT_EXCLUDED_IDS = new Set<number>([
+  ...MANUAL_COLLECTABLE_RESEARCH_EXCLUDED_IDS,
+  ...MANUAL_NON_HANDBOOK_QUEST_ITEM_EXCLUDED_IDS,
+]);
+
+export function getAchievementExclusionReason(
+  itemId: number,
+  isCustomDelivery: boolean
+): LocalizedText['achievementExclusionReason'] {
+  if (CRYSTAL_RELATED_ACHIEVEMENT_EXCLUDED_IDS.has(itemId)) return 'crystal-related';
+  if (PIGMENT_ACHIEVEMENT_EXCLUDED_IDS.has(itemId)) return 'pigment';
+  if (CARBONIZED_ACHIEVEMENT_EXCLUDED_IDS.has(itemId)) return 'grade-1-carbonized-matter';
+  if (isCustomDelivery) return 'custom-delivery';
+  if (MANUAL_SPECIAL_CASE_ACHIEVEMENT_EXCLUDED_IDS.has(itemId)) return 'manual-special-case';
+  return undefined;
+}
+
 export function getLocalizedText(textObj: LocalizedText | undefined, lang: string): string {
   if (!textObj) return 'Unknown';
   const key = lang as keyof Pick<LocalizedText, 'en' | 'ja' | 'tw' | 'zh' | 'de' | 'fr'>;

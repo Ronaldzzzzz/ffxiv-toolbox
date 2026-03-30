@@ -60,14 +60,24 @@ export const GatheringLogPage: React.FC = () => {
     if (!data) return;
 
     const typeToIndex: Record<GatherType, number> = { mining: 0, quarrying: 1, logging: 2, harvesting: 3 };
-    const countTypeProgress = (type: GatherType) => {
+    const isAchievementTrackedItem = (itemId: number) => data.items[itemId]?.isAchievementExcluded !== true;
+
+    const getTypeItemIds = (type: GatherType) => {
       const pages = data.pages[typeToIndex[type]] || [];
       const itemIds = new Set<number>();
 
       pages.forEach(page => {
-        page.items.forEach(item => itemIds.add(item.itemId));
+        page.items.forEach(item => {
+          if (isAchievementTrackedItem(item.itemId)) {
+            itemIds.add(item.itemId);
+          }
+        });
       });
 
+      return itemIds;
+    };
+
+    const countProgressFromSet = (itemIds: Set<number>) => {
       let current = 0;
       itemIds.forEach(itemId => {
         if (completedItems.has(itemId)) current += 1;
@@ -76,27 +86,48 @@ export const GatheringLogPage: React.FC = () => {
       return { current, total: itemIds.size };
     };
 
+    const countTypeProgress = (type: GatherType) => {
+      const itemIds = getTypeItemIds(type);
+
+      return countProgressFromSet(itemIds);
+    };
+
+    const mergeItemSets = (...sets: Set<number>[]) => {
+      const merged = new Set<number>();
+      sets.forEach(set => {
+        set.forEach(itemId => merged.add(itemId));
+      });
+
+      return merged;
+    };
+
+    const miningItemIds = getTypeItemIds('mining');
+    const quarryingItemIds = getTypeItemIds('quarrying');
+    const loggingItemIds = getTypeItemIds('logging');
+    const harvestingItemIds = getTypeItemIds('harvesting');
+
     const miningProgress = countTypeProgress('mining');
     const quarryingProgress = countTypeProgress('quarrying');
     const loggingProgress = countTypeProgress('logging');
     const harvestingProgress = countTypeProgress('harvesting');
 
-    const miningGroupCurrent = miningProgress.current + quarryingProgress.current;
-    const miningGroupTotal = miningProgress.total + quarryingProgress.total;
-    const botanyGroupCurrent = loggingProgress.current + harvestingProgress.current;
-    const botanyGroupTotal = loggingProgress.total + harvestingProgress.total;
+    const miningGroupProgress = countProgressFromSet(mergeItemSets(miningItemIds, quarryingItemIds));
+    const botanyGroupProgress = countProgressFromSet(mergeItemSets(loggingItemIds, harvestingItemIds));
+    const overallProgress = countProgressFromSet(
+      mergeItemSets(miningItemIds, quarryingItemIds, loggingItemIds, harvestingItemIds)
+    );
 
-    const current = miningGroupCurrent + botanyGroupCurrent;
-    const total = miningGroupTotal + botanyGroupTotal;
+    const current = overallProgress.current;
+    const total = overallProgress.total;
 
     // 0. 設定資訊
     setProgress({
       current,
       total,
-      currentPrimary: miningGroupCurrent,
-      currentSecondary: botanyGroupCurrent,
-      totalPrimary: miningGroupTotal,
-      totalSecondary: botanyGroupTotal,
+      currentPrimary: miningGroupProgress.current,
+      currentSecondary: botanyGroupProgress.current,
+      totalPrimary: miningGroupProgress.total,
+      totalSecondary: botanyGroupProgress.total,
       currentMining: miningProgress.current,
       currentQuarrying: quarryingProgress.current,
       totalMining: miningProgress.total,
@@ -106,7 +137,7 @@ export const GatheringLogPage: React.FC = () => {
       totalLogging: loggingProgress.total,
       totalHarvesting: harvestingProgress.total,
     });
-    setToolInfo({ version: 'V3.4.4' });
+    setToolInfo({ version: 'V3.4.5' });
 
     // 1. 中間：視角切換按鈕
     setCenterActions(
