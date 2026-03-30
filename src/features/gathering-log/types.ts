@@ -12,6 +12,7 @@ export interface LocalizedText {
   isCollectible?: boolean;
   collectibleType?: 'general' | 'collection-only';
   isCustomDelivery?: boolean;
+  isAetherialReduction?: boolean;
   isAchievementExcluded?: boolean;
   achievementExclusionReason?: 'crystal-related' | 'pigment' | 'grade-1-carbonized-matter' | 'custom-delivery' | 'manual-special-case';
 }
@@ -80,6 +81,27 @@ export interface Recipe {
   ingredients: RecipeIngredient[];
 }
 
+export interface SearchIndexNames {
+  tw: string;
+  zh: string;
+  en: string;
+  ja: string;
+}
+
+export interface SearchIndexEntry {
+  id: number;
+  level: number;
+  type: GatherType;
+  isRecipe: boolean;
+  icon: string;
+  names: SearchIndexNames;
+  normalizedNames: SearchIndexNames;
+}
+
+export interface GatheringPreIndex {
+  searchEntries: SearchIndexEntry[];
+}
+
 export interface GatheringData {
   pages: GatheringLogPageData[][];
   items: Record<string, LocalizedText>;
@@ -89,4 +111,5 @@ export interface GatheringData {
   maps: Record<string, MapData>;
   aetherytes: Aetheryte[];
   recipes: Record<string, Recipe[]>;
+  preIndex?: GatheringPreIndex;
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo, MouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { GatheringData, GatheringLogPageData, GatherType } from '../types';
-import { getLocalizedText, GATHERING_ICONS, getItemIconUrl, UI_ICON_URLS } from '../utils';
+import { getLocalizedText, GATHERING_ICONS, UI_ICON_URLS } from '../utils';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
 
@@ -38,9 +38,6 @@ export const LevelNav: React.FC<LevelNavProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Search State
-  // searchQuery moved to props
-
   const [searchResults, setSearchResults] = useState<{ id: number; name: string; level: number; icon: string; type: GatherType; isRecipe: boolean }[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -74,51 +71,35 @@ export const LevelNav: React.FC<LevelNavProps> = ({
       return;
     }
 
-    const results: { id: number; name: string; level: number; icon: string; type: GatherType; isRecipe: boolean }[] = [];
     const lowerQuery = debouncedSearchQuery.toLowerCase();
+    const indexEntries = data.preIndex?.searchEntries || [];
 
-    // 擴大搜尋範圍到所有職業的 pages
-    const types: GatherType[] = ['mining', 'quarrying', 'logging', 'harvesting'];
-    
-    // 用來記錄已經加入搜尋結果的項目，避免同物品重複
-    const addedItems = new Set<number>();
+    const results = indexEntries
+      .filter(entry => {
+        const names = entry.normalizedNames;
+        return (
+          names[lang as keyof typeof names]?.includes(lowerQuery) ||
+          names.tw.includes(lowerQuery) ||
+          names.zh.includes(lowerQuery) ||
+          names.en.includes(lowerQuery) ||
+          names.ja.includes(lowerQuery)
+        );
+      })
+      .map(entry => {
+        const localizedName =
+          entry.names[lang as keyof typeof entry.names] ||
+          entry.names.tw ||
+          entry.names.en;
 
-    types.forEach((type, typeIndex) => {
-      const typePages = data.pages[typeIndex] || [];
-      typePages.forEach(page => {
-        page.items.forEach(item => {
-          if (addedItems.has(item.itemId)) return;
-          
-          const itemInfo = data.items[item.itemId];
-          if (!itemInfo) return;
-          
-          const name = getLocalizedText(itemInfo, lang);
-          if (name.toLowerCase().includes(lowerQuery)) {
-            const iconUrl = getItemIconUrl(item.itemId, data.icons);
-            results.push({ id: item.itemId, name, level: item.lvl, icon: iconUrl, type, isRecipe: false });
-            addedItems.add(item.itemId);
-          }
-        });
+        return {
+          id: entry.id,
+          name: localizedName,
+          level: entry.level,
+          icon: entry.icon ? `https://xivapi.com${entry.icon}` : UI_ICON_URLS.defaultItem,
+          type: entry.type,
+          isRecipe: entry.isRecipe,
+        };
       });
-    });
-
-    // 搜尋配方資料 (如果不是直接採集品，但有配方)
-    Object.entries(data.items).forEach(([itemIdStr, itemInfo]) => {
-      const itemId = Number(itemIdStr);
-      if (addedItems.has(itemId)) return; // 已經加過了就不重複處理
-      
-      const name = getLocalizedText(itemInfo, lang);
-      if (name.toLowerCase().includes(lowerQuery)) {
-          // 檢查這東西能不能做
-          const recipes = data.recipes && data.recipes[itemId];
-          if (recipes && recipes.length > 0) {
-              const iconUrl = getItemIconUrl(itemId, data.icons);
-              // 把它當作配方放進去
-              results.push({ id: itemId, name, level: 0, icon: iconUrl, type: 'mining', isRecipe: true });
-              addedItems.add(itemId);
-          }
-      }
-    });
 
     setSearchResults(results.slice(0, 30));
     setShowResults(true);

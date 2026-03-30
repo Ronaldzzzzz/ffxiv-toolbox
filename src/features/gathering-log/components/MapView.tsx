@@ -765,6 +765,7 @@ export const MapView: React.FC<MapViewProps> = ({
                                             const collectibleType = item.collectibleType;
                                             const isCollectible = Boolean(item.isCollectible);
                                             const isCustomDelivery = item.isCustomDelivery === true;
+                                            const isAetherialReduction = item.isAetherialReduction === true;
                                             const showCollectibleIcon = isCollectible || isCustomDelivery;
                                             const isCollectionOnly = collectibleType === 'collection-only';
                                             const isHidden = (node.hiddenItems || []).includes(itemId);
@@ -846,12 +847,17 @@ export const MapView: React.FC<MapViewProps> = ({
                                                                         </MapItemNameMarquee>
                                                                     </div>
 
-                                                                    {(isCustomDelivery || isCollectionOnly || isHidden) && (
+                                                                    {(isCustomDelivery || isAetherialReduction || isCollectionOnly || isHidden) && (
                                                                         <div className="flex flex-wrap items-center gap-1">
                                                                             {isCustomDelivery && (
                                                                                 <span className="inline-flex items-center gap-1 text-[10px] px-1 rounded border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20 w-fit not-italic">
                                                                                     <img src={UI_ICON_URLS.customDelivery} className="w-3 h-3" alt="Custom Delivery" title={i18n.pages.gathering_log.custom_delivery_tag} />
                                                                                     {i18n.pages.gathering_log.custom_delivery_tag}
+                                                                                </span>
+                                                                            )}
+                                                                            {isAetherialReduction && (
+                                                                                <span className="text-[10px] px-1 rounded border border-teal-300 dark:border-teal-700 text-teal-600 dark:text-teal-300 bg-teal-50 dark:bg-teal-900/20 w-fit not-italic">
+                                                                                    {i18n.pages.gathering_log.aetherial_reduction_tag}
                                                                                 </span>
                                                                             )}
                                                                             {isCollectionOnly && (

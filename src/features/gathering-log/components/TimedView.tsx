@@ -86,6 +86,7 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
         const isBookmarked = bookmarkedItems.has(itemId);
         const isCollectible = Boolean(item.isCollectible);
         const isCustomDelivery = item.isCustomDelivery === true;
+        const isAetherialReduction = item.isAetherialReduction === true;
         const showCollectibleIcon = isCollectible || isCustomDelivery;
         const isHidden = (node.hiddenItems || []).includes(itemId);
         if (hideCompleted && isCompleted) return null;
@@ -188,6 +189,11 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
                                             title={i18n.pages.gathering_log.custom_delivery_tag}
                                         />
                                         {i18n.pages.gathering_log.custom_delivery_tag}
+                                    </span>
+                                )}
+                                {isAetherialReduction && (
+                                    <span className="text-[10px] px-1 rounded border border-teal-300 dark:border-teal-700 text-teal-600 dark:text-teal-300 bg-teal-50 dark:bg-teal-900/20 w-fit shrink-0">
+                                        {i18n.pages.gathering_log.aetherial_reduction_tag}
                                     </span>
                                 )}
                                 {isHidden && (

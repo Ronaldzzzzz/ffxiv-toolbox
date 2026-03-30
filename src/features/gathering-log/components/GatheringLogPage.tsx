@@ -136,7 +136,7 @@ export const GatheringLogPage: React.FC = () => {
       totalLogging: loggingProgress.total,
       totalHarvesting: harvestingProgress.total,
     });
-    setToolInfo({ version: 'V3.5' });
+    setToolInfo({ version: 'V3.5.1' });
 
     // 1. 中間：視角切換按鈕
     setCenterActions(

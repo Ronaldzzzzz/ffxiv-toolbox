@@ -152,6 +152,7 @@ export const ItemRow: React.FC<ItemRowProps> = React.memo(({
   const itemInfo = data.items[item.itemId];
   const isCollectible = Boolean(itemInfo?.isCollectible);
   const isCustomDelivery = itemInfo?.isCustomDelivery === true;
+  const isAetherialReduction = itemInfo?.isAetherialReduction === true;
   const showCollectibleIcon = isCollectible || isCustomDelivery;
   const iconPath = data.icons[item.itemId];
   const iconUrl = iconPath ? `https://xivapi.com${iconPath}` : UI_ICON_URLS.defaultItem;
@@ -206,6 +207,11 @@ export const ItemRow: React.FC<ItemRowProps> = React.memo(({
                   title={i18n.pages.gathering_log.custom_delivery_tag}
                 />
                 {i18n.pages.gathering_log.custom_delivery_tag}
+              </span>
+            )}
+            {isAetherialReduction && (
+              <span className="text-[10px] px-1 rounded border border-teal-300 dark:border-teal-700 text-teal-600 dark:text-teal-300 bg-teal-50 dark:bg-teal-900/20 w-fit shrink-0">
+                {i18n.pages.gathering_log.aetherial_reduction_tag}
               </span>
             )}
             {item.hidden === 1 && (
