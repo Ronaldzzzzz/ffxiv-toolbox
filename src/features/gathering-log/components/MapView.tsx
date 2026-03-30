@@ -659,7 +659,7 @@ export const MapView: React.FC<MapViewProps> = ({
                                                                     <span className={completedItems.has(itemId) ? 'text-green-400' : ''}>
                                                                         {getLocalizedText(data.items[itemId], lang)}
                                                                     </span>
-                                                                    {data.items[itemId]?.isCollectible && <span className="text-amber-400">▣</span>}
+                                                                    {(data.items[itemId]?.isCollectible || data.items[itemId]?.isCustomDelivery) && <span className="text-amber-400">▣</span>}
                                                                 </div>
                                                             ))}
                                                             <div className="mt-1 text-[10px] text-slate-400 font-mono">X:{node.x}, Y:{node.y}</div>
@@ -765,6 +765,7 @@ export const MapView: React.FC<MapViewProps> = ({
                                             const collectibleType = item.collectibleType;
                                             const isCollectible = Boolean(item.isCollectible);
                                             const isCustomDelivery = item.isCustomDelivery === true;
+                                            const showCollectibleIcon = isCollectible || isCustomDelivery;
                                             const isCollectionOnly = collectibleType === 'collection-only';
                                             const isHidden = (node.hiddenItems || []).includes(itemId);
 
@@ -841,7 +842,7 @@ export const MapView: React.FC<MapViewProps> = ({
                                                                 <div className="flex-1 min-w-0 flex flex-col gap-0.5">
                                                                     <div className={`${isCompleted ? 'line-through decoration-slate-400/50' : ''}`}>
                                                                         <MapItemNameMarquee text={itemName}>
-                                                                            {isCollectible && <img src={UI_ICON_URLS.collectible} className="w-4 h-4 flex-shrink-0" alt="Collectible" title={i18n.pages.gathering_log.collectible_tag} />}
+                                                                            {showCollectibleIcon && <img src={UI_ICON_URLS.collectible} className="w-4 h-4 flex-shrink-0" alt="Collectible" title={i18n.pages.gathering_log.collectible_tag} />}
                                                                         </MapItemNameMarquee>
                                                                     </div>
 

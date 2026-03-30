@@ -86,8 +86,6 @@ export function useGatheringData() {
                 {
                   ...item,
                   isCustomDelivery: true,
-                  isCollectible: true,
-                  collectibleType: 'general' as const,
                   ...achievementMetadata,
                 },
               ];

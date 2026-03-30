@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef, MouseEvent } from 'react';
+import React, { useState, useEffect, useRef, useMemo, MouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { GatheringData, GatheringLogPageData, GatherType } from '../types';
-import { getLocalizedText, GATHERING_ICONS, getItemIconUrl } from '../utils';
+import { getLocalizedText, GATHERING_ICONS, getItemIconUrl, UI_ICON_URLS } from '../utils';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
 
@@ -11,13 +11,11 @@ interface LevelNavProps {
   setCurrentType: (type: GatherType) => void;
   pages: GatheringLogPageData[];
   completedItems: Set<number>;
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
   onOpenRecipe?: (itemId: number) => void;
 }
 
 export const LevelNav: React.FC<LevelNavProps> = ({
-  data, currentType, setCurrentType, pages, completedItems, searchQuery, setSearchQuery, onOpenRecipe
+  data, currentType, setCurrentType, pages, completedItems, onOpenRecipe
 }) => {
   const { lang, t: i18n } = useLanguage();
   const { setHighlightItem } = useTool();
@@ -45,7 +43,17 @@ export const LevelNav: React.FC<LevelNavProps> = ({
 
   const [searchResults, setSearchResults] = useState<{ id: number; name: string; level: number; icon: string; type: GatherType; isRecipe: boolean }[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const [inputRect, setInputRect] = useState<DOMRect | null>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery.trim());
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   // Drag Scroll State
   const [isDragging, setIsDragging] = useState(false);
@@ -60,14 +68,14 @@ export const LevelNav: React.FC<LevelNavProps> = ({
 
   // Search Logic
   useEffect(() => {
-    if (!searchQuery) {
+    if (!debouncedSearchQuery) {
       setSearchResults([]);
       setShowResults(false);
       return;
     }
 
     const results: { id: number; name: string; level: number; icon: string; type: GatherType; isRecipe: boolean }[] = [];
-    const lowerQuery = searchQuery.toLowerCase();
+    const lowerQuery = debouncedSearchQuery.toLowerCase();
 
     // 擴大搜尋範圍到所有職業的 pages
     const types: GatherType[] = ['mining', 'quarrying', 'logging', 'harvesting'];
@@ -115,7 +123,7 @@ export const LevelNav: React.FC<LevelNavProps> = ({
     setSearchResults(results.slice(0, 30));
     setShowResults(true);
     updateInputRect();
-  }, [searchQuery, data, lang, pages]);
+  }, [debouncedSearchQuery, data, lang, pages]);
 
   const handleSearchResultClick = (result: { id: number; type: GatherType; isRecipe: boolean }) => {
     if (result.isRecipe && onOpenRecipe) {
@@ -195,6 +203,37 @@ export const LevelNav: React.FC<LevelNavProps> = ({
     logging: GATHERING_ICONS.logging,
     harvesting: GATHERING_ICONS.harvesting
   };
+
+  const typeToIndex: Record<GatherType, number> = {
+    mining: 0, quarrying: 1, logging: 2, harvesting: 3
+  };
+
+  const collectableBands = useMemo(() => {
+    const nodeType = typeToIndex[currentType];
+    const bands = [
+      { min: 50, max: 70, label: 'Lv.50\u201370' },
+      { min: 71, max: 80, label: 'Lv.71\u201380' },
+      { min: 81, max: 90, label: 'Lv.81\u201390' },
+      { min: 91, max: 100, label: 'Lv.91\u2013100' },
+    ];
+    const seen = new Set<number>();
+    const all: { itemId: number; lvl: number }[] = [];
+    Object.values(data.nodes).forEach(node => {
+      if (node.type !== nodeType || node.map === 0) return;
+      [...node.items, ...(node.hiddenItems || [])].forEach(itemId => {
+        if (seen.has(itemId)) return;
+        if (data.items[itemId]?.collectibleType !== 'collection-only') return;
+        seen.add(itemId);
+        all.push({ itemId, lvl: node.level });
+      });
+    });
+    return bands
+      .map(band => ({
+        ...band,
+        items: all.filter(e => e.lvl >= band.min && e.lvl <= band.max),
+      }))
+      .filter(band => band.items.length > 0);
+  }, [data, currentType]);
 
   return (
     <div
@@ -380,6 +419,60 @@ export const LevelNav: React.FC<LevelNavProps> = ({
               </React.Fragment>
             );
           })}
+
+          {collectableBands.length > 0 && (
+            <>
+              {!isSticky && (
+                <div className="basis-full h-8 flex items-center gap-2 px-2 mt-2 mb-1">
+                  <div className="h-px bg-slate-200 dark:bg-slate-700 flex-grow"></div>
+                  <div className="flex items-center gap-1 text-sm font-bold text-violet-600 dark:text-violet-400 uppercase tracking-wider shrink-0">
+                    <img src={UI_ICON_URLS.collectible} className="w-3 h-3 opacity-70" alt="" />
+                    <span className="whitespace-nowrap">{i18n.pages.gathering_log.collectibles_header}</span>
+                  </div>
+                  <div className="h-px bg-slate-200 dark:bg-slate-700 flex-grow"></div>
+                </div>
+              )}
+              {isSticky && (
+                <div className="flex items-center gap-1 text-sm font-bold text-violet-600 dark:text-violet-400 uppercase tracking-wider shrink-0 h-10 px-3 pr-4 border-r border-slate-200 dark:border-slate-700 flex-nowrap">
+                  <img src={UI_ICON_URLS.collectible} className="w-3 h-3 opacity-70 shrink-0" alt="" />
+                  <span className="hidden md:inline whitespace-nowrap">{i18n.pages.gathering_log.collectibles_header}</span>
+                </div>
+              )}
+              {collectableBands.map((band) => {
+                const completedInBand = band.items.filter(item => completedItems.has(item.itemId)).length;
+                const totalInBand = band.items.length;
+                const percent = totalInBand > 0 ? Math.round((completedInBand / totalInBand) * 100) : 0;
+                const isDone = completedInBand === totalInBand && totalInBand > 0;
+
+                let btnClass = "bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600";
+                let progressColor = "text-slate-400 dark:text-slate-500";
+
+                if (isDone) {
+                  btnClass = "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 border-green-300 dark:border-green-700/50";
+                  progressColor = "text-green-600 dark:text-green-300";
+                } else if (percent > 0) {
+                  btnClass = "bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 border-violet-300 dark:border-violet-700/50";
+                  progressColor = "text-violet-600 dark:text-violet-300";
+                }
+
+                const bandId = `collectible-band-${band.label.replace(/[^\d]/g, '')}`;
+
+                return (
+                  <button
+                    key={bandId}
+                    onClick={() => scrollToSection(bandId)}
+                    className={`px-3 py-1.5 rounded-md border text-xs transition-all flex items-center gap-2 shrink-0 shadow-sm select-none ${btnClass}`}
+                    title={band.label}
+                  >
+                    <span className="truncate max-w-[150px]">{band.label}</span>
+                    <span className={`font-mono text-[10px] border-l pl-2 ${progressColor} border-slate-300 dark:border-white/10 opacity-80`}>
+                      {percent}%
+                    </span>
+                  </button>
+                );
+              })}
+            </>
+          )}
         </div>
 
 

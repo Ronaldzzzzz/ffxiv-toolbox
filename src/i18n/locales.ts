@@ -86,6 +86,7 @@ export interface Translation {
       collectible_tag: string;
       custom_delivery_tag: string;
       collection_only_tag: string;
+      collectibles_header: string;
       hidden_tag: string;
 
       alarm_settings: string;
@@ -231,6 +232,7 @@ export const translations: Record<LangCode, Translation> = {
         collectible_tag: '收藏物',
         custom_delivery_tag: '老主顧',
         collection_only_tag: '收藏用',
+        collectibles_header: '收藏品採集',
         hidden_tag: '隱藏',
 
         alarm_settings: '鬧鐘與巨集',
@@ -364,6 +366,7 @@ export const translations: Record<LangCode, Translation> = {
         collectible_tag: 'Collectible',
         custom_delivery_tag: 'Custom Delivery',
         collection_only_tag: 'Collectible Only',
+        collectibles_header: 'Collectible Gathering',
         hidden_tag: 'Hidden',
         alarm_settings: 'Alarm & Macro',
         alarm_enable: 'Enable Browser Notifications',
@@ -496,6 +499,7 @@ export const translations: Record<LangCode, Translation> = {
         collectible_tag: 'コレクティブル',
         custom_delivery_tag: 'カスタムデリバリー',
         collection_only_tag: 'コレクション用',
+        collectibles_header: 'コレクティブル採集',
         hidden_tag: '隠し',
         alarm_settings: 'アラーム＆マクロ',
         alarm_enable: 'ブラウザ通知を有効にする',
@@ -629,6 +633,7 @@ export const translations: Record<LangCode, Translation> = {
         collectible_tag: '收藏物',
         custom_delivery_tag: '老主顾',
         collection_only_tag: '收藏用',
+        collectibles_header: '收藏品采集',
         hidden_tag: '隐藏',
 
         alarm_settings: '闹钟与宏',

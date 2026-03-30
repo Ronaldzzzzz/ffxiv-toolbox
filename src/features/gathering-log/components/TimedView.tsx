@@ -81,12 +81,12 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
         const itemId = node.items[0];
         const item = data.items[itemId]; // Assume primary item for now
         if (!item) return null;
-        if (item.collectibleType === 'collection-only') return null;
 
         const isCompleted = completedItems.has(itemId);
         const isBookmarked = bookmarkedItems.has(itemId);
         const isCollectible = Boolean(item.isCollectible);
         const isCustomDelivery = item.isCustomDelivery === true;
+        const showCollectibleIcon = isCollectible || isCustomDelivery;
         const isHidden = (node.hiddenItems || []).includes(itemId);
         if (hideCompleted && isCompleted) return null;
         if (showBookmarks && !isBookmarked) return null;
@@ -171,7 +171,7 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
                                 <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200 truncate leading-tight min-w-0">
                                     {getLocalizedText(item, lang)}
                                 </h4>
-                                {isCollectible && (
+                                {showCollectibleIcon && (
                                     <img
                                         src={UI_ICON_URLS.collectible}
                                         className="w-4 h-4 shrink-0"

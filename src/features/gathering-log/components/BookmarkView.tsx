@@ -32,7 +32,6 @@ export const BookmarkView: React.FC<BookmarkViewProps> = ({
       .map(id => {
         const itemInfo = data.items[id];
         if (!itemInfo) return null;
-        if (itemInfo.collectibleType === 'collection-only') return null;
 
         // 決定這個物品屬於哪個職業/分類 (用來歸類或顯示)
         let type: GatherType | null = null;

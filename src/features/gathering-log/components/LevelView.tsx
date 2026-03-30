@@ -1,10 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { GatheringData, GatherType } from '../types';
 import { ItemRow } from './ItemRow';
-import { getLocalizedText, getNodeItemIds } from '../utils';
+import { getLocalizedText, getNodeItemIds, UI_ICON_URLS } from '../utils';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
-
 interface LevelViewProps {
   data: GatheringData;
   currentType: GatherType;
@@ -51,8 +50,58 @@ export const LevelView: React.FC<LevelViewProps> = ({
   const pageIndex = typeToIndex[currentType];
   const pages = data.pages[pageIndex] || [];
 
+  const itemRegionMap = useMemo(() => {
+    const regionMap = new Map<number, Set<string>>();
+
+    Object.values(data.nodes).forEach(node => {
+      if (node.map === 0) return;
+      const map = data.maps[node.map];
+      if (!map) return;
+
+      const regionId = String(map.placename_id);
+      getNodeItemIds(node).forEach(itemId => {
+        if (!regionMap.has(itemId)) {
+          regionMap.set(itemId, new Set());
+        }
+        regionMap.get(itemId)!.add(regionId);
+      });
+    });
+
+    return regionMap;
+  }, [data]);
+
+  const collectableBands = useMemo(() => {
+    const nodeType = typeToIndex[currentType];
+    const bands = [
+      { min: 50, max: 70, label: 'Lv.50–70' },
+      { min: 71, max: 80, label: 'Lv.71–80' },
+      { min: 81, max: 90, label: 'Lv.81–90' },
+      { min: 91, max: 100, label: 'Lv.91–100' },
+    ];
+    const seen = new Set<number>();
+    const all: { itemId: number; lvl: number }[] = [];
+    Object.values(data.nodes).forEach(node => {
+      if (node.type !== nodeType || node.map === 0) return;
+      [...node.items, ...(node.hiddenItems || [])].forEach(itemId => {
+        if (seen.has(itemId)) return;
+        if (data.items[itemId]?.collectibleType !== 'collection-only') return;
+        seen.add(itemId);
+        all.push({ itemId, lvl: node.level });
+      });
+    });
+    return bands
+      .map(band => ({
+        ...band,
+        items: all
+          .filter(e => e.lvl >= band.min && e.lvl <= band.max)
+          .map(e => ({ itemId: e.itemId, lvl: e.lvl, ilvl: 0, stars: 0, hidden: 0 })),
+      }))
+      .filter(band => band.items.length > 0);
+  }, [data, currentType]);
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+    <div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
       {pages.map((page) => {
         const filteredItems = page.items.filter(item => {
           // 1. Hide Completed
@@ -62,13 +111,8 @@ export const LevelView: React.FC<LevelViewProps> = ({
 
           // 3. Region Filter
           if (currentRegion === 'all') return true;
-          const nodes = Object.values(data.nodes).filter(node =>
-            getNodeItemIds(node).includes(item.itemId) && node.map !== 0
-          );
-          return nodes.some(node => {
-            const map = data.maps[node.map];
-            return map && String(map.placename_id) === currentRegion;
-          });
+          const regions = itemRegionMap.get(item.itemId);
+          return regions ? regions.has(currentRegion) : false;
         });
 
         if (filteredItems.length === 0) return null;
@@ -134,6 +178,84 @@ export const LevelView: React.FC<LevelViewProps> = ({
           </section>
         );
       })}
+      </div>
+
+      {collectableBands.length > 0 && (
+        <div className="mt-8">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex-1 h-px bg-violet-200 dark:bg-violet-800/40" />
+            <span className="text-sm font-bold text-violet-600 dark:text-violet-400 flex items-center gap-1.5">
+              <img src={UI_ICON_URLS.collectible} className="w-4 h-4" alt="" />
+              {i18n.pages.gathering_log.collectibles_header}
+            </span>
+            <div className="flex-1 h-px bg-violet-200 dark:bg-violet-800/40" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            {collectableBands.map(band => {
+              const filteredBandItems = band.items.filter(item => {
+                if (hideCompleted && completedItems.has(item.itemId)) return false;
+                if (showBookmarks && !bookmarkedItems.has(item.itemId)) return false;
+                if (currentRegion === 'all') return true;
+                const regions = itemRegionMap.get(item.itemId);
+                return regions ? regions.has(currentRegion) : false;
+              });
+
+              if (filteredBandItems.length === 0) return null;
+
+              const visibleBandIds = filteredBandItems.map(i => i.itemId);
+              const allBandCompleted = visibleBandIds.every(id => completedItems.has(id));
+              const completedInBand = band.items.filter(i => completedItems.has(i.itemId)).length;
+
+              const bandId = `collectible-band-${band.label.replace(/[^\d]/g, '')}`;
+
+              return (
+                <section
+                  key={bandId}
+                  id={bandId}
+                  className="relative bg-white dark:bg-slate-800 rounded-xl border border-violet-200 dark:border-violet-700/50 shadow-sm h-fit pb-1 transition-colors"
+                >
+                  <div className="section-header-sticky px-4 py-2 flex justify-between items-center border-b border-violet-200 dark:border-violet-700/50 z-10 rounded-t-xl bg-white dark:bg-slate-800">
+                    <h3 className="font-bold text-violet-700 dark:text-violet-400 flex items-center gap-2">
+                      <img src={UI_ICON_URLS.collectible} className="w-4 h-4" alt="" />
+                      {band.label}
+                    </h3>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => toggleBatch(visibleBandIds, allBandCompleted ? 'remove' : 'add')}
+                        className="text-xs font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                      >
+                        {allBandCompleted ? i18n.pages.gathering_log.deselect_all : i18n.pages.gathering_log.select_all}
+                      </button>
+                      <div className="w-px h-3 bg-slate-300 dark:bg-slate-600"></div>
+                      <span className={`text-xs font-mono ${completedInBand === band.items.length ? 'text-green-600 dark:text-green-400' : 'text-slate-500'}`}>
+                        {completedInBand}/{band.items.length}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="divide-y divide-slate-100 dark:divide-slate-700/50">
+                    {filteredBandItems.map((item, index) => (
+                      <div
+                        key={item.itemId}
+                        ref={el => itemRefs.current[item.itemId] = el}
+                        className={`transition-all duration-300 rounded-lg ${index === filteredBandItems.length - 1 ? "rounded-b-xl overflow-hidden" : ""}`}
+                      >
+                        <ItemRow
+                          item={item}
+                          data={data}
+                          isCompleted={completedItems.has(item.itemId)}
+                          isBookmarked={bookmarkedItems.has(item.itemId)}
+                          toggleComplete={toggleComplete}
+                          toggleBookmark={toggleBookmark}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

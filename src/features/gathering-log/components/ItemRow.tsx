@@ -144,7 +144,7 @@ const NodeTimer: React.FC<{ spawns: number[]; duration: number; i18n: any }> = (
   );
 };
 
-export const ItemRow: React.FC<ItemRowProps> = ({
+export const ItemRow: React.FC<ItemRowProps> = React.memo(({
   item, data, isCompleted, isBookmarked, toggleComplete, toggleBookmark, className, disableHover, disableGrayscale
 }) => {
   const { lang, t: i18n } = useLanguage();
@@ -152,6 +152,7 @@ export const ItemRow: React.FC<ItemRowProps> = ({
   const itemInfo = data.items[item.itemId];
   const isCollectible = Boolean(itemInfo?.isCollectible);
   const isCustomDelivery = itemInfo?.isCustomDelivery === true;
+  const showCollectibleIcon = isCollectible || isCustomDelivery;
   const iconPath = data.icons[item.itemId];
   const iconUrl = iconPath ? `https://xivapi.com${iconPath}` : UI_ICON_URLS.defaultItem;
 
@@ -187,7 +188,7 @@ export const ItemRow: React.FC<ItemRowProps> = ({
               <span className="text-slate-800 dark:text-slate-100 item-name text-base leading-tight truncate">
                 {getLocalizedText(itemInfo, lang)}
               </span>
-              {isCollectible && (
+              {showCollectibleIcon && (
                 <img
                   src={UI_ICON_URLS.collectible}
                   className="w-4 h-4 shrink-0"
@@ -291,4 +292,4 @@ export const ItemRow: React.FC<ItemRowProps> = ({
       </div>
     </div>
   );
-};
+});
