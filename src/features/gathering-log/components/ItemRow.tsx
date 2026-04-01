@@ -1,6 +1,6 @@
 import React from 'react';
 import { GatheringItemEntry, GatheringData, NodeData } from '../types';
-import { getLocalizedText, calculateNodeStatus, formatSeconds, getNodeItemIds, UI_ICON_URLS } from '../utils';
+import { getLocalizedText, calculateNodeStatus, formatSeconds, getNodeItemIds, UI_ICON_URLS, CRYSTAL_RELATED_ACHIEVEMENT_EXCLUDED_IDS } from '../utils';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
 import { AlarmButton, ITEM_ACTION_BUTTON_BASE_CLASS, ITEM_ACTION_ICON_CLASS } from './AlarmButton';
@@ -162,7 +162,7 @@ export const ItemRow: React.FC<ItemRowProps> = React.memo(({
     getNodeItemIds(node).includes(item.itemId) && node.map !== 0
   );
 
-  const isCrystal = item.itemId >= 2 && item.itemId <= 19;
+  const isCrystal = CRYSTAL_RELATED_ACHIEVEMENT_EXCLUDED_IDS.has(item.itemId);
   const isTimed = itemNodes.some(n => n.spawns && n.spawns.length > 0);
 
   return (
