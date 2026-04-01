@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { GatheringData, GatherType } from '../types';
 import { ItemRow } from './ItemRow';
 import { getLocalizedText, getNodeItemIds, UI_ICON_URLS } from '../utils';
+import { getCollectableBands } from '../selectors';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
 interface LevelViewProps {
@@ -70,34 +71,10 @@ export const LevelView: React.FC<LevelViewProps> = ({
     return regionMap;
   }, [data]);
 
-  const collectableBands = useMemo(() => {
-    const nodeType = typeToIndex[currentType];
-    const bands = [
-      { min: 50, max: 70, label: 'Lv.50–70' },
-      { min: 71, max: 80, label: 'Lv.71–80' },
-      { min: 81, max: 90, label: 'Lv.81–90' },
-      { min: 91, max: 100, label: 'Lv.91–100' },
-    ];
-    const seen = new Set<number>();
-    const all: { itemId: number; lvl: number }[] = [];
-    Object.values(data.nodes).forEach(node => {
-      if (node.type !== nodeType || node.map === 0) return;
-      [...node.items, ...(node.hiddenItems || [])].forEach(itemId => {
-        if (seen.has(itemId)) return;
-        if (data.items[itemId]?.collectibleType !== 'collection-only') return;
-        seen.add(itemId);
-        all.push({ itemId, lvl: node.level });
-      });
-    });
-    return bands
-      .map(band => ({
-        ...band,
-        items: all
-          .filter(e => e.lvl >= band.min && e.lvl <= band.max)
-          .map(e => ({ itemId: e.itemId, lvl: e.lvl, ilvl: 0, stars: 0, hidden: 0 })),
-      }))
-      .filter(band => band.items.length > 0);
-  }, [data, currentType]);
+  const collectableBands = useMemo(
+    () => getCollectableBands(data, currentType),
+    [data, currentType]
+  );
 
   return (
     <div>

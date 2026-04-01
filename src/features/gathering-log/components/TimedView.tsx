@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { GatheringData, GatherType, NodeData } from '../types';
+import { GatheringData, GatherType } from '../types';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
-import { calculateNodeStatus, getLocalizedText, GATHERING_ICONS, NodeStatus, formatSeconds, UI_ICON_URLS } from '../utils';
+import { getLocalizedText, GATHERING_ICONS, formatSeconds, UI_ICON_URLS } from '../utils';
+import { getTimedNodesGrouped, TimedNodeWithStatus } from '../selectors';
 import { AlarmButton, ITEM_ACTION_BUTTON_BASE_CLASS, ITEM_ACTION_ICON_CLASS } from './AlarmButton';
 
 interface TimedViewProps {
@@ -58,26 +59,9 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
         return () => clearInterval(interval);
     }, []);
 
-    // Filter nodes for current type with spawns
-    const targetTypeMap: Record<string, number> = { mining: 0, quarrying: 1, logging: 2, harvesting: 3 };
-    const targetIds = currentType === 'all' ? [0, 1, 2, 3] : [targetTypeMap[currentType]];
+    const { activeNodes, soonNodes, laterNodes } = getTimedNodesGrouped(data, currentType);
 
-    const typeNodes = Object.values(data.nodes).filter(node =>
-        targetIds.includes(node.type) && node.spawns && node.spawns.length > 0 && node.map !== 0
-    );
-
-    // Calculate status for each node (provides anchored timestamps)
-    const nodesWithStatus = typeNodes.map(node => {
-        const status = calculateNodeStatus(node.spawns!, node.duration || 60);
-        return { ...node, statusInfo: status };
-    });
-
-    // Group by status: Active > Soon > Later
-    const activeNodes = nodesWithStatus.filter(n => n.statusInfo.status === 'active').sort((a, b) => a.statusInfo.secondsRemaining - b.statusInfo.secondsRemaining);
-    const soonNodes = nodesWithStatus.filter(n => n.statusInfo.status === 'soon').sort((a, b) => a.statusInfo.secondsUntil - b.statusInfo.secondsUntil);
-    const laterNodes = nodesWithStatus.filter(n => n.statusInfo.status === 'later').sort((a, b) => a.statusInfo.secondsUntil - b.statusInfo.secondsUntil);
-
-    const renderNodeCard = (node: NodeData & { statusInfo: NodeStatus }) => {
+    const renderNodeCard = (node: TimedNodeWithStatus) => {
         const itemId = node.items[0];
         const item = data.items[itemId]; // Assume primary item for now
         if (!item) return null;

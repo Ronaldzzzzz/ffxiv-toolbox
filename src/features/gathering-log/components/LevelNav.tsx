@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, MouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { GatheringData, GatheringLogPageData, GatherType } from '../types';
 import { getLocalizedText, GATHERING_ICONS, UI_ICON_URLS } from '../utils';
+import { getCollectableBands } from '../selectors';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
 
@@ -185,36 +186,13 @@ export const LevelNav: React.FC<LevelNavProps> = ({
     harvesting: GATHERING_ICONS.harvesting
   };
 
-  const typeToIndex: Record<GatherType, number> = {
-    mining: 0, quarrying: 1, logging: 2, harvesting: 3
-  };
-
-  const collectableBands = useMemo(() => {
-    const nodeType = typeToIndex[currentType];
-    const bands = [
-      { min: 50, max: 70, label: 'Lv.50\u201370' },
-      { min: 71, max: 80, label: 'Lv.71\u201380' },
-      { min: 81, max: 90, label: 'Lv.81\u201390' },
-      { min: 91, max: 100, label: 'Lv.91\u2013100' },
-    ];
-    const seen = new Set<number>();
-    const all: { itemId: number; lvl: number }[] = [];
-    Object.values(data.nodes).forEach(node => {
-      if (node.type !== nodeType || node.map === 0) return;
-      [...node.items, ...(node.hiddenItems || [])].forEach(itemId => {
-        if (seen.has(itemId)) return;
-        if (data.items[itemId]?.collectibleType !== 'collection-only') return;
-        seen.add(itemId);
-        all.push({ itemId, lvl: node.level });
-      });
-    });
-    return bands
-      .map(band => ({
-        ...band,
-        items: all.filter(e => e.lvl >= band.min && e.lvl <= band.max),
-      }))
-      .filter(band => band.items.length > 0);
-  }, [data, currentType]);
+  const collectableBands = useMemo(
+    () => getCollectableBands(data, currentType).map(band => ({
+      ...band,
+      items: band.items.map(item => ({ itemId: item.itemId, lvl: item.lvl })),
+    })),
+    [data, currentType]
+  );
 
   return (
     <div

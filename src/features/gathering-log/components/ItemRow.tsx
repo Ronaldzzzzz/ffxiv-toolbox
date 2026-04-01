@@ -4,6 +4,7 @@ import { getLocalizedText, calculateNodeStatus, formatSeconds, getNodeItemIds, U
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
 import { AlarmButton, ITEM_ACTION_BUTTON_BASE_CLASS, ITEM_ACTION_ICON_CLASS } from './AlarmButton';
+import { LazyImage } from './LazyImage';
 
 interface ItemRowProps {
   item: GatheringItemEntry;
@@ -176,11 +177,10 @@ export const ItemRow: React.FC<ItemRowProps> = React.memo(({
       </div>
 
       <div className="flex-grow min-w-0 flex items-center gap-3">
-        <img
+        <LazyImage
           src={iconUrl}
           alt=""
-          className="w-10 h-10 rounded border border-slate-300 dark:border-slate-600 shadow-sm shrink-0 bg-slate-800"
-          loading="lazy"
+          className="w-10 h-10 rounded border border-slate-300 dark:border-slate-600 shadow-sm shrink-0"
         />
 
         <div className="flex-grow min-w-0 flex flex-col justify-center">

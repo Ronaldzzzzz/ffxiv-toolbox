@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFavicon } from '../../../hooks/useFavicon';
 import { useGatheringData } from '../hooks/useGatheringData';
 import { Sidebar } from './Sidebar';
@@ -15,6 +15,7 @@ import { GatherType, ViewMode } from '../types';
 import { RecipeModal } from './RecipeModal';
 import { AlarmSettingsModal } from './AlarmSettingsModal';
 import { useAlarmTrigger } from '../hooks/useAlarmTrigger';
+import { useCollectionState } from '../hooks/useCollectionState';
 
 export const GatheringLogPage: React.FC = () => {
   const { data, loading, error } = useGatheringData();
@@ -28,8 +29,14 @@ export const GatheringLogPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('level');
   const [hideCompleted, setHideCompleted] = useState<boolean>(false);
   const [showBookmarks, setShowBookmarks] = useState<boolean>(false);
-  const [completedItems, setCompletedItems] = useState<Set<number>>(new Set());
-  const [bookmarkedItems, setBookmarkedItems] = useState<Set<number>>(new Set());
+  const {
+    completedItems,
+    bookmarkedItems,
+    toggleComplete,
+    toggleBookmark,
+    toggleBatch,
+    bookmarkAll,
+  } = useCollectionState();
   const [recipeModalItemId, setRecipeModalItemId] = useState<number | null>(null);
   const [isAlarmModalOpen, setIsAlarmModalOpen] = useState<boolean>(false);
 
@@ -37,15 +44,6 @@ export const GatheringLogPage: React.FC = () => {
 
   // Initialize background alarm trigger
   useAlarmTrigger(data);
-
-  // Restore LocalStorage
-  useEffect(() => {
-    const savedProgress = localStorage.getItem('ffxiv_gathering_log_progress');
-    if (savedProgress) setCompletedItems(new Set(JSON.parse(savedProgress)));
-
-    const savedBookmarks = localStorage.getItem('ffxiv_gathering_log_bookmarks');
-    if (savedBookmarks) setBookmarkedItems(new Set(JSON.parse(savedBookmarks)));
-  }, []);
 
   // Eorzea Time Timer
   useEffect(() => {
@@ -136,7 +134,7 @@ export const GatheringLogPage: React.FC = () => {
       totalLogging: loggingProgress.total,
       totalHarvesting: harvestingProgress.total,
     });
-    setToolInfo({ version: 'V3.5.1' });
+    setToolInfo({ version: 'V3.5.2' });
 
     // 1. 中間：視角切換按鈕
     setCenterActions(
@@ -210,49 +208,6 @@ export const GatheringLogPage: React.FC = () => {
       setCenterActions(null);
     };
   }, [data, completedItems, hideCompleted, showBookmarks, viewMode, i18n, setProgress, setToolInfo, setHeaderActions, setCenterActions, isAlarmModalOpen]);
-
-  const toggleComplete = useCallback((itemId: number) => {
-    setCompletedItems(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(itemId)) newSet.delete(itemId);
-      else newSet.add(itemId);
-      localStorage.setItem('ffxiv_gathering_log_progress', JSON.stringify(Array.from(newSet)));
-      return newSet;
-    });
-  }, []);
-
-  const toggleBookmark = useCallback((itemId: number) => {
-    setBookmarkedItems(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(itemId)) newSet.delete(itemId);
-      else newSet.add(itemId);
-      localStorage.setItem('ffxiv_gathering_log_bookmarks', JSON.stringify(Array.from(newSet)));
-      return newSet;
-    });
-  }, []);
-
-  const toggleBatch = useCallback((ids: number[], action: 'add' | 'remove') => {
-    setCompletedItems(prev => {
-      const newSet = new Set(prev);
-      ids.forEach(id => {
-        if (action === 'add') newSet.add(id);
-        else newSet.delete(id);
-      });
-      localStorage.setItem('ffxiv_gathering_log_progress', JSON.stringify(Array.from(newSet)));
-      return newSet;
-    });
-  }, []);
-
-  const handleBookmarkAll = useCallback((ids: number[]) => {
-    setBookmarkedItems(prev => {
-      const newSet = new Set(prev);
-      ids.forEach(id => {
-        if (!newSet.has(id)) newSet.add(id);
-      });
-      localStorage.setItem('ffxiv_gathering_log_bookmarks', JSON.stringify(Array.from(newSet)));
-      return newSet;
-    });
-  }, []);
 
   const typeToIndex: Record<GatherType, number> = { mining: 0, quarrying: 1, logging: 2, harvesting: 3 };
   const pages = data ? data.pages[typeToIndex[currentType]] || [] : [];
@@ -398,7 +353,7 @@ export const GatheringLogPage: React.FC = () => {
           itemId={recipeModalItemId}
           bookmarkedItems={bookmarkedItems}
           onClose={() => setRecipeModalItemId(null)}
-          onBookmarkAll={handleBookmarkAll}
+          onBookmarkAll={bookmarkAll}
         />
       )}
 

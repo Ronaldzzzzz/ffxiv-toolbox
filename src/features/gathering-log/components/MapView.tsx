@@ -3,8 +3,10 @@ import React, { useState, useMemo, useEffect, useRef, useLayoutEffect } from 're
 import { GatheringData, GatherType, NodeData } from '../types';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { getLocalizedText, TIMED_GATHERING_MAP_ICONS, GATHERING_MAP_ICONS, getMapPercentage, EXPANSION_MAP, calculateNodeStatus, formatSeconds, getNodeItemIds, UI_ICON_URLS } from '../utils';
+import { sortNodesForMapSidebar } from '../selectors';
 import { ChevronLeft } from 'lucide-react';
 import { AlarmButton, ITEM_ACTION_BUTTON_BASE_CLASS, ITEM_ACTION_ICON_CLASS } from './AlarmButton';
+import { LazyImage } from './LazyImage';
 
 interface MapViewProps {
     data: GatheringData;
@@ -253,6 +255,12 @@ export const MapView: React.FC<MapViewProps> = ({
             const mapId = node.map;
             if (!grouped[mapId]) grouped[mapId] = [];
             grouped[mapId].push(node);
+        });
+
+        Object.keys(grouped).forEach(mapId => {
+            const nodes = grouped[Number(mapId)] || [];
+            const sortedIndexes = sortNodesForMapSidebar(nodes);
+            grouped[Number(mapId)] = sortedIndexes.map(index => nodes[index]);
         });
 
         return grouped;
@@ -840,9 +848,9 @@ export const MapView: React.FC<MapViewProps> = ({
                                                             className="custom-checkbox w-3.5 h-3.5 rounded-sm text-blue-500 border-slate-300 focus:ring-offset-0 focus:ring-0 cursor-pointer"
                                                         />
 
-                                                        <img
+                                                        <LazyImage
                                                             src={data.icons[itemId] ? `https://xivapi.com${data.icons[itemId]}` : UI_ICON_URLS.defaultItem}
-                                                            className="w-5 h-5 rounded-sm bg-slate-200 dark:bg-slate-600"
+                                                            className="w-5 h-5 rounded-sm"
                                                             alt=""
                                                         />
                                                         <div className={`text-xs transition-colors flex-1 min-w-0 ${isCompleted ? 'text-slate-400' : isCollectionOnly ? 'text-slate-500 dark:text-slate-400 italic' : 'text-slate-700 dark:text-slate-200 group-hover/item:text-blue-500'}`}>
