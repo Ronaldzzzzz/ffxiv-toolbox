@@ -121,8 +121,8 @@ export const BookmarkView: React.FC<BookmarkViewProps> = ({
                           disableGrayscale={true}
                        />
                        {item.type && (
-                         <div className="absolute top-2 right-2 opacity-50 group-hover:opacity-100 transition-opacity">
-                             <img src={typeIcons[item.type]} className="w-4 h-4" alt="" />
+                         <div className="absolute top-2 left-2 opacity-50 group-hover:opacity-100 transition-opacity">
+                             <img src={typeIcons[item.type]} className="w-5 h-5" alt="" />
                          </div>
                        )}
                    </div>
@@ -152,8 +152,8 @@ export const BookmarkView: React.FC<BookmarkViewProps> = ({
                           disableGrayscale={true}
                        />
                        {item.type && (
-                         <div className="absolute top-2 right-2 opacity-50 group-hover:opacity-100 transition-opacity">
-                             <img src={typeIcons[item.type]} className="w-4 h-4" alt="" />
+                         <div className="absolute top-2 left-2 opacity-50 group-hover:opacity-100 transition-opacity">
+                             <img src={typeIcons[item.type]} className="w-5 h-5" alt="" />
                          </div>
                        )}
                    </div>

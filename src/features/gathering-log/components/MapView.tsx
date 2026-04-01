@@ -659,7 +659,14 @@ export const MapView: React.FC<MapViewProps> = ({
                                                                     <span className={completedItems.has(itemId) ? 'text-green-400' : ''}>
                                                                         {getLocalizedText(data.items[itemId], lang)}
                                                                     </span>
-                                                                    {(data.items[itemId]?.isCollectible || data.items[itemId]?.isCustomDelivery) && <span className="text-amber-400">▣</span>}
+                                                                    {(data.items[itemId]?.isCollectible || data.items[itemId]?.isCustomDelivery) && (
+                                                                        <img
+                                                                            src={UI_ICON_URLS.collectible}
+                                                                            className="w-3.5 h-3.5 flex-shrink-0"
+                                                                            alt="Collectible"
+                                                                            title={i18n.pages.gathering_log.collectible_tag}
+                                                                        />
+                                                                    )}
                                                                 </div>
                                                             ))}
                                                             <div className="mt-1 text-[10px] text-slate-400 font-mono">X:{node.x}, Y:{node.y}</div>
