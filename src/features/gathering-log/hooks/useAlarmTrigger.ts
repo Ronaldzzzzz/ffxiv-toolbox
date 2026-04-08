@@ -1,7 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useAlarm } from './useAlarm';
 import { useLanguage } from '../../../i18n/LanguageContext';
-import { GatheringData } from '../types';
+import { GatheringData, NodeData } from '../types';
 import { getLocalizedText, getItemIconUrl } from '../utils';
 
 // Helper to calculate when the next spawn occurs for a given node spawn time
@@ -113,8 +113,25 @@ export async function playNotificationSound(type: number = 1): Promise<AlarmSoun
 }
 
 export function useAlarmTrigger(data: GatheringData | null) {
-    const { globalEnabled, soundEnabled, soundType, localLeadTimeMinutes, trackedItems } = useAlarm();
+    const { globalEnabled, soundEnabled, soundType, localLeadTimeMinutes, trackedItems, getTrackedGroupForItem } = useAlarm();
     const { lang, t } = useLanguage();
+
+    const timedNodesByItemId = useMemo(() => {
+        const mapping = new Map<number, NodeData[]>();
+        if (!data) return mapping;
+
+        Object.values(data.nodes).forEach(node => {
+            if (!node.spawns || node.map === 0) return;
+
+            node.items.forEach(itemId => {
+                const nodes = mapping.get(itemId) || [];
+                nodes.push(node);
+                mapping.set(itemId, nodes);
+            });
+        });
+
+        return mapping;
+    }, [data]);
 
     // Keep refs updated every render so interval callbacks always use the latest lang/t
     const langRef = useRef(lang);
@@ -142,7 +159,7 @@ export function useAlarmTrigger(data: GatheringData | null) {
                 const item = data.items[itemId];
                 if (!item) return;
 
-                const nodes = Object.values(data.nodes).filter(n => n.items.includes(itemId) && n.spawns && n.map !== 0);
+                const nodes = timedNodesByItemId.get(itemId) || [];
                 
                 nodes.forEach(node => {
                     node.spawns!.forEach(spawnHour => {
@@ -195,23 +212,47 @@ export function useAlarmTrigger(data: GatheringData | null) {
                                     const itemName = getLocalizedText(item, langRef.current as any) || 'Unknown Item';
                                     const spawnTimeStr = `${spawnHour.toString().padStart(2, '0')}:00`;
                                     const isLeadTime = triggerIdx > 0;
+                                    const trackedGroup = getTrackedGroupForItem(itemId);
+                                    const groupLabel = (trackedGroup?.groupName || '').trim() || tRef.current.pages.gathering_log.ungrouped;
+                                    const effectiveSoundEnabled = typeof trackedGroup?.soundEnabled === 'boolean'
+                                        ? trackedGroup.soundEnabled
+                                        : soundEnabled;
+                                    const effectiveSoundType = Number.isFinite(trackedGroup?.soundType)
+                                        ? Number(trackedGroup?.soundType)
+                                        : soundType;
+                                    const customNotificationTemplate = trackedGroup?.notificationText?.trim();
 
-                                    if (soundEnabled) {
-                                        void playNotificationSound(soundType);
+                                    const resolveNotificationBody = () => {
+                                        if (customNotificationTemplate) {
+                                            return customNotificationTemplate
+                                                .replace('{group}', groupLabel)
+                                                .replace('{item}', itemName)
+                                                .replace('{time}', spawnTimeStr)
+                                                .replace('{minutes}', String(localLeadTimeMinutes));
+                                        }
+
+                                        const gl = tRef.current.pages.gathering_log;
+                                        const baseBody = isLeadTime
+                                            ? gl.alarm_notification_body_lead
+                                                .replace('{item}', itemName)
+                                                .replace('{time}', spawnTimeStr)
+                                                .replace('{minutes}', String(localLeadTimeMinutes))
+                                            : gl.alarm_notification_body
+                                                .replace('{item}', itemName)
+                                                .replace('{time}', spawnTimeStr);
+
+                                        return `[${groupLabel}] ${baseBody}`;
+                                    };
+
+                                    if (effectiveSoundEnabled) {
+                                        void playNotificationSound(effectiveSoundType);
                                     }
 
                                     // Browser Notification (i18n + lead-time indication)
                                     if ('Notification' in window && Notification.permission === 'granted') {
                                         try {
                                             const gl = tRef.current.pages.gathering_log;
-                                            const notifBody = isLeadTime
-                                                ? gl.alarm_notification_body_lead
-                                                    .replace('{item}', itemName)
-                                                    .replace('{time}', spawnTimeStr)
-                                                    .replace('{minutes}', String(localLeadTimeMinutes))
-                                                : gl.alarm_notification_body
-                                                    .replace('{item}', itemName)
-                                                    .replace('{time}', spawnTimeStr);
+                                            const notifBody = resolveNotificationBody();
                                             new Notification(gl.alarm_notification_title, {
                                                 body: notifBody,
                                                 icon: getItemIconUrl(itemId, data.icons)
@@ -236,5 +277,5 @@ export function useAlarmTrigger(data: GatheringData | null) {
         checkAlarms();
 
         return () => clearInterval(intervalId);
-    }, [globalEnabled, soundEnabled, soundType, localLeadTimeMinutes, trackedItems, data]);
+    }, [globalEnabled, soundEnabled, soundType, localLeadTimeMinutes, trackedItems, getTrackedGroupForItem, data, timedNodesByItemId]);
 }

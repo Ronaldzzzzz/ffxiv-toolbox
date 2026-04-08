@@ -4,6 +4,7 @@ import { useAlarm } from '../hooks/useAlarm';
 import { ALARM_SOUND_ERROR_EVENT, playNotificationSound } from '../hooks/useAlarmTrigger';
 import { GatheringData } from '../types';
 import { getLocalizedText, getNodeItemIds } from '../utils';
+import { useCollectionState } from '../hooks/useCollectionState';
 
 interface AlarmSettingsModalProps {
     isOpen: boolean;
@@ -11,15 +12,22 @@ interface AlarmSettingsModalProps {
     data: GatheringData;
 }
 
-export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({ isOpen, onClose, data }) => {
+export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({
+    isOpen,
+    onClose,
+    data
+}) => {
     const { lang, t } = useLanguage();
+    const { bookmarkGroups, ungroupedBookmarkedItemIds } = useCollectionState();
     const { 
-        globalEnabled, soundEnabled, soundType, localLeadTimeMinutes, macroLeadTimeMinutes, macroTimeMode, macroRepeat, trackedItems, 
-        updateSettings, toggleTrackedItem, requestNotificationPermission 
+        globalEnabled, soundEnabled, soundType, localLeadTimeMinutes, macroLeadTimeMinutes, macroTimeMode, macroRepeat,
+        alarmGroups,
+        updateSettings, requestNotificationPermission
     } = useAlarm();
     
     const [copySuccess, setCopySuccess] = useState(false);
     const [soundWarning, setSoundWarning] = useState<'blocked' | 'missing' | 'failed' | null>(null);
+    const [selectedMacroGroupId, setSelectedMacroGroupId] = useState<string>('__all__');
 
     useEffect(() => {
         const handler = (event: Event) => {
@@ -34,6 +42,11 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({ isOpen, 
         return () => window.removeEventListener(ALARM_SOUND_ERROR_EVENT, handler as EventListener);
     }, []);
 
+    useEffect(() => {
+        document.body.style.overflow = isOpen ? 'hidden' : '';
+        return () => { document.body.style.overflow = ''; };
+    }, [isOpen]);
+
     const resolveSoundWarningText = () => {
         if (soundWarning === 'blocked') {
             return t.pages.gathering_log.alarm_sound_blocked_warning;
@@ -41,42 +54,122 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({ isOpen, 
         return t.pages.gathering_log.alarm_sound_unavailable_warning;
     };
 
-    // Filter to get node definitions for tracked items
-    const trackedNodesInfo = useMemo(() => {
-        const info: { itemName: string, eorzeaTimeStrs: string[] }[] = [];
-        
-        trackedItems.forEach(itemId => {
-            const item = data.items[itemId];
-            if (!item) return;
-            const localizedName = getLocalizedText(item, lang);
-            
-            // Find nodes containing this item that have spawn times and valid map
-            const nodes = Object.values(data.nodes).filter(node => 
-                getNodeItemIds(node).includes(itemId) && node.spawns && node.spawns.length > 0 && node.map !== 0
-            );
-            
-            if (nodes.length > 0) {
-                // Collect all spawn times across all nodes for this item
-                const allSpawns = new Set<number>();
-                nodes.forEach(n => {
-                    n.spawns!.forEach(s => allSpawns.add(s));
-                });
-                
-                // Format spawns to FFXIV format: 2400-clock
-                // The spawn 's' is the hour (0-23). To make it a 4-digit time (e.g. 4 -> 0400), we multiply by 100.
-                const eorzeaTimeStrs = Array.from(allSpawns).sort((a,b) => a-b).map(s => {
-                    return (s * 100).toString().padStart(4, '0');
-                });
-                
-                info.push({ itemName: localizedName, eorzeaTimeStrs });
-            }
+    const bookmarkGroupByItemId = useMemo(() => {
+        const mapping = new Map<number, string>();
+        bookmarkGroups.forEach(group => {
+            group.itemIds.forEach(itemId => {
+                mapping.set(itemId, group.id);
+            });
         });
-        
-        return info;
-    }, [trackedItems, data, lang]);
+        return mapping;
+    }, [bookmarkGroups]);
+
+    const alarmGroupSettingsMap = useMemo(() => {
+        const mapping = new Map<string, typeof alarmGroups[number]>();
+        alarmGroups.forEach(group => {
+            mapping.set(group.groupId, group);
+        });
+        return mapping;
+    }, [alarmGroups]);
+
+    const groupedTrackedNodesInfo = useMemo(() => {
+        type GroupedNode = {
+            groupId: string;
+            groupLabel: string;
+            effectiveSoundEnabled: boolean;
+            effectiveSoundType: number;
+            entries: { itemId: number; itemName: string; eorzeaTimeStrs: string[] }[];
+        };
+
+        const resolveTrackedEntry = (itemId: number) => {
+            const item = data.items[itemId];
+            if (!item) return null;
+
+            const nodes = Object.values(data.nodes).filter(node =>
+                getNodeItemIds(node).includes(itemId)
+                && node.spawns
+                && node.spawns.length > 0
+                && node.map !== 0,
+            );
+
+            if (nodes.length === 0) return null;
+
+            const allSpawns = new Set<number>();
+            nodes.forEach(node => {
+                node.spawns!.forEach(spawnHour => allSpawns.add(spawnHour));
+            });
+
+            return {
+                itemId,
+                itemName: getLocalizedText(item, lang),
+                eorzeaTimeStrs: Array.from(allSpawns)
+                    .sort((a, b) => a - b)
+                    .map(spawnHour => (spawnHour * 100).toString().padStart(4, '0')),
+            };
+        };
+
+        const entriesByGroupId = new Map<string, { itemId: number; itemName: string; eorzeaTimeStrs: string[] }[]>();
+
+        const allBookmarkedItemIds = [
+            ...bookmarkGroups.flatMap(g => g.itemIds),
+            ...ungroupedBookmarkedItemIds,
+        ];
+
+        allBookmarkedItemIds.forEach(itemId => {
+            const resolved = resolveTrackedEntry(itemId);
+            if (!resolved) return;
+
+            const groupId = bookmarkGroupByItemId.get(itemId) || '__ungrouped__';
+            const entries = entriesByGroupId.get(groupId) || [];
+            entries.push(resolved);
+            entriesByGroupId.set(groupId, entries);
+        });
+
+        const grouped: GroupedNode[] = bookmarkGroups.map(group => {
+            const alarmGroupSettings = alarmGroupSettingsMap.get(group.id);
+            return {
+                groupId: group.id,
+                groupLabel: (alarmGroupSettings?.macroLabel || alarmGroupSettings?.groupName || group.name || '').trim() || t.pages.gathering_log.group_unnamed,
+                effectiveSoundEnabled: typeof alarmGroupSettings?.soundEnabled === 'boolean' ? alarmGroupSettings.soundEnabled : soundEnabled,
+                effectiveSoundType: Number.isFinite(alarmGroupSettings?.soundType) ? Number(alarmGroupSettings?.soundType) : soundType,
+                entries: entriesByGroupId.get(group.id) || [],
+            };
+        });
+
+        grouped.push({
+            groupId: '__ungrouped__',
+            groupLabel: t.pages.gathering_log.ungrouped,
+            effectiveSoundEnabled: soundEnabled,
+            effectiveSoundType: soundType,
+            entries: entriesByGroupId.get('__ungrouped__') || [],
+        });
+
+        return grouped;
+    }, [bookmarkGroups, ungroupedBookmarkedItemIds, bookmarkGroupByItemId, alarmGroupSettingsMap, data, lang, t.pages.gathering_log.group_unnamed, t.pages.gathering_log.ungrouped, soundEnabled, soundType]);
+
+    const macroGroupOptions = useMemo(() => {
+        return groupedTrackedNodesInfo.map(group => ({
+            groupId: group.groupId,
+            groupLabel: group.groupLabel,
+        }));
+    }, [groupedTrackedNodesInfo]);
+
+    useEffect(() => {
+        if (selectedMacroGroupId === '__all__') return;
+
+        const stillExists = macroGroupOptions.some(group => group.groupId === selectedMacroGroupId);
+        if (!stillExists) {
+            setSelectedMacroGroupId('__all__');
+        }
+    }, [macroGroupOptions, selectedMacroGroupId]);
 
     const generatedMacroText = useMemo(() => {
-        if (trackedNodesInfo.length === 0) return '';
+        const targetGroups = selectedMacroGroupId === '__all__'
+            ? groupedTrackedNodesInfo
+            : groupedTrackedNodesInfo.filter(group => group.groupId === selectedMacroGroupId);
+
+        const groupsWithEntries = targetGroups.filter(group => group.entries.length > 0);
+        if (groupsWithEntries.length === 0) return '';
         
         const lines: string[] = ['/alarm clear']; // Clear first if generating a full list
         
@@ -85,13 +178,16 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({ isOpen, 
         const currentEorzeaMinutesTotal = Math.floor((nowRealMs * EORZEA_MULTIPLIER) / 60000);
         const currentEorzeaMinuteOfDay = currentEorzeaMinutesTotal % (24 * 60);
 
-        trackedNodesInfo.forEach(info => {
-            info.eorzeaTimeStrs.forEach(etStr => {
+                groupsWithEntries.forEach(groupInfo => {
+                        groupInfo.entries.forEach(entry => {
+                                entry.eorzeaTimeStrs.forEach(etStr => {
                 // Macro format requested by user: /alarm "name/time" et repeat [time] [reminder_minutes] <se.02> mute
-                const soundArg = soundEnabled 
-                  ? (soundType >= 101 && soundType <= 103 ? ' <se.1> mute' : ` <se.${String(soundType).padStart(2, '0')}> mute`)
+                                const soundArg = groupInfo.effectiveSoundEnabled
+                                    ? (groupInfo.effectiveSoundType >= 101 && groupInfo.effectiveSoundType <= 103
+                                            ? ' <se.1> mute'
+                                            : ` <se.${String(groupInfo.effectiveSoundType).padStart(2, '0')}> mute`)
                   : ' mute';
-                const alarmName = `${info.itemName}/${etStr}`;
+                                const alarmName = `${groupInfo.groupLabel}/${entry.itemName}/${etStr}`;
                 
                 if (macroTimeMode === 'lt') {
                      const spawnHour = parseInt(etStr.substring(0,2), 10);
@@ -132,11 +228,12 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({ isOpen, 
                      
                      lines.push(`/alarm "${alarmName}" et ${rpArg}${finalEtStr} ${etReminder}${soundArg}`);
                 }
+                });
             });
         });
         
         return lines.join('\n');
-    }, [trackedNodesInfo, macroLeadTimeMinutes, localLeadTimeMinutes, soundEnabled, soundType, macroTimeMode, macroRepeat, isOpen]);
+    }, [groupedTrackedNodesInfo, selectedMacroGroupId, macroLeadTimeMinutes, macroTimeMode, macroRepeat]);
 
     const handleCopyMacro = () => {
         navigator.clipboard.writeText(generatedMacroText).then(() => {
@@ -145,8 +242,7 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({ isOpen, 
         });
     };
 
-    const handleToggleGlobal = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const checked = e.target.checked;
+    const handleToggleGlobal = async (checked: boolean) => {
         if (checked) {
             const hasPermission = await requestNotificationPermission();
             if (!hasPermission) {
@@ -157,11 +253,34 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({ isOpen, 
         updateSettings({ globalEnabled: checked });
     };
 
+    const handleTestNotification = async () => {
+        if (!('Notification' in window)) return;
+        const hasPermission = await requestNotificationPermission();
+        if (!hasPermission) {
+            alert(t.pages.gathering_log.alarm_browser_permission_denied);
+            return;
+        }
+        new Notification(t.pages.gathering_log.alarm_notification_title, {
+            body: t.pages.gathering_log.alarm_test_notification_body,
+        });
+    };
+
+    const handleTestSound = async () => {
+        const result = await playNotificationSound(soundType);
+        if (result === 'blocked') {
+            setSoundWarning('blocked');
+            alert(t.pages.gathering_log.alarm_sound_blocked_warning);
+        } else if (result === 'missing' || result === 'failed') {
+            setSoundWarning(result);
+            alert(t.pages.gathering_log.alarm_sound_unavailable_warning);
+        }
+    };
+
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200 dark:border-slate-700 flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={onClose}>
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200 dark:border-slate-700 flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
                 
                 {/* Header */}
                 <div className="flex justify-between items-center p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
@@ -176,44 +295,26 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({ isOpen, 
 
                 {/* Content */}
                 <div className="p-6 overflow-y-auto flex-grow thin-scrollbar space-y-6">
-                    
+
                     {/* Settings Toggles */}
                     <div className="space-y-4">
                         <div className="space-y-3 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
                             <div className="flex items-center justify-between group">
                                 <span className="font-bold text-slate-700 dark:text-slate-300">{t.pages.gathering_log.alarm_enable}</span>
                                 <div className="flex items-center gap-3 z-10">
-                                    <button 
-                                        onClick={async (e) => {
-                                            e.stopPropagation();
-                                            if (!('Notification' in window)) {
-                                                alert(t.pages.gathering_log.alarm_browser_permission);
-                                                return;
-                                            }
-                                            let permission = Notification.permission;
-                                            if (permission === 'default') {
-                                                const granted = await requestNotificationPermission();
-                                                permission = granted ? 'granted' : 'denied';
-                                            }
-                                            
-                                            if (permission === 'granted') {
-                                                try {
-                                                        const testNotif = new Notification(t.pages.gathering_log.alarm_notification_title, { body: t.pages.gathering_log.alarm_test_notification_body });
-                                                    testNotif.onclick = () => window.focus();
-                                                } catch (err) {
-                                                    console.error('Failed to create notification:', err);
-                                                    alert('Cannot show notification. If on mobile Chrome, this requires a PWA/ServiceWorker. Otherwise, ensure you are on HTTPS.');
-                                                }
-                                            } else {
-                                                alert(t.pages.gathering_log.alarm_browser_permission_denied || t.pages.gathering_log.alarm_browser_permission);
-                                            }
-                                        }}
+                                    <button
+                                        onClick={() => { void handleTestNotification(); }}
                                         className="text-xs px-2 py-1 bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
                                     >
                                         {t.pages.gathering_log.alarm_test_notification}
                                     </button>
                                     <label className="relative cursor-pointer">
-                                        <input type="checkbox" className="sr-only peer" checked={globalEnabled} onChange={handleToggleGlobal} />
+                                        <input
+                                            type="checkbox"
+                                            className="sr-only peer"
+                                            checked={globalEnabled}
+                                            onChange={(e) => { void handleToggleGlobal(e.target.checked); }}
+                                        />
                                         <div className="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-500 peer-checked:bg-green-500"></div>
                                     </label>
                                 </div>
@@ -232,24 +333,15 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({ isOpen, 
                                     <span className="text-sm font-mono w-8 text-right bg-white dark:bg-slate-800 px-2 py-1 rounded border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-400">{localLeadTimeMinutes}</span>
                                 </div>
                             </div>
+
                         </div>
                         
                         <div className="space-y-3 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
                             <div className="flex items-center justify-between group">
                                 <span className="font-bold text-slate-700 dark:text-slate-300">{t.pages.gathering_log.alarm_sound}</span>
                                 <div className="flex items-center gap-3 z-10">
-                                    <button 
-                                        onClick={async (e) => {
-                                            e.stopPropagation();
-                                            const result = await playNotificationSound(soundType);
-                                            if (result === 'blocked') {
-                                                setSoundWarning('blocked');
-                                                alert(t.pages.gathering_log.alarm_sound_blocked_warning);
-                                            } else if (result === 'missing' || result === 'failed') {
-                                                setSoundWarning(result);
-                                                alert(t.pages.gathering_log.alarm_sound_unavailable_warning);
-                                            }
-                                        }}
+                                    <button
+                                        onClick={() => { void handleTestSound(); }}
                                         className="text-xs px-2 py-1 bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
                                     >
                                         {t.pages.gathering_log.alarm_test_sound}
@@ -289,7 +381,6 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({ isOpen, 
                             )}
                         </div>
 
-                        
                     </div>
 
                     <hr className="border-slate-200 dark:border-slate-700" />
@@ -298,17 +389,22 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({ isOpen, 
                     <div>
                         <h3 className="font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center justify-between">
                             <span>{t.pages.gathering_log.alarm_macro_gen}</span>
-                            <span className="text-xs font-normal text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
-                                {t.pages.gathering_log.alarm_tracked_nodes}{trackedItems.length}
-                            </span>
+                            <div className="flex items-center gap-2">
+                                <select
+                                    value={selectedMacroGroupId}
+                                    onChange={(event) => setSelectedMacroGroupId(event.target.value)}
+                                    className="text-xs rounded border border-slate-300 bg-white px-2 py-1 text-slate-700 focus:border-blue-400 focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
+                                    title={t.pages.gathering_log.group_overview}
+                                >
+                                    <option value="__all__">{t.pages.gathering_log.alarm_macro_all_groups}</option>
+                                    {macroGroupOptions.map(group => (
+                                        <option key={group.groupId} value={group.groupId}>{group.groupLabel}</option>
+                                    ))}
+                                </select>
+                            </div>
                         </h3>
                         
-                        {trackedItems.length === 0 ? (
-                            <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-500 text-sm rounded-lg border border-yellow-200 dark:border-yellow-900/50">
-                                {t.pages.gathering_log.alarm_no_tracked}
-                            </div>
-                        ) : (
-                            <div className="space-y-3">
+                        <div className="space-y-3">
                                 <div className="space-y-3 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
                                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                         <label className="font-bold text-slate-700 dark:text-slate-300 text-sm whitespace-nowrap w-full sm:w-1/3 flex-shrink-0">{t.pages.gathering_log.alarm_lead_time}</label>
@@ -379,31 +475,8 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({ isOpen, 
                                         )}
                                     </button>
                                 </div>
-                            </div>
-                        )}
+                        </div>
                         
-                        {/* List of tracked items for quick toggle removal */}
-                        {trackedItems.length > 0 && (
-                            <div className="mt-4 flex flex-wrap gap-2">
-                                {trackedItems.map(itemId => {
-                                    const item = data.items[itemId];
-                                    if (!item) return null;
-                                    return (
-                                        <div key={itemId} className="flex items-center gap-1 text-xs bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-2 py-1 rounded">
-                                            <span className="max-w-[120px] truncate" title={getLocalizedText(item, lang)}>
-                                                {getLocalizedText(item, lang)}
-                                            </span>
-                                            <button 
-                                                onClick={() => toggleTrackedItem(itemId)}
-                                                className="hover:text-red-500 transition-colors ml-1"
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                            </button>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        )}
                     </div>
                 </div>
             </div>

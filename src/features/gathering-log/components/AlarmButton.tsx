@@ -1,23 +1,39 @@
 import React from 'react';
-import { useAlarm } from '../hooks/useAlarm';
 
 export const ITEM_ACTION_BUTTON_BASE_CLASS = 'group/action transition-all duration-200 ease-out flex items-center justify-center w-6 h-6 rounded-md hover:bg-slate-200/80 dark:hover:bg-slate-600/80 hover:scale-110 active:scale-95 flex-shrink-0';
 export const ITEM_ACTION_ICON_CLASS = 'transition-transform duration-200 ease-out group-hover/action:scale-105';
 
 interface AlarmButtonProps {
     itemId: number;
+    isTracked: boolean;
+    onToggleTracked: (itemId: number) => void;
+    autoBookmarkOnEnable?: boolean;
+    isBookmarked?: boolean;
+    onToggleBookmark?: (itemId: number) => void;
 }
 
-export const AlarmButton: React.FC<AlarmButtonProps> = ({ itemId }) => {
-    const { trackedItems, toggleTrackedItem } = useAlarm();
-    const isTracked = trackedItems.includes(itemId);
+export const AlarmButton: React.FC<AlarmButtonProps> = ({
+    itemId,
+    isTracked,
+    onToggleTracked,
+    autoBookmarkOnEnable = false,
+    isBookmarked = false,
+    onToggleBookmark,
+}) => {
+
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+
+        if (!isTracked && autoBookmarkOnEnable && !isBookmarked && onToggleBookmark) {
+            onToggleBookmark(itemId);
+        }
+
+        onToggleTracked(itemId);
+    };
 
     return (
         <button
-            onClick={(e) => { 
-                e.stopPropagation(); 
-                toggleTrackedItem(itemId); 
-            }}
+            onClick={handleClick}
             className={`${ITEM_ACTION_BUTTON_BASE_CLASS} ${isTracked ? 'text-blue-500' : 'text-slate-300 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-300'}`}
             title="Alarm Tracker"
         >

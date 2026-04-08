@@ -16,6 +16,7 @@ import { RecipeModal } from './RecipeModal';
 import { AlarmSettingsModal } from './AlarmSettingsModal';
 import { useAlarmTrigger } from '../hooks/useAlarmTrigger';
 import { useCollectionState } from '../hooks/useCollectionState';
+import { useAlarm } from '../hooks/useAlarm';
 
 export const GatheringLogPage: React.FC = () => {
   const { data, loading, error } = useGatheringData();
@@ -32,11 +33,19 @@ export const GatheringLogPage: React.FC = () => {
   const {
     completedItems,
     bookmarkedItems,
+    bookmarkGroups,
+    ungroupedBookmarkedItemIds,
     toggleComplete,
     toggleBookmark,
     toggleBatch,
     bookmarkAll,
+    createGroup,
+    updateGroup,
+    removeGroup,
+    moveBookmarkedItem,
+    maxBookmarkGroups,
   } = useCollectionState();
+  const { alarmGroups, trackedItems, toggleTrackedItem, setTrackedItems, ensureAlarmGroup, updateAlarmGroup, removeAlarmGroup } = useAlarm();
   const [recipeModalItemId, setRecipeModalItemId] = useState<number | null>(null);
   const [isAlarmModalOpen, setIsAlarmModalOpen] = useState<boolean>(false);
 
@@ -44,6 +53,30 @@ export const GatheringLogPage: React.FC = () => {
 
   // Initialize background alarm trigger
   useAlarmTrigger(data);
+
+  // Keep alarm groups aligned with bookmark groups so macro selector always includes user-created groups.
+  useEffect(() => {
+    const bookmarkGroupIdSet = new Set(bookmarkGroups.map(group => group.id));
+
+    bookmarkGroups.forEach(bookmarkGroup => {
+      const matchedAlarmGroup = alarmGroups.find(group => group.groupId === bookmarkGroup.id);
+
+      if (!matchedAlarmGroup) {
+        ensureAlarmGroup(bookmarkGroup.id, { groupName: bookmarkGroup.name });
+        return;
+      }
+
+      if ((matchedAlarmGroup.groupName || '') !== bookmarkGroup.name) {
+        updateAlarmGroup(bookmarkGroup.id, { groupName: bookmarkGroup.name });
+      }
+    });
+
+    alarmGroups.forEach(alarmGroup => {
+      if (!bookmarkGroupIdSet.has(alarmGroup.groupId)) {
+        removeAlarmGroup(alarmGroup.groupId, { moveItemsToUngrouped: true });
+      }
+    });
+  }, [bookmarkGroups, alarmGroups, ensureAlarmGroup, updateAlarmGroup, removeAlarmGroup]);
 
   // Eorzea Time Timer
   useEffect(() => {
@@ -85,7 +118,6 @@ export const GatheringLogPage: React.FC = () => {
 
     const countTypeProgress = (type: GatherType) => {
       const itemIds = getTypeItemIds(type);
-
       return countProgressFromSet(itemIds);
     };
 
@@ -134,7 +166,7 @@ export const GatheringLogPage: React.FC = () => {
       totalLogging: loggingProgress.total,
       totalHarvesting: harvestingProgress.total,
     });
-    setToolInfo({ version: 'V3.5.2' });
+    setToolInfo({ version: 'V3.6' });
 
     // 1. 中間：視角切換按鈕
     setCenterActions(
@@ -207,7 +239,7 @@ export const GatheringLogPage: React.FC = () => {
       setHeaderActions(null);
       setCenterActions(null);
     };
-  }, [data, completedItems, hideCompleted, showBookmarks, viewMode, i18n, setProgress, setToolInfo, setHeaderActions, setCenterActions, isAlarmModalOpen]);
+  }, [data, completedItems, hideCompleted, showBookmarks, viewMode, i18n, setProgress, setToolInfo, setHeaderActions, setCenterActions]);
 
   const typeToIndex: Record<GatherType, number> = { mining: 0, quarrying: 1, logging: 2, harvesting: 3 };
   const pages = data ? data.pages[typeToIndex[currentType]] || [] : [];
@@ -327,9 +359,19 @@ export const GatheringLogPage: React.FC = () => {
               data={data}
               completedItems={completedItems}
               bookmarkedItems={bookmarkedItems}
+              bookmarkGroups={bookmarkGroups}
+              ungroupedBookmarkedItemIds={ungroupedBookmarkedItemIds}
               toggleComplete={toggleComplete}
               toggleBookmark={toggleBookmark}
               hideCompleted={hideCompleted}
+              createGroup={createGroup}
+              updateGroup={updateGroup}
+              removeGroup={removeGroup}
+                moveBookmarkedItem={moveBookmarkedItem}
+                trackedItems={trackedItems}
+                 toggleTrackedItem={toggleTrackedItem}
+                setTrackedItems={setTrackedItems}
+                maxBookmarkGroups={maxBookmarkGroups}
            />
         )}
 
@@ -360,7 +402,7 @@ export const GatheringLogPage: React.FC = () => {
       <AlarmSettingsModal 
           isOpen={isAlarmModalOpen} 
           onClose={() => setIsAlarmModalOpen(false)} 
-          data={data} 
+          data={data}
       />
     </div >
   );

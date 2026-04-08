@@ -4,6 +4,7 @@ import { GatheringData } from '../types';
 import { getLocalizedText, getItemIconUrl } from '../utils';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { AlarmButton } from './AlarmButton';
+import { useAlarm } from '../hooks/useAlarm';
 
 interface RecipeModalProps {
   itemId: number;
@@ -24,6 +25,7 @@ interface RecipeNode {
 
 export const RecipeModal: React.FC<RecipeModalProps> = ({ itemId, data, onClose, onBookmarkAll, bookmarkedItems }) => {
   const { lang, t: i18n } = useLanguage();
+  const { trackedItems, toggleTrackedItem } = useAlarm();
 
   const itemInfo = data.items[itemId];
   const name = itemInfo ? getLocalizedText(itemInfo, lang) : i18n.pages.gathering_log.unknown_item;
@@ -96,6 +98,7 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({ itemId, data, onClose,
 
   // 管理勾選狀態
   const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set());
+  const trackedItemSet = useMemo(() => new Set(trackedItems), [trackedItems]);
 
   // 初始化勾選狀態：預設全選可採集且尚未加入書籤的
   useEffect(() => {
@@ -180,7 +183,13 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({ itemId, data, onClose,
                        </div>
                    </div>
                     <div className="flex items-center gap-2">
-                        {isTimed && <AlarmButton itemId={node.id} />}
+                        {isTimed && (
+                          <AlarmButton
+                            itemId={node.id}
+                            isTracked={trackedItemSet.has(node.id)}
+                            onToggleTracked={toggleTrackedItem}
+                          />
+                        )}
                         {isBookmarked && node.isGatherable && (
                             <span className="text-yellow-500 flex items-center gap-1 text-xs">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>

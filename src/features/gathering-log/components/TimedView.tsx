@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { GatheringData, GatherType } from '../types';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
 import { getLocalizedText, GATHERING_ICONS, formatSeconds, UI_ICON_URLS } from '../utils';
 import { getTimedNodesGrouped, TimedNodeWithStatus } from '../selectors';
 import { AlarmButton, ITEM_ACTION_BUTTON_BASE_CLASS, ITEM_ACTION_ICON_CLASS } from './AlarmButton';
+import { useAlarm } from '../hooks/useAlarm';
 
 interface TimedViewProps {
     data: GatheringData;
@@ -49,7 +50,9 @@ const TimedItemCopyButton: React.FC<{ text: string; title?: string }> = ({ text,
 export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, completedItems, bookmarkedItems, toggleBookmark, toggleComplete, hideCompleted, showBookmarks }) => {
     const { lang, t: i18n } = useLanguage();
     const { setMapModal } = useTool();
+    const { trackedItems, toggleTrackedItem } = useAlarm();
     const [now, setNow] = useState(Date.now());
+    const trackedItemSet = useMemo(() => new Set(trackedItems), [trackedItems]);
 
     // Update current time every 200ms for smooth countdown display
     useEffect(() => {
@@ -194,7 +197,14 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
                                     >
                                         <svg className={ITEM_ACTION_ICON_CLASS} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill={isBookmarked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                                     </button>
-                                    <AlarmButton itemId={itemId} />
+                                    <AlarmButton
+                                        itemId={itemId}
+                                        isTracked={trackedItemSet.has(itemId)}
+                                        onToggleTracked={toggleTrackedItem}
+                                        autoBookmarkOnEnable={true}
+                                        isBookmarked={isBookmarked}
+                                        onToggleBookmark={toggleBookmark}
+                                    />
                                 </div>
                             </div>
                             <div className="text-xs text-slate-500 dark:text-slate-400 flex flex-col gap-0.5">

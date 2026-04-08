@@ -7,6 +7,7 @@ import { sortNodesForMapSidebar } from '../selectors';
 import { ChevronLeft } from 'lucide-react';
 import { AlarmButton, ITEM_ACTION_BUTTON_BASE_CLASS, ITEM_ACTION_ICON_CLASS } from './AlarmButton';
 import { LazyImage } from './LazyImage';
+import { useAlarm } from '../hooks/useAlarm';
 
 interface MapViewProps {
     data: GatheringData;
@@ -108,6 +109,7 @@ export const MapView: React.FC<MapViewProps> = ({
     showBookmarks
 }) => {
     const { lang, t: i18n } = useLanguage();
+    const { trackedItems, toggleTrackedItem } = useAlarm();
     // const { setMapModal } = useTool(); // Disabled as per user request
     const [selectedMapId, setSelectedMapId] = useState<number | null>(null);
     const [now, setNow] = useState(Date.now());
@@ -115,6 +117,7 @@ export const MapView: React.FC<MapViewProps> = ({
     const [lockedNodeId, setLockedNodeId] = useState<number | string | null>(null);
     const [lineCoords, setLineCoords] = useState<{ x1: number, y1: number, x2: number, y2: number } | null>(null);
     const activeNodeId = lockedNodeId ?? hoveredNodeId;
+    const trackedItemSet = useMemo(() => new Set(trackedItems), [trackedItems]);
 
     const containerRef = useRef<HTMLDivElement>(null);
     const markerRefs = useRef<Record<string | number, HTMLDivElement | null>>({});
@@ -893,12 +896,21 @@ export const MapView: React.FC<MapViewProps> = ({
                                                                     <MapItemCopyButton text={itemName} />
                                                                     <button
                                                                         onClick={(e) => { e.stopPropagation(); toggleBookmark(itemId); }}
-                                                                        className={`${ITEM_ACTION_BUTTON_BASE_CLASS} ${bookmarkedItems.has(itemId) ? 'text-yellow-500' : 'text-slate-300 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-300'}`}
+                                                                        className={`${ITEM_ACTION_BUTTON_BASE_CLASS} ${isBookmarked ? 'text-yellow-500' : 'text-slate-300 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-300'}`}
                                                                         title="Bookmark"
                                                                     >
-                                                                        <svg className={ITEM_ACTION_ICON_CLASS} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill={bookmarkedItems.has(itemId) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                                                                        <svg className={ITEM_ACTION_ICON_CLASS} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill={isBookmarked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                                                                     </button>
-                                                                    {isTimed && <AlarmButton itemId={itemId} />}
+                                                                    {isTimed && (
+                                                                        <AlarmButton
+                                                                            itemId={itemId}
+                                                                            isTracked={trackedItemSet.has(itemId)}
+                                                                            onToggleTracked={toggleTrackedItem}
+                                                                            autoBookmarkOnEnable={true}
+                                                                            isBookmarked={isBookmarked}
+                                                                            onToggleBookmark={toggleBookmark}
+                                                                        />
+                                                                    )}
                                                                 </div>
                                                             </div>
                                                         </div>

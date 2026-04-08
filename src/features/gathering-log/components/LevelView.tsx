@@ -5,6 +5,7 @@ import { getLocalizedText, getNodeItemIds, UI_ICON_URLS } from '../utils';
 import { getCollectableBands } from '../selectors';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
+import { useAlarm } from '../hooks/useAlarm';
 interface LevelViewProps {
   data: GatheringData;
   currentType: GatherType;
@@ -24,7 +25,9 @@ export const LevelView: React.FC<LevelViewProps> = ({
 }) => {
   const { lang, t: i18n } = useLanguage();
   const { highlightItem, setHighlightItem } = useTool();
+  const { trackedItems, toggleTrackedItem } = useAlarm();
   const itemRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const trackedItemSet = useMemo(() => new Set(trackedItems), [trackedItems]);
 
   // Handle Scroll to Item
   useEffect(() => {
@@ -146,8 +149,10 @@ export const LevelView: React.FC<LevelViewProps> = ({
                     data={data}
                     isCompleted={completedItems.has(item.itemId)}
                     isBookmarked={bookmarkedItems.has(item.itemId)}
+                    isAlarmTracked={trackedItemSet.has(item.itemId)}
                     toggleComplete={toggleComplete}
                     toggleBookmark={toggleBookmark}
+                    toggleAlarm={toggleTrackedItem}
                   />
                 </div>
               ))}
@@ -221,8 +226,10 @@ export const LevelView: React.FC<LevelViewProps> = ({
                           data={data}
                           isCompleted={completedItems.has(item.itemId)}
                           isBookmarked={bookmarkedItems.has(item.itemId)}
+                          isAlarmTracked={trackedItemSet.has(item.itemId)}
                           toggleComplete={toggleComplete}
                           toggleBookmark={toggleBookmark}
+                          toggleAlarm={toggleTrackedItem}
                         />
                       </div>
                     ))}
