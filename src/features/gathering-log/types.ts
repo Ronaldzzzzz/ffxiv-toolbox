@@ -1,6 +1,48 @@
 export type JobType = 'miner' | 'botanist';
 export type GatherType = 'mining' | 'quarrying' | 'logging' | 'harvesting';
 export type ViewMode = 'level' | 'timed' | 'map' | 'bookmark';
+export type AlarmTimeMode = 'et' | 'lt';
+
+export const BOOKMARK_STATE_VERSION = 2;
+export const ALARM_STATE_VERSION = 3;
+
+export interface BookmarkGroup {
+  id: string;
+  name: string;
+  itemIds: number[];
+  collapsed?: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BookmarkState {
+  version: typeof BOOKMARK_STATE_VERSION;
+  groups: BookmarkGroup[];
+  ungroupedItemIds: number[];
+}
+
+export interface AlarmGroupSettings {
+  groupId: string;
+  groupName?: string;
+  trackedItemIds: number[];
+  notificationText?: string;
+  macroLabel?: string;
+  soundEnabled?: boolean | null;
+  soundType?: number | null;
+}
+
+export interface AlarmState {
+  version: typeof ALARM_STATE_VERSION;
+  globalEnabled: boolean;
+  soundEnabled: boolean;
+  soundType: number;
+  localLeadTimeMinutes: number;
+  macroLeadTimeMinutes: number;
+  macroTimeMode: AlarmTimeMode;
+  macroRepeat: boolean;
+  ungroupedTrackedItemIds: number[];
+  alarmGroups: AlarmGroupSettings[];
+}
 
 export interface LocalizedText {
   en: string;

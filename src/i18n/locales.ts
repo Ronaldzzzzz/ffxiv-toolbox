@@ -106,9 +106,6 @@ export interface Translation {
       alarm_macro_repeat: string;
       alarm_macro_gen: string;
       alarm_copy_macro: string;
-      alarm_no_tracked: string;
-      alarm_tracked_nodes: string;
-      alarm_browser_permission: string;
       alarm_browser_permission_denied: string;
       alarm_sound_blocked_warning: string;
       alarm_sound_unavailable_warning: string;
@@ -118,6 +115,29 @@ export interface Translation {
       alarm_test_notification_body: string;
       alarm_sound_builtin_group: string;
       alarm_sound_mp3_group: string;
+      alarm_macro_all_groups: string;
+
+      group_add: string;
+      group_rename: string;
+      group_delete: string;
+      group_unnamed: string;
+      group_default_prefix: string;
+      group_overview: string;
+      group_empty: string;
+      group_count_status: string;
+      group_limit_reached: string;
+      group_empty_bookmarks_hint: string;
+      ungrouped: string;
+      group_move_item: string;
+      bookmark_alarm_status: string;
+      bookmark_alarm_track_all: string;
+      bookmark_alarm_clear_all: string;
+      confirm_delete_group: string;
+      save: string;
+      cancel: string;
+      expand: string;
+      collapse: string;
+      more_options: string;
     };
     aether_current: {
       title: string;
@@ -253,9 +273,6 @@ export const translations: Record<LangCode, Translation> = {
         alarm_macro_repeat: '巨集重複提醒 (循環)',
         alarm_macro_gen: '遊戲內 /alarm 巨集生成',
         alarm_copy_macro: '複製巨集',
-        alarm_no_tracked: '目前沒有追蹤任何限時節點。請點擊清單中的 🔔 按鈕加入追蹤。',
-        alarm_tracked_nodes: '已追蹤節點數: ',
-        alarm_browser_permission: '需要允許瀏覽器通知才能使用此功能',
         alarm_browser_permission_denied: '瀏覽器通知已被封鎖，請在瀏覽器設定中解除封鎖',
         alarm_sound_blocked_warning: '音效播放被瀏覽器阻擋。請先與頁面互動，並確認網站音訊權限已開啟。',
         alarm_sound_unavailable_warning: '找不到音效檔或音訊裝置不可用，請確認 public/audio/alarms 下已有 se.1.mp3 ~ se.16.mp3。',
@@ -264,7 +281,30 @@ export const translations: Record<LangCode, Translation> = {
         alarm_notification_body_lead: '{item} 將在 {minutes} 分鐘後出現 (ET {time})',
         alarm_test_notification_body: '這是一則測試通知。',
         alarm_sound_builtin_group: '內建音效',
-        alarm_sound_mp3_group: 'MP3 音效檔'
+        alarm_sound_mp3_group: 'MP3 音效檔',
+        alarm_macro_all_groups: '全部群組',
+
+        group_add: '新增群組',
+        group_rename: '重命名',
+        group_delete: '刪除',
+        group_unnamed: '(未命名群組)',
+        group_default_prefix: '群組',
+        group_overview: '群組總覽',
+        group_empty: '此群組目前沒有書籤。',
+        group_count_status: '群組數量：{current}/{max}',
+        group_limit_reached: '最多只能建立 5 個群組。',
+        group_empty_bookmarks_hint: '目前沒有書籤項目，但你建立的群組已保留在上方。',
+        ungrouped: '[未分組]',
+        group_move_item: '移動到群組',
+        bookmark_alarm_status: '鬧鐘追蹤：{tracked}/{total}',
+        bookmark_alarm_track_all: '追蹤本群組限時',
+        bookmark_alarm_clear_all: '清除本群組追蹤',
+        confirm_delete_group: '確定刪除此群組嗎？其中的物品將移至未分組。',
+        save: '保存',
+        cancel: '取消',
+        expand: '展開',
+        collapse: '收摺',
+        more_options: '更多選項'
       },
       aether_current: {
         title: '風脈泉路徑',
@@ -387,9 +427,6 @@ export const translations: Record<LangCode, Translation> = {
         alarm_macro_repeat: 'Macro Repeat (Hourly)',
         alarm_macro_gen: 'In-Game /alarm Macro Generator',
         alarm_copy_macro: 'Copy Macro',
-        alarm_no_tracked: 'No timed nodes tracked. Click the 🔔 button on items to track them.',
-        alarm_tracked_nodes: 'Tracked Nodes: ',
-        alarm_browser_permission: 'Browser notification permission required',
         alarm_browser_permission_denied: 'Notifications blocked. Please enable in browser settings.',
         alarm_sound_blocked_warning: 'Sound playback is blocked by the browser. Interact with the page and make sure site audio permission is enabled.',
         alarm_sound_unavailable_warning: 'Sound file or audio output is unavailable. Please make sure se.1.mp3 ~ se.16.mp3 exist under public/audio/alarms.',
@@ -398,7 +435,30 @@ export const translations: Record<LangCode, Translation> = {
         alarm_notification_body_lead: '{item} spawning in {minutes} min (ET {time})',
         alarm_test_notification_body: 'This is a test notification.',
         alarm_sound_builtin_group: 'Built-in Sounds',
-        alarm_sound_mp3_group: 'MP3 Sound Files'
+        alarm_sound_mp3_group: 'MP3 Sound Files',
+        alarm_macro_all_groups: 'All Groups',
+
+        group_add: 'Add Group',
+        group_rename: 'Rename',
+        group_delete: 'Delete',
+        group_unnamed: '(Unnamed Group)',
+        group_default_prefix: 'Group ',
+        group_overview: 'Group Overview',
+        group_empty: 'This group does not contain any bookmarks yet.',
+        group_count_status: 'Groups: {current}/{max}',
+        group_limit_reached: 'You can create up to 5 groups.',
+        group_empty_bookmarks_hint: 'There are no bookmarked items right now, but your groups are kept above.',
+        ungrouped: '[Ungrouped]',
+        group_move_item: 'Move to group',
+        bookmark_alarm_status: 'Alarm Tracking: {tracked}/{total}',
+        bookmark_alarm_track_all: 'Track Timed in Group',
+        bookmark_alarm_clear_all: 'Clear Group Tracking',
+        confirm_delete_group: 'Delete this group? Items will be moved to ungrouped.',
+        save: 'Save',
+        cancel: 'Cancel',
+        expand: 'Expand',
+        collapse: 'Collapse',
+        more_options: 'More Options'
       },
       aether_current: {
         title: 'Aether Current',
@@ -521,9 +581,6 @@ export const translations: Record<LangCode, Translation> = {
         alarm_macro_repeat: 'マクロ 繰り返し (毎分/毎時)',
         alarm_macro_gen: 'ゲーム内 /alarm マクロ生成',
         alarm_copy_macro: 'マクロをコピー',
-        alarm_no_tracked: '追跡中の未知・伝説はありません。アイテムの 🔔 ボタンを押して追加してください。',
-        alarm_tracked_nodes: '追跡中ノード: ',
-        alarm_browser_permission: '通知機能を利用するには許可が必要です',
         alarm_browser_permission_denied: '通知がブロックされています。ブラウザの設定を変更してください。',
         alarm_sound_blocked_warning: 'ブラウザにより効果音の再生がブロックされました。ページ操作後に、サイトの音声権限を確認してください。',
         alarm_sound_unavailable_warning: '効果音ファイルまたは音声出力が利用できません。public/audio/alarms に se.1.mp3 ~ se.16.mp3 があるか確認してください。',
@@ -532,7 +589,30 @@ export const translations: Record<LangCode, Translation> = {
         alarm_notification_body_lead: '{item} が {minutes} 分後に出現します (ET {time})',
         alarm_test_notification_body: 'これはテスト通知です。',
         alarm_sound_builtin_group: '内蔵サウンド',
-        alarm_sound_mp3_group: 'MP3 サウンドファイル'
+        alarm_sound_mp3_group: 'MP3 サウンドファイル',
+        alarm_macro_all_groups: '全グループ',
+
+        group_add: 'グループを追加',
+        group_rename: '名前を変更',
+        group_delete: '削除',
+        group_unnamed: '(名前なしグループ)',
+        group_default_prefix: 'グループ',
+        group_overview: 'グループ一覧',
+        group_empty: 'このグループにはまだブックマークがありません。',
+        group_count_status: 'グループ数：{current}/{max}',
+        group_limit_reached: '作成できるグループは最大 5 個です。',
+        group_empty_bookmarks_hint: 'ブックマーク項目はまだありませんが、作成したグループは上に保持されています。',
+        ungrouped: '[グループ化されていない]',
+        group_move_item: 'グループへ移動',
+        bookmark_alarm_status: 'アラーム追跡：{tracked}/{total}',
+        bookmark_alarm_track_all: 'このグループの限時を追跡',
+        bookmark_alarm_clear_all: 'このグループの追跡を解除',
+        confirm_delete_group: 'このグループを削除していいですか？アイテムはグループ化されていない場所に移動されます。',
+        save: '保存',
+        cancel: 'キャンセル',
+        expand: '展開',
+        collapse: '隐す',
+        more_options: 'その他のオプション'
       },
       aether_current: {
         title: '風脈泉パス',
@@ -657,9 +737,6 @@ export const translations: Record<LangCode, Translation> = {
         alarm_macro_repeat: '宏重复提醒 (循环)',
         alarm_macro_gen: '游戏内 /alarm 宏生成',
         alarm_copy_macro: '复制宏',
-        alarm_no_tracked: '目前没有追踪任何限时节点。请点击列表中的 🔔 按钮加入追踪。',
-        alarm_tracked_nodes: '已追踪节点数: ',
-        alarm_browser_permission: '需要允许浏览器通知才能使用此功能',
         alarm_browser_permission_denied: '浏览器通知已被拦截，请在浏览器设置中解除拦截',
         alarm_sound_blocked_warning: '音效播放被浏览器拦截。请先与页面交互，并确认网站音频权限已开启。',
         alarm_sound_unavailable_warning: '找不到音效文件或音频设备不可用，请确认 public/audio/alarms 下已有 se.1.mp3 ~ se.16.mp3。',
@@ -668,7 +745,30 @@ export const translations: Record<LangCode, Translation> = {
         alarm_notification_body_lead: '{item} 将在 {minutes} 分钟后出现 (ET {time})',
         alarm_test_notification_body: '这是一则测试通知。',
         alarm_sound_builtin_group: '内置音效',
-        alarm_sound_mp3_group: 'MP3 音效文件'
+        alarm_sound_mp3_group: 'MP3 音效文件',
+        alarm_macro_all_groups: '全部群组',
+
+        group_add: '新增群组',
+        group_rename: '重命名',
+        group_delete: '删除',
+        group_unnamed: '(未命名群组)',
+        group_default_prefix: '群组',
+        group_overview: '群组总览',
+        group_empty: '此群组目前没有书签。',
+        group_count_status: '群组数量：{current}/{max}',
+        group_limit_reached: '最多只能建立 5 个群组。',
+        group_empty_bookmarks_hint: '目前没有书签项目，但你建立的群组会保留在上方。',
+        ungrouped: '[未分组]',
+        group_move_item: '移动到群组',
+        bookmark_alarm_status: '闹钟追踪：{tracked}/{total}',
+        bookmark_alarm_track_all: '追踪本群组限时',
+        bookmark_alarm_clear_all: '清除本群组追踪',
+        confirm_delete_group: '确定删除此群组吗？其中的物品将移至未分组。',
+        save: '保存',
+        cancel: '取消',
+        expand: '展开',
+        collapse: '收起',
+        more_options: '更多选项'
       },
       aether_current: {
         title: '风脉泉路径',
