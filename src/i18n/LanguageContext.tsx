@@ -17,6 +17,15 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
     if (saved === 'zh-TW') return 'tw';
     if (saved === 'zh-CN') return 'zh';
     if (saved === 'ja' || saved === 'en') return saved as LangCode;
+
+    // 首次造訪（無 localStorage 記錄）→ 根據瀏覽器語言自動選擇
+    const browserLang = (navigator.languages?.[0] ?? navigator.language ?? '').toLowerCase();
+    if (/^zh-(tw|hk|mo)/.test(browserLang)) return 'tw';
+    if (/^zh/.test(browserLang)) return 'zh';
+    if (/^ja/.test(browserLang)) return 'ja';
+    // 英文及其他語言（fr、ko、de 等）預設英文介面
+    if (browserLang) return 'en';
+
     return 'tw';
   });
 

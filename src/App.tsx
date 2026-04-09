@@ -1,13 +1,26 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { GatheringLogPage } from './features/gathering-log';
 import { useLanguage } from './i18n/LanguageContext';
 import { useFavicon } from './hooks/useFavicon';
+import { useSeoMeta } from './hooks/useSeoMeta';
+
+declare function gtag(...args: unknown[]): void;
 
 function Home() {
   const { t } = useLanguage();
   useFavicon('/favicon.svg');
+  useSeoMeta({
+    canonicalPath: '/ffxiv-toolbox/',
+    langs: {
+      tw: { title: 'FFXIV Toolbox | 最終幻想XIV 輔助工具箱', description: '最終幻想XIV工具箱。包含採集手冊、風脈泉導航、冒險者小隊任務等工具。支援繁中、簡中、英文、日文。' },
+      zh: { title: 'FFXIV Toolbox | 最终幻想XIV 辅助工具箱', description: '最终幻想XIV工具箱。包含采集手册、风脉泉导航、冒险者小队任务等工具。支持繁中、简中、英文、日文。' },
+      en: { title: 'FFXIV Toolbox | FF14 Toolbox', description: 'Final Fantasy XIV helper tools. Includes gathering log tracker, aether current navigation, and squadron tools. Supports TW/ZH/EN/JA.' },
+      ja: { title: 'FFXIV Toolbox | FF14 ツールボックス', description: '最終幻想XIVのツールボックス。採集手帳、風脈ナビ、冒険者小隊など。繁中・簡中・EN・JA対応。' },
+    },
+  });
   return (
     <div className="max-w-[1200px] mx-auto p-8 flex-grow">
       <div className="text-center mb-16">
@@ -72,16 +85,33 @@ function Home() {
   );
 }
 
+function AppRoutes() {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (typeof gtag === 'function') {
+      gtag('event', 'page_view', {
+        page_path: location.pathname,
+        page_title: document.title,
+      });
+    }
+  }, [location.pathname]);
+
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/gathering-log" element={<GatheringLogPage />} />
+    </Routes>
+  );
+}
+
 function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
         <Header title="FFXIV Toolbox" version="" />
         <div className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/gathering-log" element={<GatheringLogPage />} />
-          </Routes>
+          <AppRoutes />
         </div>
         <Footer />
       </div>

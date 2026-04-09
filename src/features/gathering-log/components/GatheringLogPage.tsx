@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useFavicon } from '../../../hooks/useFavicon';
+import { useSeoMeta } from '../../../hooks/useSeoMeta';
 import { useGatheringData } from '../hooks/useGatheringData';
 import { Sidebar } from './Sidebar';
 import { LevelView } from './LevelView';
@@ -23,6 +24,15 @@ export const GatheringLogPage: React.FC = () => {
   const { setProgress, setToolInfo, setHeaderActions, setCenterActions, setEtTime } = useTool();
   const { t: i18n } = useLanguage();
   useFavicon('/favicon_gatheringlog.svg');
+  useSeoMeta({
+    canonicalPath: '/ffxiv-toolbox/gathering-log',
+    langs: {
+      tw: { title: '採集手冊 | FFXIV Toolbox', description: 'FF14採集手冊。追蹤採礦工、碎石工、採伐工、園藝工的採集進度，支援限時節點鬧鐘、書籤群組管理與遊戲內巨集生成。' },
+      zh: { title: '采集手册 | FFXIV Toolbox', description: 'FF14采集手册。追踪采矿工、碎石工、采伐工、园艺工的进度，支持限时节点闹钟、书签分组管理与游戏内宏生成。' },
+      en: { title: 'Gathering Log | FFXIV Toolbox', description: 'FF14 gathering log tracker. Track mining & botany progress with timed node alarms, bookmark groups, and in-game macro generation.' },
+      ja: { title: '採集手帳 | FFXIV Toolbox', description: 'FF14採集手帳。採掘師・園芸師の進捗管理、時限採集ノードのアラーム、ブックマークグループ、マクロ生成に対応。' },
+    },
+  });
 
   const [currentType, setCurrentType] = useState<GatherType>('mining');
   const [timedType, setTimedType] = useState<GatherType | 'all'>('all'); // Independent state for Timed View
@@ -166,7 +176,7 @@ export const GatheringLogPage: React.FC = () => {
       totalLogging: loggingProgress.total,
       totalHarvesting: harvestingProgress.total,
     });
-    setToolInfo({ version: 'V3.6.1' });
+    setToolInfo({ version: 'V3.6.2' });
 
     // 1. 中間：視角切換按鈕
     setCenterActions(
