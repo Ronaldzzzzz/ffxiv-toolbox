@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { GatheringData, GatheringLogPageData } from '../types';
-import { getLocalizedText, EXPANSION_MAP, getNodeItemIds } from '../utils';
+import { getLocalizedText, EXPANSION_MAP } from '../utils';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 
@@ -44,11 +44,9 @@ export const Sidebar: React.FC<SidebarProps & { isOpen?: boolean; onClose?: () =
     const activeItemIds = new Set<number>();
     pages.forEach(p => p.items.forEach(i => activeItemIds.add(i.itemId)));
 
-    Object.values(data.nodes).forEach(node => {
-      const hasActiveItem = getNodeItemIds(node).some(id => activeItemIds.has(id));
-      if (hasActiveItem) {
-        relevantMapIds.add(node.map);
-      }
+    activeItemIds.forEach(itemId => {
+      const nodes = data.preIndex?.nodesByItemId[itemId] || [];
+      nodes.forEach(node => relevantMapIds.add(node.map));
     });
 
     relevantMapIds.forEach(mapId => {

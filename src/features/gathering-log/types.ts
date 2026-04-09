@@ -142,6 +142,12 @@ export interface SearchIndexEntry {
 
 export interface GatheringPreIndex {
   searchEntries: SearchIndexEntry[];
+  /** 每個 itemId 對應的所有採集節點（含 hiddenItems） */
+  nodesByItemId: Record<number, NodeData[]>;
+  /** 每個 itemId 對應的限時節點（含 hiddenItems；spawns 非空且 map !== 0） */
+  timedNodesByItemId: Record<number, NodeData[]>;
+  /** 每個 itemId 在手冊中所屬的採集類型（依 pages 資料決定） */
+  pageTypeByItemId: Record<number, GatherType>;
 }
 
 export interface GatheringData {

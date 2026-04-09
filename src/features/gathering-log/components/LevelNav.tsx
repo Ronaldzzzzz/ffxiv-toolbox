@@ -288,20 +288,25 @@ export const LevelNav: React.FC<LevelNavProps> = ({
             : 'overflow-x-auto pb-2 md:pb-0 flex-nowrap md:flex-wrap'}`}
         >
           {pages.map((page, index) => {
-            let label = `Lv.${page.startLevel}~${page.startLevel + 4}`;
+            // Calculate normalized level range: each band is 5 levels (1-5, 6-10, 11-15, etc.)
+            const baseLevel = Math.floor((page.startLevel - 1) / 5) * 5 + 1;
+            const endLevel = baseLevel + 4;
+            let label = `Lv.${baseLevel}~${endLevel}`;
             let isFolklore = false;
 
             const getPageLabelAndFolklore = (p: typeof page) => {
               const firstItemWithFolklore = p.items.find(item => {
-                const nodes = Object.values(data.nodes).filter(n => n.items.includes(item.itemId));
+                const nodes = data.preIndex?.nodesByItemId[item.itemId] || [];
                 return nodes.some(n => n.folklore);
               });
 
-              let pLabel = `Lv.${p.startLevel}~${p.startLevel + 4}`;
+              const pBaseLevel = Math.floor((p.startLevel - 1) / 5) * 5 + 1;
+              const pEndLevel = pBaseLevel + 4;
+              let pLabel = `Lv.${pBaseLevel}~${pEndLevel}`;
               let pIsFolklore = false;
 
               if (firstItemWithFolklore) {
-                const nodes = Object.values(data.nodes).filter(n => n.items.includes(firstItemWithFolklore.itemId));
+                const nodes = data.preIndex?.nodesByItemId[firstItemWithFolklore.itemId] || [];
                 const folkloreNode = nodes.find(n => n.folklore);
                 if (folkloreNode && folkloreNode.folklore) {
                   pLabel = getLocalizedText(data.items[folkloreNode.folklore], lang);

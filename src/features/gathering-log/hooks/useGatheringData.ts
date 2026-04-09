@@ -167,6 +167,43 @@ export function useGatheringData() {
           })
         );
 
+        // ── Pre-index: O(nodes) 建立，供各元件 O(1) 查詢 ──────────────────────
+        const nodesByItemId: Record<number, typeof processedNodes[string][]> = {};
+        const timedNodesByItemId: Record<number, typeof processedNodes[string][]> = {};
+
+        Object.values(processedNodes).forEach((node: any) => {
+          const allItemIds: number[] = [
+            ...(node.items || []),
+            ...(node.hiddenItems || []),
+          ];
+          const isTimed =
+            Array.isArray(node.spawns) && node.spawns.length > 0 && node.map !== 0;
+
+          allItemIds.forEach((id: number) => {
+            if (!nodesByItemId[id]) nodesByItemId[id] = [];
+            nodesByItemId[id].push(node);
+
+            if (isTimed) {
+              if (!timedNodesByItemId[id]) timedNodesByItemId[id] = [];
+              timedNodesByItemId[id].push(node);
+            }
+          });
+        });
+
+        const pageTypeByItemId: Record<number, GatherType> = {};
+        const pageGatherTypes: GatherType[] = ['mining', 'quarrying', 'logging', 'harvesting'];
+        (pages as any[][]).forEach((typePages: any[], typeIndex: number) => {
+          typePages.forEach((page: any) => {
+            (page.items || []).forEach((entry: any) => {
+              const itemId = Number(entry.itemId);
+              if (!(itemId in pageTypeByItemId)) {
+                pageTypeByItemId[itemId] = pageGatherTypes[typeIndex];
+              }
+            });
+          });
+        });
+        // ──────────────────────────────────────────────────────────────────────
+
         const types: GatherType[] = ['mining', 'quarrying', 'logging', 'harvesting'];
         const searchEntries: SearchIndexEntry[] = [];
         const addedItems = new Set<number>();
@@ -263,6 +300,9 @@ export function useGatheringData() {
           recipes,
           preIndex: {
             searchEntries,
+            nodesByItemId,
+            timedNodesByItemId,
+            pageTypeByItemId,
           },
         });
       } catch (err) {

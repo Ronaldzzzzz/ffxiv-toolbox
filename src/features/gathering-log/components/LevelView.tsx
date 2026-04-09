@@ -104,8 +104,12 @@ export const LevelView: React.FC<LevelViewProps> = ({
         const totalInPage = page.items.length;
         const isPageDone = completedInPage === totalInPage;
 
-        // Folklore Detection
-        let headerTitle = `Lv. ${page.startLevel} - ${page.startLevel + 4}`;
+        // Folklore Detection & Level Range
+        // Calculate normalized level range: each band is 5 levels (1-5, 6-10, 11-15, etc.)
+        const baseLevel = Math.floor((page.startLevel - 1) / 5) * 5 + 1;
+        const endLevel = baseLevel + 4;
+        let headerTitle = `Lv. ${baseLevel} - ${endLevel}`;
+
         const firstItem = page.items[0];
         if (firstItem) {
           const nodes = Object.values(data.nodes).filter(n => getNodeItemIds(n).includes(firstItem.itemId));

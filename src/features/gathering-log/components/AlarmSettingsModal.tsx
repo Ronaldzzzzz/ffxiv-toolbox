@@ -3,7 +3,7 @@ import { useLanguage } from '../../../i18n/LanguageContext';
 import { useAlarm } from '../hooks/useAlarm';
 import { ALARM_SOUND_ERROR_EVENT, playNotificationSound } from '../hooks/useAlarmTrigger';
 import { GatheringData } from '../types';
-import { getLocalizedText, getNodeItemIds } from '../utils';
+import { getLocalizedText } from '../utils';
 import { useCollectionState } from '../hooks/useCollectionState';
 
 interface AlarmSettingsModalProps {
@@ -85,12 +85,7 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({
             const item = data.items[itemId];
             if (!item) return null;
 
-            const nodes = Object.values(data.nodes).filter(node =>
-                getNodeItemIds(node).includes(itemId)
-                && node.spawns
-                && node.spawns.length > 0
-                && node.map !== 0,
-            );
+            const nodes = data.preIndex?.timedNodesByItemId[itemId] || [];
 
             if (nodes.length === 0) return null;
 

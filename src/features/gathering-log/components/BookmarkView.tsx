@@ -79,7 +79,7 @@ export const BookmarkView: React.FC<BookmarkViewProps> = ({
       let isTimed = false;
       let nodeRef = null;
 
-      const nodes = Object.values(data.nodes).filter(n => n.items.includes(id));
+      const nodes = data.preIndex?.nodesByItemId[id] || [];
       const timedNode = nodes.find(n => n.spawns && n.spawns.length > 0);
 
       if (timedNode) {
@@ -88,14 +88,7 @@ export const BookmarkView: React.FC<BookmarkViewProps> = ({
         const typeMapping: Record<number, GatherType> = { 0: 'mining', 1: 'quarrying', 2: 'logging', 3: 'harvesting' };
         type = typeMapping[timedNode.type] || 'mining';
       } else {
-        const types: GatherType[] = ['mining', 'quarrying', 'logging', 'harvesting'];
-        for (let i = 0; i < types.length; i++) {
-          const typePages = data.pages[i] || [];
-          if (typePages.some(p => p.items.some(it => it.itemId === id))) {
-            type = types[i];
-            break;
-          }
-        }
+        type = data.preIndex?.pageTypeByItemId[id] ?? null;
       }
 
       itemInfoMap.set(id, {

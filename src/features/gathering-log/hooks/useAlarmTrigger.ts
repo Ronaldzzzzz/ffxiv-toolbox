@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAlarm } from './useAlarm';
 import { useLanguage } from '../../../i18n/LanguageContext';
-import { GatheringData, NodeData } from '../types';
+import { GatheringData } from '../types';
 import { getLocalizedText, getItemIconUrl } from '../utils';
 
 // Helper to calculate when the next spawn occurs for a given node spawn time
@@ -116,23 +116,6 @@ export function useAlarmTrigger(data: GatheringData | null) {
     const { globalEnabled, soundEnabled, soundType, localLeadTimeMinutes, trackedItems, getTrackedGroupForItem } = useAlarm();
     const { lang, t } = useLanguage();
 
-    const timedNodesByItemId = useMemo(() => {
-        const mapping = new Map<number, NodeData[]>();
-        if (!data) return mapping;
-
-        Object.values(data.nodes).forEach(node => {
-            if (!node.spawns || node.map === 0) return;
-
-            node.items.forEach(itemId => {
-                const nodes = mapping.get(itemId) || [];
-                nodes.push(node);
-                mapping.set(itemId, nodes);
-            });
-        });
-
-        return mapping;
-    }, [data]);
-
     // Keep refs updated every render so interval callbacks always use the latest lang/t
     const langRef = useRef(lang);
     const tRef = useRef(t);
@@ -144,7 +127,8 @@ export function useAlarmTrigger(data: GatheringData | null) {
     const alarmedSpawnsRef = useRef<Set<string>>(new Set());
 
     useEffect(() => {
-        if (!globalEnabled || !data || trackedItems.length === 0) return;
+        if (!globalEnabled || !data || trackedItems.length === 0 || !data.preIndex) return;
+        const timedNodesByItemId = data.preIndex.timedNodesByItemId;
 
         const checkAlarms = () => {
             const nowRealMs = Date.now();
@@ -159,7 +143,7 @@ export function useAlarmTrigger(data: GatheringData | null) {
                 const item = data.items[itemId];
                 if (!item) return;
 
-                const nodes = timedNodesByItemId.get(itemId) || [];
+                const nodes = timedNodesByItemId[itemId] || [];
                 
                 nodes.forEach(node => {
                     node.spawns!.forEach(spawnHour => {
@@ -277,5 +261,5 @@ export function useAlarmTrigger(data: GatheringData | null) {
         checkAlarms();
 
         return () => clearInterval(intervalId);
-    }, [globalEnabled, soundEnabled, soundType, localLeadTimeMinutes, trackedItems, getTrackedGroupForItem, data, timedNodesByItemId]);
+    }, [globalEnabled, soundEnabled, soundType, localLeadTimeMinutes, trackedItems, getTrackedGroupForItem, data]);
 }
