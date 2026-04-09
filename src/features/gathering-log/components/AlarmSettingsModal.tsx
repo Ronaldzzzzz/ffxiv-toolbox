@@ -19,9 +19,9 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({
 }) => {
     const { lang, t } = useLanguage();
     const { bookmarkGroups, ungroupedBookmarkedItemIds } = useCollectionState();
-    const { 
+    const {
         globalEnabled, soundEnabled, soundType, localLeadTimeMinutes, macroLeadTimeMinutes, macroTimeMode, macroRepeat,
-        alarmGroups,
+        alarmGroups, trackedItems,
         updateSettings, requestNotificationPermission
     } = useAlarm();
     
@@ -105,12 +105,16 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({
 
         const entriesByGroupId = new Map<string, { itemId: number; itemName: string; eorzeaTimeStrs: string[] }[]>();
 
+        const trackedItemSet = new Set(trackedItems);
+
         const allBookmarkedItemIds = [
             ...bookmarkGroups.flatMap(g => g.itemIds),
             ...ungroupedBookmarkedItemIds,
         ];
 
         allBookmarkedItemIds.forEach(itemId => {
+            if (!trackedItemSet.has(itemId)) return;
+
             const resolved = resolveTrackedEntry(itemId);
             if (!resolved) return;
 
@@ -140,7 +144,7 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({
         });
 
         return grouped;
-    }, [bookmarkGroups, ungroupedBookmarkedItemIds, bookmarkGroupByItemId, alarmGroupSettingsMap, data, lang, t.pages.gathering_log.group_unnamed, t.pages.gathering_log.ungrouped, soundEnabled, soundType]);
+    }, [bookmarkGroups, ungroupedBookmarkedItemIds, bookmarkGroupByItemId, alarmGroupSettingsMap, trackedItems, data, lang, t.pages.gathering_log.group_unnamed, t.pages.gathering_log.ungrouped, soundEnabled, soundType]);
 
     const macroGroupOptions = useMemo(() => {
         return groupedTrackedNodesInfo.map(group => ({

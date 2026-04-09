@@ -4,7 +4,7 @@ import { BookmarkGroup, BookmarkState, BOOKMARK_STATE_VERSION } from '../types';
 const PROGRESS_STORAGE_KEY = 'ffxiv_gathering_log_progress';
 const BOOKMARK_STORAGE_KEY = 'ffxiv_gathering_log_bookmarks';
 const COLLECTION_STORAGE_EVENT = 'ffxiv_toolbox_collection_update';
-const MAX_BOOKMARK_GROUPS = 5;
+const MAX_BOOKMARK_GROUPS = 15;
 
 function restoreSet(storageKey: string): Set<number> {
   const raw = localStorage.getItem(storageKey);
