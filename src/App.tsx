@@ -15,10 +15,10 @@ function Home() {
   useSeoMeta({
     canonicalPath: '/ffxiv-toolbox/',
     langs: {
-      tw: { title: 'FFXIV Toolbox | 最終幻想XIV 輔助工具箱', description: '最終幻想XIV工具箱。包含採集手冊、風脈泉導航、冒險者小隊任務等工具。支援繁中、簡中、英文、日文。' },
-      zh: { title: 'FFXIV Toolbox | 最终幻想XIV 辅助工具箱', description: '最终幻想XIV工具箱。包含采集手册、风脉泉导航、冒险者小队任务等工具。支持繁中、简中、英文、日文。' },
-      en: { title: 'FFXIV Toolbox | FF14 Toolbox', description: 'Final Fantasy XIV helper tools. Includes gathering log tracker, aether current navigation, and squadron tools. Supports TW/ZH/EN/JA.' },
-      ja: { title: 'FFXIV Toolbox | FF14 ツールボックス', description: '最終幻想XIVのツールボックス。採集手帳、風脈ナビ、冒険者小隊など。繁中・簡中・EN・JA対応。' },
+      tw: { title: 'FFXIV Toolbox | 最終幻想XIV 輔助工具箱', description: '最終幻想XIV (FF14/FFXIV) 輔助工具箱。。包含採集手冊、風脈泉導航、冒險者小隊任務等工具。支援繁中、簡中、英文、日文。' },
+      zh: { title: 'FFXIV Toolbox | 最终幻想XIV 辅助工具箱', description: '最终幻想XIV (FF14/FFXIV) 辅助工具箱。包含采集手册、风脉泉导航、冒险者小队任务等工具。支持繁中、简中、英文、日文。' },
+      en: { title: 'FFXIV Toolbox | FF14 Toolbox', description: 'Final Fantasy XIV (FF14/FFXIV) toolbox. Includes gathering log tracker, aether current navigation, and squadron tools. Supports TW/ZH/EN/JA.' },
+      ja: { title: 'FFXIV Toolbox | FF14 ツールボックス', description: '最終幻想XIV (FF14/FFXIV) のツールボックス。採集手帳、風脈ナビ、冒険者小隊など。繁中・簡中・EN・JA対応。' },
     },
   });
   return (
