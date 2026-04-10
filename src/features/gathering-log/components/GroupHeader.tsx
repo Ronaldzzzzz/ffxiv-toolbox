@@ -7,7 +7,6 @@ interface GroupHeaderProps {
   group: BookmarkGroup;
   itemCount: number;
   inlineContent?: React.ReactNode;
-  isUngrouped?: boolean;
   onCollapse?: (groupId: string, collapsed: boolean) => void;
   onRename?: (groupId: string, newName: string) => void;
   onDelete?: (groupId: string) => void;
@@ -17,11 +16,12 @@ export const GroupHeader: React.FC<GroupHeaderProps> = ({
   group,
   itemCount,
   inlineContent,
-  isUngrouped,
   onCollapse,
   onRename,
   onDelete,
 }) => {
+  /** True when neither rename nor delete is available — e.g. ungrouped sections. */
+  const isReadOnly = !onRename && !onDelete;
   const { t: i18n } = useLanguage();
   const [isEditingName, setIsEditingName] = useState(false);
   const [editingNameValue, setEditingNameValue] = useState(group.name);
@@ -68,7 +68,7 @@ export const GroupHeader: React.FC<GroupHeaderProps> = ({
 
   const handleRenameStart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!isUngrouped) {
+    if (!isReadOnly) {
       setShowContextMenu(false);
       setIsEditingName(true);
       setEditingNameValue(group.name);
@@ -100,7 +100,7 @@ export const GroupHeader: React.FC<GroupHeaderProps> = ({
 
   const handleContextMenuClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!isUngrouped) {
+    if (!isReadOnly) {
       if (showContextMenu) {
         setShowContextMenu(false);
         return;
@@ -246,7 +246,7 @@ export const GroupHeader: React.FC<GroupHeaderProps> = ({
             </>
           )}
 
-          {!isEditingName && !isUngrouped && (
+          {!isEditingName && !isReadOnly && (
             <div
               ref={menuContainerRef}
               className="relative"
