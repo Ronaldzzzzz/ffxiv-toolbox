@@ -55,7 +55,7 @@ export const GatheringLogPage: React.FC = () => {
     moveBookmarkedItem,
     maxBookmarkGroups,
   } = useCollectionState();
-  const { alarmGroups, trackedItems, toggleTrackedItem, setTrackedItems, ensureAlarmGroup, updateAlarmGroup, removeAlarmGroup } = useAlarm();
+  const { trackedItems, toggleTrackedItem, setTrackedItems } = useAlarm();
   const [recipeModalItemId, setRecipeModalItemId] = useState<number | null>(null);
   const [isAlarmModalOpen, setIsAlarmModalOpen] = useState<boolean>(false);
 
@@ -63,30 +63,6 @@ export const GatheringLogPage: React.FC = () => {
 
   // Initialize background alarm trigger
   useAlarmTrigger(data);
-
-  // Keep alarm groups aligned with bookmark groups so macro selector always includes user-created groups.
-  useEffect(() => {
-    const bookmarkGroupIdSet = new Set(bookmarkGroups.map(group => group.id));
-
-    bookmarkGroups.forEach(bookmarkGroup => {
-      const matchedAlarmGroup = alarmGroups.find(group => group.groupId === bookmarkGroup.id);
-
-      if (!matchedAlarmGroup) {
-        ensureAlarmGroup(bookmarkGroup.id, { groupName: bookmarkGroup.name });
-        return;
-      }
-
-      if ((matchedAlarmGroup.groupName || '') !== bookmarkGroup.name) {
-        updateAlarmGroup(bookmarkGroup.id, { groupName: bookmarkGroup.name });
-      }
-    });
-
-    alarmGroups.forEach(alarmGroup => {
-      if (!bookmarkGroupIdSet.has(alarmGroup.groupId)) {
-        removeAlarmGroup(alarmGroup.groupId, { moveItemsToUngrouped: true });
-      }
-    });
-  }, [bookmarkGroups, alarmGroups, ensureAlarmGroup, updateAlarmGroup, removeAlarmGroup]);
 
   // Eorzea Time Timer
   useEffect(() => {

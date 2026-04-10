@@ -1,16 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { AlarmGroupSettings, AlarmState, ALARM_STATE_VERSION } from '../types';
+import { useCallback, useEffect, useState } from 'react';
+import { AlarmState } from '../types';
 
 // Use a custom event to sync state across multiple components/hooks
 const ALARM_STORAGE_EVENT = 'ffxiv_toolbox_alarm_update';
 const STORAGE_KEY = 'ffxiv_toolbox_alarm_settings';
 
-type AlarmSettingsUpdate = Partial<AlarmState> & {
-    trackedItems?: number[];
-};
-
 const DEFAULT_SETTINGS: AlarmState = {
-    version: ALARM_STATE_VERSION,
     globalEnabled: false,
     soundEnabled: true,
     soundType: 101,
@@ -18,8 +13,7 @@ const DEFAULT_SETTINGS: AlarmState = {
     macroLeadTimeMinutes: 3,
     macroTimeMode: 'et',
     macroRepeat: false,
-    ungroupedTrackedItemIds: [],
-    alarmGroups: [],
+    trackedItemIds: [],
 };
 
 function normalizeItemIds(values: unknown): number[] {
@@ -38,64 +32,49 @@ function normalizeItemIds(values: unknown): number[] {
     return normalized;
 }
 
-function normalizeAlarmGroupSettings(input: unknown, assignedIds: Set<number>, index: number): AlarmGroupSettings | null {
-    if (!input || typeof input !== 'object') return null;
-
-    const source = input as Partial<AlarmGroupSettings>;
-    const trackedItemIds = normalizeItemIds(source.trackedItemIds).filter(itemId => {
-        if (assignedIds.has(itemId)) return false;
-        assignedIds.add(itemId);
-        return true;
-    });
-
-    return {
-        groupId: typeof source.groupId === 'string' && source.groupId ? source.groupId : `alarm-group-${index}`,
-        groupName: typeof source.groupName === 'string' && source.groupName.trim() ? source.groupName.trim() : undefined,
-        trackedItemIds,
-        notificationText: typeof source.notificationText === 'string' && source.notificationText.trim() ? source.notificationText.trim() : undefined,
-        macroLabel: typeof source.macroLabel === 'string' && source.macroLabel.trim() ? source.macroLabel.trim() : undefined,
-        soundEnabled: typeof source.soundEnabled === 'boolean' ? source.soundEnabled : null,
-        soundType: Number.isFinite(source.soundType) ? Number(source.soundType) : null,
-    };
-}
-
 function normalizeAlarmState(input: unknown): AlarmState {
-    const source = (input && typeof input === 'object') ? input as Partial<AlarmState> & { trackedItems?: unknown; alarmGroups?: unknown; ungroupedTrackedItemIds?: unknown; macroTimeMode?: unknown } : null;
-    const assignedIds = new Set<number>();
-    const alarmGroups: AlarmGroupSettings[] = [];
+    // Support for reading old formats:
+    //   v3: { ungroupedTrackedItemIds, alarmGroups[].trackedItemIds }
+    //   v2: { trackedItems }
+    //   new: { trackedItemIds }
+    const source = (input && typeof input === 'object')
+        ? input as Record<string, unknown>
+        : null;
 
-    if (source && Array.isArray(source.alarmGroups)) {
-        source.alarmGroups.forEach((group, index) => {
-            const normalizedGroup = normalizeAlarmGroupSettings(group, assignedIds, index);
-            if (normalizedGroup) {
-                alarmGroups.push(normalizedGroup);
+    // Migration: collect all tracked item ids from old format
+    const seen = new Set<number>();
+    const merged: number[] = [];
+
+    const addIds = (ids: number[]) => {
+        ids.forEach(id => {
+            if (!seen.has(id)) { seen.add(id); merged.push(id); }
+        });
+    };
+
+    // New field takes priority
+    addIds(normalizeItemIds(source?.trackedItemIds));
+    // Old v3 ungrouped field
+    addIds(normalizeItemIds(source?.ungroupedTrackedItemIds));
+    // Old v3 groups
+    if (Array.isArray(source?.alarmGroups)) {
+        (source!.alarmGroups as unknown[]).forEach(group => {
+            if (group && typeof group === 'object') {
+                addIds(normalizeItemIds((group as Record<string, unknown>).trackedItemIds));
             }
         });
     }
-
-    const legacyTrackedItems = normalizeItemIds(source?.trackedItems).filter(itemId => {
-        if (assignedIds.has(itemId)) return false;
-        assignedIds.add(itemId);
-        return true;
-    });
-
-    const ungroupedTrackedItemIds = normalizeItemIds(source?.ungroupedTrackedItemIds).filter(itemId => {
-        if (assignedIds.has(itemId)) return false;
-        assignedIds.add(itemId);
-        return true;
-    });
+    // Old v2 flat field
+    addIds(normalizeItemIds(source?.trackedItems));
 
     return {
-        version: ALARM_STATE_VERSION,
-        globalEnabled: source?.globalEnabled ?? DEFAULT_SETTINGS.globalEnabled,
-        soundEnabled: source?.soundEnabled ?? DEFAULT_SETTINGS.soundEnabled,
+        globalEnabled: typeof source?.globalEnabled === 'boolean' ? source.globalEnabled : DEFAULT_SETTINGS.globalEnabled,
+        soundEnabled: typeof source?.soundEnabled === 'boolean' ? source.soundEnabled : DEFAULT_SETTINGS.soundEnabled,
         soundType: Number.isFinite(source?.soundType) ? Number(source?.soundType) : DEFAULT_SETTINGS.soundType,
         localLeadTimeMinutes: Number.isFinite(source?.localLeadTimeMinutes) ? Number(source?.localLeadTimeMinutes) : DEFAULT_SETTINGS.localLeadTimeMinutes,
         macroLeadTimeMinutes: Number.isFinite(source?.macroLeadTimeMinutes) ? Number(source?.macroLeadTimeMinutes) : DEFAULT_SETTINGS.macroLeadTimeMinutes,
         macroTimeMode: source?.macroTimeMode === 'lt' ? 'lt' : DEFAULT_SETTINGS.macroTimeMode,
-        macroRepeat: source?.macroRepeat ?? DEFAULT_SETTINGS.macroRepeat,
-        ungroupedTrackedItemIds: ungroupedTrackedItemIds.length > 0 ? ungroupedTrackedItemIds : legacyTrackedItems,
-        alarmGroups,
+        macroRepeat: typeof source?.macroRepeat === 'boolean' ? source.macroRepeat : DEFAULT_SETTINGS.macroRepeat,
+        trackedItemIds: merged,
     };
 }
 
@@ -119,68 +98,6 @@ function emitAlarmUpdate() {
     setTimeout(() => window.dispatchEvent(new Event(ALARM_STORAGE_EVENT)), 0);
 }
 
-function hasTrackedItem(state: AlarmState, itemId: number) {
-    return state.ungroupedTrackedItemIds.includes(itemId) || state.alarmGroups.some(group => group.trackedItemIds.includes(itemId));
-}
-
-function removeTrackedItem(state: AlarmState, itemId: number): AlarmState {
-    return {
-        ...state,
-        ungroupedTrackedItemIds: state.ungroupedTrackedItemIds.filter(id => id !== itemId),
-        alarmGroups: state.alarmGroups.map(group => {
-            if (!group.trackedItemIds.includes(itemId)) return group;
-            return {
-                ...group,
-                trackedItemIds: group.trackedItemIds.filter(id => id !== itemId),
-            };
-        }),
-    };
-}
-
-function insertItem(itemIds: number[], itemId: number, index?: number) {
-    const next = itemIds.filter(id => id !== itemId);
-    if (typeof index !== 'number' || index < 0 || index > next.length) {
-        next.push(itemId);
-        return next;
-    }
-
-    next.splice(index, 0, itemId);
-    return next;
-}
-
-function addTrackedItem(state: AlarmState, itemId: number, targetGroupId?: string | null, index?: number): AlarmState {
-    const baseState = removeTrackedItem(state, itemId);
-
-    if (!targetGroupId) {
-        return {
-            ...baseState,
-            ungroupedTrackedItemIds: insertItem(baseState.ungroupedTrackedItemIds, itemId, index),
-        };
-    }
-
-    let matchedGroup = false;
-    const alarmGroups = baseState.alarmGroups.map(group => {
-        if (group.groupId !== targetGroupId) return group;
-        matchedGroup = true;
-        return {
-            ...group,
-            trackedItemIds: insertItem(group.trackedItemIds, itemId, index),
-        };
-    });
-
-    if (!matchedGroup) {
-        return {
-            ...baseState,
-            ungroupedTrackedItemIds: insertItem(baseState.ungroupedTrackedItemIds, itemId, index),
-        };
-    }
-
-    return {
-        ...baseState,
-        alarmGroups,
-    };
-}
-
 export function useAlarm() {
     const [settings, setSettings] = useState<AlarmState>(getStoredSettings);
 
@@ -194,7 +111,7 @@ export function useAlarm() {
                 handleStorageUpdate();
             }
         };
-        
+
         window.addEventListener(ALARM_STORAGE_EVENT, handleStorageUpdate);
         window.addEventListener('storage', handleStorage);
         return () => {
@@ -202,14 +119,6 @@ export function useAlarm() {
             window.removeEventListener('storage', handleStorage);
         };
     }, []);
-
-    const trackedItems = useMemo(() => {
-        const allIds = new Set<number>(settings.ungroupedTrackedItemIds);
-        settings.alarmGroups.forEach(group => {
-            group.trackedItemIds.forEach(itemId => allIds.add(itemId));
-        });
-        return Array.from(allIds);
-    }, [settings]);
 
     const writeSettings = useCallback((updater: (previous: AlarmState) => AlarmState) => {
         setSettings(previous => {
@@ -220,128 +129,46 @@ export function useAlarm() {
         });
     }, []);
 
-    const updateSettings = useCallback((newSettings: AlarmSettingsUpdate) => {
-        writeSettings(previous => {
-            const baseNext: AlarmState = {
-                ...previous,
-                ...newSettings,
-                version: ALARM_STATE_VERSION,
-                ungroupedTrackedItemIds: 'trackedItems' in newSettings
-                    ? normalizeItemIds(newSettings.trackedItems)
-                    : previous.ungroupedTrackedItemIds,
-                alarmGroups: Array.isArray(newSettings.alarmGroups) ? newSettings.alarmGroups : previous.alarmGroups,
-                macroTimeMode: newSettings.macroTimeMode === 'lt' ? 'lt' : (newSettings.macroTimeMode === 'et' ? 'et' : previous.macroTimeMode),
-            };
-
-            return baseNext;
-        });
+    const updateSettings = useCallback((newSettings: Partial<AlarmState>) => {
+        writeSettings(previous => ({
+            ...previous,
+            ...newSettings,
+            macroTimeMode: newSettings.macroTimeMode === 'lt' ? 'lt' : (newSettings.macroTimeMode === 'et' ? 'et' : previous.macroTimeMode),
+        }));
     }, [writeSettings]);
 
-    const toggleTrackedItem = useCallback((itemId: number, options?: { groupId?: string | null }) => {
+    // _options is kept for call-site compatibility (groupId is no longer used)
+    const toggleTrackedItem = useCallback((itemId: number, _options?: { groupId?: string | null }) => {
         writeSettings(previous => {
-            if (hasTrackedItem(previous, itemId)) {
-                return removeTrackedItem(previous, itemId);
+            const tracked = previous.trackedItemIds;
+            if (tracked.includes(itemId)) {
+                return { ...previous, trackedItemIds: tracked.filter(id => id !== itemId) };
             }
-
-            return addTrackedItem(previous, itemId, options?.groupId);
+            return { ...previous, trackedItemIds: [...tracked, itemId] };
         });
     }, [writeSettings]);
 
-    const setTrackedItems = useCallback((itemIds: number[], enabled: boolean, options?: { groupId?: string | null }) => {
+    // _options is kept for call-site compatibility (groupId is no longer used)
+    const setTrackedItems = useCallback((itemIds: number[], enabled: boolean, _options?: { groupId?: string | null }) => {
         const normalizedItemIds = normalizeItemIds(itemIds);
         if (normalizedItemIds.length === 0) return;
 
         writeSettings(previous => {
-            let next = previous;
-
-            normalizedItemIds.forEach(itemId => {
-                if (enabled) {
-                    if (!hasTrackedItem(next, itemId)) {
-                        next = addTrackedItem(next, itemId, options?.groupId);
-                    }
-                    return;
-                }
-
-                if (hasTrackedItem(next, itemId)) {
-                    next = removeTrackedItem(next, itemId);
-                }
-            });
-
-            return next;
-        });
-    }, [writeSettings]);
-
-    const ensureAlarmGroup = useCallback((groupId: string, defaults?: Partial<Omit<AlarmGroupSettings, 'groupId' | 'trackedItemIds'>>) => {
-        writeSettings(previous => {
-            if (previous.alarmGroups.some(group => group.groupId === groupId)) {
-                return previous;
+            const currentSet = new Set(previous.trackedItemIds);
+            if (enabled) {
+                normalizedItemIds.forEach(id => currentSet.add(id));
+            } else {
+                normalizedItemIds.forEach(id => currentSet.delete(id));
             }
-
-            return {
-                ...previous,
-                alarmGroups: [
-                    ...previous.alarmGroups,
-                    {
-                        groupId,
-                        groupName: defaults?.groupName,
-                        trackedItemIds: [],
-                        notificationText: defaults?.notificationText,
-                        macroLabel: defaults?.macroLabel,
-                        soundEnabled: typeof defaults?.soundEnabled === 'boolean' ? defaults.soundEnabled : null,
-                        soundType: Number.isFinite(defaults?.soundType) ? Number(defaults?.soundType) : null,
-                    },
-                ],
-            };
+            return { ...previous, trackedItemIds: Array.from(currentSet) };
         });
     }, [writeSettings]);
-
-    const updateAlarmGroup = useCallback((groupId: string, patch: Partial<Omit<AlarmGroupSettings, 'groupId' | 'trackedItemIds'>>) => {
-        writeSettings(previous => ({
-            ...previous,
-            alarmGroups: previous.alarmGroups.map(group => {
-                if (group.groupId !== groupId) return group;
-                return {
-                    ...group,
-                    ...patch,
-                    groupName: typeof patch.groupName === 'string' && patch.groupName.trim() ? patch.groupName.trim() : group.groupName,
-                    notificationText: typeof patch.notificationText === 'string'
-                        ? (patch.notificationText.trim() || undefined)
-                        : group.notificationText,
-                    macroLabel: typeof patch.macroLabel === 'string'
-                        ? (patch.macroLabel.trim() || undefined)
-                        : group.macroLabel,
-                    soundEnabled: typeof patch.soundEnabled === 'boolean' ? patch.soundEnabled : (patch.soundEnabled === null ? null : group.soundEnabled),
-                    soundType: Number.isFinite(patch.soundType) ? Number(patch.soundType) : (patch.soundType === null ? null : group.soundType),
-                };
-            }),
-        }));
-    }, [writeSettings]);
-
-    const removeAlarmGroup = useCallback((groupId: string, options?: { moveItemsToUngrouped?: boolean }) => {
-        const moveItemsToUngrouped = options?.moveItemsToUngrouped !== false;
-        writeSettings(previous => {
-            const targetGroup = previous.alarmGroups.find(group => group.groupId === groupId);
-            if (!targetGroup) return previous;
-
-            return {
-                ...previous,
-                alarmGroups: previous.alarmGroups.filter(group => group.groupId !== groupId),
-                ungroupedTrackedItemIds: moveItemsToUngrouped
-                    ? [...previous.ungroupedTrackedItemIds, ...targetGroup.trackedItemIds.filter(itemId => !previous.ungroupedTrackedItemIds.includes(itemId))]
-                    : previous.ungroupedTrackedItemIds,
-            };
-        });
-    }, [writeSettings]);
-
-    const getTrackedGroupForItem = useCallback((itemId: number) => {
-        return settings.alarmGroups.find(group => group.trackedItemIds.includes(itemId)) ?? null;
-    }, [settings.alarmGroups]);
 
     const requestNotificationPermission = useCallback(async () => {
         if (!('Notification' in window)) return false;
-        
+
         if (Notification.permission === 'granted') return true;
-        
+
         if (Notification.permission !== 'denied') {
             try {
                 const permissionPromise = Notification.requestPermission();
@@ -360,20 +187,17 @@ export function useAlarm() {
                 return false;
             }
         }
-        
+
         return false;
     }, []);
 
     return {
         ...settings,
-        trackedItems,
+        /** Alias for trackedItemIds — kept for consumer compatibility */
+        trackedItems: settings.trackedItemIds,
         updateSettings,
         toggleTrackedItem,
         setTrackedItems,
-        ensureAlarmGroup,
-        updateAlarmGroup,
-        removeAlarmGroup,
-        getTrackedGroupForItem,
         requestNotificationPermission,
     };
 }

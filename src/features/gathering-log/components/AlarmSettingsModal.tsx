@@ -21,7 +21,7 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({
     const { bookmarkGroups, ungroupedBookmarkedItemIds } = useCollectionState();
     const {
         globalEnabled, soundEnabled, soundType, localLeadTimeMinutes, macroLeadTimeMinutes, macroTimeMode, macroRepeat,
-        alarmGroups, trackedItems,
+        trackedItems,
         updateSettings, requestNotificationPermission
     } = useAlarm();
     
@@ -64,20 +64,10 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({
         return mapping;
     }, [bookmarkGroups]);
 
-    const alarmGroupSettingsMap = useMemo(() => {
-        const mapping = new Map<string, typeof alarmGroups[number]>();
-        alarmGroups.forEach(group => {
-            mapping.set(group.groupId, group);
-        });
-        return mapping;
-    }, [alarmGroups]);
-
     const groupedTrackedNodesInfo = useMemo(() => {
         type GroupedNode = {
             groupId: string;
             groupLabel: string;
-            effectiveSoundEnabled: boolean;
-            effectiveSoundType: number;
             entries: { itemId: number; itemName: string; eorzeaTimeStrs: string[] }[];
         };
 
@@ -124,27 +114,20 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({
             entriesByGroupId.set(groupId, entries);
         });
 
-        const grouped: GroupedNode[] = bookmarkGroups.map(group => {
-            const alarmGroupSettings = alarmGroupSettingsMap.get(group.id);
-            return {
-                groupId: group.id,
-                groupLabel: (alarmGroupSettings?.macroLabel || alarmGroupSettings?.groupName || group.name || '').trim() || t.pages.gathering_log.group_unnamed,
-                effectiveSoundEnabled: typeof alarmGroupSettings?.soundEnabled === 'boolean' ? alarmGroupSettings.soundEnabled : soundEnabled,
-                effectiveSoundType: Number.isFinite(alarmGroupSettings?.soundType) ? Number(alarmGroupSettings?.soundType) : soundType,
-                entries: entriesByGroupId.get(group.id) || [],
-            };
-        });
+        const grouped: GroupedNode[] = bookmarkGroups.map(group => ({
+            groupId: group.id,
+            groupLabel: group.name.trim() || t.pages.gathering_log.group_unnamed,
+            entries: entriesByGroupId.get(group.id) || [],
+        }));
 
         grouped.push({
             groupId: '__ungrouped__',
             groupLabel: t.pages.gathering_log.ungrouped,
-            effectiveSoundEnabled: soundEnabled,
-            effectiveSoundType: soundType,
             entries: entriesByGroupId.get('__ungrouped__') || [],
         });
 
         return grouped;
-    }, [bookmarkGroups, ungroupedBookmarkedItemIds, bookmarkGroupByItemId, alarmGroupSettingsMap, trackedItems, data, lang, t.pages.gathering_log.group_unnamed, t.pages.gathering_log.ungrouped, soundEnabled, soundType]);
+    }, [bookmarkGroups, ungroupedBookmarkedItemIds, bookmarkGroupByItemId, trackedItems, data, lang, t.pages.gathering_log.group_unnamed, t.pages.gathering_log.ungrouped]);
 
     const macroGroupOptions = useMemo(() => {
         return groupedTrackedNodesInfo.map(group => ({
@@ -181,10 +164,10 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({
                         groupInfo.entries.forEach(entry => {
                                 entry.eorzeaTimeStrs.forEach(etStr => {
                 // Macro format requested by user: /alarm "name/time" et repeat [time] [reminder_minutes] <se.02> mute
-                                const soundArg = groupInfo.effectiveSoundEnabled
-                                    ? (groupInfo.effectiveSoundType >= 101 && groupInfo.effectiveSoundType <= 103
+                                const soundArg = soundEnabled
+                                    ? (soundType >= 101 && soundType <= 103
                                             ? ' <se.1> mute'
-                                            : ` <se.${String(groupInfo.effectiveSoundType).padStart(2, '0')}> mute`)
+                                            : ` <se.${String(soundType).padStart(2, '0')}> mute`)
                   : ' mute';
                                 const alarmName = `${groupInfo.groupLabel}/${entry.itemName}/${etStr}`;
                 
@@ -232,7 +215,7 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({
         });
         
         return lines.join('\n');
-    }, [groupedTrackedNodesInfo, selectedMacroGroupId, macroLeadTimeMinutes, macroTimeMode, macroRepeat]);
+    }, [groupedTrackedNodesInfo, selectedMacroGroupId, macroLeadTimeMinutes, macroTimeMode, macroRepeat, soundEnabled, soundType]);
 
     const handleCopyMacro = () => {
         navigator.clipboard.writeText(generatedMacroText).then(() => {

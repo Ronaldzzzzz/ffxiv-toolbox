@@ -113,7 +113,7 @@ export async function playNotificationSound(type: number = 1): Promise<AlarmSoun
 }
 
 export function useAlarmTrigger(data: GatheringData | null) {
-    const { globalEnabled, soundEnabled, soundType, localLeadTimeMinutes, trackedItems, getTrackedGroupForItem } = useAlarm();
+    const { globalEnabled, soundEnabled, soundType, localLeadTimeMinutes, trackedItems } = useAlarm();
     const { lang, t } = useLanguage();
 
     // Keep refs updated every render so interval callbacks always use the latest lang/t
@@ -196,27 +196,10 @@ export function useAlarmTrigger(data: GatheringData | null) {
                                     const itemName = getLocalizedText(item, langRef.current as any) || 'Unknown Item';
                                     const spawnTimeStr = `${spawnHour.toString().padStart(2, '0')}:00`;
                                     const isLeadTime = triggerIdx > 0;
-                                    const trackedGroup = getTrackedGroupForItem(itemId);
-                                    const groupLabel = (trackedGroup?.groupName || '').trim() || tRef.current.pages.gathering_log.ungrouped;
-                                    const effectiveSoundEnabled = typeof trackedGroup?.soundEnabled === 'boolean'
-                                        ? trackedGroup.soundEnabled
-                                        : soundEnabled;
-                                    const effectiveSoundType = Number.isFinite(trackedGroup?.soundType)
-                                        ? Number(trackedGroup?.soundType)
-                                        : soundType;
-                                    const customNotificationTemplate = trackedGroup?.notificationText?.trim();
 
                                     const resolveNotificationBody = () => {
-                                        if (customNotificationTemplate) {
-                                            return customNotificationTemplate
-                                                .replace('{group}', groupLabel)
-                                                .replace('{item}', itemName)
-                                                .replace('{time}', spawnTimeStr)
-                                                .replace('{minutes}', String(localLeadTimeMinutes));
-                                        }
-
                                         const gl = tRef.current.pages.gathering_log;
-                                        const baseBody = isLeadTime
+                                        return isLeadTime
                                             ? gl.alarm_notification_body_lead
                                                 .replace('{item}', itemName)
                                                 .replace('{time}', spawnTimeStr)
@@ -224,12 +207,10 @@ export function useAlarmTrigger(data: GatheringData | null) {
                                             : gl.alarm_notification_body
                                                 .replace('{item}', itemName)
                                                 .replace('{time}', spawnTimeStr);
-
-                                        return `[${groupLabel}] ${baseBody}`;
                                     };
 
-                                    if (effectiveSoundEnabled) {
-                                        void playNotificationSound(effectiveSoundType);
+                                    if (soundEnabled) {
+                                        void playNotificationSound(soundType);
                                     }
 
                                     // Browser Notification (i18n + lead-time indication)
@@ -261,5 +242,5 @@ export function useAlarmTrigger(data: GatheringData | null) {
         checkAlarms();
 
         return () => clearInterval(intervalId);
-    }, [globalEnabled, soundEnabled, soundType, localLeadTimeMinutes, trackedItems, getTrackedGroupForItem, data]);
+    }, [globalEnabled, soundEnabled, soundType, localLeadTimeMinutes, trackedItems, data]);
 }

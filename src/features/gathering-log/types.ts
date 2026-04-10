@@ -4,7 +4,6 @@ export type ViewMode = 'level' | 'timed' | 'map' | 'bookmark';
 export type AlarmTimeMode = 'et' | 'lt';
 
 export const BOOKMARK_STATE_VERSION = 2;
-export const ALARM_STATE_VERSION = 3;
 
 export interface BookmarkGroup {
   id: string;
@@ -21,18 +20,7 @@ export interface BookmarkState {
   ungroupedItemIds: number[];
 }
 
-export interface AlarmGroupSettings {
-  groupId: string;
-  groupName?: string;
-  trackedItemIds: number[];
-  notificationText?: string;
-  macroLabel?: string;
-  soundEnabled?: boolean | null;
-  soundType?: number | null;
-}
-
 export interface AlarmState {
-  version: typeof ALARM_STATE_VERSION;
   globalEnabled: boolean;
   soundEnabled: boolean;
   soundType: number;
@@ -40,8 +28,7 @@ export interface AlarmState {
   macroLeadTimeMinutes: number;
   macroTimeMode: AlarmTimeMode;
   macroRepeat: boolean;
-  ungroupedTrackedItemIds: number[];
-  alarmGroups: AlarmGroupSettings[];
+  trackedItemIds: number[];
 }
 
 export interface LocalizedText {
