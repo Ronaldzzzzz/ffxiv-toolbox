@@ -2,29 +2,32 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useAlarm } from '../hooks/useAlarm';
 import { ALARM_SOUND_ERROR_EVENT, playNotificationSound } from '../hooks/useAlarmTrigger';
-import { GatheringData } from '../types';
+import { BookmarkGroup, GatheringData } from '../types';
 import { getLocalizedText } from '../utils';
-import { useCollectionState } from '../hooks/useCollectionState';
+import { buildAlarmMacro } from '../alarmMacro';
 
 interface AlarmSettingsModalProps {
     isOpen: boolean;
     onClose: () => void;
     data: GatheringData;
+    bookmarkGroups: BookmarkGroup[];
+    ungroupedBookmarkedItemIds: number[];
 }
 
 export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({
     isOpen,
     onClose,
-    data
+    data,
+    bookmarkGroups,
+    ungroupedBookmarkedItemIds,
 }) => {
     const { lang, t } = useLanguage();
-    const { bookmarkGroups, ungroupedBookmarkedItemIds } = useCollectionState();
     const {
         globalEnabled, soundEnabled, soundType, localLeadTimeMinutes, macroLeadTimeMinutes, macroTimeMode, macroRepeat,
         trackedItems,
         updateSettings, requestNotificationPermission
     } = useAlarm();
-    
+
     const [copySuccess, setCopySuccess] = useState(false);
     const [soundWarning, setSoundWarning] = useState<'blocked' | 'missing' | 'failed' | null>(null);
     const [selectedMacroGroupId, setSelectedMacroGroupId] = useState<string>('__all__');
@@ -54,47 +57,36 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({
         return t.pages.gathering_log.alarm_sound_unavailable_warning;
     };
 
+    // itemId → bookmark group id lookup (O(1) after build)
     const bookmarkGroupByItemId = useMemo(() => {
         const mapping = new Map<number, string>();
         bookmarkGroups.forEach(group => {
-            group.itemIds.forEach(itemId => {
-                mapping.set(itemId, group.id);
-            });
+            group.itemIds.forEach(itemId => mapping.set(itemId, group.id));
         });
         return mapping;
     }, [bookmarkGroups]);
 
+    // Build per-group timed-node entries for the macro and group selector
     const groupedTrackedNodesInfo = useMemo(() => {
-        type GroupedNode = {
-            groupId: string;
-            groupLabel: string;
-            entries: { itemId: number; itemName: string; eorzeaTimeStrs: string[] }[];
-        };
-
-        const resolveTrackedEntry = (itemId: number) => {
+        const resolveEntry = (itemId: number) => {
             const item = data.items[itemId];
             if (!item) return null;
-
             const nodes = data.preIndex?.timedNodesByItemId[itemId] || [];
-
             if (nodes.length === 0) return null;
 
             const allSpawns = new Set<number>();
-            nodes.forEach(node => {
-                node.spawns!.forEach(spawnHour => allSpawns.add(spawnHour));
-            });
+            nodes.forEach(node => node.spawns!.forEach(h => allSpawns.add(h)));
 
             return {
                 itemId,
                 itemName: getLocalizedText(item, lang),
                 eorzeaTimeStrs: Array.from(allSpawns)
                     .sort((a, b) => a - b)
-                    .map(spawnHour => (spawnHour * 100).toString().padStart(4, '0')),
+                    .map(h => (h * 100).toString().padStart(4, '0')),
             };
         };
 
-        const entriesByGroupId = new Map<string, { itemId: number; itemName: string; eorzeaTimeStrs: string[] }[]>();
-
+        const entriesByGroupId = new Map<string, ReturnType<typeof resolveEntry>[]>();
         const trackedItemSet = new Set(trackedItems);
 
         const allBookmarkedItemIds = [
@@ -104,43 +96,37 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({
 
         allBookmarkedItemIds.forEach(itemId => {
             if (!trackedItemSet.has(itemId)) return;
-
-            const resolved = resolveTrackedEntry(itemId);
+            const resolved = resolveEntry(itemId);
             if (!resolved) return;
-
             const groupId = bookmarkGroupByItemId.get(itemId) || '__ungrouped__';
-            const entries = entriesByGroupId.get(groupId) || [];
-            entries.push(resolved);
-            entriesByGroupId.set(groupId, entries);
+            const list = entriesByGroupId.get(groupId) || [];
+            list.push(resolved);
+            entriesByGroupId.set(groupId, list);
         });
 
-        const grouped: GroupedNode[] = bookmarkGroups.map(group => ({
+        const grouped = bookmarkGroups.map(group => ({
             groupId: group.id,
             groupLabel: group.name.trim() || t.pages.gathering_log.group_unnamed,
-            entries: entriesByGroupId.get(group.id) || [],
+            entries: (entriesByGroupId.get(group.id) || []).filter(Boolean) as NonNullable<ReturnType<typeof resolveEntry>>[],
         }));
 
         grouped.push({
             groupId: '__ungrouped__',
             groupLabel: t.pages.gathering_log.ungrouped,
-            entries: entriesByGroupId.get('__ungrouped__') || [],
+            entries: (entriesByGroupId.get('__ungrouped__') || []).filter(Boolean) as NonNullable<ReturnType<typeof resolveEntry>>[],
         });
 
         return grouped;
     }, [bookmarkGroups, ungroupedBookmarkedItemIds, bookmarkGroupByItemId, trackedItems, data, lang, t.pages.gathering_log.group_unnamed, t.pages.gathering_log.ungrouped]);
 
-    const macroGroupOptions = useMemo(() => {
-        return groupedTrackedNodesInfo.map(group => ({
-            groupId: group.groupId,
-            groupLabel: group.groupLabel,
-        }));
-    }, [groupedTrackedNodesInfo]);
+    const macroGroupOptions = useMemo(
+        () => groupedTrackedNodesInfo.map(({ groupId, groupLabel }) => ({ groupId, groupLabel })),
+        [groupedTrackedNodesInfo],
+    );
 
     useEffect(() => {
         if (selectedMacroGroupId === '__all__') return;
-
-        const stillExists = macroGroupOptions.some(group => group.groupId === selectedMacroGroupId);
-        if (!stillExists) {
+        if (!macroGroupOptions.some(g => g.groupId === selectedMacroGroupId)) {
             setSelectedMacroGroupId('__all__');
         }
     }, [macroGroupOptions, selectedMacroGroupId]);
@@ -148,73 +134,15 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({
     const generatedMacroText = useMemo(() => {
         const targetGroups = selectedMacroGroupId === '__all__'
             ? groupedTrackedNodesInfo
-            : groupedTrackedNodesInfo.filter(group => group.groupId === selectedMacroGroupId);
+            : groupedTrackedNodesInfo.filter(g => g.groupId === selectedMacroGroupId);
 
-        const groupsWithEntries = targetGroups.filter(group => group.entries.length > 0);
-        if (groupsWithEntries.length === 0) return '';
-        
-        const lines: string[] = ['/alarm clear']; // Clear first if generating a full list
-        
-        const nowRealMs = Date.now();
-        const EORZEA_MULTIPLIER = 3600 / 175;
-        const currentEorzeaMinutesTotal = Math.floor((nowRealMs * EORZEA_MULTIPLIER) / 60000);
-        const currentEorzeaMinuteOfDay = currentEorzeaMinutesTotal % (24 * 60);
-
-                groupsWithEntries.forEach(groupInfo => {
-                        groupInfo.entries.forEach(entry => {
-                                entry.eorzeaTimeStrs.forEach(etStr => {
-                // Macro format requested by user: /alarm "name/time" et repeat [time] [reminder_minutes] <se.02> mute
-                                const soundArg = soundEnabled
-                                    ? (soundType >= 101 && soundType <= 103
-                                            ? ' <se.1> mute'
-                                            : ` <se.${String(soundType).padStart(2, '0')}> mute`)
-                  : ' mute';
-                                const alarmName = `${groupInfo.groupLabel}/${entry.itemName}/${etStr}`;
-                
-                if (macroTimeMode === 'lt') {
-                     const spawnHour = parseInt(etStr.substring(0,2), 10);
-                     let targetEorzeaMinute = spawnHour * 60;
-                     let minutesUntilNextSpawnET = targetEorzeaMinute - currentEorzeaMinuteOfDay;
-                     if (minutesUntilNextSpawnET <= 0) {
-                         minutesUntilNextSpawnET += 24 * 60;
-                     }
-                     const minutesUntilNextSpawnReal = minutesUntilNextSpawnET / EORZEA_MULTIPLIER;
-                     const nextSpawnRealMs = nowRealMs + (minutesUntilNextSpawnReal * 60000);
-                     const date = new Date(nextSpawnRealMs);
-                     const ltHours = date.getHours().toString().padStart(2, '0');
-                     const ltMins = date.getMinutes().toString().padStart(2, '0');
-                     
-                     // Local time does not support repeat mutually with our new logic
-                     const ltStr = `${ltHours}${ltMins}`;
-                     
-                     lines.push(`/alarm "${alarmName}" lt ${ltStr} ${macroLeadTimeMinutes}${soundArg}`);
-                } else {
-                     // FFXIV /alarm et [time] [reminder 0-60]
-                     let targetEorzeaMinute = parseInt(etStr.substring(0, 2), 10) * 60;
-                     let etReminder = Math.round(macroLeadTimeMinutes * EORZEA_MULTIPLIER);
-                     
-                     if (etReminder > 60) {
-                         // Shift target time back by the total ET minute reminder
-                         targetEorzeaMinute -= etReminder;
-                         if (targetEorzeaMinute < 0) targetEorzeaMinute += 24 * 60;
-                         // Set reminder argument to 0 since we adjusted the target clock
-                         etReminder = 0;
-                     }
-                     
-                     const etHours = Math.floor(targetEorzeaMinute / 60).toString().padStart(2, '0');
-                     const etMinsStr = (targetEorzeaMinute % 60).toString().padStart(2, '0');
-                     
-                     // Keep the full 4-digit time even when repeating, because node spawns depend on the specific hour
-                     const finalEtStr = `${etHours}${etMinsStr}`;
-                     const rpArg = macroRepeat ? 'repeat ' : '';
-                     
-                     lines.push(`/alarm "${alarmName}" et ${rpArg}${finalEtStr} ${etReminder}${soundArg}`);
-                }
-                });
-            });
+        return buildAlarmMacro(targetGroups, {
+            leadTimeMinutes: macroLeadTimeMinutes,
+            timeMode: macroTimeMode,
+            repeat: macroRepeat,
+            soundEnabled,
+            soundType,
         });
-        
-        return lines.join('\n');
     }, [groupedTrackedNodesInfo, selectedMacroGroupId, macroLeadTimeMinutes, macroTimeMode, macroRepeat, soundEnabled, soundType]);
 
     const handleCopyMacro = () => {
@@ -263,7 +191,7 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={onClose}>
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200 dark:border-slate-700 flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
-                
+
                 {/* Header */}
                 <div className="flex justify-between items-center p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
                     <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
@@ -305,19 +233,18 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
                                 <label className="font-bold text-slate-700 dark:text-slate-300 text-sm whitespace-nowrap w-full sm:w-1/3 flex-shrink-0">{t.pages.gathering_log.alarm_lead_time}</label>
                                 <div className="flex items-center gap-3 w-full sm:w-2/3">
-                                    <input 
-                                        type="range" 
+                                    <input
+                                        type="range"
                                         min="0" max="10" step="1"
-                                        value={localLeadTimeMinutes} 
+                                        value={localLeadTimeMinutes}
                                         onChange={(e) => updateSettings({ localLeadTimeMinutes: parseInt(e.target.value) })}
                                         className="flex-grow accent-blue-500"
                                     />
                                     <span className="text-sm font-mono w-8 text-right bg-white dark:bg-slate-800 px-2 py-1 rounded border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-400">{localLeadTimeMinutes}</span>
                                 </div>
                             </div>
-
                         </div>
-                        
+
                         <div className="space-y-3 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
                             <div className="flex items-center justify-between group">
                                 <span className="font-bold text-slate-700 dark:text-slate-300">{t.pages.gathering_log.alarm_sound}</span>
@@ -338,7 +265,7 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({
                             {soundEnabled && (
                                 <div className="flex flex-col gap-1.5 pt-2">
                                     <label className="font-bold text-slate-700 dark:text-slate-300 text-sm">{t.pages.gathering_log.alarm_sound_type}</label>
-                                    <select 
+                                    <select
                                         value={soundType}
                                         onChange={(e) => updateSettings({ soundType: parseInt(e.target.value) })}
                                         className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
@@ -362,7 +289,6 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({
                                 </div>
                             )}
                         </div>
-
                     </div>
 
                     <hr className="border-slate-200 dark:border-slate-700" />
@@ -385,80 +311,79 @@ export const AlarmSettingsModal: React.FC<AlarmSettingsModalProps> = ({
                                 </select>
                             </div>
                         </h3>
-                        
-                        <div className="space-y-3">
-                                <div className="space-y-3 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
-                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                        <label className="font-bold text-slate-700 dark:text-slate-300 text-sm whitespace-nowrap w-full sm:w-1/3 flex-shrink-0">{t.pages.gathering_log.alarm_lead_time}</label>
-                                        <div className="flex items-center gap-3 w-full sm:w-2/3">
-                                            <input 
-                                                type="range" 
-                                                min="0" max="10" step="1"
-                                                value={macroLeadTimeMinutes} 
-                                                onChange={(e) => updateSettings({ macroLeadTimeMinutes: parseInt(e.target.value) })}
-                                                className="flex-grow accent-blue-500"
-                                            />
-                                            <span className="text-sm font-mono w-8 text-right bg-white dark:bg-slate-800 px-2 py-1 rounded border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-400">{macroLeadTimeMinutes}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
-                                    <span className="font-bold text-slate-700 dark:text-slate-300 text-sm">{t.pages.gathering_log.alarm_macro_time_mode}</span>
-                                    <div className="flex bg-slate-200 dark:bg-slate-700 rounded-lg p-1">
-                                        <button 
-                                            onClick={() => updateSettings({ macroTimeMode: 'et' })}
-                                            className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${macroTimeMode === 'et' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
-                                        >
-                                            {t.pages.gathering_log.alarm_macro_time_mode_et}
-                                        </button>
-                                        <button 
-                                            onClick={() => updateSettings({ macroTimeMode: 'lt', macroRepeat: false })}
-                                            className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${macroTimeMode === 'lt' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
-                                        >
-                                            {t.pages.gathering_log.alarm_macro_time_mode_lt}
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                                <label className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
-                                    <span className="font-bold text-slate-700 dark:text-slate-300 text-sm">{t.pages.gathering_log.alarm_macro_repeat}</span>
-                                    <div className="relative">
-                                        <input 
-                                            type="checkbox" 
-                                            className="sr-only peer" 
-                                            checked={macroRepeat} 
-                                            onChange={(e) => {
-                                                const isChecked = e.target.checked;
-                                                if (isChecked && macroTimeMode === 'lt') {
-                                                    updateSettings({ macroRepeat: true, macroTimeMode: 'et' });
-                                                } else {
-                                                    updateSettings({ macroRepeat: isChecked });
-                                                }
-                                            }} 
-                                        />
-                                        <div className="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-500 peer-checked:bg-blue-500"></div>
-                                    </div>
-                                </label>
 
-                                <div className="relative">
-                                    <pre className="p-3 bg-slate-900 text-slate-300 text-xs font-mono rounded-lg overflow-x-auto border border-slate-700 whitespace-pre-wrap max-h-40 overflow-y-auto thin-scrollbar">
-                                        {generatedMacroText}
-                                    </pre>
-                                    <button 
-                                        onClick={handleCopyMacro}
-                                        className="absolute top-2 right-2 p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded shadow transition-colors"
-                                        title={t.pages.gathering_log.alarm_copy_macro}
+                        <div className="space-y-3">
+                            <div className="space-y-3 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                    <label className="font-bold text-slate-700 dark:text-slate-300 text-sm whitespace-nowrap w-full sm:w-1/3 flex-shrink-0">{t.pages.gathering_log.alarm_lead_time}</label>
+                                    <div className="flex items-center gap-3 w-full sm:w-2/3">
+                                        <input
+                                            type="range"
+                                            min="0" max="10" step="1"
+                                            value={macroLeadTimeMinutes}
+                                            onChange={(e) => updateSettings({ macroLeadTimeMinutes: parseInt(e.target.value) })}
+                                            className="flex-grow accent-blue-500"
+                                        />
+                                        <span className="text-sm font-mono w-8 text-right bg-white dark:bg-slate-800 px-2 py-1 rounded border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-400">{macroLeadTimeMinutes}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <span className="font-bold text-slate-700 dark:text-slate-300 text-sm">{t.pages.gathering_log.alarm_macro_time_mode}</span>
+                                <div className="flex bg-slate-200 dark:bg-slate-700 rounded-lg p-1">
+                                    <button
+                                        onClick={() => updateSettings({ macroTimeMode: 'et' })}
+                                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${macroTimeMode === 'et' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
                                     >
-                                        {copySuccess ? (
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-400"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                        ) : (
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                                        )}
+                                        {t.pages.gathering_log.alarm_macro_time_mode_et}
+                                    </button>
+                                    <button
+                                        onClick={() => updateSettings({ macroTimeMode: 'lt', macroRepeat: false })}
+                                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${macroTimeMode === 'lt' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
+                                    >
+                                        {t.pages.gathering_log.alarm_macro_time_mode_lt}
                                     </button>
                                 </div>
+                            </div>
+
+                            <label className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
+                                <span className="font-bold text-slate-700 dark:text-slate-300 text-sm">{t.pages.gathering_log.alarm_macro_repeat}</span>
+                                <div className="relative">
+                                    <input
+                                        type="checkbox"
+                                        className="sr-only peer"
+                                        checked={macroRepeat}
+                                        onChange={(e) => {
+                                            const isChecked = e.target.checked;
+                                            if (isChecked && macroTimeMode === 'lt') {
+                                                updateSettings({ macroRepeat: true, macroTimeMode: 'et' });
+                                            } else {
+                                                updateSettings({ macroRepeat: isChecked });
+                                            }
+                                        }}
+                                    />
+                                    <div className="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-500 peer-checked:bg-blue-500"></div>
+                                </div>
+                            </label>
+
+                            <div className="relative">
+                                <pre className="p-3 bg-slate-900 text-slate-300 text-xs font-mono rounded-lg overflow-x-auto border border-slate-700 whitespace-pre-wrap max-h-40 overflow-y-auto thin-scrollbar">
+                                    {generatedMacroText}
+                                </pre>
+                                <button
+                                    onClick={handleCopyMacro}
+                                    className="absolute top-2 right-2 p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded shadow transition-colors"
+                                    title={t.pages.gathering_log.alarm_copy_macro}
+                                >
+                                    {copySuccess ? (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-400"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    ) : (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                    )}
+                                </button>
+                            </div>
                         </div>
-                        
                     </div>
                 </div>
             </div>

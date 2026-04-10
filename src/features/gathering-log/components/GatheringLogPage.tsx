@@ -385,10 +385,12 @@ export const GatheringLogPage: React.FC = () => {
         />
       )}
 
-      <AlarmSettingsModal 
-          isOpen={isAlarmModalOpen} 
-          onClose={() => setIsAlarmModalOpen(false)} 
+      <AlarmSettingsModal
+          isOpen={isAlarmModalOpen}
+          onClose={() => setIsAlarmModalOpen(false)}
           data={data}
+          bookmarkGroups={bookmarkGroups}
+          ungroupedBookmarkedItemIds={ungroupedBookmarkedItemIds}
       />
     </div >
   );
