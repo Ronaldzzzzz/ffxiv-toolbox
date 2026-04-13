@@ -13,7 +13,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   check-and-update:
@@ -100,43 +99,23 @@ jobs:
         if: steps.check.outputs.has_update == 'true'
         run: npm run build
 
-      # ── 9. Open a Pull Request ────────────────────────────────────────────────
-      #
-      #  Strategy: "自動開 PR"（觀察期）
-      #  Once stable, replace this step with a direct gh-pages deploy action.
-      #
-      - name: Create Pull Request
+      # ── 9. Commit updated data back to main ──────────────────────────────────
+      - name: Commit updated data to main
         if: steps.check.outputs.has_update == 'true'
-        uses: peter-evans/create-pull-request@v7
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/gathering-log/
+          git diff --staged --quiet || git commit -m "chore: Update game data from Teamcraft
+
+          Teamcraft SHA: ${{ steps.teamcraft.outputs.sha }}"
+          git push origin main
+
+      # ── 10. Deploy to GitHub Pages ────────────────────────────────────────────
+      - name: Deploy to GitHub Pages
+        if: steps.check.outputs.has_update == 'true'
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          # Only stage the data files and metadata; ignore dist/
-          add-paths: |
-            public/data/gathering-log/
-          commit-message: |
-            Update game data from Teamcraft
-
-            Teamcraft SHA: ${{ steps.teamcraft.outputs.sha }}
-          branch: auto/update-data
-          delete-branch: true
-          title: 'chore: Update game data from Teamcraft'
-          body: |
-            ## 自動資料更新
-
-            | 欄位 | 值 |
-            |---|---|
-            | Teamcraft SHA | `${{ steps.teamcraft.outputs.sha }}` |
-            | 觸發時間 | `${{ github.event.schedule && 'schedule' || 'manual' }}` |
-
-            ### 變更內容
-
-            - `public/data/gathering-log/` 內的 JSON 資料已從 Teamcraft `staging` 分支更新
-            - `metadata.json` 已更新 `lastUpdated` 與 `teamcraftSha`
-
-            ### 確認後請 Merge
-
-            Merge 後會由現有的 deploy workflow 自動推送至 GitHub Pages。
-            若尚無 deploy workflow，請手動執行 `npm run deploy`。
-          labels: |
-            automated
-            data-update
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
