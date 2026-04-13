@@ -1,0 +1,140 @@
+name: Update Game Data
+
+on:
+  schedule:
+    # Every Monday at 06:00 UTC
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force update even if SHA unchanged'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check-and-update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 1. Fetch latest Teamcraft data-directory commit SHA ──────────────────
+      - name: Get latest Teamcraft commit SHA
+        id: teamcraft
+        run: |
+          RESPONSE=$(curl -s \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/ffxiv-teamcraft/ffxiv-teamcraft/commits?path=libs/data/src/lib/json&per_page=1")
+          SHA=$(echo "$RESPONSE" | jq -r '.[0].sha')
+          if [ -z "$SHA" ] || [ "$SHA" = "null" ]; then
+            echo "::error::Failed to fetch Teamcraft SHA. API response: $RESPONSE"
+            exit 1
+          fi
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+          echo "Latest Teamcraft SHA: $SHA"
+
+      # ── 2. Compare with stored SHA ────────────────────────────────────────────
+      - name: Check stored SHA
+        id: check
+        run: |
+          METADATA="public/data/gathering-log/metadata.json"
+          STORED_SHA=$(jq -r '.teamcraftSha // ""' "$METADATA")
+          LATEST_SHA="${{ steps.teamcraft.outputs.sha }}"
+          FORCE="${{ github.event.inputs.force }}"
+
+          echo "Stored SHA : ${STORED_SHA:-<none>}"
+          echo "Latest SHA : $LATEST_SHA"
+
+          if [ "$STORED_SHA" = "$LATEST_SHA" ] && [ "$FORCE" != "true" ]; then
+            echo "has_update=false" >> "$GITHUB_OUTPUT"
+            echo "No data changes detected."
+          else
+            echo "has_update=true" >> "$GITHUB_OUTPUT"
+            echo "Data changes detected (or forced). Proceeding with update."
+          fi
+
+      # ── 3. Early exit if nothing changed ─────────────────────────────────────
+      - name: Skip (no update needed)
+        if: steps.check.outputs.has_update == 'false'
+        run: echo "Data is already up to date. Workflow complete."
+
+      # ── 4. Setup Node.js ──────────────────────────────────────────────────────
+      - name: Setup Node.js
+        if: steps.check.outputs.has_update == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # ── 5. Install dependencies ───────────────────────────────────────────────
+      - name: Install dependencies
+        if: steps.check.outputs.has_update == 'true'
+        run: npm install --prefer-offline --no-audit
+
+      # ── 6. Run update-data script ─────────────────────────────────────────────
+      - name: Update game data
+        if: steps.check.outputs.has_update == 'true'
+        run: npm run update-data
+
+      # ── 7. Write new SHA into metadata.json ──────────────────────────────────
+      - name: Write Teamcraft SHA to metadata.json
+        if: steps.check.outputs.has_update == 'true'
+        run: |
+          METADATA="public/data/gathering-log/metadata.json"
+          NEW_SHA="${{ steps.teamcraft.outputs.sha }}"
+          # Merge SHA into existing metadata (preserves lastUpdated set by the script)
+          jq --arg sha "$NEW_SHA" '.teamcraftSha = $sha' "$METADATA" > /tmp/metadata.json
+          mv /tmp/metadata.json "$METADATA"
+          echo "metadata.json updated:"
+          cat "$METADATA"
+
+      # ── 8. Build ──────────────────────────────────────────────────────────────
+      - name: Build
+        if: steps.check.outputs.has_update == 'true'
+        run: npm run build
+
+      # ── 9. Open a Pull Request ────────────────────────────────────────────────
+      #
+      #  Strategy: "自動開 PR"（觀察期）
+      #  Once stable, replace this step with a direct gh-pages deploy action.
+      #
+      - name: Create Pull Request
+        if: steps.check.outputs.has_update == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Only stage the data files and metadata; ignore dist/
+          add-paths: |
+            public/data/gathering-log/
+          commit-message: |
+            Update game data from Teamcraft
+
+            Teamcraft SHA: ${{ steps.teamcraft.outputs.sha }}
+          branch: auto/update-data
+          delete-branch: true
+          title: 'chore: Update game data from Teamcraft'
+          body: |
+            ## 自動資料更新
+
+            | 欄位 | 值 |
+            |---|---|
+            | Teamcraft SHA | `${{ steps.teamcraft.outputs.sha }}` |
+            | 觸發時間 | `${{ github.event.schedule && 'schedule' || 'manual' }}` |
+
+            ### 變更內容
+
+            - `public/data/gathering-log/` 內的 JSON 資料已從 Teamcraft `staging` 分支更新
+            - `metadata.json` 已更新 `lastUpdated` 與 `teamcraftSha`
+
+            ### 確認後請 Merge
+
+            Merge 後會由現有的 deploy workflow 自動推送至 GitHub Pages。
+            若尚無 deploy workflow，請手動執行 `npm run deploy`。
+          labels: |
+            automated
+            data-update

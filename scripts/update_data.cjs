@@ -270,8 +270,13 @@ async function step3_filterData() {
     console.log(`Filtered Icons kept: ALL (Filter bypass applied)`);
 
     // Generate Metadata
+    // TEAMCRAFT_SHA may be injected by CI (GitHub Actions) via environment variable.
+    // When running locally it will be empty string, which is fine —
+    // the workflow step overwrites teamcraftSha after this script finishes.
+    const existingMeta = fs.existsSync(METADATA_PATH) ? loadJson(METADATA_PATH) : {};
     const metadata = {
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
+        teamcraftSha: process.env.TEAMCRAFT_SHA || existingMeta.teamcraftSha || ''
     };
     saveJson(METADATA_PATH, metadata);
     console.log(`Generated metadata.json with timestamp: ${metadata.lastUpdated}`);
