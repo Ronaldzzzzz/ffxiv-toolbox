@@ -194,6 +194,41 @@ export const LevelNav: React.FC<LevelNavProps> = ({
     [data, currentType]
   );
 
+  const pageInfoList = useMemo(() => pages.map(p => {
+    const pBaseLevel = Math.floor((p.startLevel - 1) / 5) * 5 + 1;
+    const pEndLevel = pBaseLevel + 4;
+
+    // Count folklore ID occurrences across all items × all their nodes.
+    // This handles items (e.g. 極硬水) that appear in nodes of multiple different tomes:
+    // the tome shared by the most nodes wins; ties break by highest (newest) ID.
+    const folkloreCounts = new Map<number, number>();
+    p.items.forEach(entry => {
+      (data.preIndex?.nodesByItemId[entry.itemId] || []).forEach(n => {
+        if (n.folklore) folkloreCounts.set(n.folklore, (folkloreCounts.get(n.folklore) || 0) + 1);
+      });
+    });
+
+    let pLabel = `Lv.${pBaseLevel}~${pEndLevel}`;
+    let pIsFolklore = false;
+    if (folkloreCounts.size > 0) {
+      const bestId = [...folkloreCounts.entries()].sort((a, b) => b[1] - a[1] || b[0] - a[0])[0][0];
+      const folkloreItem = data.items[bestId];
+      if (folkloreItem) {
+        pLabel = getLocalizedText(folkloreItem, lang);
+        pIsFolklore = true;
+      }
+    }
+    return { label: pLabel, isFolklore: pIsFolklore, baseLevel: pBaseLevel, endLevel: pEndLevel };
+  }), [pages, data, lang]);
+
+  const duplicateFolkloreLabels = useMemo(() => {
+    const counts = new Map<string, number>();
+    pageInfoList.forEach(({ label, isFolklore }) => {
+      if (isFolklore) counts.set(label, (counts.get(label) || 0) + 1);
+    });
+    return new Set([...counts.entries()].filter(([, c]) => c > 1).map(([l]) => l));
+  }, [pageInfoList]);
+
   return (
     <div
       className={`sticky z-40 mb-6 bg-slate-50/95 dark:bg-slate-900/95 rounded-xl border border-slate-200 dark:border-slate-800 shadow-md transition-all duration-300 top-[calc(var(--app-header-height)+0.5rem)] ${isSticky ? 'rounded-t-none border-t-0 shadow-lg py-2 px-4' : 'p-4'} relative group/nav`}
@@ -288,43 +323,11 @@ export const LevelNav: React.FC<LevelNavProps> = ({
             : 'overflow-x-auto pb-2 md:pb-0 flex-nowrap md:flex-wrap'}`}
         >
           {pages.map((page, index) => {
-            // Calculate normalized level range: each band is 5 levels (1-5, 6-10, 11-15, etc.)
-            const baseLevel = Math.floor((page.startLevel - 1) / 5) * 5 + 1;
-            const endLevel = baseLevel + 4;
-            let label = `Lv.${baseLevel}~${endLevel}`;
-            let isFolklore = false;
-
-            const getPageLabelAndFolklore = (p: typeof page) => {
-              const firstItemWithFolklore = p.items.find(item => {
-                const nodes = data.preIndex?.nodesByItemId[item.itemId] || [];
-                return nodes.some(n => n.folklore);
-              });
-
-              const pBaseLevel = Math.floor((p.startLevel - 1) / 5) * 5 + 1;
-              const pEndLevel = pBaseLevel + 4;
-              let pLabel = `Lv.${pBaseLevel}~${pEndLevel}`;
-              let pIsFolklore = false;
-
-              if (firstItemWithFolklore) {
-                const nodes = data.preIndex?.nodesByItemId[firstItemWithFolklore.itemId] || [];
-                const folkloreNode = nodes.find(n => n.folklore);
-                if (folkloreNode && folkloreNode.folklore) {
-                  pLabel = getLocalizedText(data.items[folkloreNode.folklore], lang);
-                  pIsFolklore = true;
-                }
-              }
-              return { label: pLabel, isFolklore: pIsFolklore };
-            };
-
-            const current = getPageLabelAndFolklore(page);
-            label = current.label;
-            isFolklore = current.isFolklore;
+            const { label, isFolklore, baseLevel, endLevel } = pageInfoList[index];
 
             let showBreak = false;
             if (!isSticky && index > 0) {
-              const prev = getPageLabelAndFolklore(pages[index - 1]);
-              // Only break when transitioning from normal levels to folklore
-              if (isFolklore && !prev.isFolklore) {
+              if (isFolklore && !pageInfoList[index - 1].isFolklore) {
                 showBreak = true;
               }
             }
@@ -353,8 +356,11 @@ export const LevelNav: React.FC<LevelNavProps> = ({
               if (separator) {
                 const parts = label.split(separator);
                 if (parts.length > 1) {
-                  displayName = parts[parts.length - 1]; // Take the last part (e.g., "星外天域篇")
+                  displayName = parts[parts.length - 1];
                 }
+              }
+              if (duplicateFolkloreLabels.has(label)) {
+                displayName = `${displayName} ${baseLevel}~${endLevel}`;
               }
             }
 

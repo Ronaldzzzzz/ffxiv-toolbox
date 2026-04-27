@@ -105,18 +105,20 @@ export const LevelView: React.FC<LevelViewProps> = ({
         const isPageDone = completedInPage === totalInPage;
 
         // Folklore Detection & Level Range
-        // Calculate normalized level range: each band is 5 levels (1-5, 6-10, 11-15, etc.)
         const baseLevel = Math.floor((page.startLevel - 1) / 5) * 5 + 1;
         const endLevel = baseLevel + 4;
         let headerTitle = `Lv. ${baseLevel} - ${endLevel}`;
 
-        const firstItem = page.items[0];
-        if (firstItem) {
-          const nodes = Object.values(data.nodes).filter(n => getNodeItemIds(n).includes(firstItem.itemId));
-          const folkloreNode = nodes.find(n => n.folklore);
-          if (folkloreNode && folkloreNode.folklore) {
-            headerTitle = getLocalizedText(data.items[folkloreNode.folklore], lang);
-          }
+        const folkloreCounts = new Map<number, number>();
+        page.items.forEach(entry => {
+          (data.preIndex?.nodesByItemId[entry.itemId] || []).forEach(n => {
+            if (n.folklore) folkloreCounts.set(n.folklore, (folkloreCounts.get(n.folklore) || 0) + 1);
+          });
+        });
+        if (folkloreCounts.size > 0) {
+          const bestId = [...folkloreCounts.entries()].sort((a, b) => b[1] - a[1] || b[0] - a[0])[0][0];
+          const folkloreItem = data.items[bestId];
+          if (folkloreItem) headerTitle = getLocalizedText(folkloreItem, lang);
         }
 
         return (
