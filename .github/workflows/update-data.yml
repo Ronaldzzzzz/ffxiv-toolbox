@@ -21,10 +21,17 @@ jobs:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
+      - name: Generate token from GitHub App
+        id: generate_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.MY_GIT_TOKEN }}
+          token: ${{ steps.generate_token.outputs.token }}
 
       # ── 1. Fetch latest Teamcraft data-directory commit SHA ──────────────────
       - name: Get latest Teamcraft commit SHA
