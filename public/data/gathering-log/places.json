@@ -1504,7 +1504,7 @@
     "ja": "迷子橋",
     "de": "Verrückte Brücke",
     "fr": "Pont des Égarés",
-    "tw": "錯亂橋",
+    "tw": "迷失橋",
     "zh": "错乱桥"
   },
   "196": {
@@ -4906,7 +4906,7 @@
     "ja": "エメラルドアベニュー",
     "de": "Smaragdstraße",
     "fr": "Avenue de l'Émeraude",
-    "tw": "翠玉大街",
+    "tw": "翠玉大道",
     "zh": "翠玉大街"
   },
   "622": {
@@ -10254,7 +10254,7 @@
     "ja": "お得意様取引",
     "de": "Wunschlieferungen",
     "fr": "Commandes spéciales",
-    "tw": "老顧客交易",
+    "tw": "老主顧交易",
     "zh": "老主顾交易"
   },
   "1299": {
@@ -12642,7 +12642,7 @@
     "ja": "スフィア・オブ・マーヴィン",
     "de": "Marvyn-Sphäre",
     "fr": "Sphère de Marvyn",
-    "tw": "瑪文晶球",
+    "tw": "瑪文幻光球",
     "zh": "玛文晶球"
   },
   "1598": {
@@ -23362,7 +23362,8 @@
     "en": "<i>The Merchant's Tale</i><br>(Dungeon Entry)",
     "ja": "商客物語<br>[特殊ダンジョン探索]",
     "de": "Des Händlers Liebesmüh (Gewölbesuche)",
-    "fr": "Contes du Camelot<br>[Donjons spéciaux]"
+    "fr": "Contes du Camelot<br>[Donjons spéciaux]",
+    "zh": "商客奇谭\n[特殊迷宫探索]"
   },
   "2947": {
     "en": "",
@@ -25029,7 +25030,7 @@
     "ja": "ジェナーナ峠",
     "de": "Jenannas Glanz",
     "fr": "Faveur de Jenanna",
-    "tw": "傑娜娜寬容道",
+    "tw": "杰娜娜寬容道",
     "zh": "杰娜娜宽容道"
   },
   "3156": {
@@ -32552,10 +32553,11 @@
     "zh": "海岸斗场"
   },
   "4096": {
-    "en": "",
-    "ja": "",
-    "de": "",
-    "fr": ""
+    "en": "Archeia Harmonias",
+    "ja": "ハルモニア戦争図書館",
+    "de": "Archeia Harmonias",
+    "fr": "La Bibliothèque Harmonia",
+    "zh": "休兵书库"
   },
   "4097": {
     "en": "",
@@ -36926,7 +36928,7 @@
     "ja": "レクリエーションゾーン",
     "de": "Erholungszone",
     "fr": "Zone récréative",
-    "tw": "消遣地區",
+    "tw": "休閒區",
     "zh": "消遣地区"
   },
   "4644": {
@@ -36934,7 +36936,7 @@
     "ja": "レイノード・ナイン",
     "de": "Leyknoten Neun",
     "fr": "Nœud tellurique Neuf",
-    "tw": "地場節點·九",
+    "tw": "九之節點",
     "zh": "地场节点·九"
   },
   "4645": {
@@ -36974,7 +36976,7 @@
     "ja": "レゾリューション",
     "de": "Schlichtung",
     "fr": "Résolution",
-    "tw": "解答所",
+    "tw": "指引所",
     "zh": "解答所"
   },
   "4650": {
@@ -37014,7 +37016,7 @@
     "ja": "バックルーム",
     "de": "Hinterzimmer",
     "fr": "Le Repaire",
-    "tw": "後房",
+    "tw": "後室",
     "zh": "后房"
   },
   "4655": {
@@ -37022,7 +37024,7 @@
     "ja": "ジム・トライテール",
     "de": "Tatzentrio-Training",
     "fr": "Trois Queues",
-    "tw": "三尾訓練館",
+    "tw": "三尾健身房",
     "zh": "三尾训练馆"
   },
   "4656": {
@@ -37382,7 +37384,7 @@
     "ja": "レイノード・メモリス",
     "de": "Leyknoten Mnemo",
     "fr": "Nœud tellurique mnémo",
-    "tw": "地場節點·憶",
+    "tw": "憶之節點",
     "zh": "地场节点·忆"
   },
   "4701": {
@@ -37486,7 +37488,7 @@
     "ja": "レイノード・ウィンド",
     "de": "Leyknoten Aero",
     "fr": "Nœud tellurique aéro",
-    "tw": "地場節點·風",
+    "tw": "風之節點",
     "zh": "地场节点·风"
   },
   "4714": {
@@ -37550,7 +37552,7 @@
     "ja": "レイノード・ファイア",
     "de": "Leyknoten Pyro",
     "fr": "Nœud tellurique pyro",
-    "tw": "地場節點·火",
+    "tw": "火之節點",
     "zh": "地场节点·火"
   },
   "4722": {
@@ -37678,7 +37680,7 @@
     "ja": "レゾリューション",
     "de": "Schlichtung",
     "fr": "Résolution",
-    "tw": "解答所",
+    "tw": "指引所",
     "zh": "解答所"
   },
   "4738": {
@@ -37814,6 +37816,7 @@
     "ja": "星芒マーケット",
     "de": "Sternenlicht-Stände",
     "fr": "Marché des étoiles",
+    "tw": "星芒市集",
     "zh": "星芒市场"
   },
   "4755": {
@@ -37869,37 +37872,43 @@
     "en": "Alexandria Crater",
     "ja": "アレクサンドリア王国跡地",
     "de": "Alexandrias Ruinenring",
-    "fr": "Vestiges d'Alexandrie"
+    "fr": "Vestiges d'Alexandrie",
+    "zh": "亚历山德里亚王国遗址"
   },
   "4763": {
     "en": "Bentini Depot",
     "ja": "ベンティーニ貨物駅",
     "de": "Bahnhof Bentini",
-    "fr": "Gare de Bendini"
+    "fr": "Gare de Bendini",
+    "zh": "本蒂尼货运站"
   },
   "4764": {
     "en": "The Maiden's Home",
     "ja": "美しい娘の家",
     "de": "Gemächer der jungen Angebeteten",
-    "fr": "Appartements de la belle demoiselle"
+    "fr": "Appartements de la belle demoiselle",
+    "zh": "美丽的姑娘的家"
   },
   "4765": {
     "en": "Treno",
     "ja": "トレノ",
     "de": "Treno",
-    "fr": "Tréno"
+    "fr": "Tréno",
+    "zh": "特雷诺"
   },
   "4766": {
-    "en": "",
-    "ja": "",
-    "de": "",
-    "fr": ""
+    "en": "The Unmaking",
+    "ja": "無の領域",
+    "de": "Nichts-Territorium",
+    "fr": "Domaine du néant",
+    "zh": "无之领域"
   },
   "4767": {
-    "en": "",
-    "ja": "",
-    "de": "",
-    "fr": ""
+    "en": "Nihil",
+    "ja": "無の深淵",
+    "de": "Nichts-Tiefe",
+    "fr": "Abysses du néant",
+    "zh": "无之深渊"
   },
   "4768": {
     "en": "",
@@ -39387,6 +39396,7 @@
     "ja": "セノーテ・ジャジャグラル",
     "de": "Cenote Ja Ja Gural",
     "fr": "Cénote Ja Ja Gural",
+    "tw": "加加財富天坑",
     "zh": "加加财富天坑"
   },
   "5001": {
@@ -39394,6 +39404,7 @@
     "ja": "セノーテ・ジャジャグラル入口",
     "de": "Cenoten-Eingang",
     "fr": "Entrée du cénote",
+    "tw": "財富天坑入口",
     "zh": "财富天坑入口"
   },
   "5002": {
@@ -39401,6 +39412,7 @@
     "ja": "第一区画",
     "de": "Erste Kammer",
     "fr": "Première salle",
+    "tw": "第一區",
     "zh": "第一区"
   },
   "5003": {
@@ -39408,6 +39420,7 @@
     "ja": "第二区画",
     "de": "Zweite Kammer",
     "fr": "Deuxième salle",
+    "tw": "第二區",
     "zh": "第二区"
   },
   "5004": {
@@ -39415,6 +39428,7 @@
     "ja": "第三区画",
     "de": "Dritte Kammer",
     "fr": "Troisième salle",
+    "tw": "第三區",
     "zh": "第三区"
   },
   "5005": {
@@ -39422,6 +39436,7 @@
     "ja": "第四区画",
     "de": "Vierte Kammer",
     "fr": "Quatrième salle",
+    "tw": "第四區",
     "zh": "第四区"
   },
   "5006": {
@@ -39429,6 +39444,7 @@
     "ja": "最終区画",
     "de": "Prunkvolle Thronkammer",
     "fr": "Dernière salle",
+    "tw": "最終區",
     "zh": "最终区"
   },
   "5007": {
@@ -39964,7 +39980,7 @@
     "ja": "レイノード・ウィンド",
     "de": "Leyknoten Aero",
     "fr": "Nœud tellurique aéro",
-    "tw": "地場節點·風",
+    "tw": "風之節點",
     "zh": "地场节点·风"
   },
   "5074": {
@@ -40166,6 +40182,7 @@
     "ja": "リング・オブ・ラブ",
     "de": "Liebesring",
     "fr": "Ring de l'Amour mielleux",
+    "tw": "愛意格鬥場",
     "zh": "爱意格斗场"
   },
   "5103": {
@@ -40173,6 +40190,7 @@
     "ja": "リング・オブ・サンダー",
     "de": "Donnerring",
     "fr": "Ring du Tonnerre terrifiant",
+    "tw": "雷電格鬥場",
     "zh": "闪雷格斗场"
   },
   "5104": {
@@ -40180,6 +40198,7 @@
     "ja": "リング・オブ・キャット",
     "de": "Katzenring",
     "fr": "Ring des Griffes félines",
+    "tw": "狩獵格鬥場",
     "zh": "狩猎格斗场"
   },
   "5105": {
@@ -40259,6 +40278,7 @@
     "ja": "リング・オブ・ボンバー",
     "de": "Bombenring",
     "fr": "Ring du Bombardement brutal",
+    "tw": "爆破格鬥場",
     "zh": "爆破格斗场"
   },
   "5115": {
@@ -40354,6 +40374,7 @@
     "ja": "ユウェヤーワータ",
     "de": "Yuweyawata",
     "fr": "Yuweyawata",
+    "tw": "玉韋亞瓦塔",
     "zh": "玉韦亚瓦塔"
   },
   "5127": {
@@ -40361,6 +40382,7 @@
     "ja": "ワーサテニャデト",
     "de": "Wawsatenyazeto",
     "fr": "Wawsatenyazeto",
+    "tw": "瓦薩特恩亞澤托",
     "zh": "瓦萨特恩亚泽托"
   },
   "5128": {
@@ -40368,6 +40390,7 @@
     "ja": "採石場跡",
     "de": "Elektrobgrube ",
     "fr": "Carrière de cristal",
+    "tw": "水晶礦場",
     "zh": "水晶矿场"
   },
   "5129": {
@@ -40375,6 +40398,7 @@
     "ja": "人魂管理室",
     "de": "Seelenaufbewahrung",
     "fr": "Centre de gestion des âmes",
+    "tw": "靈魂管理室",
     "zh": "灵魂管理室"
   },
   "5130": {
@@ -40382,6 +40406,7 @@
     "ja": "砂兎の封牢",
     "de": "Gefängnis des Leporiden",
     "fr": "Clapier tempétueux",
+    "tw": "沙兔的封印",
     "zh": "沙兔的封印"
   },
   "5131": {
@@ -40389,6 +40414,7 @@
     "ja": "冥漠の森",
     "de": "Verschwommener Wald",
     "fr": "Forêt du crépuscule",
+    "tw": "幽冥的森林",
     "zh": "幽冥的森林"
   },
   "5132": {
@@ -40396,6 +40422,7 @@
     "ja": "ユウェヤーワータ廃村",
     "de": "Überreste Yuweyawatas",
     "fr": "Ruines de Yuweyawata",
+    "tw": "玉韋亞瓦塔廢村",
     "zh": "玉韦亚瓦塔废村"
   },
   "5133": {
@@ -40403,6 +40430,7 @@
     "ja": "カニロッカ技研",
     "de": "Kanilokkas Institut",
     "fr": "Institut Kanilokka",
+    "tw": "卡尼洛喀技術研究所",
     "zh": "卡尼洛喀技术研究所"
   },
   "5134": {
@@ -40410,6 +40438,7 @@
     "ja": "砂紋の戦野",
     "de": "Versiegelte Sande",
     "fr": "Furie de l'Oreillard",
+    "tw": "沙紋戰野",
     "zh": "沙纹战野"
   },
   "5135": {
@@ -40417,6 +40446,7 @@
     "ja": "機密研究棟",
     "de": "Abteilung für experimentelle Forschung EG",
     "fr": "Laboratoire secret",
+    "tw": "機密研究所",
     "zh": "机密研究所"
   },
   "5136": {
@@ -40424,6 +40454,7 @@
     "ja": "機密研究棟地下",
     "de": "Abteilung für experimentelle Forschung U1",
     "fr": "Sous-sol du laboratoire secret",
+    "tw": "機密研究所地下",
     "zh": "机密研究所地下"
   },
   "5137": {
@@ -40438,6 +40469,7 @@
     "ja": "ジュノ：ザ・ファーストウォーク",
     "de": "Jeuno: Die erste Etappe",
     "fr": "Jeuno - La première perambulation",
+    "tw": "朱諾：第一巡行",
     "zh": "朱诺：第一巡行"
   },
   "5139": {
@@ -40445,6 +40477,7 @@
     "ja": "ジュノ下層",
     "de": "Unter-Jeuno",
     "fr": "Bas Jeuno",
+    "tw": "朱諾下層",
     "zh": "朱诺下层"
   },
   "5140": {
@@ -40452,6 +40485,7 @@
     "ja": "ボヤーダ樹",
     "de": "Boyahda-Baum",
     "fr": "Arbre de Boyahda",
+    "tw": "波亞達樹",
     "zh": "波亚达树"
   },
   "5141": {
@@ -40459,6 +40493,7 @@
     "ja": "ル・オンの庭",
     "de": "Ru'Aun-Gärten",
     "fr": "Jardins de Ru'Aun",
+    "tw": "路·歐恩庭院",
     "zh": "路·欧恩庭院"
   },
   "5142": {
@@ -40466,6 +40501,7 @@
     "ja": "ラ・ロフの劇場",
     "de": "La'Loff-Amphitheater",
     "fr": "Amphithéâtre de La'Loff",
+    "tw": "拉·洛弗劇場",
     "zh": "拉·洛弗剧场"
   },
   "5143": {
@@ -40473,6 +40509,7 @@
     "ja": "ズヴァール城",
     "de": "Zvahl-Schloss",
     "fr": "Château Zvahl",
+    "tw": "茲瓦爾城",
     "zh": "兹瓦尔城"
   },
   "5144": {
@@ -40480,6 +40517,7 @@
     "ja": "王の間",
     "de": "Thronsaal",
     "fr": "Salle du trône",
+    "tw": "王座大殿",
     "zh": "王座大殿"
   },
   "5145": {
@@ -40487,6 +40525,7 @@
     "ja": "ジュノ下層",
     "de": "Unter-Jeuno",
     "fr": "Bas Jeuno",
+    "tw": "朱諾下層",
     "zh": "朱诺下层"
   },
   "5146": {
@@ -40494,6 +40533,7 @@
     "ja": "ボヤーダ樹",
     "de": "Boyahda-Baum",
     "fr": "Arbre de Boyahda",
+    "tw": "波亞達樹",
     "zh": "波亚达树"
   },
   "5147": {
@@ -40501,6 +40541,7 @@
     "ja": "ル・オンの庭",
     "de": "Ru'Aun-Gärten",
     "fr": "Jardins de Ru'Aun",
+    "tw": "路·歐恩庭院",
     "zh": "路·欧恩庭院"
   },
   "5148": {
@@ -40508,6 +40549,7 @@
     "ja": "ズヴァール城",
     "de": "Zvahl-Schloss",
     "fr": "Château Zvahl",
+    "tw": "茲瓦爾城",
     "zh": "兹瓦尔城"
   },
   "5149": {
@@ -40515,6 +40557,7 @@
     "ja": "市場橋",
     "de": "Marktbrücke",
     "fr": "Pont du marché",
+    "tw": "市場橋",
     "zh": "市场桥"
   },
   "5150": {
@@ -40522,6 +40565,7 @@
     "ja": "闘舞台",
     "de": "Kampfplatz",
     "fr": "Estrade des guerriers",
+    "tw": "鬥舞台",
     "zh": "斗舞台"
   },
   "5151": {
@@ -40529,6 +40573,7 @@
     "ja": "龍のねぐら",
     "de": "Drachen-Nest",
     "fr": "Volière aux dragons",
+    "tw": "龍巢",
     "zh": "龙巢"
   },
   "5152": {
@@ -40536,6 +40581,7 @@
     "ja": "ラ・ロフの劇場",
     "de": "La'Loff-Amphitheater",
     "fr": "Amphithéâtre de La'Loff",
+    "tw": "拉·洛弗劇場",
     "zh": "拉·洛弗剧场"
   },
   "5153": {
@@ -40550,6 +40596,7 @@
     "ja": "ユウェヤーワータ",
     "de": "Yuweyawata",
     "fr": "Yuweyawata",
+    "tw": "玉韋亞瓦塔",
     "zh": "玉韦亚瓦塔"
   },
   "5155": {
@@ -41417,37 +41464,43 @@
     "en": "The Pâtisserie",
     "ja": "ヴァレンティオンパティスリー",
     "de": "Pâtisserie",
-    "fr": "Pâtisserie de la Valention"
+    "fr": "Pâtisserie de la Valention",
+    "zh": "瓦伦提昂蛋糕店"
   },
   "5279": {
     "en": "Pâtisserie Stage",
     "ja": "パティスリーフロア",
     "de": "Küche",
-    "fr": "Cuisines"
+    "fr": "Cuisines",
+    "zh": "蛋糕店场地"
   },
   "5280": {
     "en": "Shelves of Frosting",
     "ja": "クリーム・キャビネット",
     "de": "Cremes",
-    "fr": "Galerie des crèmes"
+    "fr": "Galerie des crèmes",
+    "zh": "奶油柜"
   },
   "5281": {
     "en": "Shelves of Delicacies",
     "ja": "フルーツ・キャビネット",
     "de": "Früchte",
-    "fr": "Galerie des fruits"
+    "fr": "Galerie des fruits",
+    "zh": "水果柜"
   },
   "5282": {
     "en": "Shelves of Garnishes",
     "ja": "トッピング・キャビネット",
     "de": "Beläge",
-    "fr": "Galerie des garnitures"
+    "fr": "Galerie des garnitures",
+    "zh": "配料柜"
   },
   "5283": {
     "en": "Shelves of Cake Toppers",
     "ja": "デコレーション・キャビネット",
     "de": "Dekorationen",
-    "fr": "Galerie des décorations"
+    "fr": "Galerie des décorations",
+    "zh": "装饰柜"
   },
   "5284": {
     "en": "The Ageless Necropolis",
@@ -41555,10 +41608,11 @@
     "zh": "舰队飞空艇"
   },
   "5299": {
-    "en": "",
-    "ja": "",
-    "de": "",
-    "fr": ""
+    "en": "Shrouded Sanctum",
+    "ja": "隠された小部屋",
+    "de": "隠された小部屋",
+    "fr": "隠された小部屋",
+    "zh": "隠された小部屋"
   },
   "5300": {
     "en": "Mech Ops",
@@ -41886,697 +41940,813 @@
     "en": "Mistwake",
     "ja": "ミストウェイク",
     "de": "Nebeltrift",
-    "fr": "Sillage brumeux"
+    "fr": "Sillage brumeux",
+    "zh": "雾之迹"
   },
   "5351": {
     "en": "Quan Caverns",
     "ja": "クワン洞",
     "de": "Quans Höhle",
-    "fr": "Grotte de Kwane"
+    "fr": "Grotte de Kwane",
+    "zh": "阿饱洞"
   },
   "5352": {
     "en": "Treno Lowlands",
     "ja": "トレノ平野",
     "de": "Treno-Ebene",
-    "fr": "Plaine de Tréno"
+    "fr": "Plaine de Tréno",
+    "zh": "特雷诺平野"
   },
   "5353": {
     "en": "The City of Treno",
     "ja": "トレノ市街地",
     "de": "Treno-Stadt",
-    "fr": "Centre-ville de Tréno"
+    "fr": "Centre-ville de Tréno",
+    "zh": "特雷诺市区"
   },
   "5354": {
     "en": "Shattered Lair",
     "ja": "魔獣の縄張り",
     "de": "Steinernes Nest",
-    "fr": "Territoire des fauves"
+    "fr": "Territoire des fauves",
+    "zh": "魔兽的领地"
   },
   "5355": {
     "en": "Overture Plaza",
     "ja": "トレノ入口広場",
     "de": "Boulevardplatz",
-    "fr": "Parvis de Tréno"
+    "fr": "Parvis de Tréno",
+    "zh": "特雷诺入口广场"
   },
   "5356": {
     "en": "Town Round",
     "ja": "タウンホール前広場",
     "de": "Rathausplatz",
-    "fr": "Place de l'hôtel de ville"
+    "fr": "Place de l'hôtel de ville",
+    "zh": "议事厅广场"
   },
   "5357": {
     "en": "Quan Caverns",
     "ja": "クワン洞",
     "de": "Quans Höhle",
-    "fr": "Grotte de Kwane"
+    "fr": "Grotte de Kwane",
+    "zh": "阿饱洞"
   },
   "5358": {
     "en": "Treno Lowlands",
     "ja": "トレノ平野",
     "de": "Treno-Ebene",
-    "fr": "Plaine de Tréno"
+    "fr": "Plaine de Tréno",
+    "zh": "特雷诺平野"
   },
   "5359": {
     "en": "The City of Treno",
     "ja": "トレノ市街地",
     "de": "Treno-Stadt",
-    "fr": "Centre-ville de Tréno"
+    "fr": "Centre-ville de Tréno",
+    "zh": "特雷诺市区"
   },
   "5360": {
     "en": "Electrope Mine",
     "ja": "放棄された採掘区画",
     "de": "Verlassener Bruch",
-    "fr": "Mine abandonnée"
+    "fr": "Mine abandonnée",
+    "zh": "废弃矿区"
   },
   "5361": {
     "en": "Derelict Railway",
     "ja": "鉄馬車線路",
     "de": "Gütergleise",
-    "fr": "Voie ferroviaire"
+    "fr": "Voie ferroviaire",
+    "zh": "铁马车轨道"
   },
   "5362": {
     "en": "Treno Thoroughfare",
     "ja": "トレノへの道",
     "de": "Weg nach Treno",
-    "fr": "Entrée de Tréno"
+    "fr": "Entrée de Tréno",
+    "zh": "通往特雷诺的道路"
   },
   "5363": {
     "en": "Darkgate",
     "ja": "トレノゲート",
     "de": "Stadttore",
-    "fr": "Grande Porte de Tréno"
+    "fr": "Grande Porte de Tréno",
+    "zh": "特雷诺大门"
   },
   "5364": {
     "en": "Codetta Quarter",
     "ja": "拡張区画",
     "de": "Kleinstadt",
-    "fr": "Quartier périphérique"
+    "fr": "Quartier périphérique",
+    "zh": "扩建区"
   },
   "5365": {
     "en": "Main Street",
     "ja": "トレノ主道路",
     "de": "Hauptstraße",
-    "fr": "Avenue principale de Tréno"
+    "fr": "Avenue principale de Tréno",
+    "zh": "特雷诺主路"
   },
   "5366": {
     "en": "Bridge Street",
     "ja": "トレノの裏道",
     "de": "Gartengasse",
-    "fr": "Allée pavée de Tréno"
+    "fr": "Allée pavée de Tréno",
+    "zh": "特雷诺小路"
   },
   "5367": {
     "en": "Hell on Rails",
     "ja": "鉄馬車線路",
     "de": "Gütergleise",
-    "fr": "Voie ferroviaire"
+    "fr": "Voie ferroviaire",
+    "zh": "铁马车轨道"
   },
   "5368": {
     "en": "???",
     "ja": "？？？？",
     "de": "???",
-    "fr": "???"
+    "fr": "???",
+    "zh": "？？？？"
   },
   "5369": {
     "en": "Ring Noir",
     "ja": "リング・オブ・ヴァンプ",
     "de": "Vampirring",
-    "fr": "Ring fatal"
+    "fr": "Ring fatal",
+    "zh": "致命格斗场"
   },
   "5370": {
     "en": "The X-Ring",
     "ja": "リング・オブ・エクストリーム",
     "de": "Extremring",
-    "fr": "Ring extrême"
+    "fr": "Ring extrême",
+    "zh": "极限格斗场"
   },
   "5371": {
     "en": "The Crown",
     "ja": "リング・オブ・タイラント",
     "de": "Tyrannenring",
-    "fr": "Ring du champion"
+    "fr": "Ring du champion",
+    "zh": "霸王格斗场"
   },
   "5372": {
     "en": "<i>The Merchant's Tale</i>",
     "ja": "商客物語",
     "de": "Des Händlers Liebesmüh",
-    "fr": "Contes du Camelot"
+    "fr": "Contes du Camelot",
+    "zh": "商客奇谭"
   },
   "5373": {
     "en": "A Faraway Place",
     "ja": "とある街",
     "de": "Ferner Ort",
-    "fr": "Ville lointaine"
+    "fr": "Ville lointaine",
+    "zh": "某个城镇"
   },
   "5374": {
     "en": "Land of Eternal Harvest",
     "ja": "実り豊かな大地",
     "de": "Land des Überflusses",
-    "fr": "Plaines verdoyantes"
+    "fr": "Plaines verdoyantes",
+    "zh": "果实丰收的大地"
   },
   "5375": {
     "en": "Cove of Countless Colors",
     "ja": "彩り豊かな入江",
     "de": "Bucht der Schillernden Farben",
-    "fr": "Baie prismatique"
+    "fr": "Baie prismatique",
+    "zh": "色彩缤纷的海湾"
   },
   "5376": {
     "en": "Valley of Living Stone",
     "ja": "歪な岩の谷",
     "de": "Tal der Tausend Felsen",
-    "fr": "Vallée des Mille Roches"
+    "fr": "Vallée des Mille Roches",
+    "zh": "岩石怪异的溪谷"
   },
   "5377": {
     "en": "Veil of Mist",
     "ja": "霧深き海",
     "de": "Nebelmeer",
-    "fr": "Mer brumeuse"
+    "fr": "Mer brumeuse",
+    "zh": "浓雾笼罩的大海"
   },
   "5378": {
     "en": "Font of Paths Aplenty",
     "ja": "中央広場",
     "de": "Marktplatz",
-    "fr": "Place centrale"
+    "fr": "Place centrale",
+    "zh": "中央广场"
   },
   "5379": {
     "en": "Caravan Campsite",
     "ja": "街道の休息地",
     "de": "Platz der Rastenden",
-    "fr": "Relais des Voyageurs"
+    "fr": "Relais des Voyageurs",
+    "zh": "路上的休息地"
   },
   "5380": {
     "en": "Sun-teased Cavern",
     "ja": "日向へ続く広場",
     "de": "Sonnenpfad",
-    "fr": "Place du Soleil"
+    "fr": "Place du Soleil",
+    "zh": "通往向阳地的广场"
   },
   "5381": {
     "en": "Jealous Slope",
     "ja": "街を望む丘",
     "de": "Palastblick",
-    "fr": "Colline châtelaine"
+    "fr": "Colline châtelaine",
+    "zh": "望向城镇的山坡"
   },
   "5382": {
     "en": "Ruby Receiving Room",
     "ja": "赤石の間",
     "de": "Rubin-Foyer",
-    "fr": "Salle des Pierres rouges"
+    "fr": "Salle des Pierres rouges",
+    "zh": "红石之间"
   },
   "5383": {
     "en": "Smoldering Bedchamber",
     "ja": "眠り火の間",
     "de": "Schwelende Kammer",
-    "fr": "Chambre du Feu dormant"
+    "fr": "Chambre du Feu dormant",
+    "zh": "睡火之间"
   },
   "5384": {
     "en": "Seven-shade Sands",
     "ja": "七色の浜",
     "de": "Strand der Sieben Farben",
-    "fr": "Plage prismatique"
+    "fr": "Plage prismatique",
+    "zh": "七色沙滩"
   },
   "5385": {
     "en": "Shimmering Stage",
     "ja": "虹の演舞台",
     "de": "Regenbogensande",
-    "fr": "Scène de l'Arc-en-ciel"
+    "fr": "Scène de l'Arc-en-ciel",
+    "zh": "虹彩演舞台"
   },
   "5386": {
     "en": "Sea-maid's Mirror",
     "ja": "人魚の石舞台",
     "de": "Bühne der Meerjungfrau",
-    "fr": "Théâtre de la Sirène"
+    "fr": "Théâtre de la Sirène",
+    "zh": "人鱼的石舞台"
   },
   "5387": {
     "en": "Den of Thieves",
     "ja": "野盗のたまり場",
     "de": "Unterschlupf der Banditen",
-    "fr": "Antre des Couteaux"
+    "fr": "Antre des Couteaux",
+    "zh": "盗贼的碰头点"
   },
   "5388": {
     "en": "Old Nest",
     "ja": "古びたねぐら",
     "de": "Altes Nest",
-    "fr": "Nichoir ancien"
+    "fr": "Nichoir ancien",
+    "zh": "老旧的巢穴"
   },
   "5389": {
     "en": "Wound of the Heavens",
     "ja": "剛剣の試し場",
     "de": "Plateau der Kreuzenden Klingen",
-    "fr": "Le Fil de la Lame"
+    "fr": "Le Fil de la Lame",
+    "zh": "刚剑试炼场"
   },
   "5390": {
     "en": "Overgrown Dwelling",
     "ja": "朽ちた家屋",
     "de": "Vergessene Unterkunft",
-    "fr": "Demeure abandonnée"
+    "fr": "Demeure abandonnée",
+    "zh": "破败的人家"
   },
   "5391": {
     "en": "Beckoning Backstreet",
     "ja": "街外れの裏通り",
     "de": "Hinterhofgasse",
-    "fr": "Ruelle du quartier résidentiel"
+    "fr": "Ruelle du quartier résidentiel",
+    "zh": "城边的后巷"
   },
   "5392": {
     "en": "Bountiful Bazaar",
     "ja": "賑やかな市場",
     "de": "Belebter Basar",
-    "fr": "Marché affairé"
+    "fr": "Marché affairé",
+    "zh": "热闹的市场"
   },
   "5393": {
     "en": "Tiled Thoroughfare",
     "ja": "正門通り",
     "de": "Große Torstraße",
-    "fr": "Avenue de la Grande Porte"
+    "fr": "Avenue de la Grande Porte",
+    "zh": "正门大道"
   },
   "5394": {
     "en": "Land of Eternal Harvest",
     "ja": "実り豊かな大地",
     "de": "Land des Überflusses",
-    "fr": "Plaines verdoyantes"
+    "fr": "Plaines verdoyantes",
+    "zh": "果实丰收的大地"
   },
   "5395": {
     "en": "Ever-ripe Vineyard",
     "ja": "ブドウ畑",
     "de": "Immergrüne Weinhänge",
-    "fr": "Vignoble corvosien"
+    "fr": "Vignoble corvosien",
+    "zh": "葡萄园"
   },
   "5396": {
     "en": "Palace of the Spurned",
     "ja": "棄てられた宮殿",
     "de": "Verlassener Palast",
-    "fr": "Palais abandonné"
+    "fr": "Palais abandonné",
+    "zh": "废弃的宫殿"
   },
   "5397": {
     "en": "Anchorite's Auspice",
     "ja": "隠遁者の膝元",
     "de": "Bucht des Eremiten",
-    "fr": "Giron de l'Ermite"
+    "fr": "Giron de l'Ermite",
+    "zh": "隐者的膝下"
   },
   "5398": {
     "en": "Cove of Countless Colors",
     "ja": "彩り豊かな入江",
     "de": "Bucht der Schillernden Farben",
-    "fr": "Baie prismatique"
+    "fr": "Baie prismatique",
+    "zh": "色彩缤纷的海湾"
   },
   "5399": {
     "en": "Valley of Living Stone",
     "ja": "歪な岩の谷",
     "de": "Tal der Tausend Felsen",
-    "fr": "Vallée des Mille Roches"
+    "fr": "Vallée des Mille Roches",
+    "zh": "岩石怪异的溪谷"
   },
   "5400": {
     "en": "Passage of Earth",
     "ja": "磁力の洞窟",
     "de": "Höhle der Anziehung",
-    "fr": "Grotte magnétique"
+    "fr": "Grotte magnétique",
+    "zh": "磁力洞穴"
   },
   "5401": {
     "en": "Passage of Sky",
     "ja": "浮かび岩の山道",
     "de": "Pass der Fliegenden Felsen",
-    "fr": "Col des Roches volantes"
+    "fr": "Col des Roches volantes",
+    "zh": "浮岩山路"
   },
   "5402": {
     "en": "Little-traveled Path",
     "ja": "修行者たちの道",
     "de": "Pfad der Strebenden",
-    "fr": "Défilé des Disciples"
+    "fr": "Défilé des Disciples",
+    "zh": "修行者之路"
   },
   "5403": {
     "en": "Village of No One",
     "ja": "誰もいない村",
     "de": "Niemandsdorf",
-    "fr": "Village dépeuplé"
+    "fr": "Village dépeuplé",
+    "zh": "无人的村子"
   },
   "5404": {
     "en": "Land of Sea",
     "ja": "虚の海",
     "de": "Meer der Leere",
-    "fr": "Mer de la Vacuité"
+    "fr": "Mer de la Vacuité",
+    "zh": "虚海"
   },
   "5405": {
     "en": "Arcadia",
     "ja": "リング・オブ・アルカディア",
     "de": "Arkadionring",
-    "fr": "Ring arcadien"
+    "fr": "Ring arcadien",
+    "zh": "登天格斗场"
   },
   "5406": {
     "en": "Oizys",
     "ja": "惑星オイジュス",
     "de": "Oizys",
-    "fr": "Oizys"
+    "fr": "Oizys",
+    "zh": "俄匊斯行星"
   },
   "5407": {
     "en": "Megalithopolis",
     "ja": "メガリスポリス",
     "de": "Megalithopolis",
-    "fr": "Mégalithopolis"
+    "fr": "Mégalithopolis",
+    "zh": "巨石城"
   },
   "5408": {
     "en": "Erg Eris",
     "ja": "凪去った砂漠",
     "de": "Erg Eris",
-    "fr": "Désert de l'Emporte-brise"
+    "fr": "Désert de l'Emporte-brise",
+    "zh": "无风无息沙漠"
   },
   "5409": {
     "en": "The Regolift",
     "ja": "リフティング・レグ",
     "de": "Regolift",
-    "fr": "Reg levant"
+    "fr": "Reg levant",
+    "zh": "升地沙石滩"
   },
   "5410": {
     "en": "Cape Geras",
     "ja": "ケープ・ゲーラス",
     "de": "Kap Geras",
-    "fr": "Cap Géras"
+    "fr": "Cap Géras",
+    "zh": "革剌斯角"
   },
   "5411": {
     "en": "The Moros Well",
     "ja": "モロス・ウェル",
     "de": "Moros-Brunnen",
-    "fr": "Puits de Moros"
+    "fr": "Puits de Moros",
+    "zh": "摩罗斯井"
   },
   "5412": {
     "en": "Shadefleet",
     "ja": "藍裂の幽陸",
     "de": "Schattenflotte",
-    "fr": "Bâtiment ombré"
+    "fr": "Bâtiment ombré",
+    "zh": "蓝裂幽陆"
   },
   "5413": {
     "en": "Emerald Echoes",
     "ja": "翠核の谷",
     "de": "Tiefgrünes Echo",
-    "fr": "Échos d'Émeraude"
+    "fr": "Échos d'Émeraude",
+    "zh": "翠核深谷"
   },
   "5414": {
     "en": "Shielding Wall",
     "ja": "立盾の壁",
     "de": "Schildwand",
-    "fr": "Mur de l'Écusson"
+    "fr": "Mur de l'Écusson",
+    "zh": "护盾岩墙"
   },
   "5415": {
     "en": "Falsifying Wall",
     "ja": "虚空の壁",
     "de": "Falscher Wall",
-    "fr": "Mur du Déclin"
+    "fr": "Mur du Déclin",
+    "zh": "虚空岩墙"
   },
   "5416": {
     "en": "Collapsed Tunnel",
     "ja": "圧壊した坑道",
     "de": "Eingestürzter Tunnel",
-    "fr": "Galerie effondrée"
+    "fr": "Galerie effondrée",
+    "zh": "坏掉的坑道"
   },
   "5417": {
     "en": "Long-lost Carrot",
     "ja": "ロングロスト・キャロット",
     "de": "Längstverlorene Karotte",
-    "fr": "Carotte oubliée"
+    "fr": "Carotte oubliée",
+    "zh": "丢失已久的胡萝卜"
   },
   "5418": {
     "en": "Foregone Oasis",
     "ja": "先駆者のオアシス",
     "de": "Oase der Gegangenen",
-    "fr": "Oasis des Pionniers"
+    "fr": "Oasis des Pionniers",
+    "zh": "先驱者绿洲"
   },
   "5419": {
     "en": "Sound Pole",
     "ja": "極束の浜",
     "de": "Magnetsande",
-    "fr": "Plage du Pôle unique"
+    "fr": "Plage du Pôle unique",
+    "zh": "强极海滩"
   },
   "5420": {
     "en": "Terra Firma",
     "ja": "テラ・ファーマ基地",
     "de": "Terra Firma",
-    "fr": "Station Terra Firma"
+    "fr": "Station Terra Firma",
+    "zh": "大地基地"
   },
   "5421": {
     "en": "Event Rise",
     "ja": "因果の井戸端",
     "de": "Schlingrand",
-    "fr": "Puits de la Causalité"
+    "fr": "Puits de la Causalité",
+    "zh": "视界井"
   },
   "5422": {
     "en": "Unmoored Anchor",
     "ja": "アンカーマウンテン",
     "de": "Loser Anker",
-    "fr": "L'Ancre"
+    "fr": "L'Ancre",
+    "zh": "锚山"
   },
   "5423": {
     "en": "Indigo Flagship",
     "ja": "藍裂の小丘",
     "de": "Tiefblaues Flaggschiff",
-    "fr": "Tertre ombré"
+    "fr": "Tertre ombré",
+    "zh": "蓝裂小丘"
   },
   "5424": {
     "en": "Desert Burrow",
     "ja": "デザート・バロー遺跡",
     "de": "Wüstenbau",
-    "fr": "Terrier désertique"
+    "fr": "Terrier désertique",
+    "zh": "荒漠地洞遗迹"
   },
   "5425": {
     "en": "Foregone Oasis",
     "ja": "先駆者のオアシス",
     "de": "Oase der Gegangenen",
-    "fr": "Oasis des Pionniers"
+    "fr": "Oasis des Pionniers",
+    "zh": "先驱者绿洲"
   },
   "5426": {
     "en": "Megalithopolis",
     "ja": "メガリスポリス東",
     "de": "Ost-Megalithopolis",
-    "fr": "Est de Mégalithopolis"
+    "fr": "Est de Mégalithopolis",
+    "zh": "巨石城东侧"
   },
   "5427": {
     "en": "Magnetic Horizon",
     "ja": "極界の水平線",
     "de": "Magnetnass",
-    "fr": "Lisière d'Eau"
+    "fr": "Lisière d'Eau",
+    "zh": "极界水平线"
   },
   "5428": {
     "en": "Collapsed Tunnel",
     "ja": "圧壊した坑道東",
     "de": "Östlicher Tunnel",
-    "fr": "Est de la galerie effondrée"
+    "fr": "Est de la galerie effondrée",
+    "zh": "坏掉的坑道东侧"
   },
   "5429": {
     "en": "The Moros Well",
     "ja": "モロス・ウェル",
     "de": "Moros-Brunnen",
-    "fr": "Puits de Moros"
+    "fr": "Puits de Moros",
+    "zh": "摩罗斯井"
   },
   "5430": {
     "en": "Under Overboard",
     "ja": "藍裂の裂界",
     "de": "Indigobecken",
-    "fr": "Faille ombrée"
+    "fr": "Faille ombrée",
+    "zh": "蓝裂裂界"
   },
   "5431": {
     "en": "The Subterrain",
     "ja": "サブターレイン",
     "de": "Ruineninneres",
-    "fr": "Souterrain"
+    "fr": "Souterrain",
+    "zh": "地下池"
   },
   "5432": {
     "en": "Worqor Chirteh",
     "ja": "ウォーコー・チーテ",
     "de": "Worqor Chirteh",
-    "fr": "Worqor Chirteh"
+    "fr": "Worqor Chirteh",
+    "zh": "沃刻其特"
   },
   "5433": {
     "en": "Triumph 1",
     "ja": "戦略目標地01",
     "de": "Triumphpunkt 1",
-    "fr": "Point névralgique 1"
+    "fr": "Point névralgique 1",
+    "zh": "战略目标点01"
   },
   "5434": {
     "en": "Triumph 3",
     "ja": "戦略目標地03",
     "de": "Triumphpunkt 2",
-    "fr": "Point névralgique 2"
+    "fr": "Point névralgique 2",
+    "zh": "战略目标点03"
   },
   "5435": {
     "en": "Triumph 2",
     "ja": "戦略目標地02",
     "de": "Triumphpunkt 3",
-    "fr": "Point névralgique 3"
+    "fr": "Point névralgique 3",
+    "zh": "战略目标点02"
   },
   "5436": {
     "en": "Triumph 4",
     "ja": "戦略目標地04",
     "de": "Triumphpunkt 4",
-    "fr": "Point névralgique 4"
+    "fr": "Point névralgique 4",
+    "zh": "战略目标点04"
   },
   "5437": {
     "en": "Triumph 5",
     "ja": "戦略目標地05",
     "de": "Triumphpunkt 5",
-    "fr": "Point névralgique 5"
+    "fr": "Point névralgique 5",
+    "zh": "战略目标点05"
   },
   "5438": {
     "en": "Triumph 6",
     "ja": "戦略目標地06",
     "de": "Triumphpunkt 6",
-    "fr": "Point névralgique 6"
+    "fr": "Point névralgique 6",
+    "zh": "战略目标点06"
   },
   "5439": {
     "en": "Triumph 7",
     "ja": "戦略目標地07",
     "de": "Triumphpunkt 7",
-    "fr": "Point névralgique 7"
+    "fr": "Point névralgique 7",
+    "zh": "战略目标点07"
   },
   "5440": {
     "en": "Triumph 8",
     "ja": "戦略目標地08",
     "de": "Triumphpunkt 8",
-    "fr": "Point névralgique 8"
+    "fr": "Point névralgique 8",
+    "zh": "战略目标点08"
   },
   "5441": {
     "en": "Triumph 9",
     "ja": "戦略目標地09",
     "de": "Triumphpunkt 9",
-    "fr": "Point névralgique 9"
+    "fr": "Point névralgique 9",
+    "zh": "战略目标点09"
   },
   "5442": {
     "en": "Triumph 10",
     "ja": "戦略目標地10",
     "de": "Triumphpunkt 10",
-    "fr": "Point névralgique 10"
+    "fr": "Point névralgique 10",
+    "zh": "战略目标点10"
   },
   "5443": {
     "en": "Triumph 11",
     "ja": "戦略目標地11",
     "de": "Triumphpunkt 11",
-    "fr": "Point névralgique 11"
+    "fr": "Point névralgique 11",
+    "zh": "战略目标点11"
   },
   "5444": {
     "en": "Triumph 12",
     "ja": "戦略目標地12",
     "de": "Triumphpunkt 12",
-    "fr": "Point névralgique 12"
+    "fr": "Point névralgique 12",
+    "zh": "战略目标点12"
   },
   "5445": {
     "en": "Lilyswim",
     "ja": "睡蓮湖近郊",
     "de": "Lilienteich",
-    "fr": "Alentours du lac aux Nénuphars"
+    "fr": "Alentours du lac aux Nénuphars",
+    "zh": "睡莲湖附近"
   },
   "5446": {
     "en": "Moongate Hub",
     "ja": "ムーンゲート基地",
     "de": "Mondtor-Station",
-    "fr": "Station sélénienne"
+    "fr": "Station sélénienne",
+    "zh": "月门基地"
   },
   "5447": {
     "en": "Calabash Cove",
     "ja": "キャラバシュ・コーヴ",
     "de": "Kalabassenbucht ",
-    "fr": "La Gourde"
+    "fr": "La Gourde",
+    "zh": "葫芦小湾"
   },
   "5448": {
     "en": "Weddingway's Bower",
     "ja": "ウェディングウェイの式園",
     "de": "Weddingways Traugarten",
-    "fr": "Pépinière de Weddingway"
+    "fr": "Pépinière de Weddingway",
+    "zh": "婚庆威的实验园"
   },
   "5449": {
     "en": "Gleamslope",
     "ja": "グリーミングマウンテン",
     "de": "Glimmberg",
-    "fr": "Mont scintillant"
+    "fr": "Mont scintillant",
+    "zh": "闪亮山"
   },
   "5450": {
     "en": "Lunar Nadir",
     "ja": "ルナ・ネイディア",
     "de": "Lunarer Nadir",
-    "fr": "Nadir lunaire"
+    "fr": "Nadir lunaire",
+    "zh": "月底"
   },
   "5451": {
     "en": "Glassblowers' Beacon",
     "ja": "グラスブロワーズ基地",
     "de": "Glasbläser-Basis",
-    "fr": "Station Souffleverre"
+    "fr": "Station Souffleverre",
+    "zh": "玻璃匠基地"
   },
   "5452": {
     "en": "Iridized Rise",
     "ja": "イリデセント・ステップス",
     "de": "Schillerstufen",
-    "fr": "Marches iridescentes"
+    "fr": "Marches iridescentes",
+    "zh": "虹彩阶梯"
   },
   "5453": {
     "en": "The Saltpeter Shore",
     "ja": "硝礫の川浜",
     "de": "Glassteinküste",
-    "fr": "Berges de Salpêtre"
+    "fr": "Berges de Salpêtre",
+    "zh": "玻砾河岸"
   },
   "5454": {
     "en": "Capsule Chasm",
     "ja": "カプセル・カズム",
     "de": "Kapselgrund",
-    "fr": "Gouffre aux Capsules"
+    "fr": "Gouffre aux Capsules",
+    "zh": "胶囊峡谷"
   },
   "5455": {
     "en": "Fusingway Vent",
     "ja": "フュージングウェイ・ヴェント",
     "de": "Fusingway-Schlund",
-    "fr": "Cheminée de Fusingway"
+    "fr": "Cheminée de Fusingway",
+    "zh": "熔火涌道"
   },
   "5456": {
     "en": "Terra Firma",
     "ja": "テラ・ファーマ基地",
     "de": "Terra Firma",
-    "fr": "Station Terra Firma"
+    "fr": "Station Terra Firma",
+    "zh": "大地基地"
   },
   "5457": {
     "en": "Northwestern Regolift",
     "ja": "リフティング・レグ北西",
     "de": "Nordwestlicher Regolift",
-    "fr": "Nord-ouest du Reg levant"
+    "fr": "Nord-ouest du Reg levant",
+    "zh": "升地沙石滩西北"
   },
   "5458": {
     "en": "Cape Geras",
     "ja": "ケープ・ゲーラス",
     "de": "Kap Geras",
-    "fr": "Cap Géras"
+    "fr": "Cap Géras",
+    "zh": "革剌斯角"
   },
   "5459": {
     "en": "Shadefleet",
     "ja": "藍裂の幽陸",
     "de": "Schattenflotte",
-    "fr": "Bâtiment ombré"
+    "fr": "Bâtiment ombré",
+    "zh": "蓝裂幽陆"
   },
   "5460": {
     "en": "Desert Burrow",
     "ja": "デザート・バロー遺跡",
     "de": "Wüstenbau",
-    "fr": "Terrier désertique"
+    "fr": "Terrier désertique",
+    "zh": "荒漠地洞遗迹"
   },
   "5461": {
     "en": "Unfamiliar Street",
     "ja": "広場への道",
     "de": "Marktstraße",
-    "fr": "Rue de la place"
+    "fr": "Rue de la place",
+    "zh": "通往广场的路"
   },
   "5462": {
     "en": "Prismatic Cave",
     "ja": "入江へ続く洞窟",
     "de": "Buchthöhle",
-    "fr": "Grotte de la baie"
+    "fr": "Grotte de la baie",
+    "zh": "通往海湾的洞穴"
   },
   "5463": {
     "en": "Land of Sea",
     "ja": "虚の海",
     "de": "Meer der Leere",
-    "fr": "Mer de la Vacuité"
+    "fr": "Mer de la Vacuité",
+    "zh": "虚海"
   },
   "5464": {
     "en": "Font of Earthly Treasures",
     "ja": "路地裏の広場",
     "de": "Gassenplatz",
-    "fr": "Place annexe"
+    "fr": "Place annexe",
+    "zh": "后巷庭院"
   },
   "5465": {
     "en": "Font of Earthly Treasures",
     "ja": "路地裏の広場",
     "de": "Gassenplatz",
-    "fr": "Place annexe"
+    "fr": "Place annexe",
+    "zh": "后巷庭院"
   },
   "5466": {
     "en": "",
@@ -42588,49 +42758,57 @@
     "en": "Dorgerwor the Astute",
     "ja": "ドーゲーウォーの野営地",
     "de": "Dorgerwor der Scharfsinnige",
-    "fr": "Campement de Dorgerwor"
+    "fr": "Campement de Dorgerwor",
+    "zh": "多格渥野营地"
   },
   "5468": {
     "en": "Singing Stone",
     "ja": "祭陽殿跡",
     "de": "Weg des Gesangs",
-    "fr": "Chanteroche"
+    "fr": "Chanteroche",
+    "zh": "祭阳神殿遗址"
   },
   "5469": {
     "en": "Chirteh's Keep",
     "ja": "チーテ野城跡",
     "de": "Chirteh-Burgruine",
-    "fr": "Fort de Chirteh"
+    "fr": "Fort de Chirteh",
+    "zh": "其特野城遗址"
   },
   "5470": {
     "en": "Zirgor",
     "ja": "ジィゴ岩砦",
     "de": "Zirgor",
-    "fr": "Zirgor"
+    "fr": "Zirgor",
+    "zh": "山棱石寨"
   },
   "5471": {
     "en": "Argent Overlook",
     "ja": "雪見の丘",
     "de": "Silberhügel",
-    "fr": "Colline d'argent"
+    "fr": "Colline d'argent",
+    "zh": "观雪丘"
   },
   "5472": {
     "en": "Vahder",
     "ja": "ヴァデー岩砦",
     "de": "Vahder",
-    "fr": "Vahder"
+    "fr": "Vahder",
+    "zh": "确认石寨"
   },
   "5473": {
     "en": "Snowmelt",
     "ja": "雪水の泉",
     "de": "Schneeschmelze",
-    "fr": "Source gelée"
+    "fr": "Source gelée",
+    "zh": "雪水泉"
   },
   "5474": {
     "en": "Another Merchant's Tale",
     "ja": "異聞商客物語",
     "de": "Des Händlers kuriose Liebesmüh",
-    "fr": "Contes du Camelot annexes"
+    "fr": "Contes du Camelot annexes",
+    "zh": "异闻商客奇谭"
   },
   "5475": {
     "en": "",
@@ -42765,24 +42943,754 @@
     "fr": ""
   },
   "5497": {
-    "en": "",
-    "ja": "",
-    "de": "",
-    "fr": ""
+    "en": "The Commercium",
+    "ja": "コンメルキウム区",
+    "de": "Commercium",
+    "fr": "Commercium",
+    "zh": "商业区"
   },
   "5498": {
-    "en": "",
-    "ja": "",
-    "de": "",
-    "fr": ""
+    "en": "Manufactory Vallum",
+    "ja": "魔導工廠への道",
+    "de": "Weg zum Klyteum",
+    "fr": "Chemin de l'usine",
+    "zh": "通往魔导工厂的路"
   },
   "5499": {
+    "en": "The Clyteum",
+    "ja": "クルティウス魔導工廠",
+    "de": "Klyteum",
+    "fr": "Le Clyteum",
+    "zh": "克吕提俄斯魔导工厂"
+  },
+  "5500": {
+    "en": "Transeptimum",
+    "ja": "セプティマム駅前通り",
+    "de": "Septium-Straße",
+    "fr": "Transeptimum",
+    "zh": "第七站前路"
+  },
+  "5501": {
+    "en": "Via Varis",
+    "ja": "ウィア・ヴァリス",
+    "de": "Via Valis",
+    "fr": "Via Varis",
+    "zh": "瓦厉斯道"
+  },
+  "5502": {
+    "en": "Cardo VI",
+    "ja": "帝都第VI大通り",
+    "de": "Straße der VI. Legion",
+    "fr": "Cardo VI",
+    "zh": "帝都第六大道"
+  },
+  "5503": {
+    "en": "Restricted Access",
+    "ja": "工廠連絡路",
+    "de": "Fabrikdurchgang",
+    "fr": "Chemin du personnel d'usine",
+    "zh": "工厂联络路"
+  },
+  "5504": {
+    "en": "North Eblan Timberland",
+    "ja": "北エブラーナ林道",
+    "de": "Waldweg Nord-Eblan",
+    "fr": "Chemin boisé d'Éblana Nord",
+    "zh": "北艾布拉纳林道"
+  },
+  "5505": {
+    "en": "Steel Gateway",
+    "ja": "クルティウス魔導工廠入口",
+    "de": "Eingang zum Klyteum",
+    "fr": "Entrée du Clyteum",
+    "zh": "克吕提俄斯魔导工厂入口"
+  },
+  "5506": {
+    "en": "Dock I",
+    "ja": "第I飛空艇ドック",
+    "de": "Dock 1",
+    "fr": "Dock I",
+    "zh": "第一飞空艇坞"
+  },
+  "5507": {
+    "en": "Forum Floricomum",
+    "ja": "フォルム・フロリコマム",
+    "de": "Forum Floricomum",
+    "fr": "Forum Floricomum",
+    "zh": "花冠广场"
+  },
+  "5508": {
+    "en": "Stockyard",
+    "ja": "資材蓄積場",
+    "de": "Materiallager",
+    "fr": "Site de dépôt des ressources",
+    "zh": "材料存放场"
+  },
+  "5509": {
+    "en": "Secure Test Site",
+    "ja": "兵器試験場",
+    "de": "Waffentestgelände",
+    "fr": "Site d'essai sécurisé",
+    "zh": "兵器试验场"
+  },
+  "5510": {
+    "en": "Windurst: The Third Walk",
+    "ja": "ウィンダス：ザ・サードウォーク",
+    "de": "Windurst: Die dritte Etappe",
+    "fr": "Windurst - La troisième perambulation",
+    "zh": "温达斯：第三巡行"
+  },
+  "5511": {
+    "en": "Windurst",
+    "ja": "ウィンダス",
+    "de": "Windurst: Die dritte Etappe",
+    "fr": "Windurst",
+    "zh": "温达斯"
+  },
+  "5512": {
+    "en": "Al Zahbi",
+    "ja": "アルザビ",
+    "de": "Al Zahbi",
+    "fr": "Al Zahbi",
+    "zh": "阿尔扎比"
+  },
+  "5513": {
+    "en": "Nyzul Isle",
+    "ja": "ナイズル島",
+    "de": "Nyzul-Insel",
+    "fr": "Île de Nyzul",
+    "zh": "奈兹尔岛"
+  },
+  "5514": {
+    "en": "The Garden of Ru'Hmet",
+    "ja": "ル・メトの園",
+    "de": "Garten von Ru'Hmet",
+    "fr": "Jardin de Ru'Hmet",
+    "zh": "路·美特庭园"
+  },
+  "5515": {
+    "en": "Empyreal Paradox",
+    "ja": "天象の鎖",
+    "de": "Empyreal-Paradox",
+    "fr": "Paradoxe empyréen",
+    "zh": "天象之锁"
+  },
+  "5516": {
+    "en": "Abyssean Empyreal Paradox",
+    "ja": "アビセア-天象の鎖",
+    "de": "Abyssea - Empyreal-Paradox",
+    "fr": "Abyssée - Paradoxe empyréen",
+    "zh": "阿比瑟亚·天象之锁"
+  },
+  "5517": {
+    "en": "Windurst Walls",
+    "ja": "石の区",
+    "de": "Windurst-Mauern",
+    "fr": "Remparts de Windurst",
+    "zh": "石之区"
+  },
+  "5518": {
+    "en": "Residential Area",
+    "ja": "人民街区",
+    "de": "Volksbezirk",
+    "fr": "Quartier des roturiers",
+    "zh": "人民街区"
+  },
+  "5519": {
+    "en": "Nyzul Isle",
+    "ja": "ナイズル島",
+    "de": "Nyzul-Insel",
+    "fr": "Île de Nyzul",
+    "zh": "奈兹尔岛"
+  },
+  "5520": {
+    "en": "The Garden of Ru'Hmet",
+    "ja": "ル・メトの園",
+    "de": "Garten von Ru'Hmet",
+    "fr": "Jardin de Ru'Hmet",
+    "zh": "路·美特庭园"
+  },
+  "5521": {
+    "en": "Empyreal Paradox",
+    "ja": "天象の鎖",
+    "de": "Empyreal-Paradox",
+    "fr": "Paradoxe empyréen",
+    "zh": "天象之锁"
+  },
+  "5522": {
+    "en": "Abyssean Empyreal Paradox",
+    "ja": "アビセア-天象の鎖",
+    "de": "Abyssea - Empyreal-Paradox",
+    "fr": "Abyssée - Paradoxe empyréen",
+    "zh": "阿比瑟亚·天象之锁"
+  },
+  "5523": {
+    "en": "Heavens Tower",
+    "ja": "天の塔",
+    "de": "Himmelsturm",
+    "fr": "Tour des cieux",
+    "zh": "天之塔"
+  },
+  "5524": {
+    "en": "Dais of Ascension",
+    "ja": "闘舞台",
+    "de": "Kampfplatz",
+    "fr": "Estrade des guerriers",
+    "zh": "斗舞台"
+  },
+  "5525": {
+    "en": "Victory Gate",
+    "ja": "凱旋門",
+    "de": "Siegestor",
+    "fr": "Porte de la Victoire",
+    "zh": "凯旋门"
+  },
+  "5526": {
+    "en": "The Bastion",
+    "ja": "稜堡",
+    "de": "Das Bollwerk",
+    "fr": "Bastion",
+    "zh": "棱堡"
+  },
+  "5527": {
+    "en": "The Ruin of Light Divine",
+    "ja": "白き神の間",
+    "de": "Reich des Lichtgottes",
+    "fr": "Antichambre du dieu de lumière",
+    "zh": "白神之间"
+  },
+  "5528": {
+    "en": "Angels' Fall",
+    "ja": "天使たちの間",
+    "de": "Reich der Engel",
+    "fr": "Antichambre des anges",
+    "zh": "众天使之间"
+  },
+  "5529": {
+    "en": "The Clyteum",
+    "ja": "クルティウス魔導工廠",
+    "de": "Klyteum",
+    "fr": "Le Clyteum",
+    "zh": "克吕提俄斯魔导工厂"
+  },
+  "5530": {
     "en": "",
     "ja": "",
     "de": "",
     "fr": ""
   },
-  "5500": {
+  "5531": {
+    "en": "Unnamed Island",
+    "ja": "名もなき島",
+    "de": "Einsame Insel",
+    "fr": "Île sans nom",
+    "zh": "无名岛"
+  },
+  "5532": {
+    "en": "Thavnair",
+    "ja": "サベネア島",
+    "de": "Thavnair",
+    "fr": "Thavnair",
+    "zh": "萨维奈岛"
+  },
+  "5533": {
+    "en": "Unnamed Margin",
+    "ja": "名もなき島沖合",
+    "de": "Einsamer Saum",
+    "fr": "Large de l'île sans nom",
+    "zh": "无名岛近海"
+  },
+  "5534": {
+    "en": "Unnamed Spectral Current",
+    "ja": "名もなき島沖合：幻海流",
+    "de": "Einsamer Saum - Phantomströmung",
+    "fr": "Courant spectral (large de l'île sans nom)",
+    "zh": "无名岛近海幻海流"
+  },
+  "5535": {
+    "en": "Thavnair Margin",
+    "ja": "サベネア島沖合",
+    "de": "Thavnair - Hochsee",
+    "fr": "Large de Thavnair",
+    "zh": "萨维奈岛近海"
+  },
+  "5536": {
+    "en": "Thavnair Spectral Current",
+    "ja": "サベネア島沖合：幻海流",
+    "de": "Thavnair - Phantomströmung",
+    "fr": "Courant spectral (large de Thavnair)",
+    "zh": "萨维奈岛近海幻海流"
+  },
+  "5537": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5538": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5539": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5540": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5541": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5542": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5543": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5544": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5545": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5546": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5547": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5548": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5549": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5550": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5551": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5552": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5553": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5554": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5555": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5556": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5557": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5558": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5559": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5560": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5561": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5562": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5563": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5564": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5565": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5566": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5567": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5568": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5569": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5570": {
+    "en": "Ulthalam Parade",
+    "ja": "ウルタラム大通り",
+    "de": "Ulthalam Allee",
+    "fr": "Avenue d'Ulthalam",
+    "zh": "乌尔塔拉姆大道"
+  },
+  "5571": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5572": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5573": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5574": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5575": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5576": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5577": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5578": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5579": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5580": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5581": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5582": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5583": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5584": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5585": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5586": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5587": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5588": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5589": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5590": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5591": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5592": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5593": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5594": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5595": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5596": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5597": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5598": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5599": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5600": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5601": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5602": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5603": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5604": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5605": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5606": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5607": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5608": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5609": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5610": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5611": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5612": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5613": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5614": {
+    "en": "",
+    "ja": "",
+    "de": "",
+    "fr": ""
+  },
+  "5615": {
     "en": "",
     "ja": "",
     "de": "",
