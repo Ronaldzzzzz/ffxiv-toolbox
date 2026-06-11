@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { GatheringData, GatherType } from '../types';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
-import { getLocalizedText, GATHERING_ICONS, formatSeconds, UI_ICON_URLS } from '../utils';
+import { getLocalizedText, GATHERING_ICONS, formatSeconds, UI_ICON_URLS, getItemIconUrl } from '../utils';
 import { getTimedNodesGrouped, TimedNodeWithStatus } from '../selectors';
 import { AlarmButton, ITEM_ACTION_BUTTON_BASE_CLASS, ITEM_ACTION_ICON_CLASS } from './AlarmButton';
 import { useAlarm } from '../hooks/useAlarm';
@@ -153,7 +153,7 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
                             />
 
                         </div>
-                        <img src={data.icons[itemId] ? `https://xivapi.com${data.icons[itemId]}` : UI_ICON_URLS.defaultItem} className="w-10 h-10 object-contain rounded shrink-0 bg-slate-100 dark:bg-slate-700" />
+                        <img src={getItemIconUrl(itemId, data.icons)} className="w-10 h-10 object-contain rounded shrink-0 bg-slate-100 dark:bg-slate-700" />
                         <div className="flex-grow min-w-0">
                             <div className="mb-1 flex items-center gap-2 min-w-0" title={getLocalizedText(item, lang)}>
                                 <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200 truncate leading-tight min-w-0">

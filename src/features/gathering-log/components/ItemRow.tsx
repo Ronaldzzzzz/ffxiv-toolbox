@@ -1,6 +1,6 @@
 import React from 'react';
 import { GatheringItemEntry, GatheringData, NodeData } from '../types';
-import { getLocalizedText, calculateNodeStatus, formatSeconds, getNodeItemIds, UI_ICON_URLS, CRYSTAL_RELATED_ACHIEVEMENT_EXCLUDED_IDS } from '../utils';
+import { getLocalizedText, calculateNodeStatus, formatSeconds, getNodeItemIds, UI_ICON_URLS, CRYSTAL_RELATED_ACHIEVEMENT_EXCLUDED_IDS, getItemIconUrl } from '../utils';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
 import { AlarmButton, ITEM_ACTION_BUTTON_BASE_CLASS, ITEM_ACTION_ICON_CLASS } from './AlarmButton';
@@ -158,8 +158,7 @@ export const ItemRow: React.FC<ItemRowProps> = React.memo(({
   const isCustomDelivery = itemInfo?.isCustomDelivery === true;
   const isAetherialReduction = itemInfo?.isAetherialReduction === true;
   const showCollectibleIcon = isCollectible || isCustomDelivery;
-  const iconPath = data.icons[item.itemId];
-  const iconUrl = iconPath ? `https://xivapi.com${iconPath}` : UI_ICON_URLS.defaultItem;
+  const iconUrl = getItemIconUrl(item.itemId, data.icons);
 
   const itemNodes: NodeData[] = Object.values(data.nodes).filter(node =>
     getNodeItemIds(node).includes(item.itemId) && node.map !== 0

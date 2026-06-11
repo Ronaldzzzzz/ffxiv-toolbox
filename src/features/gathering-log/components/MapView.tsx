@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef, useLayoutEffect } from 're
 //import { useTool } from '../../../context/ToolContext';
 import { GatheringData, GatherType, NodeData } from '../types';
 import { useLanguage } from '../../../i18n/LanguageContext';
-import { getLocalizedText, TIMED_GATHERING_MAP_ICONS, GATHERING_MAP_ICONS, getMapPercentage, EXPANSION_MAP, calculateNodeStatus, formatSeconds, getNodeItemIds, UI_ICON_URLS } from '../utils';
+import { getLocalizedText, TIMED_GATHERING_MAP_ICONS, GATHERING_MAP_ICONS, getMapPercentage, EXPANSION_MAP, calculateNodeStatus, formatSeconds, getNodeItemIds, UI_ICON_URLS, getItemIconUrl } from '../utils';
 import { sortNodesForMapSidebar } from '../selectors';
 import { ChevronLeft } from 'lucide-react';
 import { AlarmButton, ITEM_ACTION_BUTTON_BASE_CLASS, ITEM_ACTION_ICON_CLASS } from './AlarmButton';
@@ -852,7 +852,7 @@ export const MapView: React.FC<MapViewProps> = ({
                                                         />
 
                                                         <LazyImage
-                                                            src={data.icons[itemId] ? `https://xivapi.com${data.icons[itemId]}` : UI_ICON_URLS.defaultItem}
+                                                            src={getItemIconUrl(itemId, data.icons)}
                                                             className="w-5 h-5 rounded-sm"
                                                             alt=""
                                                         />
