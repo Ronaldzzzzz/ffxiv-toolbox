@@ -6,6 +6,7 @@
  */
 
 export const XIVAPI_BASE = 'https://xivapi.com';
+export const XIVAPI_V2_BASE = 'https://v2.xivapi.com';
 
 // Profession tab icons (used in type selectors)
 export const GATHERING_ICONS = {
@@ -48,8 +49,11 @@ export const UI_ICON_URLS = {
  * Falls back to the generic item icon when no path is found.
  */
 export function getItemIconUrl(itemId: number, icons: Record<number, string>): string {
-  const path = icons[itemId];
-  return path ? `${XIVAPI_BASE}${path}` : UI_ICON_URLS.defaultItem;
+  const iconPath = icons[itemId];
+  if (!iconPath) return UI_ICON_URLS.defaultItem;
+  // Teamcraft switched to XIVAPI v2 paths (/api/asset?path=...) — use v2 base
+  const base = iconPath.startsWith('/api/asset?') ? XIVAPI_V2_BASE : XIVAPI_BASE;
+  return `${base}${iconPath}`;
 }
 
 /**
