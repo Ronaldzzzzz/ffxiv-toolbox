@@ -77,6 +77,13 @@ export const BookmarkItemCard: React.FC<BookmarkItemCardProps> = ({
 }) => {
     const { t: i18n } = useLanguage();
 
+    // Stable entry object so ItemRow's React.memo isn't defeated by a fresh
+    // object literal on every render
+    const itemRowEntry = React.useMemo(
+        () => ({ itemId: item.id, lvl: item.nodeInfo?.level || 0, ilvl: 0, stars: 0, hidden: item.hidden ? 1 : 0 }),
+        [item.id, item.nodeInfo?.level, item.hidden]
+    );
+
     const isDragging = activeDragItemId === item.id;
     const isDropTarget = dropBeforeItemId === item.id && dropContainerId === containerDisplayId;
 
@@ -159,7 +166,7 @@ export const BookmarkItemCard: React.FC<BookmarkItemCardProps> = ({
                 )}
 
                 <ItemRow
-                    item={{ itemId: item.id, lvl: item.nodeInfo?.level || 0, ilvl: 0, stars: 0, hidden: item.hidden ? 1 : 0 }}
+                    item={itemRowEntry}
                     data={data}
                     isCompleted={isCompleted}
                     isBookmarked={true}

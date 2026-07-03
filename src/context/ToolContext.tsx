@@ -74,6 +74,7 @@ export const ToolProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components -- provider + hook co-located by design; splitting is out of scope
 export const useTool = () => {
   const context = useContext(ToolContext);
   if (!context) throw new Error('useTool must be used within a ToolProvider');

@@ -69,6 +69,8 @@ export const EXPANSION_MAP: Record<number, string> = {
   4500: 'exp_7', 4501: 'exp_7', 4502: 'exp_7'
 };
 
+export const EXPANSION_ORDER = ['exp_2', 'exp_3', 'exp_4', 'exp_5', 'exp_6', 'exp_7'];
+
 export const EXPANSION_NAMES: Record<string, string> = {
   'exp_2': 'A Realm Reborn',
   'exp_3': 'Heavensward',
@@ -125,7 +127,7 @@ export function calculateNodeStatus(spawns: number[], durationMin: number = 60, 
   for (const spawnHour of spawns) {
     const spawnStartMs = spawnHour * 60 * 60 * 1000;
     const durationMs = durationMin * 60 * 1000;
-    let spawnEndMs = spawnStartMs + durationMs;
+    const spawnEndMs = spawnStartMs + durationMs;
 
     // Handle Active Windows (Check yesterday, today, tomorrow to handle wrapping)
     const windows = [

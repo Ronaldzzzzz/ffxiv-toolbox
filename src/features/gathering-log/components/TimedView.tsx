@@ -1,11 +1,15 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { GatheringData, GatherType } from '../types';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
-import { getLocalizedText, GATHERING_ICONS, formatSeconds, UI_ICON_URLS, getItemIconUrl } from '../utils';
+import { getLocalizedText, GATHERING_ICONS, formatSeconds, getItemIconUrl } from '../utils';
 import { getTimedNodesGrouped, TimedNodeWithStatus } from '../selectors';
 import { AlarmButton, ITEM_ACTION_BUTTON_BASE_CLASS, ITEM_ACTION_ICON_CLASS } from './AlarmButton';
 import { useAlarm } from '../hooks/useAlarm';
+import { useNowTick } from '../hooks/useNowTick';
+import { useTrackedItemSet } from '../hooks/useTrackedItemSet';
+import { CopyNameButton } from './shared/CopyNameButton';
+import { CollectibleIcon, ItemBadges } from './shared/ItemBadges';
 
 interface TimedViewProps {
     data: GatheringData;
@@ -18,51 +22,33 @@ interface TimedViewProps {
     showBookmarks: boolean;
 }
 
-const TimedItemCopyButton: React.FC<{ text: string; title?: string }> = ({ text, title = 'Copy Name' }) => {
-    const [copied, setCopied] = useState(false);
-
-    const handleCopy = async (e: React.MouseEvent) => {
-        e.stopPropagation();
-        try {
-            await navigator.clipboard.writeText(text);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 1500);
-        } catch (err) {
-            console.error('Failed to copy:', err);
-        }
-    };
-
-    return (
-        <button
-            onClick={handleCopy}
-            className={`${ITEM_ACTION_BUTTON_BASE_CLASS} ${copied ? 'text-green-500' : 'text-slate-300 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-300'}`}
-            title={copied ? 'Copied!' : title}
-        >
-            {copied ? (
-                <svg className={ITEM_ACTION_ICON_CLASS} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            ) : (
-                <svg className={ITEM_ACTION_ICON_CLASS} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-            )}
-        </button>
-    );
-};
-
 export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, completedItems, bookmarkedItems, toggleBookmark, toggleComplete, hideCompleted, showBookmarks }) => {
     const { lang, t: i18n } = useLanguage();
     const { setMapModal } = useTool();
     const { trackedItems, toggleTrackedItem } = useAlarm();
-    const [now, setNow] = useState(Date.now());
-    const trackedItemSet = useMemo(() => new Set(trackedItems), [trackedItems]);
+    // Current time every 200ms for smooth countdown display
+    const now = useNowTick(200);
+    const trackedItemSet = useTrackedItemSet(trackedItems);
 
-    // Update current time every 200ms for smooth countdown display
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setNow(Date.now());
-        }, 200);
-        return () => clearInterval(interval);
-    }, []);
+    // Regroup once per second instead of on every 200ms tick; the 200ms `now`
+    // still drives the smooth countdown/progress rendering below.
+    const nowSecond = Math.floor(now / 1000);
+    const { activeNodes, soonNodes, laterNodes } = useMemo(
+        () => getTimedNodesGrouped(data, currentType),
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- nowSecond intentionally triggers a per-second regroup
+        [data, currentType, nowSecond]
+    );
 
-    const { activeNodes, soonNodes, laterNodes } = getTimedNodesGrouped(data, currentType);
+    const isCardVisible = (node: TimedNodeWithStatus) => {
+        const itemId = node.items[0];
+        if (hideCompleted && completedItems.has(itemId)) return false;
+        if (showBookmarks && !bookmarkedItems.has(itemId)) return false;
+        return true;
+    };
+    const hasVisibleCards =
+        activeNodes.some(isCardVisible) ||
+        soonNodes.some(isCardVisible) ||
+        laterNodes.some(isCardVisible);
 
     const renderNodeCard = (node: TimedNodeWithStatus) => {
         const itemId = node.items[0];
@@ -82,7 +68,6 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
         // Determine Job Info
         const jobKey = (['mining', 'quarrying', 'logging', 'harvesting'][node.type] || 'mining') as GatherType;
         const jobIcon = GATHERING_ICONS[jobKey];
-        // @ts-ignore
         const jobName = i18n.pages.gathering_log[jobKey];
 
         // Determine Folklore / Group Name
@@ -159,37 +144,15 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
                                 <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200 truncate leading-tight min-w-0">
                                     {getLocalizedText(item, lang)}
                                 </h4>
-                                {showCollectibleIcon && (
-                                    <img
-                                        src={UI_ICON_URLS.collectible}
-                                        className="w-4 h-4 shrink-0"
-                                        alt="Collectible"
-                                        title={i18n.pages.gathering_log.collectible_tag}
-                                    />
-                                )}
-                                {isCustomDelivery && (
-                                    <span className="inline-flex items-center gap-1 text-[10px] px-1 rounded border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20 w-fit shrink-0">
-                                        <img
-                                            src={UI_ICON_URLS.customDelivery}
-                                            className="w-3 h-3"
-                                            alt="Custom Delivery"
-                                            title={i18n.pages.gathering_log.custom_delivery_tag}
-                                        />
-                                        {i18n.pages.gathering_log.custom_delivery_tag}
-                                    </span>
-                                )}
-                                {isAetherialReduction && (
-                                    <span className="text-[10px] px-1 rounded border border-teal-300 dark:border-teal-700 text-teal-600 dark:text-teal-300 bg-teal-50 dark:bg-teal-900/20 w-fit shrink-0">
-                                        {i18n.pages.gathering_log.aetherial_reduction_tag}
-                                    </span>
-                                )}
-                                {isHidden && (
-                                    <span className="inline-flex items-center text-[10px] px-1 rounded border border-red-300 dark:border-red-700 text-red-500 dark:text-red-300 bg-red-50 dark:bg-red-900/20 w-fit shrink-0">
-                                        {i18n.pages.gathering_log.hidden_tag}
-                                    </span>
-                                )}
+                                {showCollectibleIcon && <CollectibleIcon />}
+                                <ItemBadges
+                                    isCustomDelivery={isCustomDelivery}
+                                    isAetherialReduction={isAetherialReduction}
+                                    isHidden={isHidden}
+                                    badgeClassName="shrink-0"
+                                />
                                 <div className="flex items-center gap-1 shrink-0 ml-auto pl-1">
-                                    <TimedItemCopyButton text={getLocalizedText(item, lang)} />
+                                    <CopyNameButton text={getLocalizedText(item, lang)} />
                                     <button
                                         onClick={(e) => { e.stopPropagation(); toggleBookmark(itemId); }}
                                         className={`${ITEM_ACTION_BUTTON_BASE_CLASS} ${isBookmarked ? 'text-yellow-500' : 'text-slate-300 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-300'}`}
@@ -300,26 +263,9 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
             )}
 
 
-            {activeNodes.filter(n => {
-                const itemId = n.items[0];
-                if (hideCompleted && completedItems.has(itemId)) return false;
-                if (showBookmarks && !bookmarkedItems.has(itemId)) return false;
-                return true;
-            }).length === 0 &&
-                soonNodes.filter(n => {
-                    const itemId = n.items[0];
-                    if (hideCompleted && completedItems.has(itemId)) return false;
-                    if (showBookmarks && !bookmarkedItems.has(itemId)) return false;
-                    return true;
-                }).length === 0 &&
-                laterNodes.filter(n => {
-                    const itemId = n.items[0];
-                    if (hideCompleted && completedItems.has(itemId)) return false;
-                    if (showBookmarks && !bookmarkedItems.has(itemId)) return false;
-                    return true;
-                }).length === 0 && (
-                    <div className="text-center p-10 text-slate-500">{i18n.pages.gathering_log.no_timed_nodes}</div>
-                )}
+            {!hasVisibleCards && (
+                <div className="text-center p-10 text-slate-500">{i18n.pages.gathering_log.no_timed_nodes}</div>
+            )}
         </div>
     );
 };

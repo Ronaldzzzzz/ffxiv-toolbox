@@ -5,6 +5,7 @@ import { useLanguage } from '../../../i18n/LanguageContext';
 import { GroupHeader } from './GroupHeader';
 import { BookmarkItemCard, ItemInfo } from './BookmarkItemCard';
 import { useBookmarkDragAndDrop } from '../hooks/useBookmarkDragAndDrop';
+import { useTrackedItemSet } from '../hooks/useTrackedItemSet';
 
 interface BookmarkViewProps {
   data: GatheringData;
@@ -119,7 +120,7 @@ export const BookmarkView: React.FC<BookmarkViewProps> = ({
   const timedUngroupedItems = useMemo(() => ungroupedDisplayItems.filter(item => item.isTimed), [ungroupedDisplayItems]);
   const regularUngroupedItems = useMemo(() => ungroupedDisplayItems.filter(item => !item.isTimed), [ungroupedDisplayItems]);
 
-  const trackedItemSet = useMemo(() => new Set(trackedItems), [trackedItems]);
+  const trackedItemSet = useTrackedItemSet(trackedItems);
 
   const nextDefaultGroupName = useMemo(() => {
     let nextIndex = 1;
@@ -135,9 +136,9 @@ export const BookmarkView: React.FC<BookmarkViewProps> = ({
     regularUngroupedItems.length > 0;
 
   // ---------------------------------------------------------------------------
-  // Shared BookmarkItemCard props builder
+  // Shared BookmarkItemCard props builder (memoized so card props stay stable)
   // ---------------------------------------------------------------------------
-  const sharedCardProps = {
+  const sharedCardProps = useMemo(() => ({
     activeDragItemId: dnd.dragItemId,
     dropContainerId: dnd.dropContainerId,
     dropBeforeItemId: dnd.dropBeforeItemId,
@@ -155,7 +156,22 @@ export const BookmarkView: React.FC<BookmarkViewProps> = ({
     toggleComplete,
     toggleBookmark,
     toggleAlarm: toggleTrackedItem || (() => {}),
-  };
+  }), [
+    dnd.dragItemId,
+    dnd.dropContainerId,
+    dnd.dropBeforeItemId,
+    dnd.setDragItemId,
+    dnd.setDropContainerId,
+    dnd.setDropBeforeItemId,
+    dnd.clearDragState,
+    dnd.maybeAutoScrollOnDrag,
+    moveBookmarkedItem,
+    bookmarkGroups,
+    data,
+    toggleComplete,
+    toggleBookmark,
+    toggleTrackedItem,
+  ]);
 
   // ---------------------------------------------------------------------------
   // Group section renderer (real groups only)

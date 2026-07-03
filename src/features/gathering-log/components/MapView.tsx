@@ -1,13 +1,17 @@
-import React, { useState, useMemo, useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 //import { useTool } from '../../../context/ToolContext';
-import { GatheringData, GatherType, NodeData } from '../types';
+import { GatheringData, NodeData } from '../types';
 import { useLanguage } from '../../../i18n/LanguageContext';
-import { getLocalizedText, TIMED_GATHERING_MAP_ICONS, GATHERING_MAP_ICONS, getMapPercentage, EXPANSION_MAP, calculateNodeStatus, formatSeconds, getNodeItemIds, UI_ICON_URLS, getItemIconUrl } from '../utils';
+import { getLocalizedText, getMapPercentage, EXPANSION_MAP, EXPANSION_ORDER, getNodeItemIds, UI_ICON_URLS } from '../utils';
 import { sortNodesForMapSidebar } from '../selectors';
 import { ChevronLeft } from 'lucide-react';
-import { AlarmButton, ITEM_ACTION_BUTTON_BASE_CLASS, ITEM_ACTION_ICON_CLASS } from './AlarmButton';
-import { LazyImage } from './LazyImage';
 import { useAlarm } from '../hooks/useAlarm';
+import { useNowTick } from '../hooks/useNowTick';
+import { useTrackedItemSet } from '../hooks/useTrackedItemSet';
+import { MapNodeMarker } from './map/MapNodeMarker';
+import { MapSelectorSidebar } from './map/MapSelectorSidebar';
+import { MapSidebarNodeCard } from './map/MapSidebarNodeCard';
+import { useNodeConnectionLine } from './map/useNodeConnectionLine';
 
 interface MapViewProps {
     data: GatheringData;
@@ -18,86 +22,6 @@ interface MapViewProps {
     hideCompleted: boolean;
     showBookmarks: boolean;
 }
-
-const MapItemCopyButton: React.FC<{ text: string; title?: string }> = ({ text, title = 'Copy Name' }) => {
-    const [copied, setCopied] = useState(false);
-
-    const handleCopy = async (e: React.MouseEvent) => {
-        e.stopPropagation();
-        try {
-            await navigator.clipboard.writeText(text);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 1500);
-        } catch (err) {
-            console.error('Failed to copy:', err);
-        }
-    };
-
-    return (
-        <button
-            onClick={handleCopy}
-            className={`${ITEM_ACTION_BUTTON_BASE_CLASS} ${copied ? 'text-green-500' : 'text-slate-300 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-300'}`}
-            title={copied ? 'Copied!' : title}
-        >
-            {copied ? (
-                <svg className={ITEM_ACTION_ICON_CLASS} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            ) : (
-                <svg className={ITEM_ACTION_ICON_CLASS} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-            )}
-        </button>
-    );
-};
-
-const MapItemNameMarquee: React.FC<{ text: string; children?: React.ReactNode }> = ({ text, children }) => {
-    const clipRef = useRef<HTMLDivElement | null>(null);
-    const textRef = useRef<HTMLSpanElement | null>(null);
-    const [shiftPx, setShiftPx] = useState(0);
-
-    useLayoutEffect(() => {
-        const updateOverflow = () => {
-            const clip = clipRef.current;
-            const label = textRef.current;
-            if (!clip || !label) {
-                setShiftPx(0);
-                return;
-            }
-
-            const overflow = Math.max(0, label.scrollWidth - clip.clientWidth);
-            setShiftPx(overflow);
-        };
-
-        updateOverflow();
-
-        let observer: ResizeObserver | null = null;
-        if (typeof ResizeObserver !== 'undefined') {
-            observer = new ResizeObserver(updateOverflow);
-            if (clipRef.current) observer.observe(clipRef.current);
-            if (textRef.current) observer.observe(textRef.current);
-        }
-
-        window.addEventListener('resize', updateOverflow);
-
-        return () => {
-            if (observer) observer.disconnect();
-            window.removeEventListener('resize', updateOverflow);
-        };
-    }, [text]);
-
-    const shouldMarquee = shiftPx > 2;
-
-    return (
-        <div ref={clipRef} className="map-item-name-marquee-clip flex-1 min-w-0" title={text}>
-            <span
-                ref={textRef}
-                className={`inline-flex items-center gap-1 whitespace-nowrap ${shouldMarquee ? 'map-item-name-marquee map-item-name-marquee--active' : ''}`}
-                style={shouldMarquee ? ({ ['--marquee-shift' as string]: `${shiftPx + 12}px` } as React.CSSProperties) : undefined}
-            >
-                <span>{text}</span>
-                {children}
-            </span>
-        </div>
-    );
-};
 
 export const MapView: React.FC<MapViewProps> = ({
     data,
@@ -112,16 +36,19 @@ export const MapView: React.FC<MapViewProps> = ({
     const { trackedItems, toggleTrackedItem } = useAlarm();
     // const { setMapModal } = useTool(); // Disabled as per user request
     const [selectedMapId, setSelectedMapId] = useState<number | null>(null);
-    const [now, setNow] = useState(Date.now());
+    // Current time every second for timers
+    const now = useNowTick(1000);
     const [hoveredNodeId, setHoveredNodeId] = useState<number | string | null>(null);
     const [lockedNodeId, setLockedNodeId] = useState<number | string | null>(null);
-    const [lineCoords, setLineCoords] = useState<{ x1: number, y1: number, x2: number, y2: number } | null>(null);
     const activeNodeId = lockedNodeId ?? hoveredNodeId;
-    const trackedItemSet = useMemo(() => new Set(trackedItems), [trackedItems]);
+    const trackedItemSet = useTrackedItemSet(trackedItems);
 
     const containerRef = useRef<HTMLDivElement>(null);
     const markerRefs = useRef<Record<string | number, HTMLDivElement | null>>({});
     const sidebarRefs = useRef<Record<string | number, HTMLDivElement | null>>({});
+
+    // Dashed connection line between the active marker and its sidebar card
+    const { lineCoords, clearLineCoords } = useNodeConnectionLine(activeNodeId, containerRef, markerRefs, sidebarRefs);
 
     const mapItemWhitelist = useMemo(() => {
         const whitelist = new Set<number>();
@@ -173,62 +100,8 @@ export const MapView: React.FC<MapViewProps> = ({
     const clearNodeLock = () => {
         setLockedNodeId(null);
         setHoveredNodeId(null);
-        setLineCoords(null);
+        clearLineCoords();
     };
-
-    // Update current time every second for timers
-    useEffect(() => {
-        const interval = setInterval(() => setNow(Date.now()), 1000);
-        return () => clearInterval(interval);
-    }, []);
-
-    // Update Line Coordinates and Scroll logic
-    useEffect(() => {
-        if (activeNodeId === null) {
-            setLineCoords(null);
-            return;
-        }
-
-        const sidebarItem = sidebarRefs.current[activeNodeId];
-        if (sidebarItem && window.innerWidth >= 1024) {
-            // Scroll the active node into view (Desktop only)
-            sidebarItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-        }
-
-        // Use requestAnimationFrame to update line position smoothly during potential scrolling
-        let animationFrameId: number;
-
-        const updatePosition = () => {
-            const marker = markerRefs.current[activeNodeId];
-            const sidebarRef = sidebarRefs.current[activeNodeId];
-            const container = containerRef.current;
-
-            if (marker && sidebarRef && container) {
-                const markerRect = marker.getBoundingClientRect();
-                const sidebarRect = sidebarRef.getBoundingClientRect();
-                const containerRect = container.getBoundingClientRect();
-
-                // Calculate relative coordinates
-                // Start: Center of marker
-                const x1 = markerRect.left + markerRect.width / 2 - containerRect.left;
-                const y1 = markerRect.top + markerRect.height / 2 - containerRect.top;
-
-                // End: Left-Center of sidebar item
-                const x2 = sidebarRect.left - containerRect.left;
-                const y2 = sidebarRect.top + sidebarRect.height / 2 - containerRect.top;
-
-                setLineCoords({ x1, y1, x2, y2 });
-            } else {
-                setLineCoords(null);
-            }
-
-            animationFrameId = requestAnimationFrame(updatePosition);
-        };
-
-        updatePosition();
-
-        return () => cancelAnimationFrame(animationFrameId);
-    }, [activeNodeId]);
 
     // Group nodes by Map ID
     const nodesByMap = useMemo(() => {
@@ -293,9 +166,8 @@ export const MapView: React.FC<MapViewProps> = ({
                 placeId
             };
         }).filter(m => data.maps[m.id]).sort((a, b) => {
-            const expOrder = ['exp_2', 'exp_3', 'exp_4', 'exp_5', 'exp_6', 'exp_7'];
-            const expA = expOrder.indexOf(a.expansion);
-            const expB = expOrder.indexOf(b.expansion);
+            const expA = EXPANSION_ORDER.indexOf(a.expansion);
+            const expB = EXPANSION_ORDER.indexOf(b.expansion);
             if (expA !== expB) return expA - expB;
             if (a.regionId !== b.regionId) return a.regionId - b.regionId;
             return a.placeId - b.placeId;
@@ -388,7 +260,8 @@ export const MapView: React.FC<MapViewProps> = ({
     useEffect(() => {
         setHoveredNodeId(null);
         setLockedNodeId(null);
-        setLineCoords(null);
+        clearLineCoords();
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- reset only when map selection changes
     }, [selectedMapId, isMapSelectorOpen]);
 
     // Ref to scroll map selector to top when opened
@@ -428,89 +301,20 @@ export const MapView: React.FC<MapViewProps> = ({
             </svg>
 
             {/* Map Selection Sidebar */}
-            <div
-                ref={mapSelectorRef}
-                className={`w-full lg:w-72 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex-col overflow-hidden shrink-0 ${!isMapSelectorOpen ? 'hidden lg:flex' : 'flex'}`}
-            >
-                <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
-                    <h3 className="font-bold text-slate-700 dark:text-slate-200">{i18n.pages.gathering_log.all_regions}</h3>
-                    <div className="text-xs text-slate-500 mt-1">{i18n.pages.gathering_log.maps_available.replace('{count}', String(availableMaps.length))}</div>
-                </div>
-
-                <div className="overflow-y-auto flex-grow thin-scrollbar p-2 overscroll-contain">
-                    {/* Group Maps by Expansion and Region for Rendering */}
-                    {(() => {
-                        const groupedMaps: Record<string, Record<number, typeof availableMaps>> = {};
-                        const expOrder = ['exp_2', 'exp_3', 'exp_4', 'exp_5', 'exp_6', 'exp_7'];
-                        const EXPANSION_COLORS: Record<string, string> = {
-                            'exp_2': '#666666',
-                            'exp_3': '#4C7EE8',
-                            'exp_4': '#A22A3E',
-                            'exp_5': '#2E1D4A',
-                            'exp_6': '#3D4E99',
-                            'exp_7': '#9B853F',
-                        };
-
-                        availableMaps.forEach(map => {
-                            const exp = map.expansion;
-                            const rid = map.regionId;
-                            if (!groupedMaps[exp]) groupedMaps[exp] = {};
-                            if (!groupedMaps[exp][rid]) groupedMaps[exp][rid] = [];
-                            groupedMaps[exp][rid].push(map);
-                        });
-
-                        return expOrder.filter(exp => groupedMaps[exp]).map(expKey => (
-                            <div key={expKey} className="mb-2">
-                                {/* Expansion Header */}
-                                <div
-                                    className="w-full text-left text-xs font-extrabold mt-2 mb-1 px-3 py-1.5 rounded shadow-sm text-white flex items-center justify-between"
-                                    style={{ backgroundColor: EXPANSION_COLORS[expKey] }}
-                                >
-                                    <span>{i18n.common.expansions[expKey as keyof typeof i18n.common.expansions]}</span>
-                                </div>
-
-                                {/* Regions */}
-                                {Object.entries(groupedMaps[expKey]).map(([rid, maps]) => (
-                                    <div key={rid} className="mb-2 pl-1">
-                                        <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mt-1 mb-1 px-2">
-                                            {getLocalizedText(data.places[Number(rid)], lang)}
-                                        </div>
-
-                                        {/* Maps */}
-                                        {maps.map(map => (
-                                            <button
-                                                key={map.id}
-                                                onClick={() => {
-                                                    setSelectedMapId(map.id);
-                                                    setIsMapSelectorOpen(false); // Close on mobile selection
-                                                    if (window.innerWidth < 1024) {
-                                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                                    }
-                                                }}
-                                                className={`w-full text-left px-3 py-2 rounded-lg mb-0.5 transition-all flex items-center justify-between group ${selectedMapId === map.id
-                                                    ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-700 font-bold'
-                                                    : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400'
-                                                    }`}
-                                            >
-                                                <div className="flex items-center gap-2 truncate">
-                                                    <span className={`w-1.5 h-1.5 rounded-full ${selectedMapId === map.id ? 'bg-blue-500' : 'bg-slate-300 dark:bg-slate-600'}`}></span>
-                                                    <span className="text-xs truncate">{map.name}</span>
-                                                </div>
-                                                <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded-full ${selectedMapId === map.id
-                                                    ? 'bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200'
-                                                    : 'bg-slate-200 dark:bg-slate-700 text-slate-500'
-                                                    }`}>
-                                                    {map.nodeCount}
-                                                </span>
-                                            </button>
-                                        ))}
-                                    </div>
-                                ))}
-                            </div>
-                        ));
-                    })()}
-                </div>
-            </div>
+            <MapSelectorSidebar
+                availableMaps={availableMaps}
+                selectedMapId={selectedMapId}
+                isOpen={isMapSelectorOpen}
+                data={data}
+                sidebarRef={mapSelectorRef}
+                onSelectMap={(mapId) => {
+                    setSelectedMapId(mapId);
+                    setIsMapSelectorOpen(false); // Close on mobile selection
+                    if (window.innerWidth < 1024) {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                }}
+            />
 
             {/* Map Display & Node List */}
             <div className={`flex-grow bg-slate-100 dark:bg-slate-900 rounded-xl shadow-inner border border-slate-200 dark:border-slate-700 overflow-hidden relative flex flex-col ${isMapSelectorOpen ? 'hidden lg:flex' : 'flex'}`}>
@@ -590,101 +394,23 @@ export const MapView: React.FC<MapViewProps> = ({
                                     >
                                         {cluster.nodes.map((item) => {
                                             const node = item.node;
-                                            const isStacked = cluster.nodes.length > 1;
-
-                                            let iconKey: GatherType = 'mining';
-                                            if (node.type === 0) iconKey = 'mining';
-                                            else if (node.type === 1) iconKey = 'quarrying';
-                                            else if (node.type === 2) iconKey = 'logging';
-                                            else if (node.type === 3) iconKey = 'harvesting';
-
-                                            const isTimed = node.spawns && node.spawns.length > 0;
-                                            const iconSet = isTimed ? TIMED_GATHERING_MAP_ICONS : GATHERING_MAP_ICONS;
-                                            const iconUrl = iconSet[iconKey] || iconSet.mining;
-                                            const validItems = mapNodeItems[String(node.id)] || [];
-                                            const isAllCompleted = validItems.every(id => completedItems.has(id));
-                                            // Mobile Tap to Hover
-                                            const isActive = activeNodeId === node.id;
-                                            const isLocked = lockedNodeId === node.id;
-                                            // Use onClick for mobile to simulate hover/select?
-                                            // For now sticking to mouseEnter/Leave but on mobile tap might need better handling if hover doesn't work well.
-                                            // React's mouseEnter/Leave often works on tap for first tap.
-
-                                            // Pulse color
-                                            const pulseColor = 'bg-blue-400';
-
                                             return (
-                                                <div
+                                                <MapNodeMarker
                                                     key={node.id}
-                                                    ref={el => { markerRefs.current[node.id] = el; }}
-                                                    onMouseEnter={() => handleNodeHoverStart(node.id)}
-                                                    onMouseLeave={handleNodeHoverEnd}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleNodeLockToggle(node.id);
-                                                    }}
-                                                    className={`
-                                                    absolute flex items-center justify-center 
-                                                    w-6 h-6 -ml-3 -mt-3
-                                                    md:w-8 md:h-8 md:-ml-4 md:-mt-4 
-                                                    cursor-pointer transition-all duration-300 ease-out
-                                                    ${isAllCompleted ? 'grayscale opacity-60' : ''}
-                                                    ${isActive ? 'z-50 scale-125' : (isStacked ? 'z-10' : 'z-20')}
-                                                `}
-                                                    style={{
-                                                        transform: isStacked ? undefined : 'none',
-                                                    }}
-                                                >
-                                                    {/* Wrapper for hover transform - only if stacked */}
-                                                    <div
-                                                        className={`w-full h-full flex items-center justify-center transition-transform duration-300 ease-out ${isStacked ? 'group-hover/cluster:translate-x-[var(--tx)] group-hover/cluster:translate-y-[var(--ty)]' : ''}`}
-                                                        style={isStacked ? { '--tx': `${item.offsetX}px`, '--ty': `${item.offsetY}px` } as any : {}}
-                                                    >
-                                                        {/* Background Circle */}
-                                                        <div className={`absolute inset-0 rounded-full shadow-sm transform scale-125 ${isLocked ? 'bg-blue-200 ring-2 ring-blue-400 dark:bg-blue-900/60 dark:ring-blue-300' : 'bg-blue-100'} ${isAllCompleted ? 'opacity-30' : 'opacity-60'}`}></div>
-
-                                                        {/* Pulse */}
-                                                        {!isAllCompleted && (
-                                                            <>
-                                                                <div className={`absolute inset-0 rounded-full opacity-60 animate-ping ${pulseColor}`}></div>
-                                                                <div className={`absolute inset-1 rounded-full opacity-40 animate-pulse ${pulseColor} blur-[2px]`}></div>
-                                                            </>
-                                                        )}
-
-                                                        <img
-                                                            src={iconUrl}
-                                                            className="relative z-10 w-full h-full object-contain drop-shadow hover:scale-110"
-                                                            alt=""
-                                                        />
-
-                                                        {/* Tooltip */}
-                                                        <div className={`
-                                                        absolute left-1/2 bottom-full mb-2 -translate-x-1/2 bg-slate-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap 
-                                                        pointer-events-none shadow-lg z-50
-                                                        opacity-0 transition-opacity
-                                                        ${isActive ? 'opacity-100' : 'opacity-0'}
-                                                    `}>
-                                                            <div className="font-bold mb-0.5">{i18n.pages.gathering_log.level_short}{node.level}</div>
-                                                            {validItems.map(itemId => (
-                                                                <div key={itemId} className="flex items-center gap-1 opacity-80">
-                                                                    <span className={completedItems.has(itemId) ? 'text-green-400' : ''}>
-                                                                        {getLocalizedText(data.items[itemId], lang)}
-                                                                    </span>
-                                                                    {(data.items[itemId]?.isCollectible || data.items[itemId]?.isCustomDelivery) && (
-                                                                        <img
-                                                                            src={UI_ICON_URLS.collectible}
-                                                                            className="w-3.5 h-3.5 flex-shrink-0"
-                                                                            alt="Collectible"
-                                                                            title={i18n.pages.gathering_log.collectible_tag}
-                                                                        />
-                                                                    )}
-                                                                </div>
-                                                            ))}
-                                                            <div className="mt-1 text-[10px] text-slate-400 font-mono">X:{node.x}, Y:{node.y}</div>
-                                                            <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                    node={node}
+                                                    offsetX={item.offsetX}
+                                                    offsetY={item.offsetY}
+                                                    isStacked={cluster.nodes.length > 1}
+                                                    validItems={mapNodeItems[String(node.id)] || []}
+                                                    data={data}
+                                                    completedItems={completedItems}
+                                                    isActive={activeNodeId === node.id}
+                                                    isLocked={lockedNodeId === node.id}
+                                                    onHoverStart={() => handleNodeHoverStart(node.id)}
+                                                    onHoverEnd={handleNodeHoverEnd}
+                                                    onLockToggle={() => handleNodeLockToggle(node.id)}
+                                                    markerRef={el => { markerRefs.current[node.id] = el; }}
+                                                />
                                             );
                                         })}
                                     </div>
@@ -732,195 +458,27 @@ export const MapView: React.FC<MapViewProps> = ({
                             }
                             if (validNodeItems.length === 0) return null;
 
-                            // Determine Icon type for the node header
-                            let iconKey: GatherType = 'mining';
-                            if (node.type === 0) iconKey = 'mining';
-                            else if (node.type === 1) iconKey = 'quarrying';
-                            else if (node.type === 2) iconKey = 'logging';
-                            else if (node.type === 3) iconKey = 'harvesting';
-
-                            const jobName = i18n.pages.gathering_log[iconKey]; // Should be safe with ts-ignore or type assertion if needed
-
-                            const isAllCompleted = validNodeItems.every(id => completedItems.has(id));
-
-                            const isActive = activeNodeId === node.id;
-                            const isLocked = lockedNodeId === node.id;
-                            const isTimed = node.spawns && node.spawns.length > 0;
-                            const iconSet = isTimed ? TIMED_GATHERING_MAP_ICONS : GATHERING_MAP_ICONS;
-
                             return (
-                                <div
+                                <MapSidebarNodeCard
                                     key={nodeIdx}
-                                    ref={el => { sidebarRefs.current[node.id] = el; }}
-                                    onMouseEnter={() => handleNodeHoverStart(node.id)}
-                                    onMouseLeave={handleNodeHoverEnd}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleNodeLockToggle(node.id);
-                                    }}
-                                    className={`rounded-lg p-2 border transition-all duration-200 cursor-pointer ${isActive
-                                        ? 'bg-blue-50 border-blue-300 shadow-md ring-1 dark:bg-blue-900/30 dark:border-blue-500 dark:ring-blue-500'
-                                        : 'bg-slate-50 border-slate-100 dark:bg-slate-700/30 dark:border-slate-700/50'
-                                        } ${isLocked ? 'ring-blue-400 dark:ring-blue-300' : (isActive ? 'ring-blue-200' : '')} ${isAllCompleted ? 'grayscale opacity-60' : ''}`}
-                                >
-                                    <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-200 dark:border-slate-600">
-                                        <img src={iconSet[iconKey]} className="w-4 h-4 object-contain" alt="" />
-                                        <span className="text-xs font-bold text-slate-600 dark:text-slate-300">Lv.{node.level} {jobName}</span>
-                                        <span className="ml-auto text-[10px] font-mono text-slate-400 bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-600">
-                                            X:{node.x}, Y:{node.y}
-                                        </span>
-                                    </div>
-                                    <div className="space-y-1">
-                                        {validNodeItems.map(itemId => {
-                                            const item = data.items[itemId];
-                                            if (!item) return null;
-                                            const itemName = getLocalizedText(item, lang);
-
-                                            const isBookmarked = bookmarkedItems.has(itemId);
-                                            if (showBookmarks && !isBookmarked) return null;
-
-                                            const isCompleted = completedItems.has(itemId);
-                                            const collectibleType = item.collectibleType;
-                                            const isCollectible = Boolean(item.isCollectible);
-                                            const isCustomDelivery = item.isCustomDelivery === true;
-                                            const isAetherialReduction = item.isAetherialReduction === true;
-                                            const showCollectibleIcon = isCollectible || isCustomDelivery;
-                                            const isCollectionOnly = collectibleType === 'collection-only';
-                                            const isHidden = (node.hiddenItems || []).includes(itemId);
-
-                                            // Timer Logic (ONLY for items in a timed node)
-                                            let timerElement = null;
-                                            if (node.spawns && node.spawns.length > 0) {
-                                                const status = calculateNodeStatus(node.spawns, node.duration || 60);
-
-                                                const isActive = status.status === 'active';
-                                                const isSoon = status.status === 'soon';
-                                                const isLater = status.status === 'later';
-
-                                                if (isActive || isSoon || isLater) {
-                                                    const remainingMs = status.endRealTimestamp - now;
-                                                    const seconds = Math.max(0, Math.ceil(remainingMs / 1000));
-                                                    const timeLabel = formatSeconds(seconds);
-
-                                                    // Progress Bar Calculation
-                                                    let progressPercent = 0;
-                                                    if (isActive && status.durationRealMs > 0) {
-                                                        progressPercent = Math.max(0, (1 - (now - status.startRealTimestamp) / status.durationRealMs)) * 100;
-                                                    }
-
-                                                    let barColor = 'bg-slate-300 dark:bg-slate-600';
-                                                    let textColor = 'text-slate-500 dark:text-slate-400';
-
-                                                    if (isActive) {
-                                                        barColor = 'bg-green-500';
-                                                        textColor = 'text-green-600 dark:text-green-400';
-                                                    } else if (isSoon) {
-                                                        barColor = 'bg-amber-500';
-                                                        textColor = 'text-amber-600 dark:text-amber-400';
-                                                    }
-
-                                                    const label = isActive ? `${i18n.pages.gathering_log.active} ${timeLabel}` : `${i18n.pages.gathering_log.wait} ${formatSeconds(status.secondsUntil)}`;
-
-                                                    timerElement = (
-                                                        <div className="mt-1 w-full">
-                                                            <div className={`text-[10px] font-mono font-bold flex justify-between ${textColor}`}>
-                                                                <span>{label}</span>
-                                                                {isActive && <span>{Math.round(progressPercent)}%</span>}
-                                                            </div>
-                                                            {isActive && (
-                                                                <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-600 rounded-full overflow-hidden mt-0.5">
-                                                                    <div
-                                                                        className={`h-full ${barColor} transition-all duration-1000 ease-linear rounded-full`}
-                                                                        style={{ width: `${progressPercent}%` }}
-                                                                    />
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    );
-                                                }
-                                            }
-
-                                            return (
-                                                <div key={itemId} className="flex flex-col gap-1 group/item">
-                                                    <div className="flex items-center gap-2">
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={isCompleted}
-                                                            onClick={(e) => e.stopPropagation()}
-                                                            onChange={() => toggleComplete(itemId)}
-                                                            className="custom-checkbox w-3.5 h-3.5 rounded-sm text-blue-500 border-slate-300 focus:ring-offset-0 focus:ring-0 cursor-pointer"
-                                                        />
-
-                                                        <LazyImage
-                                                            src={getItemIconUrl(itemId, data.icons)}
-                                                            className="w-5 h-5 rounded-sm"
-                                                            alt=""
-                                                        />
-                                                        <div className={`text-xs transition-colors flex-1 min-w-0 ${isCompleted ? 'text-slate-400' : isCollectionOnly ? 'text-slate-500 dark:text-slate-400 italic' : 'text-slate-700 dark:text-slate-200 group-hover/item:text-blue-500'}`}>
-                                                            <div className="flex items-stretch gap-2 min-w-0">
-                                                                <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-                                                                    <div className={`${isCompleted ? 'line-through decoration-slate-400/50' : ''}`}>
-                                                                        <MapItemNameMarquee text={itemName}>
-                                                                            {showCollectibleIcon && <img src={UI_ICON_URLS.collectible} className="w-4 h-4 flex-shrink-0" alt="Collectible" title={i18n.pages.gathering_log.collectible_tag} />}
-                                                                        </MapItemNameMarquee>
-                                                                    </div>
-
-                                                                    {(isCustomDelivery || isAetherialReduction || isCollectionOnly || isHidden) && (
-                                                                        <div className="flex flex-wrap items-center gap-1">
-                                                                            {isCustomDelivery && (
-                                                                                <span className="inline-flex items-center gap-1 text-[10px] px-1 rounded border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20 w-fit not-italic">
-                                                                                    <img src={UI_ICON_URLS.customDelivery} className="w-3 h-3" alt="Custom Delivery" title={i18n.pages.gathering_log.custom_delivery_tag} />
-                                                                                    {i18n.pages.gathering_log.custom_delivery_tag}
-                                                                                </span>
-                                                                            )}
-                                                                            {isAetherialReduction && (
-                                                                                <span className="text-[10px] px-1 rounded border border-teal-300 dark:border-teal-700 text-teal-600 dark:text-teal-300 bg-teal-50 dark:bg-teal-900/20 w-fit not-italic">
-                                                                                    {i18n.pages.gathering_log.aetherial_reduction_tag}
-                                                                                </span>
-                                                                            )}
-                                                                            {isCollectionOnly && (
-                                                                                <span className="text-[10px] px-1 rounded border border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 w-fit not-italic">
-                                                                                    {i18n.pages.gathering_log.collection_only_tag}
-                                                                                </span>
-                                                                            )}
-                                                                            {isHidden && (
-                                                                                <span className="text-[10px] px-1 rounded border border-red-300 dark:border-red-700 text-red-500 dark:text-red-300 bg-red-50 dark:bg-red-900/20 w-fit not-italic">
-                                                                                    {i18n.pages.gathering_log.hidden_tag}
-                                                                                </span>
-                                                                            )}
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-
-                                                                <div className="flex items-center gap-1 shrink-0 self-center">
-                                                                    <MapItemCopyButton text={itemName} />
-                                                                    <button
-                                                                        onClick={(e) => { e.stopPropagation(); toggleBookmark(itemId); }}
-                                                                        className={`${ITEM_ACTION_BUTTON_BASE_CLASS} ${isBookmarked ? 'text-yellow-500' : 'text-slate-300 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-300'}`}
-                                                                        title="Bookmark"
-                                                                    >
-                                                                        <svg className={ITEM_ACTION_ICON_CLASS} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill={isBookmarked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                                                                    </button>
-                                                                    {isTimed && (
-                                                                        <AlarmButton
-                                                                            itemId={itemId}
-                                                                            isTracked={trackedItemSet.has(itemId)}
-                                                                            onToggleTracked={toggleTrackedItem}
-                                                                            autoBookmarkOnEnable={true}
-                                                                            isBookmarked={isBookmarked}
-                                                                            onToggleBookmark={toggleBookmark}
-                                                                        />
-                                                                    )}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    {timerElement}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
+                                    node={node}
+                                    validNodeItems={validNodeItems}
+                                    data={data}
+                                    now={now}
+                                    isActive={activeNodeId === node.id}
+                                    isLocked={lockedNodeId === node.id}
+                                    completedItems={completedItems}
+                                    bookmarkedItems={bookmarkedItems}
+                                    showBookmarks={showBookmarks}
+                                    toggleComplete={toggleComplete}
+                                    toggleBookmark={toggleBookmark}
+                                    trackedItemSet={trackedItemSet}
+                                    toggleTrackedItem={toggleTrackedItem}
+                                    onHoverStart={() => handleNodeHoverStart(node.id)}
+                                    onHoverEnd={handleNodeHoverEnd}
+                                    onLockToggle={() => handleNodeLockToggle(node.id)}
+                                    cardRef={el => { sidebarRefs.current[node.id] = el; }}
+                                />
                             );
                         })
                     ) : (

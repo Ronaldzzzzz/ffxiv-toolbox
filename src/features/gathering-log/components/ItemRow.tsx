@@ -1,10 +1,12 @@
 import React from 'react';
 import { GatheringItemEntry, GatheringData, NodeData } from '../types';
-import { getLocalizedText, calculateNodeStatus, formatSeconds, getNodeItemIds, UI_ICON_URLS, CRYSTAL_RELATED_ACHIEVEMENT_EXCLUDED_IDS, getItemIconUrl } from '../utils';
+import { getLocalizedText, calculateNodeStatus, formatSeconds, CRYSTAL_RELATED_ACHIEVEMENT_EXCLUDED_IDS, getItemIconUrl } from '../utils';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
 import { AlarmButton, ITEM_ACTION_BUTTON_BASE_CLASS, ITEM_ACTION_ICON_CLASS } from './AlarmButton';
 import { LazyImage } from './LazyImage';
+import { CopyNameButton } from './shared/CopyNameButton';
+import { CollectibleIcon, ItemBadges } from './shared/ItemBadges';
 
 interface ItemRowProps {
   item: GatheringItemEntry;
@@ -20,35 +22,6 @@ interface ItemRowProps {
   disableGrayscale?: boolean;
   autoBookmarkOnAlarm?: boolean;
 }
-
-const ItemCopyButton: React.FC<{ text: string; title?: string }> = ({ text, title = 'Copy Name' }) => {
-  const [copied, setCopied] = React.useState(false);
-
-  const handleCopy = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch (err) {
-      console.error('Failed to copy:', err);
-    }
-  };
-
-  return (
-    <button
-      onClick={handleCopy}
-      className={`${ITEM_ACTION_BUTTON_BASE_CLASS} ${copied ? 'text-green-500' : 'text-slate-300 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-300'}`}
-      title={copied ? 'Copied!' : title}
-    >
-      {copied ? (
-        <svg className={ITEM_ACTION_ICON_CLASS} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      ) : (
-        <svg className={ITEM_ACTION_ICON_CLASS} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-      )}
-    </button>
-  );
-};
 
 const NodeTimer: React.FC<{ spawns: number[]; duration: number; i18n: any }> = ({ spawns, duration, i18n }) => {
   const [status, setStatus] = React.useState<{
@@ -160,9 +133,8 @@ export const ItemRow: React.FC<ItemRowProps> = React.memo(({
   const showCollectibleIcon = isCollectible || isCustomDelivery;
   const iconUrl = getItemIconUrl(item.itemId, data.icons);
 
-  const itemNodes: NodeData[] = Object.values(data.nodes).filter(node =>
-    getNodeItemIds(node).includes(item.itemId) && node.map !== 0
-  );
+  const itemNodes: NodeData[] = (data.preIndex?.nodesByItemId[item.itemId] ?? [])
+    .filter(node => node.map !== 0);
 
   const isCrystal = CRYSTAL_RELATED_ACHIEVEMENT_EXCLUDED_IDS.has(item.itemId);
   const isTimed = itemNodes.some(n => n.spawns && n.spawns.length > 0);
@@ -191,38 +163,16 @@ export const ItemRow: React.FC<ItemRowProps> = React.memo(({
               <span className="text-slate-800 dark:text-slate-100 item-name text-base leading-tight truncate">
                 {getLocalizedText(itemInfo, lang)}
               </span>
-              {showCollectibleIcon && (
-                <img
-                  src={UI_ICON_URLS.collectible}
-                  className="w-4 h-4 shrink-0"
-                  alt="Collectible"
-                  title={i18n.pages.gathering_log.collectible_tag}
-                />
-              )}
+              {showCollectibleIcon && <CollectibleIcon />}
             </div>
-            {isCustomDelivery && (
-              <span className="inline-flex items-center gap-1 text-[10px] px-1 rounded border border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20 w-fit shrink-0">
-                <img
-                  src={UI_ICON_URLS.customDelivery}
-                  className="w-3 h-3"
-                  alt="Custom Delivery"
-                  title={i18n.pages.gathering_log.custom_delivery_tag}
-                />
-                {i18n.pages.gathering_log.custom_delivery_tag}
-              </span>
-            )}
-            {isAetherialReduction && (
-              <span className="text-[10px] px-1 rounded border border-teal-300 dark:border-teal-700 text-teal-600 dark:text-teal-300 bg-teal-50 dark:bg-teal-900/20 w-fit shrink-0">
-                {i18n.pages.gathering_log.aetherial_reduction_tag}
-              </span>
-            )}
-            {item.hidden === 1 && (
-              <span className="text-red-500 dark:text-red-300 text-[10px] px-1 rounded border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20 w-fit shrink-0">
-                {i18n.pages.gathering_log.hidden_tag}
-              </span>
-            )}
+            <ItemBadges
+              isCustomDelivery={isCustomDelivery}
+              isAetherialReduction={isAetherialReduction}
+              isHidden={item.hidden === 1}
+              badgeClassName="shrink-0"
+            />
             <div className="flex items-center gap-1 shrink-0 ml-auto pl-1">
-              <ItemCopyButton text={getLocalizedText(itemInfo, lang)} />
+              <CopyNameButton text={getLocalizedText(itemInfo, lang)} />
               <button
                 onClick={(e) => { e.stopPropagation(); toggleBookmark(item.itemId); }}
                 className={`${ITEM_ACTION_BUTTON_BASE_CLASS} ${isBookmarked ? 'text-yellow-500' : 'text-slate-300 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-300'}`}

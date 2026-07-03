@@ -2,10 +2,11 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { GatheringData, GatherType } from '../types';
 import { ItemRow } from './ItemRow';
 import { getLocalizedText, getNodeItemIds, UI_ICON_URLS } from '../utils';
-import { getCollectableBands } from '../selectors';
+import { getCollectableBands, TYPE_TO_NODE_INDEX } from '../selectors';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
 import { useAlarm } from '../hooks/useAlarm';
+import { useTrackedItemSet } from '../hooks/useTrackedItemSet';
 interface LevelViewProps {
   data: GatheringData;
   currentType: GatherType;
@@ -27,7 +28,7 @@ export const LevelView: React.FC<LevelViewProps> = ({
   const { highlightItem, setHighlightItem } = useTool();
   const { trackedItems, toggleTrackedItem } = useAlarm();
   const itemRefs = useRef<Record<number, HTMLDivElement | null>>({});
-  const trackedItemSet = useMemo(() => new Set(trackedItems), [trackedItems]);
+  const trackedItemSet = useTrackedItemSet(trackedItems);
 
   // Handle Scroll to Item
   useEffect(() => {
@@ -47,11 +48,7 @@ export const LevelView: React.FC<LevelViewProps> = ({
     }
   }, [highlightItem, setHighlightItem]);
 
-  const typeToIndex: Record<GatherType, number> = {
-    mining: 0, quarrying: 1, logging: 2, harvesting: 3
-  };
-
-  const pageIndex = typeToIndex[currentType];
+  const pageIndex = TYPE_TO_NODE_INDEX[currentType];
   const pages = data.pages[pageIndex] || [];
 
   const itemRegionMap = useMemo(() => {

@@ -92,7 +92,6 @@ async function step1_downloadData() {
 
     const FILES_TO_DOWNLOAD = [
         { url: `${BASE_URL}/items.json`, dest: path.join(RAW_DATA_DIR, 'items.json') },
-        { url: `${BASE_URL}/gathering-items.json`, dest: path.join(RAW_DATA_DIR, 'gathering-items.json') },
         { url: `${BASE_URL}/nodes.json`, dest: path.join(RAW_DATA_DIR, 'nodes.json') },
         { url: `${BASE_URL}/places.json`, dest: path.join(RAW_DATA_DIR, 'places.json') },
         { url: `${BASE_URL}/maps.json`, dest: path.join(RAW_DATA_DIR, 'maps.json') },
@@ -195,7 +194,7 @@ async function step2_mergeData() {
     // 2. Loop locales and merge INTO APP_DATA_DIR files.
 
     console.log('\nInitializing base files...');
-    const filesToCopy = ['items.json', 'places.json', 'nodes.json', 'gathering-items.json', 'gathering-log-pages.json', 'item-icons.json', 'maps.json', 'aetherytes.json', 'recipes-per-item.json', 'satisfaction-thresholds.json'];
+    const filesToCopy = ['items.json', 'places.json', 'nodes.json', 'gathering-log-pages.json', 'item-icons.json', 'maps.json', 'aetherytes.json', 'recipes-per-item.json', 'satisfaction-thresholds.json'];
     
     // We copy items.json and places.json FIRST to ensure they exist for merging
     ['items.json', 'places.json'].forEach(file => {
@@ -280,6 +279,10 @@ async function step3_filterData() {
     };
     saveJson(METADATA_PATH, metadata);
     console.log(`Generated metadata.json with timestamp: ${metadata.lastUpdated}`);
+
+    // Derive recipe-item-ids.json (small isRecipe index; the full recipes file
+    // is only fetched lazily by the app when a recipe modal is opened)
+    require('./derive_recipe_ids.cjs');
 }
 
 function getItemDisplayName(itemData = {}) {

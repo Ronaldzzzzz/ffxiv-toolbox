@@ -76,7 +76,7 @@ export interface NodeData {
   zoneid?: number;
 }
 
-export interface PlaceData extends LocalizedText {}
+export type PlaceData = LocalizedText
 
 export interface MapData {
   image: string;
@@ -109,6 +109,8 @@ export interface Recipe {
   yields: number;
   ingredients: RecipeIngredient[];
 }
+
+export type RecipesMap = Record<string, Recipe[]>;
 
 export interface SearchIndexNames {
   tw: string;
@@ -145,6 +147,7 @@ export interface GatheringData {
   nodes: Record<string, NodeData>;
   maps: Record<string, MapData>;
   aetherytes: Aetheryte[];
-  recipes: Record<string, Recipe[]>;
+  /** Full recipes are lazy-loaded via useRecipes(); always null in the shared data object */
+  recipes: RecipesMap | null;
   preIndex?: GatheringPreIndex;
 }

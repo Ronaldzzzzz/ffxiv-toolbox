@@ -5,6 +5,8 @@ import { getLocalizedText, getItemIconUrl } from '../utils';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { AlarmButton } from './AlarmButton';
 import { useAlarm } from '../hooks/useAlarm';
+import { useRecipes } from '../hooks/useRecipes';
+import { useTrackedItemSet } from '../hooks/useTrackedItemSet';
 
 interface RecipeModalProps {
   itemId: number;
@@ -26,12 +28,15 @@ interface RecipeNode {
 export const RecipeModal: React.FC<RecipeModalProps> = ({ itemId, data, onClose, onBookmarkAll, bookmarkedItems }) => {
   const { lang, t: i18n } = useLanguage();
   const { trackedItems, toggleTrackedItem } = useAlarm();
+  const { recipes: recipesMap, loading: recipesLoading } = useRecipes();
 
   const itemInfo = data.items[itemId];
   const name = itemInfo ? getLocalizedText(itemInfo, lang) : i18n.pages.gathering_log.unknown_item;
 
   // 1. 建立樹狀結構
   const recipeTree = useMemo(() => {
+    if (!recipesMap) return null;
+
     const processing = new Set<number>();
 
     const buildNode = (currentId: number, multiplier = 1, parentId?: number): RecipeNode | null => {
@@ -39,7 +44,7 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({ itemId, data, onClose,
       if (processing.has(currentId)) return null;
       processing.add(currentId);
 
-      const recipes = data.recipes && data.recipes[currentId];
+      const recipes = recipesMap[currentId];
       
       const isGatherable = [0, 1, 2, 3].some(typeIndex => {
         const pages = data.pages[typeIndex] || [];
@@ -83,7 +88,7 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({ itemId, data, onClose,
     };
 
     return buildNode(itemId);
-  }, [itemId, data]);
+  }, [itemId, data, recipesMap]);
 
   // 取出所有是 Gathering Item 的唯一 ID 供預設全選
   const allGatherableIds = useMemo(() => {
@@ -98,7 +103,7 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({ itemId, data, onClose,
 
   // 管理勾選狀態
   const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set());
-  const trackedItemSet = useMemo(() => new Set(trackedItems), [trackedItems]);
+  const trackedItemSet = useTrackedItemSet(trackedItems);
 
   // 初始化勾選狀態：預設全選可採集且尚未加入書籤的
   useEffect(() => {
@@ -133,8 +138,7 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({ itemId, data, onClose,
        const isBookmarked = bookmarkedItems.has(node.id);
        const isSelected = selectedItems.has(node.id);
 
-       const itemNodes = Object.values(data.nodes).filter(n => n.items.includes(node.id) && n.map !== 0);
-       const isTimed = itemNodes.some(n => n.spawns && n.spawns.length > 0);
+       const isTimed = (data.preIndex?.timedNodesByItemId[node.id] ?? []).length > 0;
 
        return (
            <div 
@@ -234,7 +238,16 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({ itemId, data, onClose,
           </p>
           
           <div className="space-y-4">
-            {recipeTree ? renderNode(recipeTree) : <div className="text-center text-red-500">{i18n.pages.gathering_log.recipe_parsing_failed}</div>}
+            {recipesLoading ? (
+              <div className="flex items-center justify-center gap-2 py-8 text-slate-500 dark:text-slate-400">
+                <span className="inline-block w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+                {i18n.common.loading}
+              </div>
+            ) : recipeTree ? (
+              renderNode(recipeTree)
+            ) : (
+              <div className="text-center text-red-500">{i18n.pages.gathering_log.recipe_parsing_failed}</div>
+            )}
           </div>
         </div>
 
