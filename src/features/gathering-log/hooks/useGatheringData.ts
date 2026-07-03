@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { GatheringData, GatherType, SearchIndexEntry, SearchIndexNames } from '../types';
 import { getAchievementExclusionReason } from '../utils';
 
@@ -286,6 +286,7 @@ export function useGatheringData() {
   const [data, setData] = useState<GatheringData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -304,7 +305,15 @@ export function useGatheringData() {
     return () => {
       cancelled = true;
     };
+  }, [attempt]);
+
+  // Clears the module cache and refetches (used by the error-state retry button)
+  const retry = useCallback(() => {
+    resetGatheringDataCache();
+    setError(null);
+    setLoading(true);
+    setAttempt(a => a + 1);
   }, []);
 
-  return { data, loading, error };
+  return { data, loading, error, retry };
 }

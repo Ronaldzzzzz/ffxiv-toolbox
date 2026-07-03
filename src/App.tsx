@@ -1,9 +1,14 @@
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { GatheringLogPage } from './features/gathering-log';
+import { GatheringLogSkeleton } from './features/gathering-log/components/GatheringLogSkeleton';
 import { useLanguage } from './i18n/LanguageContext';
+
+// Route-level code splitting: the gathering-log feature (largest chunk) loads on demand
+const GatheringLogPage = lazy(() =>
+  import('./features/gathering-log/components/GatheringLogPage').then(m => ({ default: m.GatheringLogPage }))
+);
 import { useFavicon } from './hooks/useFavicon';
 import { useSeoMeta } from './hooks/useSeoMeta';
 
@@ -100,7 +105,14 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/gathering-log" element={<GatheringLogPage />} />
+      <Route
+        path="/gathering-log"
+        element={
+          <Suspense fallback={<GatheringLogSkeleton />}>
+            <GatheringLogPage />
+          </Suspense>
+        }
+      />
     </Routes>
   );
 }

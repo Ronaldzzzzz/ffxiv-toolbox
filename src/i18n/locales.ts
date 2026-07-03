@@ -5,6 +5,7 @@ export interface Translation {
     version: string;
     loading: string;
     error_loading: string;
+    retry: string;
     expansions: {
       exp_2: string;
       exp_3: string;
@@ -172,6 +173,7 @@ export const translations: Record<LangCode, Translation> = {
       version: '版本',
       loading: '載入中...',
       error_loading: '載入失敗',
+      retry: '重試',
       expansions: {
         exp_2: '2.0 新生艾奧傑亞',
         exp_3: '3.0 蒼天伊修加爾德',
@@ -328,6 +330,7 @@ export const translations: Record<LangCode, Translation> = {
       version: 'Ver',
       loading: 'Loading...',
       error_loading: 'Failed to load',
+      retry: 'Retry',
       expansions: {
         exp_2: 'A Realm Reborn',
         exp_3: 'Heavensward',
@@ -482,6 +485,7 @@ export const translations: Record<LangCode, Translation> = {
       version: 'Ver',
       loading: '読み込み中...',
       error_loading: '読み込み失敗',
+      retry: '再試行',
       expansions: {
         exp_2: '新生エオルゼア',
         exp_3: '蒼天のイシュガルド',
@@ -636,6 +640,7 @@ export const translations: Record<LangCode, Translation> = {
       version: '版本',
       loading: '加载中...',
       error_loading: '加载失败',
+      retry: '重试',
       expansions: {
         exp_2: '新生艾欧泽亚',
         exp_3: '苍穹之禁城',

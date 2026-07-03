@@ -14,6 +14,7 @@ import { useLanguage } from '../../../i18n/LanguageContext';
 import { getEorzeaTime, GATHERING_ICONS } from '../utils';
 import { GatherType, ViewMode } from '../types';
 import { RecipeModal } from './RecipeModal';
+import { GatheringLogSkeleton } from './GatheringLogSkeleton';
 import { AlarmSettingsModal } from './AlarmSettingsModal';
 import { useAlarmTrigger } from '../hooks/useAlarmTrigger';
 import { useCollectionState } from '../hooks/useCollectionState';
@@ -28,7 +29,7 @@ const VIEW_MODE_CONFIG = [
 ] as const;
 
 export const GatheringLogPage: React.FC = () => {
-  const { data, loading, error } = useGatheringData();
+  const { data, loading, error, retry } = useGatheringData();
   const { setProgress, setToolInfo, setHeaderActions, setCenterActions, setEtTime } = useTool();
   const { t: i18n } = useLanguage();
   useFavicon('/favicon_gatheringlog.svg');
@@ -247,8 +248,20 @@ export const GatheringLogPage: React.FC = () => {
   const pages = data ? data.pages[TYPE_TO_NODE_INDEX[currentType]] || [] : [];
 
   // Show loading, error, or null states
-  if (loading) return <div className="p-8 text-center text-slate-500">{i18n.common.loading}</div>;
-  if (error) return <div className="p-8 text-center text-red-500">{i18n.common.error_loading}: {error.message}</div>;
+  if (loading) return <GatheringLogSkeleton />;
+  if (error) {
+    return (
+      <div className="p-8 text-center">
+        <div className="text-red-500 mb-4">{i18n.common.error_loading}: {error.message}</div>
+        <button
+          onClick={retry}
+          className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold transition-colors"
+        >
+          {i18n.common.retry}
+        </button>
+      </div>
+    );
+  }
   if (!data) return null;
 
   return (
