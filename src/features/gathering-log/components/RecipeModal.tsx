@@ -6,6 +6,7 @@ import { useLanguage } from '../../../i18n/LanguageContext';
 import { AlarmButton } from './AlarmButton';
 import { useAlarm } from '../hooks/useAlarm';
 import { useRecipes } from '../hooks/useRecipes';
+import { useTrackedItemSet } from '../hooks/useTrackedItemSet';
 
 interface RecipeModalProps {
   itemId: number;
@@ -102,7 +103,7 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({ itemId, data, onClose,
 
   // 管理勾選狀態
   const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set());
-  const trackedItemSet = useMemo(() => new Set(trackedItems), [trackedItems]);
+  const trackedItemSet = useTrackedItemSet(trackedItems);
 
   // 初始化勾選狀態：預設全選可採集且尚未加入書籤的
   useEffect(() => {

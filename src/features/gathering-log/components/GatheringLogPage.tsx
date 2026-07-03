@@ -18,8 +18,7 @@ import { AlarmSettingsModal } from './AlarmSettingsModal';
 import { useAlarmTrigger } from '../hooks/useAlarmTrigger';
 import { useCollectionState } from '../hooks/useCollectionState';
 import { useAlarm } from '../hooks/useAlarm';
-
-const TYPE_TO_PAGE_INDEX: Record<GatherType, number> = { mining: 0, quarrying: 1, logging: 2, harvesting: 3 };
+import { TYPE_TO_NODE_INDEX } from '../selectors';
 
 const VIEW_MODE_CONFIG = [
   { id: 'level', labelKey: 'view_level', icon: '📊' },
@@ -87,7 +86,7 @@ export const GatheringLogPage: React.FC = () => {
     const isAchievementTrackedItem = (itemId: number) => data.items[itemId]?.isAchievementExcluded !== true;
 
     const getTypeItemIds = (type: GatherType) => {
-      const pages = data.pages[TYPE_TO_PAGE_INDEX[type]] || [];
+      const pages = data.pages[TYPE_TO_NODE_INDEX[type]] || [];
       const itemIds = new Set<number>();
 
       pages.forEach(page => {
@@ -245,7 +244,7 @@ export const GatheringLogPage: React.FC = () => {
     return () => setHeaderActions(null);
   }, [data, hideCompleted, showBookmarks, i18n, setHeaderActions]);
 
-  const pages = data ? data.pages[TYPE_TO_PAGE_INDEX[currentType]] || [] : [];
+  const pages = data ? data.pages[TYPE_TO_NODE_INDEX[currentType]] || [] : [];
 
   // Show loading, error, or null states
   if (loading) return <div className="p-8 text-center text-slate-500">{i18n.common.loading}</div>;

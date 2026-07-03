@@ -69,6 +69,8 @@ export const EXPANSION_MAP: Record<number, string> = {
   4500: 'exp_7', 4501: 'exp_7', 4502: 'exp_7'
 };
 
+export const EXPANSION_ORDER = ['exp_2', 'exp_3', 'exp_4', 'exp_5', 'exp_6', 'exp_7'];
+
 export const EXPANSION_NAMES: Record<string, string> = {
   'exp_2': 'A Realm Reborn',
   'exp_3': 'Heavensward',

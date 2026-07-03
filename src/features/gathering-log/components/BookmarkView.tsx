@@ -5,6 +5,7 @@ import { useLanguage } from '../../../i18n/LanguageContext';
 import { GroupHeader } from './GroupHeader';
 import { BookmarkItemCard, ItemInfo } from './BookmarkItemCard';
 import { useBookmarkDragAndDrop } from '../hooks/useBookmarkDragAndDrop';
+import { useTrackedItemSet } from '../hooks/useTrackedItemSet';
 
 interface BookmarkViewProps {
   data: GatheringData;
@@ -119,7 +120,7 @@ export const BookmarkView: React.FC<BookmarkViewProps> = ({
   const timedUngroupedItems = useMemo(() => ungroupedDisplayItems.filter(item => item.isTimed), [ungroupedDisplayItems]);
   const regularUngroupedItems = useMemo(() => ungroupedDisplayItems.filter(item => !item.isTimed), [ungroupedDisplayItems]);
 
-  const trackedItemSet = useMemo(() => new Set(trackedItems), [trackedItems]);
+  const trackedItemSet = useTrackedItemSet(trackedItems);
 
   const nextDefaultGroupName = useMemo(() => {
     let nextIndex = 1;

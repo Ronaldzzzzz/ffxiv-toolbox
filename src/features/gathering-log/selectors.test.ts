@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { getCollectableBands, getTimedNodesGrouped, sortNodesForMapSidebar } from './selectors';
+import { getCollectableBands, getTimedNodesGrouped, groupMapsByExpansion, sortNodesForMapSidebar } from './selectors';
 import { GatheringData, NodeData } from './types';
 
 // 4,200,000 real ms = one Eorzea day → system time pinned to ET 00:00
@@ -87,6 +87,28 @@ describe('getCollectableBands', () => {
 
   it('returns no bands when no collectable items match', () => {
     expect(getCollectableBands(data, 'harvesting')).toEqual([]);
+  });
+});
+
+describe('groupMapsByExpansion', () => {
+  it('groups by expansion in release order, then by ascending region id', () => {
+    const maps = [
+      { id: 10, expansion: 'exp_3', regionId: 25 },
+      { id: 11, expansion: 'exp_2', regionId: 23 },
+      { id: 12, expansion: 'exp_2', regionId: 22 },
+      { id: 13, expansion: 'exp_2', regionId: 23 },
+      { id: 14, expansion: 'exp_7', regionId: 4500 },
+    ];
+
+    const groups = groupMapsByExpansion(maps);
+    expect(groups.map(g => g.expansion)).toEqual(['exp_2', 'exp_3', 'exp_7']);
+    expect(groups[0].regions.map(r => r.regionId)).toEqual([22, 23]);
+    // Map order within a region follows input order
+    expect(groups[0].regions[1].maps.map(m => m.id)).toEqual([11, 13]);
+  });
+
+  it('returns an empty array for no maps', () => {
+    expect(groupMapsByExpansion([])).toEqual([]);
   });
 });
 

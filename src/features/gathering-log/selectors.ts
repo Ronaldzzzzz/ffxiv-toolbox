@@ -1,5 +1,5 @@
 import { GatherType, GatheringData, GatheringItemEntry } from './types';
-import { calculateNodeStatus, NodeStatus } from './utils';
+import { calculateNodeStatus, EXPANSION_ORDER, NodeStatus } from './utils';
 
 export interface CollectableBand {
   min: number;
@@ -31,7 +31,7 @@ export interface TimedNodesGrouped {
   laterNodes: TimedNodeWithStatus[];
 }
 
-const TYPE_TO_NODE_INDEX: Record<GatherType, number> = {
+export const TYPE_TO_NODE_INDEX: Record<GatherType, number> = {
   mining: 0,
   quarrying: 1,
   logging: 2,
@@ -109,6 +109,38 @@ export function getTimedNodesGrouped(
     soonNodes,
     laterNodes,
   };
+}
+
+export interface ExpansionMapGroup<T> {
+  expansion: string;
+  regions: Array<{ regionId: number; maps: T[] }>;
+}
+
+/**
+ * Groups the map-selector entries by expansion, then by region id (ascending),
+ * preserving the incoming map order within each region.
+ * Extracted from the MapView sidebar IIFE.
+ */
+export function groupMapsByExpansion<T extends { expansion: string; regionId: number }>(
+  maps: T[]
+): ExpansionMapGroup<T>[] {
+  const grouped: Record<string, Record<number, T[]>> = {};
+
+  maps.forEach(map => {
+    if (!grouped[map.expansion]) grouped[map.expansion] = {};
+    if (!grouped[map.expansion][map.regionId]) grouped[map.expansion][map.regionId] = [];
+    grouped[map.expansion][map.regionId].push(map);
+  });
+
+  return EXPANSION_ORDER
+    .filter(exp => grouped[exp])
+    .map(exp => ({
+      expansion: exp,
+      regions: Object.keys(grouped[exp])
+        .map(Number)
+        .sort((a, b) => a - b)
+        .map(regionId => ({ regionId, maps: grouped[exp][regionId] })),
+    }));
 }
 
 export function sortNodesForMapSidebar(nodes: Array<{ spawns?: number[]; duration?: number; level: number }>): number[] {
