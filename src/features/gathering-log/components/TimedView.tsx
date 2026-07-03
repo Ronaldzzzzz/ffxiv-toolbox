@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { GatheringData, GatherType } from '../types';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
@@ -6,6 +6,7 @@ import { getLocalizedText, GATHERING_ICONS, formatSeconds, UI_ICON_URLS, getItem
 import { getTimedNodesGrouped, TimedNodeWithStatus } from '../selectors';
 import { AlarmButton, ITEM_ACTION_BUTTON_BASE_CLASS, ITEM_ACTION_ICON_CLASS } from './AlarmButton';
 import { useAlarm } from '../hooks/useAlarm';
+import { useNowTick } from '../hooks/useNowTick';
 
 interface TimedViewProps {
     data: GatheringData;
@@ -51,18 +52,29 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
     const { lang, t: i18n } = useLanguage();
     const { setMapModal } = useTool();
     const { trackedItems, toggleTrackedItem } = useAlarm();
-    const [now, setNow] = useState(Date.now());
+    // Current time every 200ms for smooth countdown display
+    const now = useNowTick(200);
     const trackedItemSet = useMemo(() => new Set(trackedItems), [trackedItems]);
 
-    // Update current time every 200ms for smooth countdown display
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setNow(Date.now());
-        }, 200);
-        return () => clearInterval(interval);
-    }, []);
+    // Regroup once per second instead of on every 200ms tick; the 200ms `now`
+    // still drives the smooth countdown/progress rendering below.
+    const nowSecond = Math.floor(now / 1000);
+    const { activeNodes, soonNodes, laterNodes } = useMemo(
+        () => getTimedNodesGrouped(data, currentType),
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- nowSecond intentionally triggers a per-second regroup
+        [data, currentType, nowSecond]
+    );
 
-    const { activeNodes, soonNodes, laterNodes } = getTimedNodesGrouped(data, currentType);
+    const isCardVisible = (node: TimedNodeWithStatus) => {
+        const itemId = node.items[0];
+        if (hideCompleted && completedItems.has(itemId)) return false;
+        if (showBookmarks && !bookmarkedItems.has(itemId)) return false;
+        return true;
+    };
+    const hasVisibleCards =
+        activeNodes.some(isCardVisible) ||
+        soonNodes.some(isCardVisible) ||
+        laterNodes.some(isCardVisible);
 
     const renderNodeCard = (node: TimedNodeWithStatus) => {
         const itemId = node.items[0];
@@ -299,26 +311,9 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
             )}
 
 
-            {activeNodes.filter(n => {
-                const itemId = n.items[0];
-                if (hideCompleted && completedItems.has(itemId)) return false;
-                if (showBookmarks && !bookmarkedItems.has(itemId)) return false;
-                return true;
-            }).length === 0 &&
-                soonNodes.filter(n => {
-                    const itemId = n.items[0];
-                    if (hideCompleted && completedItems.has(itemId)) return false;
-                    if (showBookmarks && !bookmarkedItems.has(itemId)) return false;
-                    return true;
-                }).length === 0 &&
-                laterNodes.filter(n => {
-                    const itemId = n.items[0];
-                    if (hideCompleted && completedItems.has(itemId)) return false;
-                    if (showBookmarks && !bookmarkedItems.has(itemId)) return false;
-                    return true;
-                }).length === 0 && (
-                    <div className="text-center p-10 text-slate-500">{i18n.pages.gathering_log.no_timed_nodes}</div>
-                )}
+            {!hasVisibleCards && (
+                <div className="text-center p-10 text-slate-500">{i18n.pages.gathering_log.no_timed_nodes}</div>
+            )}
         </div>
     );
 };

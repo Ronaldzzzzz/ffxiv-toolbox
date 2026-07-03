@@ -8,6 +8,7 @@ import { ChevronLeft } from 'lucide-react';
 import { AlarmButton, ITEM_ACTION_BUTTON_BASE_CLASS, ITEM_ACTION_ICON_CLASS } from './AlarmButton';
 import { LazyImage } from './LazyImage';
 import { useAlarm } from '../hooks/useAlarm';
+import { useNowTick } from '../hooks/useNowTick';
 
 interface MapViewProps {
     data: GatheringData;
@@ -112,7 +113,8 @@ export const MapView: React.FC<MapViewProps> = ({
     const { trackedItems, toggleTrackedItem } = useAlarm();
     // const { setMapModal } = useTool(); // Disabled as per user request
     const [selectedMapId, setSelectedMapId] = useState<number | null>(null);
-    const [now, setNow] = useState(Date.now());
+    // Current time every second for timers
+    const now = useNowTick(1000);
     const [hoveredNodeId, setHoveredNodeId] = useState<number | string | null>(null);
     const [lockedNodeId, setLockedNodeId] = useState<number | string | null>(null);
     const [lineCoords, setLineCoords] = useState<{ x1: number, y1: number, x2: number, y2: number } | null>(null);
@@ -175,12 +177,6 @@ export const MapView: React.FC<MapViewProps> = ({
         setHoveredNodeId(null);
         setLineCoords(null);
     };
-
-    // Update current time every second for timers
-    useEffect(() => {
-        const interval = setInterval(() => setNow(Date.now()), 1000);
-        return () => clearInterval(interval);
-    }, []);
 
     // Update Line Coordinates and Scroll logic
     useEffect(() => {

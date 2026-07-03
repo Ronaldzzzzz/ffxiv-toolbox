@@ -135,9 +135,9 @@ export const BookmarkView: React.FC<BookmarkViewProps> = ({
     regularUngroupedItems.length > 0;
 
   // ---------------------------------------------------------------------------
-  // Shared BookmarkItemCard props builder
+  // Shared BookmarkItemCard props builder (memoized so card props stay stable)
   // ---------------------------------------------------------------------------
-  const sharedCardProps = {
+  const sharedCardProps = useMemo(() => ({
     activeDragItemId: dnd.dragItemId,
     dropContainerId: dnd.dropContainerId,
     dropBeforeItemId: dnd.dropBeforeItemId,
@@ -155,7 +155,22 @@ export const BookmarkView: React.FC<BookmarkViewProps> = ({
     toggleComplete,
     toggleBookmark,
     toggleAlarm: toggleTrackedItem || (() => {}),
-  };
+  }), [
+    dnd.dragItemId,
+    dnd.dropContainerId,
+    dnd.dropBeforeItemId,
+    dnd.setDragItemId,
+    dnd.setDropContainerId,
+    dnd.setDropBeforeItemId,
+    dnd.clearDragState,
+    dnd.maybeAutoScrollOnDrag,
+    moveBookmarkedItem,
+    bookmarkGroups,
+    data,
+    toggleComplete,
+    toggleBookmark,
+    toggleTrackedItem,
+  ]);
 
   // ---------------------------------------------------------------------------
   // Group section renderer (real groups only)

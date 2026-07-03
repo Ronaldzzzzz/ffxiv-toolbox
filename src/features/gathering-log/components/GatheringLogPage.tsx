@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useFavicon } from '../../../hooks/useFavicon';
 import { useSeoMeta } from '../../../hooks/useSeoMeta';
 import { useGatheringData } from '../hooks/useGatheringData';
@@ -18,6 +18,15 @@ import { AlarmSettingsModal } from './AlarmSettingsModal';
 import { useAlarmTrigger } from '../hooks/useAlarmTrigger';
 import { useCollectionState } from '../hooks/useCollectionState';
 import { useAlarm } from '../hooks/useAlarm';
+
+const TYPE_TO_PAGE_INDEX: Record<GatherType, number> = { mining: 0, quarrying: 1, logging: 2, harvesting: 3 };
+
+const VIEW_MODE_CONFIG = [
+  { id: 'level', labelKey: 'view_level', icon: '📊' },
+  { id: 'timed', labelKey: 'view_timed', icon: '⏱️' },
+  { id: 'map', labelKey: 'view_map', icon: '🗺️' },
+  { id: 'bookmark', labelKey: 'view_bookmark', icon: '⭐' },
+] as const;
 
 export const GatheringLogPage: React.FC = () => {
   const { data, loading, error } = useGatheringData();
@@ -71,15 +80,14 @@ export const GatheringLogPage: React.FC = () => {
     return () => { clearInterval(timer); setEtTime(null); };
   }, [setEtTime]);
 
-  // Sync Header Info & Actions
-  useEffect(() => {
-    if (!data) return;
+  // Per-type achievement-tracked itemId sets — only depend on data
+  const typeItemIdSets = useMemo(() => {
+    if (!data) return null;
 
-    const typeToIndex: Record<GatherType, number> = { mining: 0, quarrying: 1, logging: 2, harvesting: 3 };
     const isAchievementTrackedItem = (itemId: number) => data.items[itemId]?.isAchievementExcluded !== true;
 
     const getTypeItemIds = (type: GatherType) => {
-      const pages = data.pages[typeToIndex[type]] || [];
+      const pages = data.pages[TYPE_TO_PAGE_INDEX[type]] || [];
       const itemIds = new Set<number>();
 
       pages.forEach(page => {
@@ -93,6 +101,18 @@ export const GatheringLogPage: React.FC = () => {
       return itemIds;
     };
 
+    return {
+      mining: getTypeItemIds('mining'),
+      quarrying: getTypeItemIds('quarrying'),
+      logging: getTypeItemIds('logging'),
+      harvesting: getTypeItemIds('harvesting'),
+    };
+  }, [data]);
+
+  // Progress numbers — recompute only when completion state (or data) changes
+  const progress = useMemo(() => {
+    if (!typeItemIdSets) return null;
+
     const countProgressFromSet = (itemIds: Set<number>) => {
       let current = 0;
       itemIds.forEach(itemId => {
@@ -100,11 +120,6 @@ export const GatheringLogPage: React.FC = () => {
       });
 
       return { current, total: itemIds.size };
-    };
-
-    const countTypeProgress = (type: GatherType) => {
-      const itemIds = getTypeItemIds(type);
-      return countProgressFromSet(itemIds);
     };
 
     const mergeItemSets = (...sets: Set<number>[]) => {
@@ -116,29 +131,20 @@ export const GatheringLogPage: React.FC = () => {
       return merged;
     };
 
-    const miningItemIds = getTypeItemIds('mining');
-    const quarryingItemIds = getTypeItemIds('quarrying');
-    const loggingItemIds = getTypeItemIds('logging');
-    const harvestingItemIds = getTypeItemIds('harvesting');
+    const { mining, quarrying, logging, harvesting } = typeItemIdSets;
 
-    const miningProgress = countTypeProgress('mining');
-    const quarryingProgress = countTypeProgress('quarrying');
-    const loggingProgress = countTypeProgress('logging');
-    const harvestingProgress = countTypeProgress('harvesting');
+    const miningProgress = countProgressFromSet(mining);
+    const quarryingProgress = countProgressFromSet(quarrying);
+    const loggingProgress = countProgressFromSet(logging);
+    const harvestingProgress = countProgressFromSet(harvesting);
 
-    const miningGroupProgress = countProgressFromSet(mergeItemSets(miningItemIds, quarryingItemIds));
-    const botanyGroupProgress = countProgressFromSet(mergeItemSets(loggingItemIds, harvestingItemIds));
-    const overallProgress = countProgressFromSet(
-      mergeItemSets(miningItemIds, quarryingItemIds, loggingItemIds, harvestingItemIds)
-    );
+    const miningGroupProgress = countProgressFromSet(mergeItemSets(mining, quarrying));
+    const botanyGroupProgress = countProgressFromSet(mergeItemSets(logging, harvesting));
+    const overallProgress = countProgressFromSet(mergeItemSets(mining, quarrying, logging, harvesting));
 
-    const current = overallProgress.current;
-    const total = overallProgress.total;
-
-    // 0. 設定資訊
-    setProgress({
-      current,
-      total,
+    return {
+      current: overallProgress.current,
+      total: overallProgress.total,
       currentPrimary: miningGroupProgress.current,
       currentSecondary: botanyGroupProgress.current,
       totalPrimary: miningGroupProgress.total,
@@ -151,31 +157,48 @@ export const GatheringLogPage: React.FC = () => {
       currentHarvesting: harvestingProgress.current,
       totalLogging: loggingProgress.total,
       totalHarvesting: harvestingProgress.total,
-    });
+    };
+  }, [typeItemIdSets, completedItems]);
+
+  // Sync progress indicator & tool info
+  useEffect(() => {
+    if (!progress) return;
+
+    setProgress(progress);
     setToolInfo({ version: 'V3.6.4' });
 
-    // 1. 中間：視角切換按鈕
+    return () => {
+      setProgress(null);
+      setToolInfo(null);
+    };
+  }, [progress, setProgress, setToolInfo]);
+
+  // Header center: view-mode switch buttons
+  useEffect(() => {
+    if (!data) return;
+
     setCenterActions(
       <div className="flex items-center bg-slate-200 dark:bg-slate-700 p-1 rounded-lg">
-        {[
-          { id: 'level', label: i18n.pages.gathering_log.view_level, icon: '📊' },
-          { id: 'timed', label: i18n.pages.gathering_log.view_timed, icon: '⏱️' },
-          { id: 'map', label: i18n.pages.gathering_log.view_map, icon: '🗺️' },
-          { id: 'bookmark', label: i18n.pages.gathering_log.view_bookmark, icon: '⭐' }
-        ].map(mode => (
+        {VIEW_MODE_CONFIG.map(mode => (
           <button
             key={mode.id}
             onClick={() => setViewMode(mode.id as ViewMode)}
             className={`px-2 py-1 md:px-4 md:py-1.5 rounded-md text-xs md:text-base font-bold transition-all flex items-center gap-1 md:gap-2 ${viewMode === mode.id ? 'bg-white dark:bg-slate-600 shadow-sm text-blue-600 dark:text-blue-300' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'}`}
           >
             <span className="text-sm md:text-xl">{mode.icon}</span>
-            <span>{mode.label}</span>
+            <span>{i18n.pages.gathering_log[mode.labelKey]}</span>
           </button>
         ))}
       </div>
     );
 
-    // 2. 左側：功能開關
+    return () => setCenterActions(null);
+  }, [data, viewMode, i18n, setCenterActions]);
+
+  // Header left: feature toggles
+  useEffect(() => {
+    if (!data) return;
+
     setHeaderActions(
       <div className="flex items-center gap-1">
         <button
@@ -219,16 +242,10 @@ export const GatheringLogPage: React.FC = () => {
       </div>
     );
 
-    return () => {
-      setProgress(null);
-      setToolInfo(null);
-      setHeaderActions(null);
-      setCenterActions(null);
-    };
-  }, [data, completedItems, hideCompleted, showBookmarks, viewMode, i18n, setProgress, setToolInfo, setHeaderActions, setCenterActions]);
+    return () => setHeaderActions(null);
+  }, [data, hideCompleted, showBookmarks, i18n, setHeaderActions]);
 
-  const typeToIndex: Record<GatherType, number> = { mining: 0, quarrying: 1, logging: 2, harvesting: 3 };
-  const pages = data ? data.pages[typeToIndex[currentType]] || [] : [];
+  const pages = data ? data.pages[TYPE_TO_PAGE_INDEX[currentType]] || [] : [];
 
   // Show loading, error, or null states
   if (loading) return <div className="p-8 text-center text-slate-500">{i18n.common.loading}</div>;

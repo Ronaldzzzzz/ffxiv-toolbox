@@ -98,12 +98,31 @@ function emitAlarmUpdate() {
     setTimeout(() => window.dispatchEvent(new Event(ALARM_STORAGE_EVENT)), 0);
 }
 
+function isSameAlarmState(a: AlarmState, b: AlarmState): boolean {
+    return (
+        a.globalEnabled === b.globalEnabled &&
+        a.soundEnabled === b.soundEnabled &&
+        a.soundType === b.soundType &&
+        a.localLeadTimeMinutes === b.localLeadTimeMinutes &&
+        a.macroLeadTimeMinutes === b.macroLeadTimeMinutes &&
+        a.macroTimeMode === b.macroTimeMode &&
+        a.macroRepeat === b.macroRepeat &&
+        a.trackedItemIds.length === b.trackedItemIds.length &&
+        a.trackedItemIds.every((id, index) => id === b.trackedItemIds[index])
+    );
+}
+
 export function useAlarm() {
     const [settings, setSettings] = useState<AlarmState>(getStoredSettings);
 
     useEffect(() => {
         const handleStorageUpdate = () => {
-            setSettings(getStoredSettings());
+            // Bail out when nothing changed so sibling hook instances on the
+            // same page don't cascade re-renders on every alarm update event
+            setSettings(previous => {
+                const stored = getStoredSettings();
+                return isSameAlarmState(previous, stored) ? previous : stored;
+            });
         };
 
         const handleStorage = (event: StorageEvent) => {
