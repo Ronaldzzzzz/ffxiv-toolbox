@@ -110,6 +110,8 @@ export interface Recipe {
   ingredients: RecipeIngredient[];
 }
 
+export type RecipesMap = Record<string, Recipe[]>;
+
 export interface SearchIndexNames {
   tw: string;
   zh: string;
@@ -145,6 +147,7 @@ export interface GatheringData {
   nodes: Record<string, NodeData>;
   maps: Record<string, MapData>;
   aetherytes: Aetheryte[];
-  recipes: Record<string, Recipe[]>;
+  /** Full recipes are lazy-loaded via useRecipes(); always null in the shared data object */
+  recipes: RecipesMap | null;
   preIndex?: GatheringPreIndex;
 }
