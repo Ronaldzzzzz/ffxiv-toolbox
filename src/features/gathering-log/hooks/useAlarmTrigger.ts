@@ -148,7 +148,7 @@ export function useAlarmTrigger(data: GatheringData | null) {
                 nodes.forEach(node => {
                     node.spawns!.forEach(spawnHour => {
                         // Spawn hour is 0-23. Target Eorzea Minute is spawnHour * 60
-                        let targetEorzeaMinute = spawnHour * 60;
+                        const targetEorzeaMinute = spawnHour * 60;
                         
                         const triggers = [targetEorzeaMinute];
                         if (leadTimeEorzeaMinutes > 0) {

@@ -31,7 +31,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
 
   const setLang = (newLang: LangCode) => {
     setLangState(newLang);
-    let pref = newLang === 'tw' ? 'zh-TW' : (newLang === 'zh' ? 'zh-CN' : newLang);
+    const pref = newLang === 'tw' ? 'zh-TW' : (newLang === 'zh' ? 'zh-CN' : newLang);
     localStorage.setItem('ff14_lang_pref', pref);
   };
 
@@ -44,6 +44,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components -- provider + hook co-located by design; splitting is out of scope
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
   if (!context) throw new Error('useLanguage must be used within a LanguageProvider');

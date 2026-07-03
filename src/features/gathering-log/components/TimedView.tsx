@@ -82,7 +82,6 @@ export const TimedView: React.FC<TimedViewProps> = ({ data, currentType, complet
         // Determine Job Info
         const jobKey = (['mining', 'quarrying', 'logging', 'harvesting'][node.type] || 'mining') as GatherType;
         const jobIcon = GATHERING_ICONS[jobKey];
-        // @ts-ignore
         const jobName = i18n.pages.gathering_log[jobKey];
 
         // Determine Folklore / Group Name

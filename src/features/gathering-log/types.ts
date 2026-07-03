@@ -76,7 +76,7 @@ export interface NodeData {
   zoneid?: number;
 }
 
-export interface PlaceData extends LocalizedText {}
+export type PlaceData = LocalizedText
 
 export interface MapData {
   image: string;

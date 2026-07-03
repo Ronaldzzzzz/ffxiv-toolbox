@@ -125,7 +125,7 @@ export function calculateNodeStatus(spawns: number[], durationMin: number = 60, 
   for (const spawnHour of spawns) {
     const spawnStartMs = spawnHour * 60 * 60 * 1000;
     const durationMs = durationMin * 60 * 1000;
-    let spawnEndMs = spawnStartMs + durationMs;
+    const spawnEndMs = spawnStartMs + durationMs;
 
     // Handle Active Windows (Check yesterday, today, tomorrow to handle wrapping)
     const windows = [

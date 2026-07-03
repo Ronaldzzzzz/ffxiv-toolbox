@@ -291,7 +291,6 @@ export const GatheringLogPage: React.FC = () => {
               {/* Type Toggles for Timed View */}
               {(['all', 'mining', 'quarrying', 'logging', 'harvesting'] as const).map(type => {
                 const isAll = type === 'all';
-                // @ts-ignore
                 const label = isAll ? i18n.pages.gathering_log.all_types : i18n.pages.gathering_log[type];
                 const icon = isAll ? null : GATHERING_ICONS[type];
                 
