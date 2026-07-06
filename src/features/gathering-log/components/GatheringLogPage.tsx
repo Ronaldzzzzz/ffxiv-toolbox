@@ -34,12 +34,12 @@ export const GatheringLogPage: React.FC = () => {
   const { t: i18n } = useLanguage();
   useFavicon('/favicon_gatheringlog.svg');
   useSeoMeta({
-    canonicalPath: '/ffxiv-toolbox/gathering-log',
+    canonicalPath: '/ffxiv-toolbox/gathering-log/',
     langs: {
-      tw: { title: '採集手冊 | FFXIV Toolbox', description: 'FF14採集手冊。追蹤採礦工、碎石工、採伐工、園藝工的採集進度，支援限時節點鬧鐘、書籤群組管理與遊戲內巨集生成。' },
-      zh: { title: '采集手册 | FFXIV Toolbox', description: 'FF14采集手册。追踪采矿工、碎石工、采伐工、园艺工的进度，支持限时节点闹钟、书签分组管理与游戏内宏生成。' },
-      en: { title: 'Gathering Log | FFXIV Toolbox', description: 'FF14 gathering log tracker. Track mining & botany progress with timed node alarms, bookmark groups, and in-game macro generation.' },
-      ja: { title: '採集手帳 | FFXIV Toolbox', description: 'FF14採集手帳。採掘師・園芸師の進捗管理、時限採集ノードのアラーム、ブックマークグループ、マクロ生成に対応。' },
+      tw: { title: 'FF14 採集手冊 - 限時採集鬧鐘與進度追蹤 | FFXIV Toolbox', description: 'FF14採集手冊。追蹤採礦工、碎石工、採伐工、園藝工的採集進度，支援限時節點鬧鐘、書籤群組管理與遊戲內巨集生成。' },
+      zh: { title: 'FF14 采集手册 - 限时采集闹钟与进度追踪 | FFXIV Toolbox', description: 'FF14采集手册。追踪采矿工、碎石工、采伐工、园艺工的进度，支持限时节点闹钟、书签分组管理与游戏内宏生成。' },
+      en: { title: 'FFXIV Gathering Log Tracker - Timed Node Alarms | FFXIV Toolbox', description: 'FF14 gathering log tracker. Track mining & botany progress with timed node alarms, bookmark groups, and in-game macro generation.' },
+      ja: { title: 'FF14 採集手帳 - 時限アラームと進捗管理 | FFXIV Toolbox', description: 'FF14採集手帳。採掘師・園芸師の進捗管理、時限採集ノードのアラーム、ブックマークグループ、マクロ生成に対応。' },
     },
   });
 
