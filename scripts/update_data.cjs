@@ -280,6 +280,9 @@ async function step3_filterData() {
     saveJson(METADATA_PATH, metadata);
     console.log(`Generated metadata.json with timestamp: ${metadata.lastUpdated}`);
 
+    // Shrink data files: strip unsupported de/fr locales, compress icon paths
+    require('./optimize_data.cjs');
+
     // Derive recipe-item-ids.json (small isRecipe index; the full recipes file
     // is only fetched lazily by the app when a recipe modal is opened)
     require('./derive_recipe_ids.cjs');

@@ -124,7 +124,6 @@ export interface SearchIndexEntry {
   level: number;
   type: GatherType;
   isRecipe: boolean;
-  icon: string;
   names: SearchIndexNames;
   normalizedNames: SearchIndexNames;
 }
@@ -142,7 +141,8 @@ export interface GatheringPreIndex {
 export interface GatheringData {
   pages: GatheringLogPageData[][];
   items: Record<string, LocalizedText>;
-  icons: Record<string, string>;
+  /** Item id -> bare icon number (optimized data) or legacy path string */
+  icons: Record<string, string | number>;
   places: Record<string, PlaceData>;
   nodes: Record<string, NodeData>;
   maps: Record<string, MapData>;

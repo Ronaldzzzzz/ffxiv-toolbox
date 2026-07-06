@@ -180,7 +180,6 @@ async function fetchAndBuildGatheringData(): Promise<GatheringData> {
           level: entry.lvl || 0,
           type,
           isRecipe: false,
-          icon: icons[itemId] || '',
           names,
           normalizedNames: normalizeNames(names),
         });
@@ -215,7 +214,6 @@ async function fetchAndBuildGatheringData(): Promise<GatheringData> {
         level: node.level || 0,
         type,
         isRecipe: false,
-        icon: icons[itemId] || '',
         names,
         normalizedNames: normalizeNames(names),
       });
@@ -238,7 +236,6 @@ async function fetchAndBuildGatheringData(): Promise<GatheringData> {
       level: 0,
       type: 'mining',
       isRecipe: true,
-      icon: icons[itemId] || '',
       names,
       normalizedNames: normalizeNames(names),
     });

@@ -47,10 +47,17 @@ export const UI_ICON_URLS = {
 /**
  * Compose a full item icon URL from the icons data record.
  * Falls back to the generic item icon when no path is found.
+ * Optimized data (scripts/optimize_data.cjs) stores the bare icon number;
+ * legacy string paths (v1 "/i/..." and v2 "/api/asset?...") are still handled.
  */
-export function getItemIconUrl(itemId: number, icons: Record<number, string>): string {
+export function getItemIconUrl(itemId: number, icons: Record<number, string | number>): string {
   const iconPath = icons[itemId];
   if (!iconPath) return UI_ICON_URLS.defaultItem;
+  if (typeof iconPath === 'number') {
+    const folder = String(Math.floor(iconPath / 1000) * 1000).padStart(6, '0');
+    const file = String(iconPath).padStart(6, '0');
+    return `${XIVAPI_V2_BASE}/api/asset?path=ui/icon/${folder}/${file}_hr1.tex&format=png`;
+  }
   // Teamcraft switched to XIVAPI v2 paths (/api/asset?path=...) — use v2 base
   const base = iconPath.startsWith('/api/asset?') ? XIVAPI_V2_BASE : XIVAPI_BASE;
   return `${base}${iconPath}`;
