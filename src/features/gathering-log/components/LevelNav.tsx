@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo, MouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { GatheringData, GatheringLogPageData, GatherType } from '../types';
-import { getLocalizedText, GATHERING_ICONS, UI_ICON_URLS } from '../utils';
+import { getLocalizedText, getItemIconUrl, GATHERING_ICONS, UI_ICON_URLS } from '../utils';
 import { getCollectableBands } from '../selectors';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import { useTool } from '../../../context/ToolContext';
@@ -96,7 +96,7 @@ export const LevelNav: React.FC<LevelNavProps> = ({
           id: entry.id,
           name: localizedName,
           level: entry.level,
-          icon: entry.icon ? `https://xivapi.com${entry.icon}` : UI_ICON_URLS.defaultItem,
+          icon: getItemIconUrl(entry.id, data.icons),
           type: entry.type,
           isRecipe: entry.isRecipe,
         };
