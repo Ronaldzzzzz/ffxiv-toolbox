@@ -723154,8 +723154,8 @@
       "suggestedCraftsmanship": 4740,
       "progressDivider": 170,
       "qualityDivider": 150,
-      "progressModifier": 90,
-      "qualityModifier": 75,
+      "progressModifier": 100,
+      "qualityModifier": 100,
       "controlReq": 0,
       "craftsmanshipReq": 0,
       "rlvl": 772,
@@ -723168,7 +723168,7 @@
         }
       ],
       "expert": true,
-      "conditionsFlag": 15
+      "conditionsFlag": 1491
     },
     {
       "id": 38046,
@@ -723185,8 +723185,8 @@
       "suggestedCraftsmanship": 4740,
       "progressDivider": 170,
       "qualityDivider": 150,
-      "progressModifier": 90,
-      "qualityModifier": 75,
+      "progressModifier": 100,
+      "qualityModifier": 100,
       "controlReq": 0,
       "craftsmanshipReq": 0,
       "rlvl": 772,
@@ -723199,7 +723199,7 @@
         }
       ],
       "expert": true,
-      "conditionsFlag": 15
+      "conditionsFlag": 1491
     },
     {
       "id": 38076,
@@ -723216,8 +723216,8 @@
       "suggestedCraftsmanship": 4740,
       "progressDivider": 170,
       "qualityDivider": 150,
-      "progressModifier": 90,
-      "qualityModifier": 75,
+      "progressModifier": 100,
+      "qualityModifier": 100,
       "controlReq": 0,
       "craftsmanshipReq": 0,
       "rlvl": 772,
@@ -723230,7 +723230,7 @@
         }
       ],
       "expert": true,
-      "conditionsFlag": 15
+      "conditionsFlag": 1491
     }
   ],
   "52461": [
@@ -728710,8 +728710,8 @@
       "suggestedCraftsmanship": 4740,
       "progressDivider": 170,
       "qualityDivider": 150,
-      "progressModifier": 90,
-      "qualityModifier": 75,
+      "progressModifier": 100,
+      "qualityModifier": 100,
       "controlReq": 0,
       "craftsmanshipReq": 0,
       "rlvl": 772,
@@ -728724,7 +728724,7 @@
         }
       ],
       "expert": true,
-      "conditionsFlag": 15
+      "conditionsFlag": 1491
     }
   ],
   "52504": [
@@ -729186,8 +729186,8 @@
       "suggestedCraftsmanship": 4740,
       "progressDivider": 170,
       "qualityDivider": 150,
-      "progressModifier": 90,
-      "qualityModifier": 75,
+      "progressModifier": 100,
+      "qualityModifier": 100,
       "controlReq": 0,
       "craftsmanshipReq": 0,
       "rlvl": 772,
@@ -729200,7 +729200,7 @@
         }
       ],
       "expert": true,
-      "conditionsFlag": 15
+      "conditionsFlag": 1491
     }
   ],
   "52513": [
@@ -729351,8 +729351,8 @@
       "suggestedCraftsmanship": 4740,
       "progressDivider": 170,
       "qualityDivider": 150,
-      "progressModifier": 90,
-      "qualityModifier": 75,
+      "progressModifier": 100,
+      "qualityModifier": 100,
       "controlReq": 0,
       "craftsmanshipReq": 0,
       "rlvl": 772,
@@ -729365,7 +729365,7 @@
         }
       ],
       "expert": true,
-      "conditionsFlag": 15
+      "conditionsFlag": 1491
     }
   ],
   "52518": [
@@ -729582,8 +729582,8 @@
       "suggestedCraftsmanship": 4740,
       "progressDivider": 170,
       "qualityDivider": 150,
-      "progressModifier": 90,
-      "qualityModifier": 75,
+      "progressModifier": 100,
+      "qualityModifier": 100,
       "controlReq": 0,
       "craftsmanshipReq": 0,
       "rlvl": 772,
@@ -729596,7 +729596,7 @@
         }
       ],
       "expert": true,
-      "conditionsFlag": 15
+      "conditionsFlag": 1491
     }
   ],
   "52525": [
@@ -730089,8 +730089,8 @@
       "suggestedCraftsmanship": 4740,
       "progressDivider": 170,
       "qualityDivider": 150,
-      "progressModifier": 90,
-      "qualityModifier": 75,
+      "progressModifier": 100,
+      "qualityModifier": 100,
       "controlReq": 0,
       "craftsmanshipReq": 0,
       "rlvl": 772,
@@ -730103,7 +730103,7 @@
         }
       ],
       "expert": true,
-      "conditionsFlag": 15
+      "conditionsFlag": 1491
     }
   ],
   "52536": [
