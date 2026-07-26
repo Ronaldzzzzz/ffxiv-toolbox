@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTool } from '../../../context/ToolContext';
 import { GatheringData, GatherType } from '../types';
-import { getLocalizedText, getMapPercentage, GATHERING_ICONS } from '../utils';
+import { getLocalizedText, getMapPercentage, GATHERING_ICONS, getMapImageUrl } from '../utils';
 import { useLanguage } from '../../../i18n/LanguageContext';
 
 interface MapModalProps {
@@ -33,7 +33,7 @@ export const MapModal: React.FC<MapModalProps> = ({ data }) => {
 
     const mapName = getLocalizedText(data.places[map.placename_id || mapModal.mapId], lang);
     const title = mapModal.itemName ? `${mapModal.itemName} - ${mapName}` : mapName;
-    const mapImage = map.image ? (map.image.includes('xivapi.com') ? map.image : `https://xivapi.com${map.image.startsWith('/') ? '' : '/'}${map.image}`) : `https://xivapi.com/m/${mapModal.mapId}/${mapModal.mapId}.00.jpg`;
+    const mapImage = getMapImageUrl(mapModal.mapId, map.image);
 
     return (
         <div

@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 //import { useTool } from '../../../context/ToolContext';
 import { GatheringData, NodeData } from '../types';
 import { useLanguage } from '../../../i18n/LanguageContext';
-import { getLocalizedText, getMapPercentage, EXPANSION_MAP, EXPANSION_ORDER, getNodeItemIds, UI_ICON_URLS } from '../utils';
+import { getLocalizedText, getMapPercentage, EXPANSION_MAP, EXPANSION_ORDER, getNodeItemIds, UI_ICON_URLS, getMapImageUrl } from '../utils';
 import { sortNodesForMapSidebar } from '../selectors';
 import { ChevronLeft } from 'lucide-react';
 import { useAlarm } from '../hooks/useAlarm';
@@ -339,9 +339,7 @@ export const MapView: React.FC<MapViewProps> = ({
                                 {/* Map Image */}
                                 {(() => {
                                     const map = data.maps[selectedMapId];
-                                    const mapImage = map.image
-                                        ? (map.image.includes('xivapi.com') ? map.image : `https://xivapi.com${map.image.startsWith('/') ? '' : '/'}${map.image}`)
-                                        : `https://xivapi.com/m/${selectedMapId}/${selectedMapId}.00.jpg`;
+                                    const mapImage = getMapImageUrl(selectedMapId, map.image);
 
                                     return (
                                         <img

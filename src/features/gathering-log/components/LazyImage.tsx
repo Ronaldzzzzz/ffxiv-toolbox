@@ -16,7 +16,7 @@ interface LazyImageProps
  * Shows animated breathing skeleton while loading.
  *
  * Usage:
- *   <LazyImage src="https://xivapi.com/i/..." alt="Item" className="w-8 h-8" />
+ *   <LazyImage src={getItemIconUrl(itemId, icons)} alt="Item" className="w-8 h-8" />
  *
  * Benefits:
  * - First paint is 30-50% faster (fewer initial requests)

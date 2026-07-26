@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getItemIconUrl, UI_ICON_URLS } from './iconRegistry';
+import { getItemIconUrl, getMapImageUrl, UI_ICON_URLS } from './iconRegistry';
 
 describe('getItemIconUrl', () => {
   it('rebuilds the v2 asset URL from a bare icon number (optimized data)', () => {
@@ -26,5 +26,37 @@ describe('getItemIconUrl', () => {
   it('falls back to the default icon for missing or empty entries', () => {
     expect(getItemIconUrl(42, {})).toBe(UI_ICON_URLS.defaultItem);
     expect(getItemIconUrl(42, { 42: '' })).toBe(UI_ICON_URLS.defaultItem);
+  });
+});
+
+describe('UI_ICON_URLS', () => {
+  it('resolves static icons through the v2 asset endpoint', () => {
+    expect(UI_ICON_URLS.defaultItem).toBe(
+      'https://v2.xivapi.com/api/asset?path=ui/icon/066000/066313_hr1.tex&format=png'
+    );
+  });
+
+  it('keeps job companion portraits on v1 (no v2 equivalent)', () => {
+    expect(UI_ICON_URLS.jobMiner).toBe('https://xivapi.com/cj/companion/miner.png');
+  });
+});
+
+describe('getMapImageUrl', () => {
+  it('rewrites the legacy v1 map path shape to the v2 asset endpoint', () => {
+    expect(getMapImageUrl(2, 'https://xivapi.com/m/f1t1/f1t1.00.jpg')).toBe(
+      'https://v2.xivapi.com/api/asset/map/f1t1/00'
+    );
+  });
+
+  it('rewrites the legacy shape even when Teamcraft prefixes it with the v2 host', () => {
+    expect(getMapImageUrl(2, 'https://v2.xivapi.com/m/f1t1/f1t1.00.jpg')).toBe(
+      'https://v2.xivapi.com/api/asset/map/f1t1/00'
+    );
+  });
+
+  it('passes through an already-correct v2 asset URL unchanged', () => {
+    expect(getMapImageUrl(2, 'https://v2.xivapi.com/api/asset/map/f1t1/00')).toBe(
+      'https://v2.xivapi.com/api/asset/map/f1t1/00'
+    );
   });
 });
