@@ -165,7 +165,7 @@ export const GatheringLogPage: React.FC = () => {
     if (!progress) return;
 
     setProgress(progress);
-    setToolInfo({ version: 'V3.7.0' });
+    setToolInfo({ version: 'V3.7.1' });
 
     return () => {
       setProgress(null);
