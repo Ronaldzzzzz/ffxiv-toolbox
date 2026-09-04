@@ -35,6 +35,8 @@ export interface Translation {
       regions_header: string;
       all_regions: string;
       omitted: string;
+      omitted_hint: string;
+      all_locations: string;
       back_to_top: string;
       select_all: string;
       deselect_all: string;
@@ -203,6 +205,8 @@ export const translations: Record<LangCode, Translation> = {
         regions_header: '區域',
         all_regions: '全部地區',
         omitted: '已省略詳細地點',
+        omitted_hint: '點擊查看全部地點',
+        all_locations: '所有採集地點',
         back_to_top: '返回頂部',
         select_all: '全選',
         deselect_all: '取消全選',
@@ -360,6 +364,8 @@ export const translations: Record<LangCode, Translation> = {
         regions_header: 'Regions',
         all_regions: 'All Regions',
         omitted: 'Locations omitted',
+        omitted_hint: 'Click to view all locations',
+        all_locations: 'All Locations',
         back_to_top: 'Back to Top',
         select_all: 'Select All',
         deselect_all: 'Deselect All',
@@ -515,6 +521,8 @@ export const translations: Record<LangCode, Translation> = {
         regions_header: 'エリア',
         all_regions: 'すべての地域',
         omitted: '場所を省略しました',
+        omitted_hint: 'クリックして全ての場所を表示',
+        all_locations: '全ての採集地',
         back_to_top: 'トップに戻る',
         select_all: 'すべて選択',
         deselect_all: 'すべて解除',
@@ -670,6 +678,8 @@ export const translations: Record<LangCode, Translation> = {
         regions_header: '区域',
         all_regions: '全部地区',
         omitted: '已省略详细地点',
+        omitted_hint: '点击查看全部地点',
+        all_locations: '所有采集地点',
         back_to_top: '返回顶部',
         select_all: '全选',
         deselect_all: '取消全选',
